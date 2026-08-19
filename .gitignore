@@ -1,0 +1,17 @@
+# Datos de origen y derivados: nunca deben subirse a este repositorio.
+# El repo solo debe contener el dashboard publicado y el código del pipeline
+# que lo genera, no los Excel/JSON con cifras reales por RBD.
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+CARGA/
+carga_manual/
+*.json
+!package.json
+
+# Artefactos de trabajo / respaldos locales
+*_backup_*.html
+.DS_Store
+__pycache__/
+*.pyc

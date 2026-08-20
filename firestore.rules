@@ -1,0 +1,50 @@
+// Reglas de seguridad Firestore — Monitoreo Ingresos y Gastos SEP 2026 (SLEP Petorca)
+// Para desplegar: Firebase Console → Firestore Database → Reglas → pegar este contenido →
+// Publicar (proyecto "slep-petorca-finanzas-permisos", el mismo que usa Calendariopermisos).
+// Para agregar/quitar correos: editar la lista de abajo Y la constante ALLOWED_EMAILS en
+// index.html.
+//
+// Este proyecto Firebase también aloja la colección "events" de Calendariopermisos. Ambas
+// colecciones son completamente independientes: este archivo agrega un bloque nuevo para
+// "sep_carga_rbd" sin tocar el bloque de "events" (que vive en el firestore.rules de ese otro
+// repositorio). Si alguna vez se publican ambos conjuntos de reglas en el mismo proyecto,
+// hay que fusionar los dos bloques `match` dentro de un mismo `service cloud.firestore { match
+// /databases/{database}/documents { ... } }`, como se muestra aquí.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAllowed() {
+      return request.auth != null && request.auth.token.email in [
+        "wilson.rojas@sleppetorca.gob.cl",
+        "juan.bustamante@sleppetorca.gob.cl",
+        "benedicto.fessia@sleppetorca.gob.cl",
+        "sebastian.olguin@sleppetorca.gob.cl",
+        "fernando.saavedra@sleppetorca.gob.cl",
+        "yessenia.vilches@sleppetorca.gob.cl",
+        "catalina.brito@sleppetorca.gob.cl",
+        "wilson.rojasabarca@gmail.com",
+        "javier.ilabaca@sleppetorca.gob.cl"
+      ];
+    }
+
+    // Un documento por RBD (id = RBD, p.ej. "1121") + un documento "_meta" con la lista
+    // compartida de ítems de gasto (items_22 / items_29). No se borran RBD desde el cliente:
+    // el panel nunca da de baja un establecimiento, solo edita sus montos.
+    match /sep_carga_rbd/{rbdId} {
+      allow read:   if isAllowed();
+      allow create, update: if isAllowed();
+      allow delete: if false;
+    }
+
+    // Bloque de Calendariopermisos (colección "events") — se deja documentado aquí solo como
+    // referencia de que ambas colecciones pueden convivir en el mismo proyecto sin pisarse; el
+    // archivo fuente de esas reglas vive en el repositorio Calendariopermisos.
+    // match /events/{eventId} { ... }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

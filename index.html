@@ -409,6 +409,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                   <button type="button" class="link-btn" id="reporteConceptoNinguno">Ninguno</button>
                 </span>
               </div>
+              <input type="text" id="reporteConceptoSearch" placeholder="Buscar concepto…" class="report-search">
               <div class="report-checklist" id="reporteConceptoList"></div>
             </div>
             <div class="report-filter-col">
@@ -424,6 +425,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           </div>
           <div class="table-controls" style="margin-top:14px;">
             <button id="reporteCsvBtn" type="button">⬇ CSV</button>
+            <button id="reporteExcelBtn" type="button" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel</button>
             <button id="reportePdfBtn" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
           </div>
         </div>
@@ -1113,10 +1115,11 @@ function renderReportFilters() {
     <label class="check-row"><input type="checkbox" data-rbd-check="${r.rbd}" ${reporteState.rbds.has(r.rbd) ? 'checked' : ''}> ${r.rbd} — ${r.nombre}</label>
   `).join('') : '<div style="padding:10px; color:var(--text-muted); font-size:12px;">Sin resultados.</div>';
 
-  const catalog = buildConceptoCatalog();
-  document.getElementById('reporteConceptoList').innerHTML = catalog.map(c => `
+  const conceptoSearch = (document.getElementById('reporteConceptoSearch').value || '').toLowerCase();
+  const catalog = buildConceptoCatalog().filter(c => !conceptoSearch || c.label.toLowerCase().includes(conceptoSearch));
+  document.getElementById('reporteConceptoList').innerHTML = catalog.length ? catalog.map(c => `
     <label class="check-row"><input type="checkbox" data-concepto-check="${c.key}" ${reporteState.conceptos.has(c.key) ? 'checked' : ''}> ${c.label}</label>
-  `).join('');
+  `).join('') : '<div style="padding:10px; color:var(--text-muted); font-size:12px;">Sin resultados.</div>';
 
   document.getElementById('reporteMesList').innerHTML = MESES_CARGA.map((m, i) => `
     <label class="check-row"><input type="checkbox" data-mes-check="${m}" ${reporteState.meses.has(m) ? 'checked' : ''}> ${MESES_CARGA_ABREV[i]}</label>
@@ -1143,6 +1146,7 @@ document.getElementById('reporteMesList').addEventListener('change', (e) => {
 });
 
 document.getElementById('reporteRbdSearch').addEventListener('input', renderReportFilters);
+document.getElementById('reporteConceptoSearch').addEventListener('input', renderReportFilters);
 document.getElementById('reporteRbdTodos').addEventListener('click', () => {
   DATA.registros.forEach(r => reporteState.rbds.add(r.rbd));
   renderReportFilters(); renderReporte();
@@ -1233,6 +1237,17 @@ document.getElementById('reporteCsvBtn').addEventListener('click', () => {
   a.href = url; a.download = `reporte_sep_${new Date().toISOString().slice(0,10)}.csv`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
+});
+
+document.getElementById('reporteExcelBtn').addEventListener('click', () => {
+  if (!currentReporteRows.length) { alert('No hay datos para exportar — ajusta los filtros primero.'); return; }
+  if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); return; }
+  const mesesSel = currentReporteRows[0].meses;
+  const headers = ['RBD', 'Establecimiento', 'Concepto', ...mesesSel.map(m => MESES_CARGA_TITLE[MESES_CARGA.indexOf(m)]), 'Total selección'];
+  const aoa = [headers, ...currentReporteRows.map(row => [row.rbd, row.nombre, row.concepto, ...row.valores, row.total])];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'REPORTE');
+  XLSX.writeFile(wb, `reporte_sep_${new Date().toISOString().slice(0,10)}.xlsx`);
 });
 
 document.getElementById('reportePdfBtn').addEventListener('click', () => {
@@ -1612,19 +1627,16 @@ function getNameFromEmail(email) {
   return local.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }
 
-function formatRelativeTime(date) {
-  if (!date) return '';
-  const diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (diffSec < 60) return 'hace unos segundos';
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `hace ${diffMin} minuto${diffMin !== 1 ? 's' : ''}`;
-  const diffHrs = Math.floor(diffMin / 60);
-  if (diffHrs < 24) return `hace ${diffHrs} hora${diffHrs !== 1 ? 's' : ''}`;
-  const dd = String(date.getDate()).padStart(2, '0');
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const hh = String(date.getHours()).padStart(2, '0');
-  const min = String(date.getMinutes()).padStart(2, '0');
-  return `el ${dd}/${mm} a las ${hh}:${min}`;
+// Fecha y hora SIEMPRE en horario de Chile (America/Santiago), sin importar la zona horaria
+// del dispositivo de quien mira el panel — así "última edición" significa lo mismo para todos.
+function formatFechaHoraChile(date) {
+  if (!date || isNaN(date.getTime())) return '';
+  const partes = new Intl.DateTimeFormat('es-CL', {
+    timeZone: 'America/Santiago',
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).formatToParts(date).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+  return `el ${partes.day}/${partes.month}/${partes.year} a las ${partes.hour}:${partes.minute} (hora Chile)`;
 }
 
 function setSyncStatus(status, text) {
@@ -1638,7 +1650,7 @@ function setSyncStatus(status, text) {
 function ultimaEdicionRbdHTML(rbd) {
   const info = rbdLastModified[rbd];
   if (!info || !info.by) return '';
-  return `Última edición en este RBD: <strong>${getNameFromEmail(info.by)}</strong> · ${formatRelativeTime(info.at)}`;
+  return `Última edición en este RBD: <strong>${getNameFromEmail(info.by)}</strong> · ${formatFechaHoraChile(info.at)}`;
 }
 
 // ============== AUTH: acceso por correo institucional + enlace mágico ==============
@@ -1857,7 +1869,7 @@ function aplicarSnapshot(snapshot) {
   renderTable();
 
   const syncMsg = latestEmail && latestAt
-    ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatRelativeTime(latestAt)}`
+    ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatFechaHoraChile(latestAt)}`
     : 'Sincronizado';
   setSyncStatus('green', syncMsg);
 

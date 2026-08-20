@@ -234,6 +234,35 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .header-right { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
   .header-logo { height:40px; width:auto; display:block; }
   @media print { .header-logo { display:none !important; } }
+
+  /* ---- PESTAÑAS (Panel principal / Reportes) ---- */
+  .tab-bar { display:flex; gap:6px; margin-bottom:16px; border-bottom:1px solid var(--border); }
+  .tab-btn { padding:9px 16px; border:none; background:none; font-size:13.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; }
+  .tab-btn:hover { color:var(--text-primary); }
+  .tab-btn.active { color:var(--series-1); border-bottom-color:var(--series-1); }
+  .tab-content.hidden { display:none !important; }
+
+  /* ---- REPORTE PERSONALIZADO ---- */
+  .report-filter-grid { display:grid; grid-template-columns:1.3fr 1.3fr 1fr; gap:16px; }
+  .report-filter-col { min-width:0; }
+  .report-filter-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:12.5px; }
+  .report-filter-actions { display:flex; gap:10px; }
+  .link-btn { background:none; border:none; color:var(--series-1); font-size:11.5px; font-weight:600; cursor:pointer; padding:0; }
+  .link-btn:hover { text-decoration:underline; }
+  .report-search { width:100%; padding:6px 8px; border-radius:6px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); margin-bottom:6px; box-sizing:border-box; }
+  .report-checklist { border:1px solid var(--border); border-radius:6px; max-height:220px; overflow-y:auto; padding:4px 8px; background:#fff; }
+  .report-checklist-meses { max-height:none; display:flex; flex-wrap:wrap; gap:2px 12px; padding:8px; }
+  .check-row { display:block; font-size:12px; padding:3px 2px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .check-row:hover { background:var(--page-plane); }
+  .check-row input { margin-right:6px; vertical-align:-2px; }
+  .report-empty-row td { text-align:center; color:var(--text-muted); font-size:12.5px; padding:18px !important; }
+  .report-subtotal-row td { font-weight:700; background:var(--page-plane); border-top:2px solid var(--baseline); }
+  @media print {
+    .tab-bar, .report-controls { display:none !important; }
+  }
+  @media (max-width:900px) {
+    .report-filter-grid { grid-template-columns:1fr; }
+  }
 </style>
 </head>
 <body>
@@ -290,6 +319,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
   </header>
 
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="panel" type="button">📊 Panel principal</button>
+    <button class="tab-btn" data-tab="reportes" type="button">📈 Reportes</button>
+  </div>
+
+  <div id="tab-panel" class="tab-content">
+
   <div class="kpi-row" id="kpiRow"></div>
 
   <section>
@@ -345,8 +381,62 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
   </section>
 
-</div>
-</div>
+  </div>
+  <!-- /#tab-panel -->
+
+  <div id="tab-reportes" class="tab-content hidden">
+    <section>
+      <h2>Reporte personalizado <span class="count-chip" id="reporteCountChip"></span></h2>
+      <div class="panel">
+        <div class="report-controls">
+          <div class="report-filter-grid">
+            <div class="report-filter-col">
+              <div class="report-filter-head">
+                <strong>Establecimientos</strong>
+                <span class="report-filter-actions">
+                  <button type="button" class="link-btn" id="reporteRbdTodos">Todos</button>
+                  <button type="button" class="link-btn" id="reporteRbdNinguno">Ninguno</button>
+                </span>
+              </div>
+              <input type="text" id="reporteRbdSearch" placeholder="Buscar RBD o nombre…" class="report-search">
+              <div class="report-checklist" id="reporteRbdList"></div>
+            </div>
+            <div class="report-filter-col">
+              <div class="report-filter-head">
+                <strong>Conceptos</strong>
+                <span class="report-filter-actions">
+                  <button type="button" class="link-btn" id="reporteConceptoTodos">Todos</button>
+                  <button type="button" class="link-btn" id="reporteConceptoNinguno">Ninguno</button>
+                </span>
+              </div>
+              <div class="report-checklist" id="reporteConceptoList"></div>
+            </div>
+            <div class="report-filter-col">
+              <div class="report-filter-head">
+                <strong>Meses</strong>
+                <span class="report-filter-actions">
+                  <button type="button" class="link-btn" id="reporteMesTodos">Todos</button>
+                  <button type="button" class="link-btn" id="reporteMesNinguno">Ninguno</button>
+                </span>
+              </div>
+              <div class="report-checklist report-checklist-meses" id="reporteMesList"></div>
+            </div>
+          </div>
+          <div class="table-controls" style="margin-top:14px;">
+            <button id="reporteCsvBtn" type="button">⬇ CSV</button>
+            <button id="reportePdfBtn" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          </div>
+        </div>
+        <div class="table-scroll" style="margin-top:14px;">
+          <table class="data-table" id="reporteTable">
+            <thead><tr id="reporteTheadRow"></tr></thead>
+            <tbody id="reporteTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /#tab-reportes -->
 
 <div id="printSingleWrap"></div>
 </div>
@@ -878,6 +968,7 @@ function renderTable() {
       renderTable();
     });
   });
+  renderReporte();
 }
 
 document.getElementById('searchInput').addEventListener('input', renderTable);
@@ -924,6 +1015,7 @@ function addNewItem(subt, inputEl) {
     return;
   }
   arr.push(name.toUpperCase());
+  renderReportFilters();
   renderTable();
   guardarNuevoItem(subt, name.toUpperCase()).catch(err => alert('No se pudo sincronizar el nuevo ítem con el resto del equipo: ' + err.message));
 }
@@ -954,6 +1046,201 @@ tableBodyEl.addEventListener('focusout', (e) => {
     flushRbdSaveNow(e.target.dataset.rbd);
   }
 });
+
+// ============================================================================
+// ============== REPORTES: pestaña de reportes personalizados ==============
+// Vista de solo lectura (no edita nada) para cruzar establecimiento × concepto × mes(es) y ver
+// el comportamiento de cualquier serie ya cargada, sin mezclarse con la tabla principal donde
+// se ingresan los datos. Vive en su propia pestaña ("📈 Reportes").
+// ============================================================================
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    const tab = btn.getAttribute('data-tab');
+    document.getElementById('tab-panel').classList.toggle('hidden', tab !== 'panel');
+    document.getElementById('tab-reportes').classList.toggle('hidden', tab !== 'reportes');
+  });
+});
+
+// Catálogo de conceptos reportables: los 3 ingresos SEP, Remuneraciones (fila única por RBD),
+// y cada ítem vivo de Subt.22/29 (incluye los agregados con "+ Agregar ítem").
+function buildConceptoCatalog() {
+  const list = [
+    { key: 'ingreso|Ingreso SEP Preferente', label: 'Ingreso SEP Preferente' },
+    { key: 'ingreso|Ingreso SEP Prioritario', label: 'Ingreso SEP Prioritario' },
+    { key: 'ingreso|Carrera Docente', label: 'Carrera Docente' },
+    { key: 'rem', label: 'Remuneraciones (Subt. 21)' },
+  ];
+  ITEMS_22.forEach(item => list.push({ key: `22|${item}`, label: `${item} (Subt.22)` }));
+  ITEMS_29.forEach(item => list.push({ key: `29|${item}`, label: `${item} (Subt.29)` }));
+  return list;
+}
+
+function getConceptoSeries(rbd, key) {
+  if (key === 'rem') {
+    const s = CARGA_MANUAL.rem_por_rbd[rbd];
+    return s ? s.meses : {};
+  }
+  if (key.startsWith('ingreso|')) {
+    const itemName = key.slice('ingreso|'.length);
+    const ing = CARGA_MANUAL.ingreso_items_por_rbd[rbd];
+    const it = ing ? ing.items.find(x => x.item === itemName) : null;
+    return it ? it.meses : {};
+  }
+  const subt = key.slice(0, 2);
+  const itemName = key.slice(3);
+  const ag = CARGA_MANUAL.agregado_por_rbd[rbd];
+  const it = ag ? ag.items.find(x => x.subtitulo === subt && x.item === itemName) : null;
+  return it ? it.meses : {};
+}
+
+// Estado de los filtros: por defecto, todos los RBD, Remuneraciones, y todos los meses — así
+// el reporte muestra algo útil de inmediato y el usuario va acotando desde ahí.
+const reporteState = {
+  rbds: new Set(DATA.registros.map(r => r.rbd)),
+  conceptos: new Set(['rem']),
+  meses: new Set(MESES_CARGA),
+};
+
+function renderReportFilters() {
+  const rbdSearch = (document.getElementById('reporteRbdSearch').value || '').toLowerCase();
+  const rbdListEl = document.getElementById('reporteRbdList');
+  const rbdRows = DATA.registros.filter(r =>
+    !rbdSearch || r.rbd.toLowerCase().includes(rbdSearch) || r.nombre.toLowerCase().includes(rbdSearch)
+  );
+  rbdListEl.innerHTML = rbdRows.length ? rbdRows.map(r => `
+    <label class="check-row"><input type="checkbox" data-rbd-check="${r.rbd}" ${reporteState.rbds.has(r.rbd) ? 'checked' : ''}> ${r.rbd} — ${r.nombre}</label>
+  `).join('') : '<div style="padding:10px; color:var(--text-muted); font-size:12px;">Sin resultados.</div>';
+
+  const catalog = buildConceptoCatalog();
+  document.getElementById('reporteConceptoList').innerHTML = catalog.map(c => `
+    <label class="check-row"><input type="checkbox" data-concepto-check="${c.key}" ${reporteState.conceptos.has(c.key) ? 'checked' : ''}> ${c.label}</label>
+  `).join('');
+
+  document.getElementById('reporteMesList').innerHTML = MESES_CARGA.map((m, i) => `
+    <label class="check-row"><input type="checkbox" data-mes-check="${m}" ${reporteState.meses.has(m) ? 'checked' : ''}> ${MESES_CARGA_ABREV[i]}</label>
+  `).join('');
+}
+
+document.getElementById('reporteRbdList').addEventListener('change', (e) => {
+  const rbd = e.target.getAttribute('data-rbd-check');
+  if (!rbd) return;
+  if (e.target.checked) reporteState.rbds.add(rbd); else reporteState.rbds.delete(rbd);
+  renderReporte();
+});
+document.getElementById('reporteConceptoList').addEventListener('change', (e) => {
+  const key = e.target.getAttribute('data-concepto-check');
+  if (!key) return;
+  if (e.target.checked) reporteState.conceptos.add(key); else reporteState.conceptos.delete(key);
+  renderReporte();
+});
+document.getElementById('reporteMesList').addEventListener('change', (e) => {
+  const mes = e.target.getAttribute('data-mes-check');
+  if (!mes) return;
+  if (e.target.checked) reporteState.meses.add(mes); else reporteState.meses.delete(mes);
+  renderReporte();
+});
+
+document.getElementById('reporteRbdSearch').addEventListener('input', renderReportFilters);
+document.getElementById('reporteRbdTodos').addEventListener('click', () => {
+  DATA.registros.forEach(r => reporteState.rbds.add(r.rbd));
+  renderReportFilters(); renderReporte();
+});
+document.getElementById('reporteRbdNinguno').addEventListener('click', () => {
+  reporteState.rbds.clear();
+  renderReportFilters(); renderReporte();
+});
+document.getElementById('reporteConceptoTodos').addEventListener('click', () => {
+  buildConceptoCatalog().forEach(c => reporteState.conceptos.add(c.key));
+  renderReportFilters(); renderReporte();
+});
+document.getElementById('reporteConceptoNinguno').addEventListener('click', () => {
+  reporteState.conceptos.clear();
+  renderReportFilters(); renderReporte();
+});
+document.getElementById('reporteMesTodos').addEventListener('click', () => {
+  MESES_CARGA.forEach(m => reporteState.meses.add(m));
+  renderReportFilters(); renderReporte();
+});
+document.getElementById('reporteMesNinguno').addEventListener('click', () => {
+  reporteState.meses.clear();
+  renderReportFilters(); renderReporte();
+});
+
+let currentReporteRows = []; // filas mostradas actualmente (para exportar CSV)
+
+function renderReporte() {
+  const mesesSel = MESES_CARGA.filter(m => reporteState.meses.has(m));
+  const rbdsSel = DATA.registros.filter(r => reporteState.rbds.has(r.rbd));
+  const conceptosSel = buildConceptoCatalog().filter(c => reporteState.conceptos.has(c.key));
+
+  const colspan = 3 + mesesSel.length + 1;
+  document.getElementById('reporteTheadRow').innerHTML = `<th>RBD</th><th>Establecimiento</th><th>Concepto</th>${
+    mesesSel.map(m => `<th class="num">${MESES_CARGA_ABREV[MESES_CARGA.indexOf(m)]}</th>`).join('')
+  }<th class="num">Total selección</th>`;
+
+  const tbody = document.getElementById('reporteTbody');
+
+  if (!rbdsSel.length || !conceptosSel.length || !mesesSel.length) {
+    tbody.innerHTML = `<tr class="report-empty-row"><td colspan="${colspan}">Selecciona al menos un establecimiento, un concepto y un mes para ver el reporte.</td></tr>`;
+    currentReporteRows = [];
+    document.getElementById('reporteCountChip').textContent = '';
+    return;
+  }
+
+  const rows = [];
+  conceptosSel.forEach(c => {
+    const subtotales = mesesSel.map(() => 0);
+    rbdsSel.forEach(r => {
+      const meses = getConceptoSeries(r.rbd, c.key);
+      const valores = mesesSel.map(m => meses[m] || 0);
+      valores.forEach((v, i) => { subtotales[i] += v; });
+      rows.push({ rbd: r.rbd, nombre: r.nombre, concepto: c.label, valores, total: valores.reduce((s, v) => s + v, 0) });
+    });
+    if (rbdsSel.length > 1) {
+      rows.push({ rbd: '', nombre: '', concepto: `Subtotal — ${c.label}`, valores: subtotales, total: subtotales.reduce((s, v) => s + v, 0), esSubtotal: true });
+    }
+  });
+
+  tbody.innerHTML = rows.map(row => `
+    <tr class="${row.esSubtotal ? 'report-subtotal-row' : ''}">
+      <td>${row.rbd}</td>
+      <td>${row.nombre}</td>
+      <td>${row.concepto}</td>
+      ${row.valores.map(v => `<td class="num">${fmtCLP(v)}</td>`).join('')}
+      <td class="num">${fmtCLP(row.total)}</td>
+    </tr>
+  `).join('');
+
+  currentReporteRows = rows.map(row => ({ ...row, meses: mesesSel }));
+  document.getElementById('reporteCountChip').textContent =
+    `${rbdsSel.length} establecimiento${rbdsSel.length !== 1 ? 's' : ''} · ${conceptosSel.length} concepto${conceptosSel.length !== 1 ? 's' : ''} · ${mesesSel.length} mes${mesesSel.length !== 1 ? 'es' : ''}`;
+}
+
+document.getElementById('reporteCsvBtn').addEventListener('click', () => {
+  if (!currentReporteRows.length) { alert('No hay datos para exportar — ajusta los filtros primero.'); return; }
+  const mesesSel = currentReporteRows[0].meses;
+  const headers = ['RBD', 'Establecimiento', 'Concepto', ...mesesSel.map(m => MESES_CARGA_TITLE[MESES_CARGA.indexOf(m)]), 'Total selección'];
+  const lines = [headers.map(csvEscape).join(';')];
+  currentReporteRows.forEach(row => {
+    lines.push([row.rbd, row.nombre, row.concepto, ...row.valores, row.total].map(csvEscape).join(';'));
+  });
+  const csvContent = '﻿' + lines.join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `reporte_sep_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('reportePdfBtn').addEventListener('click', () => {
+  window.print();
+});
+
+renderReportFilters();
+renderReporte();
 
 function csvEscape(val) {
   const s = (val === null || val === undefined) ? '' : String(val);
@@ -1566,6 +1853,7 @@ function aplicarSnapshot(snapshot) {
   renderKpis();
   document.getElementById('rbdCountChip').textContent = N_RBD_CON_MARCO + ' RBD con marco SEP activo'
     + (N_RBD_SIN_MARCO ? ` + ${N_RBD_SIN_MARCO} en alerta (sin marco SEP)` : '');
+  renderReportFilters();
   renderTable();
 
   const syncMsg = latestEmail && latestAt

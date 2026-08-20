@@ -109,8 +109,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .expand-btn { background:none; border:none; cursor:pointer; font-size:12px; color:var(--text-muted); padding:2px 6px; }
   .expand-btn:hover { color:var(--series-1); }
   tr.rbd-row:hover { background:rgba(42,120,214,0.04); }
-  tr.detalle-row td { padding:0; background:#fafbfc; border-bottom:1px solid var(--gridline); }
-  .detalle-wrap { padding:14px 18px 16px 46px; }
+  .detalle-wrap { padding:0; }
   .detalle-header { margin-bottom:8px; font-size:12px; }
   .detalle-header strong { color:var(--text-secondary); }
   .detalle-sub { color:var(--text-muted); margin-left:8px; }
@@ -295,6 +294,27 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .ejec-delta-flat { color:var(--text-muted); }
   #ejecTable td.mes-real { background:rgba(12,163,92,0.06); }
   #ejecTable td.mes-proy { background:rgba(224,138,0,0.06); }
+
+  /* ---- Fila: RBD/Establecimiento clickeables (abren el modal de detalle) ---- */
+  .rbd-clickable { cursor:pointer; }
+  tr.rbd-row:hover .rbd-clickable { text-decoration:underline; }
+  .table-empty-row td { text-align:center; color:var(--text-muted); font-size:13px; padding:28px !important; }
+
+  /* ---- MODAL: detalle editable por RBD ---- */
+  .modal-overlay { position:fixed; inset:0; background:rgba(11,11,11,0.55); z-index:60; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px; overflow-y:auto; }
+  .modal-overlay.hidden { display:none !important; }
+  .modal-panel { background:#fff; border-radius:12px; width:100%; max-width:1120px; box-shadow:0 16px 48px rgba(0,0,0,0.28); display:flex; flex-direction:column; max-height:calc(100vh - 64px); }
+  .modal-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:18px 22px; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .modal-header h3 { margin:0 0 4px; font-size:16.5px; }
+  .modal-subtitle { font-size:12px; color:var(--text-secondary); }
+  .modal-close { background:none; border:none; font-size:19px; color:var(--text-muted); cursor:pointer; padding:2px 6px; line-height:1; border-radius:4px; }
+  .modal-close:hover { color:var(--text-primary); background:var(--page-plane); }
+  .modal-body { padding:18px 22px 24px; overflow-y:auto; }
+  @media print { .modal-overlay { display:none !important; } }
+  @media (max-width:640px) {
+    .modal-overlay { padding:0; }
+    .modal-panel { max-width:none; max-height:100vh; border-radius:0; }
+  }
 </style>
 </head>
 <body>
@@ -378,8 +398,6 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <input type="file" id="importExcelInput" accept=".xlsx" style="display:none;">
         <button id="exportPdfBtn" type="button" style="background:#374151; border-color:#374151;" title="PDF general (solo el resumen, sin detalle por RBD)">🖨 Exportar PDF (general)</button>
         <button id="downloadCargaBtn" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
-        <button id="expandAllBtn" type="button" class="expand-collapse-btn">⤢ Desplegar todo</button>
-        <button id="collapseAllBtn" type="button" class="expand-collapse-btn">⤡ Contraer todo</button>
       </div>
       <div class="corte-control">
         <label for="corteMesSelect">Ver resumen y colorear tablas hasta el mes:</label>
@@ -514,6 +532,19 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   <!-- /#tab-ejecucion -->
 
 <div id="printSingleWrap"></div>
+
+<div id="rbdModal" class="modal-overlay hidden">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalTitle"></h3>
+        <div class="modal-subtitle" id="modalSubtitle"></div>
+      </div>
+      <button id="modalCloseBtn" type="button" class="modal-close" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
 </div>
 <!-- /#app -->
 
@@ -599,7 +630,7 @@ function nombreTagsHTML(r) {
 
 let sortKey = 'saldo_total', sortDir = 1;
 let currentFilteredRows = [];
-let expandedRbds = new Set();
+let modalRbdAbierto = null; // RBD cuyo detalle está abierto en el modal, o null si está cerrado
 
 // --- Modelo de carga manual en memoria (editable directo en el dashboard) ---
 
@@ -1018,14 +1049,14 @@ function renderTable() {
   });
   currentFilteredRows = rows;
   const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = rows.map(r => {
-    const isOpen = expandedRbds.has(r.rbd);
-    const detalleRow = isOpen ? `<tr class="detalle-row"><td colspan="12">${buildDetalleHTML(r.rbd)}</td></tr>` : '';
-    return `
+  if (!rows.length) {
+    tbody.innerHTML = `<tr class="table-empty-row"><td colspan="12">Ningún establecimiento coincide con el filtro/búsqueda actual.</td></tr>`;
+  } else {
+    tbody.innerHTML = rows.map(r => `
     <tr class="rbd-row${r.alerta_sep_sin_marco ? ' alerta-critica' : ''}" data-rbd="${r.rbd}">
-      <td class="expand-cell"><button class="expand-btn" data-rbd="${r.rbd}" aria-label="Ver detalle por ítem">${isOpen ? '▾' : '▸'}</button></td>
-      <td>${r.rbd}</td>
-      <td data-field="nombre">${r.nombre}${nombreTagsHTML(r)}</td>
+      <td class="expand-cell"><button class="expand-btn" data-abrir-rbd="${r.rbd}" aria-label="Ver detalle de ${r.nombre}">▸</button></td>
+      <td class="rbd-clickable" data-abrir-rbd="${r.rbd}">${r.rbd}</td>
+      <td data-field="nombre" class="rbd-clickable" data-abrir-rbd="${r.rbd}">${r.nombre}${nombreTagsHTML(r)}</td>
       <td class="num" data-field="marco_anual_proy">${fmtCLP(r.marco_anual_proy)}</td>
       <td class="num" data-field="gasto_rem_anual_proy">${fmtCLP(r.gasto_rem_anual_proy)}</td>
       <td class="num" data-field="pct_ejec_rem">${pctBarHTML(r.pct_ejec_rem)}</td>
@@ -1038,17 +1069,11 @@ function renderTable() {
         <button class="row-action-btn" data-action="excel" data-rbd="${r.rbd}" title="Descargar Excel solo de este RBD">Excel</button>
         <button class="row-action-btn" data-action="pdf" data-rbd="${r.rbd}" title="Descargar PDF solo de este RBD">PDF</button>
       </td>
-    </tr>${detalleRow}`;
-  }).join('');
-  tbody.querySelectorAll('.expand-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const rbd = btn.getAttribute('data-rbd');
-      if (expandedRbds.has(rbd)) expandedRbds.delete(rbd); else expandedRbds.add(rbd);
-      renderTable();
-    });
-  });
+    </tr>`).join('');
+  }
   renderReporte();
   renderEjecucion();
+  if (modalRbdAbierto) renderModalContenido();
 }
 
 document.getElementById('searchInput').addEventListener('input', renderTable);
@@ -1071,15 +1096,6 @@ corteMesSelectEl.value = String(corteMesIdx);
 corteMesSelectEl.addEventListener('change', () => {
   corteMesIdx = Number(corteMesSelectEl.value) || DATA.n_meses;
   renderKpis();
-  renderTable();
-});
-
-document.getElementById('expandAllBtn').addEventListener('click', () => {
-  currentFilteredRows.forEach(r => expandedRbds.add(r.rbd));
-  renderTable();
-});
-document.getElementById('collapseAllBtn').addEventListener('click', () => {
-  expandedRbds.clear();
   renderTable();
 });
 
@@ -1109,19 +1125,63 @@ tableBodyEl.addEventListener('click', (e) => {
     else if (action === 'pdf') exportRbdPdf(rbd);
     return;
   }
+  const abrir = e.target.closest('[data-abrir-rbd]');
+  if (abrir) abrirModalRbd(abrir.getAttribute('data-abrir-rbd'));
+});
+
+// --- Modal de detalle por RBD: reemplaza la fila desplegable de antes. Se abre al hacer clic
+// en el RBD, el nombre del establecimiento, o el ícono ▸ de una fila; se cierra con el botón
+// ✕, la tecla Escape, o al hacer clic fuera del panel (sobre el fondo oscuro). ---
+function renderModalContenido() {
+  const rbd = modalRbdAbierto;
+  const r = DATA.registros.find(x => x.rbd === rbd);
+  if (!r) { cerrarModal(); return; }
+  document.getElementById('modalTitle').textContent = `RBD ${r.rbd} — ${r.nombre}`;
+  document.getElementById('modalSubtitle').innerHTML =
+    `Ingreso SEP anual: <strong>${fmtCLP(r.marco_anual_proy)}</strong> · ` +
+    `Gasto Remuneraciones: <strong>${fmtCLP(r.gasto_rem_anual_proy)}</strong> · ` +
+    `Gasto B&S: <strong>${fmtCLP(r.gasto_bys)}</strong> · ` +
+    `Saldo final: <strong>${fmtCLP(r.saldo_total)}</strong> · ${estadoTagHTML(r)}`;
+  document.getElementById('modalBody').innerHTML = buildDetalleHTML(rbd);
+}
+
+function abrirModalRbd(rbd) {
+  modalRbdAbierto = rbd;
+  renderModalContenido();
+  document.getElementById('rbdModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal() {
+  modalRbdAbierto = null;
+  document.getElementById('rbdModal').classList.add('hidden');
+  document.getElementById('modalBody').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalCloseBtn').addEventListener('click', cerrarModal);
+document.getElementById('rbdModal').addEventListener('click', (e) => {
+  if (e.target.id === 'rbdModal') cerrarModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && modalRbdAbierto) cerrarModal();
+});
+
+const modalBodyEl = document.getElementById('modalBody');
+modalBodyEl.addEventListener('click', (e) => {
   const btn = e.target.closest('.add-item-btn');
   if (!btn) return;
   const subt = btn.getAttribute('data-subt');
   const input = btn.closest('.add-item-row').querySelector('.add-item-input');
   addNewItem(subt, input);
 });
-tableBodyEl.addEventListener('keydown', (e) => {
+modalBodyEl.addEventListener('keydown', (e) => {
   if (e.target.classList && e.target.classList.contains('add-item-input') && e.key === 'Enter') {
     e.preventDefault();
     addNewItem(e.target.getAttribute('data-subt'), e.target);
   }
 });
-tableBodyEl.addEventListener('focusout', (e) => {
+modalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);
   }
@@ -1868,7 +1928,8 @@ const ALLOWED_EMAILS = [
   "yessenia.vilches@sleppetorca.gob.cl",
   "catalina.brito@sleppetorca.gob.cl",
   "wilson.rojasabarca@gmail.com",
-  "javier.ilabaca@sleppetorca.gob.cl"
+  "javier.ilabaca@sleppetorca.gob.cl",
+  "nicolas.campos@sleppetorca.gob.cl"
 ];
 
 const CARGA_COLLECTION = 'sep_carga_rbd';
@@ -1893,6 +1954,7 @@ const EMAIL_TO_NAME = {
   "catalina.brito@sleppetorca.gob.cl": "Catalina Brito",
   "wilson.rojasabarca@gmail.com": "Wilson Rojas Abarca",
   "javier.ilabaca@sleppetorca.gob.cl": "Javier Ilabaca",
+  "nicolas.campos@sleppetorca.gob.cl": "Nicolas Campos",
 };
 function getNameFromEmail(email) {
   if (!email) return '';

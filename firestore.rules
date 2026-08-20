@@ -26,7 +26,8 @@ service cloud.firestore {
         "yessenia.vilches@sleppetorca.gob.cl",
         "catalina.brito@sleppetorca.gob.cl",
         "wilson.rojasabarca@gmail.com",
-        "javier.ilabaca@sleppetorca.gob.cl"
+        "javier.ilabaca@sleppetorca.gob.cl",
+        "nicolas.campos@sleppetorca.gob.cl"
       ];
     }
 

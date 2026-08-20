@@ -59,6 +59,22 @@ son necesarios para que los cambios queden guardados.
 - Saldo final = (Ingreso SEP + Carrera Docente) − gasto remuneraciones − gasto bienes y
   servicios.
 
+## Alerta: establecimientos sin marco SEP con gasto SEP
+
+Tres establecimientos no tienen marco SEP asignado (Preferente/Prioritario/Carrera Docente =
+$0), pero de todas formas pueden registrar gasto SEP por error de imputación:
+
+- RBD 1120 — Centro de Educación de Adultos La Ligua
+- RBD 11196 — Ctro.Rec.Atenc.Divers.CRAD Paul Percy Harris
+- RBD 1126 — Escuela Especial Sol Naciente
+
+Se incluyen en el panel igual que cualquier otro RBD (mismas tablas editables, mismo
+exportar/importar Excel), pero si alguna vez registran gasto en remuneraciones, Subt. 22/29 o
+Carrera Docente, el panel los marca con una alerta crítica bien visible: fila resaltada en rojo,
+tag "⚠ GASTO SEP INDEBIDO" junto al nombre, "Estado" pasa a "⚠ Sin marco SEP", un banner rojo en
+su detalle explicando el problema, y se suman a la tarjeta KPI "⚠ Gasto SEP sin marco" en la
+parte superior. Esto es siempre un error a corregir o justificar, nunca un estado normal.
+
 ## Estructura del repositorio
 
 ```

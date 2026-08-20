@@ -1,15 +1,16 @@
-// Reglas de seguridad Firestore — Monitoreo Ingresos y Gastos SEP 2026 (SLEP Petorca)
+// Reglas de seguridad Firestore — proyecto "slep-petorca-finanzas-permisos"
 // Para desplegar: Firebase Console → Firestore Database → Reglas → pegar este contenido →
-// Publicar (proyecto "slep-petorca-finanzas-permisos", el mismo que usa Calendariopermisos).
-// Para agregar/quitar correos: editar la lista de abajo Y la constante ALLOWED_EMAILS en
-// index.html.
+// Publicar. Para agregar/quitar correos: editar la lista de isAllowed() de abajo Y la
+// constante ALLOWED_EMAILS en index.html (de este repo y de Calendariopermisos).
 //
-// Este proyecto Firebase también aloja la colección "events" de Calendariopermisos. Ambas
-// colecciones son completamente independientes: este archivo agrega un bloque nuevo para
-// "sep_carga_rbd" sin tocar el bloque de "events" (que vive en el firestore.rules de ese otro
-// repositorio). Si alguna vez se publican ambos conjuntos de reglas en el mismo proyecto,
-// hay que fusionar los dos bloques `match` dentro de un mismo `service cloud.firestore { match
-// /databases/{database}/documents { ... } }`, como se muestra aquí.
+// Este proyecto Firebase aloja DOS apps con colecciones independientes en la misma base de
+// datos, así que sus reglas viven juntas en un solo archivo (Firestore solo permite un
+// conjunto de reglas por base de datos):
+//   - "events"        → Calendariopermisos (github.com/Finanzas-SLEP-Petorca/Calendariopermisos)
+//   - "sep_carga_rbd" → este panel (Monitoreo Ingresos y Gastos SEP 2026)
+// Si se edita el bloque de una colección, no tocar el bloque de la otra — y mantener este
+// archivo igual al que está publicado en Firebase Console en ambos repositorios, ya que es el
+// mismo archivo real desplegado para las dos apps.
 
 rules_version = '2';
 service cloud.firestore {
@@ -29,6 +30,22 @@ service cloud.firestore {
       ];
     }
 
+    // --- Calendariopermisos ---
+    function validEventData() {
+      return request.resource.data.keys().hasAll(["date", "memberId", "type"])
+        && request.resource.data.date is string
+        && request.resource.data.memberId is string
+        && request.resource.data.type is string
+        && request.resource.data.type in ["feriado","permiso","licencia","compensacion","otro"];
+    }
+    match /events/{eventId} {
+      allow read:   if isAllowed();
+      allow create: if isAllowed() && validEventData();
+      allow update: if isAllowed();
+      allow delete: if isAllowed();
+    }
+
+    // --- Monitoreo Ingresos y Gastos SEP 2026 ---
     // Un documento por RBD (id = RBD, p.ej. "1121") + un documento "_meta" con la lista
     // compartida de ítems de gasto (items_22 / items_29). No se borran RBD desde el cliente:
     // el panel nunca da de baja un establecimiento, solo edita sus montos.
@@ -37,11 +54,6 @@ service cloud.firestore {
       allow create, update: if isAllowed();
       allow delete: if false;
     }
-
-    // Bloque de Calendariopermisos (colección "events") — se deja documentado aquí solo como
-    // referencia de que ambas colecciones pueden convivir en el mismo proyecto sin pisarse; el
-    // archivo fuente de esas reglas vive en el repositorio Calendariopermisos.
-    // match /events/{eventId} { ... }
 
     match /{document=**} {
       allow read, write: if false;

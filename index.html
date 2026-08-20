@@ -68,6 +68,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   .legend-row { display:flex; gap:14px; margin-top:8px; font-size:11.5px; color:var(--text-secondary); flex-wrap:wrap; line-height:1.35; }
   .legend-row .swatch { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+  .ejec-print-legend { display:flex; gap:14px; margin:0 0 8px; font-size:11.5px; color:var(--text-secondary); flex-wrap:wrap; }
+  .ejec-print-legend .swatch { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
 
   .table-controls { display:flex; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
   .table-controls input, .table-controls select { padding:6px 10px; border-radius:6px; border:1px solid var(--baseline); font-size:13px; background:var(--surface-1); color:var(--text-primary); }
@@ -161,7 +163,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
      solo el listado de filas (.table-scroll) hace scroll interno, dentro de la pestaña activa.
      Se deja fuera de pantallas angostas (celular) para no forzar todo el panel a caber en
      poco alto ahí, donde el scroll normal de página sigue siendo lo más usable. ---- */
-  @media (min-width:641px) {
+  @media screen and (min-width:641px) {
     body { display:flex; flex-direction:column; overflow:hidden; }
     #app:not(.hidden) { display:flex; flex-direction:column; flex:1 1 0%; min-height:0; }
     .viz-root { display:flex; flex-direction:column; flex:1 1 0%; min-height:0; }
@@ -528,6 +530,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
             <label class="ejec-toggle"><input type="checkbox" id="ejecShowRem" checked><span class="ejec-legend-dot" style="background:var(--series-1)"></span>Remuneraciones (Subt. 21)</label>
             <label class="ejec-toggle"><input type="checkbox" id="ejecShowBys" checked><span class="ejec-legend-dot" style="background:var(--series-2)"></span>Bienes y Servicios (22+29)</label>
           </div>
+          <button id="ejecPdfBtn" type="button" style="background:#374151; border-color:#374151;" title="PDF con el filtro, las tarjetas % y el gráfico actuales">🖨 Exportar PDF</button>
         </div>
         <div class="corte-legend" id="ejecCorteNota"></div>
 
@@ -559,8 +562,6 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-ejecucion -->
 
-<div id="printSingleWrap"></div>
-
 <div id="rbdModal" class="modal-overlay hidden">
   <div class="modal-panel">
     <div class="modal-header">
@@ -573,6 +574,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
+</div>
+<!-- /.wrap: #printSingleWrap se queda AFUERA de .wrap a propósito — en impresión de un solo
+     RBD (o de % Ejecución) se oculta .wrap por completo (body.print-single-rbd .wrap{display:none}),
+     y un div escondido nunca deja ver a sus hijos aunque ellos mismos tengan display:block, así
+     que si printSingleWrap quedara adentro de .wrap jamás se vería nada al imprimir. -->
+<div id="printSingleWrap"></div>
 </div>
 <!-- /#app -->
 
@@ -1782,6 +1789,44 @@ function exportRbdPdf(rbd) {
   }, 300);
 }
 
+function buildEjecucionPrintHTML() {
+  const sel = document.getElementById('ejecRbdSelect');
+  const rbdLabel = (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].textContent) || 'Todos los RBD (agregado)';
+  const showRem = document.getElementById('ejecShowRem').checked;
+  const showBys = document.getElementById('ejecShowBys').checked;
+  const kpiHtml = document.getElementById('ejecKpiRow').innerHTML;
+  const svgEl = document.querySelector('#ejecChartWrap svg');
+  const chartHtml = svgEl ? svgEl.outerHTML : '<p>Sin datos suficientes para el gráfico.</p>';
+  const tableHtml = document.getElementById('ejecTable').outerHTML;
+  // Las casillas Remuneraciones/B&S de arriba del gráfico también sirven de leyenda de color en
+  // pantalla, pero no se imprimen (van dentro de .table-controls) — se repite esa leyenda aquí
+  // como texto simple para que el color de cada línea se siga entendiendo en el PDF.
+  const legendHtml = `<div class="ejec-print-legend">
+    ${showRem ? `<span><span class="swatch" style="background:var(--series-1)"></span>Remuneraciones (Subt. 21)</span>` : ''}
+    ${showBys ? `<span><span class="swatch" style="background:var(--series-2)"></span>Bienes y Servicios (22+29)</span>` : ''}
+  </div>`;
+  return `
+    <div class="detalle-header" style="margin-bottom:14px;">
+      <strong style="font-size:16px;">Monitor SEP 70/30 — % Ejecución</strong><br>
+      <span>${rbdLabel}</span><br>
+      <span class="detalle-sub">${document.getElementById('ejecCorteNota').textContent}</span>
+    </div>
+    <div class="kpi-row" style="margin-bottom:14px;">${kpiHtml}</div>
+    <div class="ejec-chart-card" style="margin-bottom:14px;">${legendHtml}<div class="ejec-chart-wrap">${chartHtml}</div></div>
+    ${tableHtml}
+  `;
+}
+
+function exportEjecucionPdf() {
+  document.getElementById('printSingleWrap').innerHTML = buildEjecucionPrintHTML();
+  document.body.classList.add('print-single-rbd');
+  window.print();
+  setTimeout(() => {
+    document.body.classList.remove('print-single-rbd');
+    document.getElementById('printSingleWrap').innerHTML = '';
+  }, 300);
+}
+
 document.getElementById('downloadExcelBtn').addEventListener('click', () => {
   if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); return; }
   const wb = buildCargaWorkbook(null);
@@ -1906,6 +1951,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
   document.body.classList.remove('print-single-rbd');
   window.print();
 });
+document.getElementById('ejecPdfBtn').addEventListener('click', exportEjecucionPdf);
 
 // Gasto Remuneraciones: a pedido, se borra completo (todos los meses en $0, para todos los RBD)
 // para que se cargue a mano desde cero — antes traía el gasto real automatizado desde

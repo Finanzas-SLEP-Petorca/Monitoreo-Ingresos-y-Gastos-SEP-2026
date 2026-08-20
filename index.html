@@ -99,9 +99,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   tr.rbd-row.alerta-critica { background:rgba(208,59,59,0.07); }
   tr.rbd-row.alerta-critica:hover { background:rgba(208,59,59,0.12); }
 
-  .pct-bar-track { position:relative; height:8px; background:var(--gridline); border-radius:4px; width:56px; display:inline-block; vertical-align:middle; margin-right:6px; }
-  td[data-field="pct_ejec_rem"], td[data-field="pct_ejec_bys"] { white-space:nowrap; }
+  .pct-bar-wrap { display:inline-flex; align-items:center; gap:8px; justify-content:flex-end; width:100%; }
+  .pct-bar-track { position:relative; height:8px; border-radius:4px; width:72px; flex-shrink:0; }
   .pct-bar-fill { position:absolute; top:0; left:0; height:100%; border-radius:4px; }
+  .pct-bar-text { min-width:44px; text-align:right; font-variant-numeric:tabular-nums; }
+  td[data-field="pct_ejec_rem"], td[data-field="pct_ejec_bys"] { white-space:nowrap; }
 
   .expand-cell { width:28px; text-align:center; }
   .expand-btn { background:none; border:none; cursor:pointer; font-size:12px; color:var(--text-muted); padding:2px 6px; }
@@ -122,6 +124,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   table.detalle-table th.mes-proy { background:#fdf1de; color:#a3630a; }
   table.detalle-table td.mes-real { background:rgba(12,163,92,0.06); }
   table.detalle-table td.mes-proy { background:rgba(224,138,0,0.06); }
+  #reporteTable th.mes-real, #reporteTable th.mes-proy { white-space:normal; text-align:right; line-height:1.25; }
+  #reporteTable th.mes-real { background:#e3f6ea; color:#0b7a3e; }
+  #reporteTable th.mes-proy { background:#fdf1de; color:#a3630a; }
   .mes-tag { display:block; font-size:8.5px; font-weight:500; text-transform:none; letter-spacing:0; opacity:.85; }
   table.detalle-table td { padding:4px 7px; border:1px solid var(--gridline); color:var(--text-primary); overflow:hidden; }
   table.detalle-table td.item-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-secondary); }
@@ -263,6 +268,33 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media (max-width:900px) {
     .report-filter-grid { grid-template-columns:1fr; }
   }
+
+  /* ---- % EJECUCIÓN: filtros, tarjetas y gráfico ---- */
+  #ejecRbdSelect { padding:7px 10px; border-radius:6px; border:1px solid var(--baseline); font-size:13px; background:var(--surface-1); color:var(--text-primary); min-width:260px; }
+  .ejec-toggle { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-secondary); cursor:pointer; padding:6px 4px; }
+  .ejec-legend-dot { width:10px; height:10px; border-radius:2px; display:inline-block; }
+  .ejec-chart-card { margin-top:16px; border:1px solid var(--border); border-radius:8px; padding:12px 14px 4px; background:#fff; }
+  .ejec-chart-wrap { position:relative; width:100%; }
+  .ejec-chart-wrap svg { width:100%; height:auto; display:block; overflow:visible; }
+  .ejec-axis-label { font-size:10px; fill:var(--text-muted); }
+  .ejec-gridline { stroke:var(--gridline); stroke-width:1; }
+  .ejec-meta-line { stroke:var(--baseline); stroke-width:1.25; }
+  .ejec-corte-line { stroke:var(--text-muted); stroke-width:1; }
+  .ejec-corte-label { font-size:10px; fill:var(--text-muted); }
+  .ejec-series-line { fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .ejec-series-line.proy { stroke-dasharray:4 3; }
+  .ejec-dot { stroke:#fff; stroke-width:2; }
+  .ejec-end-label { font-size:11.5px; font-weight:600; }
+  .ejec-hit-col { fill:transparent; cursor:crosshair; }
+  .ejec-crosshair { stroke:var(--baseline); stroke-width:1; pointer-events:none; opacity:0; }
+  .ejec-tooltip { position:absolute; pointer-events:none; background:#1a1a18; color:#fff; font-size:11.5px; line-height:1.5; padding:8px 10px; border-radius:6px; box-shadow:0 4px 14px rgba(0,0,0,0.18); opacity:0; transform:translate(-50%, 0); white-space:nowrap; z-index:5; transition:opacity 0.08s; }
+  .ejec-tooltip .tt-title { font-weight:700; margin-bottom:3px; }
+  .ejec-tooltip .tt-row { display:flex; align-items:center; gap:6px; }
+  .ejec-tooltip .tt-key { width:9px; height:2px; display:inline-block; border-radius:1px; }
+  .ejec-delta-up, .ejec-delta-down { color:var(--text-secondary); font-weight:600; }
+  .ejec-delta-flat { color:var(--text-muted); }
+  #ejecTable td.mes-real { background:rgba(12,163,92,0.06); }
+  #ejecTable td.mes-proy { background:rgba(224,138,0,0.06); }
 </style>
 </head>
 <body>
@@ -322,6 +354,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="panel" type="button">📊 Panel principal</button>
     <button class="tab-btn" data-tab="reportes" type="button">📈 Reportes</button>
+    <button class="tab-btn" data-tab="ejecucion" type="button">📉 % Ejecución</button>
   </div>
 
   <div id="tab-panel" class="tab-content">
@@ -428,6 +461,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
             <button id="reporteExcelBtn" type="button" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel</button>
             <button id="reportePdfBtn" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
           </div>
+          <div class="corte-legend" id="reporteCorteNota" style="margin-top:8px;"></div>
         </div>
         <div class="table-scroll" style="margin-top:14px;">
           <table class="data-table" id="reporteTable">
@@ -439,6 +473,45 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </section>
   </div>
   <!-- /#tab-reportes -->
+
+  <div id="tab-ejecucion" class="tab-content hidden">
+    <section>
+      <h2>% Ejecución SEP</h2>
+      <div class="panel">
+        <div class="table-controls">
+          <select id="ejecRbdSelect"></select>
+          <label class="ejec-toggle"><input type="checkbox" id="ejecShowRem" checked><span class="ejec-legend-dot" style="background:var(--series-1)"></span>Remuneraciones (Subt. 21)</label>
+          <label class="ejec-toggle"><input type="checkbox" id="ejecShowBys" checked><span class="ejec-legend-dot" style="background:var(--series-2)"></span>Bienes y Servicios (22+29)</label>
+        </div>
+        <div class="corte-legend" id="ejecCorteNota"></div>
+
+        <div class="kpi-row" id="ejecKpiRow" style="margin-top:14px;"></div>
+
+        <div class="ejec-chart-card">
+          <div class="ejec-chart-wrap" id="ejecChartWrap"></div>
+        </div>
+
+        <div class="table-scroll" style="margin-top:16px;">
+          <table class="data-table" id="ejecTable">
+            <thead>
+              <tr>
+                <th>Mes</th>
+                <th>Corte</th>
+                <th class="num">Gasto Rem. (mes)</th>
+                <th class="num">Δ vs mes anterior</th>
+                <th class="num">% Ejec. Rem. acumulado</th>
+                <th class="num">Gasto B&amp;S (mes)</th>
+                <th class="num">Δ vs mes anterior</th>
+                <th class="num">% Ejec. B&amp;S acumulado</th>
+              </tr>
+            </thead>
+            <tbody id="ejecTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /#tab-ejecucion -->
 
 <div id="printSingleWrap"></div>
 </div>
@@ -655,10 +728,13 @@ function recomputeRegistro(r) {
   r.saldo_bys = r.meta_bys_30 - r.gasto_bys;
   r.saldo_total = (r.marco_anual_proy + r.carrera_docente_anual) - r.gasto_rem_anual_proy - r.gasto_bys;
 
-  // % Ejec. Remuneraciones se mide contra SU propia meta (que ya incluye Carrera Docente);
-  // 100% = gastó justo lo disponible para remuneraciones.
+  // % Ejec. Remuneraciones y % Ejec. B&S se miden SIEMPRE contra su propia meta (70% y 30%
+  // respectivamente) — igual que dice la leyenda de la tabla ("100% = gastó justo la meta").
+  // Antes % Ejec. B&S se calculaba contra el marco TOTAL (no contra su meta del 30%), lo que
+  // no coincidía con la barra de progreso de esa misma celda (que sí usaba la meta del 30%) ni
+  // con la leyenda — dos números distintos mostrados uno junto al otro para el mismo dato.
   r.pct_ejec_rem = r.meta_rem_70 ? Math.round((r.gasto_rem_anual_proy / r.meta_rem_70 * 100) * 10) / 10 : 0;
-  r.pct_ejec_bys = r.marco_anual_proy ? Math.round((r.gasto_bys / r.marco_anual_proy * 100) * 10) / 10 : 0;
+  r.pct_ejec_bys = r.meta_bys_30 ? Math.round((r.gasto_bys / r.meta_bys_30 * 100) * 10) / 10 : 0;
   const recursoTotal = r.marco_anual_proy + r.carrera_docente_anual;
   r.pct_ejec_total = recursoTotal ? Math.round(((r.gasto_rem_anual_proy + r.gasto_bys) / recursoTotal * 100) * 10) / 10 : 0;
 
@@ -748,14 +824,15 @@ function renderKpis() {
   });
 }
 
-// value: % ejecución sobre el marco total (como ya se calcula). meta: la meta de ese bucket
-// (70 para remuneraciones, 30 para B&S) — la barra se llena según cuánto de SU meta se ha
-// usado (100% de barra = justo en la meta), no según el marco total.
-function pctBarHTML(value, meta) {
-  const pctDeMeta = meta ? (value / meta * 100) : 0;
-  const color = pctDeMeta >= 100 ? 'var(--status-critical)' : (pctDeMeta >= 90 ? 'var(--status-warning)' : 'var(--status-good)');
-  const width = Math.min(100, pctDeMeta);
-  return `<span class="pct-bar-track"><span class="pct-bar-fill" style="width:${width}%; background:${color}"></span></span>${value}%`;
+// value ya viene como % de SU propia meta (100% = gastó justo la meta). El track va teñido
+// con un tono claro del mismo color de la barra (no un gris neutro) para que el estado se lea
+// de un vistazo, y tanto el track como el texto tienen un ancho fijo — así las barras quedan
+// alineadas entre filas sin importar cuántos dígitos tenga el % de cada una.
+function pctBarHTML(value) {
+  const color = value >= 100 ? 'var(--status-critical)' : (value >= 90 ? 'var(--status-warning)' : 'var(--status-good)');
+  const trackBg = value >= 100 ? 'rgba(208,59,59,0.15)' : (value >= 90 ? 'rgba(250,178,25,0.22)' : 'rgba(12,163,12,0.15)');
+  const width = Math.min(100, Math.max(0, value));
+  return `<span class="pct-bar-wrap"><span class="pct-bar-track" style="background:${trackBg}"><span class="pct-bar-fill" style="width:${width}%; background:${color}"></span></span><span class="pct-bar-text">${value}%</span></span>`;
 }
 
 function updateRowDOM(rbd) {
@@ -767,8 +844,8 @@ function updateRowDOM(rbd) {
   row.querySelector('[data-field="marco_anual_proy"]').textContent = fmtCLP(r.marco_anual_proy);
   row.querySelector('[data-field="gasto_rem_anual_proy"]').textContent = fmtCLP(r.gasto_rem_anual_proy);
   row.querySelector('[data-field="gasto_bys"]').textContent = fmtCLP(r.gasto_bys);
-  row.querySelector('[data-field="pct_ejec_rem"]').innerHTML = pctBarHTML(r.pct_ejec_rem, 100);
-  row.querySelector('[data-field="pct_ejec_bys"]').innerHTML = pctBarHTML(r.pct_ejec_bys, 30);
+  row.querySelector('[data-field="pct_ejec_rem"]').innerHTML = pctBarHTML(r.pct_ejec_rem);
+  row.querySelector('[data-field="pct_ejec_bys"]').innerHTML = pctBarHTML(r.pct_ejec_bys);
   const saldoRemCell = row.querySelector('[data-field="saldo_rem"]');
   saldoRemCell.textContent = fmtCLP(r.saldo_rem);
   saldoRemCell.style.color = r.saldo_rem < 0 ? 'var(--status-critical)' : 'var(--text-primary)';
@@ -951,10 +1028,10 @@ function renderTable() {
       <td data-field="nombre">${r.nombre}${nombreTagsHTML(r)}</td>
       <td class="num" data-field="marco_anual_proy">${fmtCLP(r.marco_anual_proy)}</td>
       <td class="num" data-field="gasto_rem_anual_proy">${fmtCLP(r.gasto_rem_anual_proy)}</td>
-      <td class="num" data-field="pct_ejec_rem">${pctBarHTML(r.pct_ejec_rem, 100)}</td>
+      <td class="num" data-field="pct_ejec_rem">${pctBarHTML(r.pct_ejec_rem)}</td>
       <td class="num" data-field="saldo_rem" style="color:${r.saldo_rem < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(r.saldo_rem)}</td>
       <td class="num" data-field="gasto_bys">${fmtCLP(r.gasto_bys)}</td>
-      <td class="num" data-field="pct_ejec_bys">${pctBarHTML(r.pct_ejec_bys, 30)}</td>
+      <td class="num" data-field="pct_ejec_bys">${pctBarHTML(r.pct_ejec_bys)}</td>
       <td class="num" data-field="saldo_total" style="color:${r.saldo_total < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(r.saldo_total)}</td>
       <td data-field="estado">${estadoTagHTML(r)}</td>
       <td class="col-acciones">
@@ -971,6 +1048,7 @@ function renderTable() {
     });
   });
   renderReporte();
+  renderEjecucion();
 }
 
 document.getElementById('searchInput').addEventListener('input', renderTable);
@@ -1062,6 +1140,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     const tab = btn.getAttribute('data-tab');
     document.getElementById('tab-panel').classList.toggle('hidden', tab !== 'panel');
     document.getElementById('tab-reportes').classList.toggle('hidden', tab !== 'reportes');
+    document.getElementById('tab-ejecucion').classList.toggle('hidden', tab !== 'ejecucion');
+    if (tab === 'ejecucion') renderEjecucion();
   });
 });
 
@@ -1181,8 +1261,14 @@ function renderReporte() {
 
   const colspan = 3 + mesesSel.length + 1;
   document.getElementById('reporteTheadRow').innerHTML = `<th>RBD</th><th>Establecimiento</th><th>Concepto</th>${
-    mesesSel.map(m => `<th class="num">${MESES_CARGA_ABREV[MESES_CARGA.indexOf(m)]}</th>`).join('')
+    mesesSel.map(m => {
+      const idx = MESES_CARGA.indexOf(m) + 1;
+      const real = mesEsReal(idx);
+      return `<th class="num ${real ? 'mes-real' : 'mes-proy'}">${MESES_CARGA_ABREV[idx - 1]}<span class="mes-tag">${real ? 'Real' : 'Proy.'}</span></th>`;
+    }).join('')
   }<th class="num">Total selección</th>`;
+  document.getElementById('reporteCorteNota').textContent =
+    `Corte real/proyectado: hasta ${MESES_CARGA_TITLE[corteMesIdx - 1]} — mismo selector del Panel principal ("Ver resumen y colorear tablas hasta el mes").`;
 
   const tbody = document.getElementById('reporteTbody');
 
@@ -1256,6 +1342,194 @@ document.getElementById('reportePdfBtn').addEventListener('click', () => {
 
 renderReportFilters();
 renderReporte();
+
+// ============================================================================
+// ============== % EJECUCIÓN: comportamiento mensual/anual ==================
+// Vista de solo lectura — % Ejec. Remuneraciones y % Ejec. B&S acumulados mes a mes, para un
+// RBD específico o agregados entre todos, con el MISMO corte real/proyectado del Panel
+// principal (corteMesIdx, cambia allá). Grafica el ritmo de ejecución contra la meta anual
+// (línea de 100%) y la tabla de abajo muestra el gasto de cada mes por separado (no
+// acumulado) para detectar en qué mes hubo una caída o una subida.
+// ============================================================================
+
+function computeEjecucionSerie(rbdFiltro) {
+  const regs = rbdFiltro ? DATA.registros.filter(r => r.rbd === rbdFiltro) : DATA.registros;
+  const metaRemAnual = regs.reduce((s, r) => s + (r.meta_rem_70 || 0), 0);
+  const metaBysAnual = regs.reduce((s, r) => s + (r.meta_bys_30 || 0), 0);
+
+  let cumRem = 0, cumBys = 0;
+  const serie = MESES_CARGA.map((mes, i) => {
+    let gastoRemMes = 0, gastoBysMes = 0;
+    regs.forEach(r => {
+      const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
+      if (rem) gastoRemMes += rem.meses[mes] || 0;
+      const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
+      if (ag) ag.items.forEach(it => { gastoBysMes += it.meses[mes] || 0; });
+    });
+    cumRem += gastoRemMes;
+    cumBys += gastoBysMes;
+    return {
+      mes, idx: i + 1, esReal: mesEsReal(i + 1), gastoRemMes, gastoBysMes,
+      pctRemAcum: metaRemAnual ? (cumRem / metaRemAnual * 100) : 0,
+      pctBysAcum: metaBysAnual ? (cumBys / metaBysAnual * 100) : 0,
+    };
+  });
+  return { serie, metaRemAnual, metaBysAnual };
+}
+
+function renderEjecucionFiltros() {
+  const sel = document.getElementById('ejecRbdSelect');
+  if (sel.dataset.built) return; // la lista de RBD es estática — se construye una sola vez
+  sel.innerHTML = `<option value="">Todos los RBD (agregado)</option>` +
+    DATA.registros.map(r => `<option value="${r.rbd}">${r.rbd} — ${r.nombre}</option>`).join('');
+  sel.dataset.built = '1';
+}
+
+function deltaHTML(actual, anterior) {
+  if (anterior === undefined) return '<span class="ejec-delta-flat">—</span>';
+  const diff = actual - anterior;
+  if (Math.abs(diff) < 1) return `<span class="ejec-delta-flat">sin cambio</span>`;
+  const arrow = diff > 0 ? '▲' : '▼';
+  const cls = diff > 0 ? 'ejec-delta-up' : 'ejec-delta-down';
+  return `<span class="${cls}">${arrow} ${fmtCLP(Math.abs(diff))}</span>`;
+}
+
+// Construye el SVG del gráfico (sin dependencias externas) y devuelve además x(i) y el layout,
+// para que renderEjecucion() pueda posicionar el crosshair/tooltip sobre las mismas coordenadas.
+function ejecucionChartSVG(serie, showRem, showBys) {
+  const W = 900, H = 320;
+  const margin = { left: 44, right: 54, top: 16, bottom: 30 };
+  const plotW = W - margin.left - margin.right;
+  const plotH = H - margin.top - margin.bottom;
+  const n = serie.length;
+
+  const values = [];
+  serie.forEach(m => { if (showRem) values.push(m.pctRemAcum); if (showBys) values.push(m.pctBysAcum); });
+  const maxVal = values.length ? Math.max(...values, 0) : 0;
+  const yMax = Math.max(100, Math.ceil((maxVal + 5) / 25) * 25);
+
+  const x = i => margin.left + (n > 1 ? (i / (n - 1)) * plotW : 0);
+  const y = v => margin.top + plotH - (v / yMax) * plotH;
+
+  const yTicks = [];
+  for (let v = 0; v <= yMax; v += 25) yTicks.push(v);
+  const gridlines = yTicks.map(v => `
+    <line class="ejec-gridline" x1="${margin.left}" x2="${W - margin.right}" y1="${y(v)}" y2="${y(v)}"></line>
+    <text class="ejec-axis-label" x="${margin.left - 8}" y="${y(v) + 3}" text-anchor="end">${v}%</text>
+  `).join('');
+
+  const meta100Y = y(100);
+  const metaLine = `
+    <line class="ejec-meta-line" x1="${margin.left}" x2="${W - margin.right}" y1="${meta100Y}" y2="${meta100Y}"></line>
+    <text class="ejec-axis-label" x="${W - margin.right + 6}" y="${meta100Y + 3}">100% meta</text>
+  `;
+
+  const corteIdx = Math.max(1, Math.min(n, corteMesIdx));
+  const corteX = x(corteIdx - 1);
+  const corteLine = corteIdx < n ? `
+    <line class="ejec-corte-line" x1="${corteX}" x2="${corteX}" y1="${margin.top}" y2="${margin.top + plotH}"></line>
+    <text class="ejec-corte-label" x="${corteX}" y="${margin.top - 4}" text-anchor="middle">Corte</text>
+  ` : '';
+
+  const monthLabels = serie.map((m, i) => `
+    <text class="ejec-axis-label" x="${x(i)}" y="${H - margin.bottom + 16}" text-anchor="middle">${MESES_CARGA_ABREV[i]}</text>
+  `).join('');
+
+  function seriePath(key, colorVar) {
+    const realPts = serie.filter((m, i) => i + 1 <= corteIdx).map((m, i) => `${x(i)},${y(m[key])}`).join(' ');
+    const proyPts = serie.filter((m, i) => i + 1 >= corteIdx).map((m, i) => `${x(i + corteIdx - 1)},${y(m[key])}`).join(' ');
+    const dots = serie.map((m, i) => `<circle class="ejec-dot" cx="${x(i)}" cy="${y(m[key])}" r="4" fill="${colorVar}"></circle>`).join('');
+    const last = serie[n - 1];
+    const endLabel = `<text class="ejec-end-label" x="${x(n - 1) + 8}" y="${y(last[key]) + 4}" fill="var(--text-primary)">${last[key].toFixed(1)}%</text>`;
+    return `<polyline class="ejec-series-line" points="${realPts}" style="stroke:${colorVar}"></polyline>
+      ${corteIdx < n ? `<polyline class="ejec-series-line proy" points="${proyPts}" style="stroke:${colorVar}"></polyline>` : ''}
+      ${dots}${endLabel}`;
+  }
+
+  const remPath = showRem ? seriePath('pctRemAcum', 'var(--series-1)') : '';
+  const bysPath = showBys ? seriePath('pctBysAcum', 'var(--series-2)') : '';
+
+  const colW = n > 1 ? plotW / (n - 1) : plotW;
+  const hitCols = serie.map((m, i) => {
+    const cx = x(i) - colW / 2;
+    return `<rect class="ejec-hit-col" data-idx="${i}" x="${Math.max(margin.left, cx)}" y="${margin.top}" width="${colW}" height="${plotH}"></rect>`;
+  }).join('');
+
+  const svg = `<svg viewBox="0 0 ${W} ${H}">
+    ${gridlines}${metaLine}${corteLine}${remPath}${bysPath}${monthLabels}
+    <line class="ejec-crosshair" id="ejecCrosshair" x1="0" x2="0" y1="${margin.top}" y2="${margin.top + plotH}"></line>
+    ${hitCols}
+  </svg>`;
+
+  return { svg, x };
+}
+
+function renderEjecucion() {
+  renderEjecucionFiltros();
+  const rbdFiltro = document.getElementById('ejecRbdSelect').value || null;
+  const showRem = document.getElementById('ejecShowRem').checked;
+  const showBys = document.getElementById('ejecShowBys').checked;
+
+  const { serie } = computeEjecucionSerie(rbdFiltro);
+  const corteIdx = Math.max(1, Math.min(serie.length, corteMesIdx));
+  const alCorte = serie[corteIdx - 1];
+  const anual = serie[serie.length - 1];
+
+  document.getElementById('ejecCorteNota').textContent =
+    `Corte real/proyectado: hasta ${MESES_CARGA_TITLE[corteMesIdx - 1]} — mismo selector "Ver resumen y colorear tablas hasta el mes" del Panel principal.`;
+
+  document.getElementById('ejecKpiRow').innerHTML = [
+    { label: `% Ejec. Remuneraciones (a ${MESES_CARGA_TITLE[corteIdx - 1]})`, value: `${alCorte.pctRemAcum.toFixed(1)}%`, full: 'Acumulado hasta el corte, sobre la meta anual (70% del Ingreso SEP + Carrera Docente)', critical: alCorte.pctRemAcum >= 100 },
+    { label: '% Ejec. Remuneraciones (proy. a diciembre)', value: `${anual.pctRemAcum.toFixed(1)}%`, full: 'Acumulado a diciembre, incluyendo los meses aún proyectados', critical: anual.pctRemAcum >= 100 },
+    { label: `% Ejec. B&S (a ${MESES_CARGA_TITLE[corteIdx - 1]})`, value: `${alCorte.pctBysAcum.toFixed(1)}%`, full: 'Acumulado hasta el corte, sobre la meta anual (30% del Ingreso SEP)', critical: alCorte.pctBysAcum >= 100 },
+    { label: '% Ejec. B&S (proy. a diciembre)', value: `${anual.pctBysAcum.toFixed(1)}%`, full: 'Acumulado a diciembre, incluyendo los meses aún proyectados', critical: anual.pctBysAcum >= 100 },
+  ].map(k => `<div class="kpi-card${k.critical ? ' critical' : ''}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div></div>`).join('');
+
+  const chart = ejecucionChartSVG(serie, showRem, showBys);
+  const wrap = document.getElementById('ejecChartWrap');
+  wrap.innerHTML = chart.svg + '<div class="ejec-tooltip" id="ejecTooltip"></div>';
+
+  const crosshair = wrap.querySelector('#ejecCrosshair');
+  const tooltip = wrap.querySelector('#ejecTooltip');
+  wrap.querySelectorAll('.ejec-hit-col').forEach(col => {
+    const idx = Number(col.getAttribute('data-idx'));
+    const mostrar = () => {
+      const m = serie[idx];
+      crosshair.style.opacity = '1';
+      crosshair.setAttribute('x1', chart.x(idx));
+      crosshair.setAttribute('x2', chart.x(idx));
+      const wrapRect = wrap.getBoundingClientRect();
+      const colRect = col.getBoundingClientRect();
+      tooltip.style.left = `${colRect.left - wrapRect.left + colRect.width / 2}px`;
+      tooltip.style.top = `${colRect.top - wrapRect.top + 4}px`;
+      tooltip.innerHTML = `<div class="tt-title">${MESES_CARGA_TITLE[idx]} · ${m.esReal ? 'Real' : 'Proyectado'}</div>` +
+        (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Remuneraciones: <strong>${m.pctRemAcum.toFixed(1)}%</strong> acum. (${fmtCLP(m.gastoRemMes)} ese mes)</div>` : '') +
+        (showBys ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-2)"></span>Bienes y Servicios: <strong>${m.pctBysAcum.toFixed(1)}%</strong> acum. (${fmtCLP(m.gastoBysMes)} ese mes)</div>` : '');
+      tooltip.style.opacity = '1';
+    };
+    col.addEventListener('pointerenter', mostrar);
+    col.addEventListener('pointermove', mostrar);
+    col.addEventListener('pointerleave', () => { crosshair.style.opacity = '0'; tooltip.style.opacity = '0'; });
+  });
+
+  document.getElementById('ejecTbody').innerHTML = serie.map((m, i) => {
+    const prev = i > 0 ? serie[i - 1] : null;
+    return `<tr>
+      <td>${MESES_CARGA_TITLE[i]}</td>
+      <td class="${m.esReal ? 'mes-real' : 'mes-proy'}">${m.esReal ? 'Real' : 'Proy.'}</td>
+      <td class="num">${fmtCLP(m.gastoRemMes)}</td>
+      <td class="num">${deltaHTML(m.gastoRemMes, prev ? prev.gastoRemMes : undefined)}</td>
+      <td class="num">${m.pctRemAcum.toFixed(1)}%</td>
+      <td class="num">${fmtCLP(m.gastoBysMes)}</td>
+      <td class="num">${deltaHTML(m.gastoBysMes, prev ? prev.gastoBysMes : undefined)}</td>
+      <td class="num">${m.pctBysAcum.toFixed(1)}%</td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('ejecRbdSelect').addEventListener('change', renderEjecucion);
+document.getElementById('ejecShowRem').addEventListener('change', renderEjecucion);
+document.getElementById('ejecShowBys').addEventListener('change', renderEjecucion);
 
 function csvEscape(val) {
   const s = (val === null || val === undefined) ? '' : String(val);

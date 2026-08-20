@@ -1303,8 +1303,24 @@ let firestoreUnsub = null;
 const rbdLastModified = {}; // rbd -> { by, at: Date }
 const rbdFaltanteEnCreacion = new Set(); // evita crear el mismo doc 2 veces mientras se propaga
 
+// Nombre para mostrar por correo (indicador de sincronización, "Conectado como", "Última
+// edición por..."). Se usa un mapeo explícito en vez de derivarlo del correo (ej.
+// "wilson.rojasabarca" no tiene forma de saber que son dos apellidos, "Rojas" y "Abarca") —
+// mantener esta lista igual a ALLOWED_EMAILS si se agrega o quita algún correo.
+const EMAIL_TO_NAME = {
+  "wilson.rojas@sleppetorca.gob.cl": "Wilson Rojas",
+  "juan.bustamante@sleppetorca.gob.cl": "Juan Bustamante",
+  "benedicto.fessia@sleppetorca.gob.cl": "Benedicto Fessia",
+  "sebastian.olguin@sleppetorca.gob.cl": "Sebastian Olguin",
+  "fernando.saavedra@sleppetorca.gob.cl": "Fernando Saavedra",
+  "yessenia.vilches@sleppetorca.gob.cl": "Yessenia Vilches",
+  "catalina.brito@sleppetorca.gob.cl": "Catalina Brito",
+  "wilson.rojasabarca@gmail.com": "Wilson Rojas Abarca",
+  "javier.ilabaca@sleppetorca.gob.cl": "Javier Ilabaca",
+};
 function getNameFromEmail(email) {
   if (!email) return '';
+  if (EMAIL_TO_NAME[email]) return EMAIL_TO_NAME[email];
   const local = email.split('@')[0];
   return local.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }

@@ -102,10 +102,15 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   tr.rbd-row.alerta-critica { background:rgba(208,59,59,0.07); }
   tr.rbd-row.alerta-critica:hover { background:rgba(208,59,59,0.12); }
 
-  .pct-bar-wrap { display:inline-flex; align-items:center; gap:5px; justify-content:flex-end; width:100%; }
-  .pct-bar-track { position:relative; height:8px; border-radius:4px; width:46px; flex-shrink:0; }
+  /* Sin flexbox a propósito: .pct-bar-wrap usa inline-block + vertical-align en vez de
+     inline-flex, porque un flex item con ancho en % dentro de una celda de tabla es justo el
+     tipo de combinación que distintos motores de impresión/PDF (no solo Chrome) pueden calcular
+     de forma inconsistente — con inline-block + ancho fijo en píxeles el ancho de la barra no
+     depende de ningún cálculo de espacio flexible, así que sale igual en pantalla y al imprimir. */
+  .pct-bar-wrap { display:inline-block; width:100%; text-align:right; white-space:nowrap; }
+  .pct-bar-track { position:relative; display:inline-block; height:8px; border-radius:4px; width:46px; vertical-align:middle; margin-right:5px; }
   .pct-bar-fill { position:absolute; top:0; left:0; height:100%; border-radius:4px; }
-  .pct-bar-text { min-width:36px; text-align:right; font-variant-numeric:tabular-nums; }
+  .pct-bar-text { display:inline-block; width:36px; text-align:right; font-variant-numeric:tabular-nums; vertical-align:middle; }
   td[data-field="pct_ejec_rem"], td[data-field="pct_ejec_bys"] { white-space:nowrap; }
 
   .expand-cell { width:28px; text-align:center; }

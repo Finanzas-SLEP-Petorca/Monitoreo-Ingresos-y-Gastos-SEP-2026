@@ -86,10 +86,15 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .corte-legend .swatch.proy { background:#e08a00; }
 
   table.data-table { width:100%; border-collapse:collapse; font-size:12.5px; }
-  table.data-table th { text-align:left; padding:6px 6px; border-bottom:1px solid var(--baseline); color:var(--text-secondary); font-weight:600; position:sticky; top:0; background:var(--surface-1); cursor:pointer; white-space:nowrap; }
+  table.data-table thead { position:sticky; top:0; z-index:2; }
+  table.data-table th { text-align:left; padding:6px 6px; border-bottom:1px solid var(--baseline); color:var(--text-secondary); font-weight:600; background:var(--surface-1); cursor:pointer; white-space:nowrap; }
+  table.data-table th.th-group { text-align:center; font-size:11px; border-bottom:1px solid var(--gridline); cursor:default; }
+  table.data-table th.th-group-alt, table.data-table th.pct-ing-total { background:#eef3f9; }
   table.data-table td { padding:5px 6px; border-bottom:1px solid var(--gridline); font-variant-numeric: tabular-nums; }
   table.data-table td.num { text-align:right; }
+  table.data-table td.pct-ing-total { background:#f6f9fc; color:var(--text-secondary); }
   table.data-table tbody tr:hover { background:var(--page-plane); }
+  table.data-table tbody tr:hover td.pct-ing-total { background:#eef3f9; }
   .table-scroll { max-height:520px; overflow-y:auto; overflow-x:auto; border:1px solid var(--border); border-radius:8px; } table.data-table { min-width: 860px; }
   td[data-field="nombre"] .nombre-txt { display:inline-block; max-width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; vertical-align:bottom; }
 
@@ -209,7 +214,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .wrap { max-width:none !important; padding:10px !important; }
     .table-scroll { max-height:none !important; overflow:visible !important; border:none !important; }
     table.data-table { min-width:0 !important; font-size:10.5px !important; }
-    table.data-table th { position:static !important; }
+    table.data-table thead, table.data-table th { position:static !important; }
     .nombre-txt { max-width:none !important; overflow:visible !important; text-overflow:clip !important; white-space:normal !important; }
     .detalle-wrap { padding:8px 4px 8px 10px !important; }
     /* Las 4 tablas de detalle: en pantalla usan table-layout:fixed con columnas angostas
@@ -457,23 +462,32 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="legend-row" style="margin-top:-4px; margin-bottom:10px;">
         <span><strong>% Ejec. Remuneraciones</strong>: gasto en remuneraciones / meta de remuneraciones de ese RBD (70% del Ingreso SEP + 100% de Carrera Docente, ya que ese ingreso solo puede usarse ahí). 100% = gastó justo la meta.</span>
         <span><strong>% Ejec. B&S</strong>: gasto Subt.22+29 / meta 30% del Ingreso SEP de ese RBD. 100% = gastó justo la meta.</span>
+        <span style="padding:1px 6px; border-radius:4px; background:#eef3f9;"><strong>% .../Ingreso</strong> (columnas con fondo celeste): NO es contra la meta 70/30, es gasto / Ingreso Total (SEP + Carrera Docente) — la fracción real del ingreso ya gastada. % Rem./Ingreso + % B&S/Ingreso = % Total/Ingreso.</span>
       </div>
       <div class="table-scroll">
         <table class="data-table">
           <thead>
             <tr>
-              <th class="expand-cell"></th>
-              <th data-key="rbd">RBD</th>
-              <th data-key="nombre">Establecimiento</th>
-              <th data-key="marco_anual_proy" class="num" title="Ingreso SEP anual">Ingreso SEP anual</th>
-              <th data-key="gasto_rem_anual_proy" class="num" title="Gasto Remuneraciones">Gasto Rem.</th>
-              <th data-key="pct_ejec_rem" class="num" title="% Ejec. Remuneraciones">% Ejec. Rem.</th>
-              <th data-key="saldo_rem" class="num" title="Saldo post Remuneraciones">Saldo post Rem.</th>
-              <th data-key="gasto_bys" class="num" title="Gasto Bienes y Servicios (Subt. 22+29)">Gasto B&S</th>
-              <th data-key="pct_ejec_bys" class="num">% Ejec. B&S</th>
-              <th data-key="saldo_total" class="num">Saldo final</th>
-              <th data-key="estado">Estado</th>
-              <th class="col-acciones" title="Análisis individual">Acciones</th>
+              <th class="expand-cell" rowspan="2"></th>
+              <th data-key="rbd" rowspan="2">RBD</th>
+              <th data-key="nombre" rowspan="2">Establecimiento</th>
+              <th data-key="marco_anual_proy" class="num" rowspan="2" title="Ingreso SEP anual">Ingreso SEP anual</th>
+              <th class="th-group" colspan="3" title="Se mide contra la META del 70% del Ingreso SEP (+ Carrera Docente) — puede pasar de 100% aunque el gasto total del RBD sea bajo.">Remuneraciones — % sobre meta 70%</th>
+              <th class="th-group" colspan="2" title="Se mide contra la META del 30% del Ingreso SEP.">Bienes y Servicios — % sobre meta 30%</th>
+              <th data-key="saldo_total" class="num" rowspan="2">Saldo final</th>
+              <th class="th-group th-group-alt" colspan="3" title="Se mide contra el Ingreso SEP + Carrera Docente TOTAL (no contra la meta 70/30) — es la fracción real del ingreso que se ha gastado, no cuánto se ha usado del cupo asignado.">% sobre Ingreso Total (informativo)</th>
+              <th data-key="estado" rowspan="2">Estado</th>
+              <th class="col-acciones" rowspan="2" title="Análisis individual">Acciones</th>
+            </tr>
+            <tr class="th-row-2">
+              <th data-key="gasto_rem_anual_proy" class="num th-group" title="Gasto Remuneraciones">Gasto Rem.</th>
+              <th data-key="pct_ejec_rem" class="num th-group" title="% Ejec. Remuneraciones (sobre meta 70%)">% Ejec. Rem.</th>
+              <th data-key="saldo_rem" class="num th-group" title="Saldo post Remuneraciones">Saldo post Rem.</th>
+              <th data-key="gasto_bys" class="num th-group" title="Gasto Bienes y Servicios (Subt. 22+29)">Gasto B&S</th>
+              <th data-key="pct_ejec_bys" class="num th-group" title="% Ejec. B&S (sobre meta 30%)">% Ejec. B&S</th>
+              <th data-key="pct_rem_ing_total" class="num th-group th-group-alt" title="Gasto Remuneraciones / (Ingreso SEP + Carrera Docente)">% Rem. / Ingreso</th>
+              <th data-key="pct_bys_ing_total" class="num th-group th-group-alt" title="Gasto B&S / (Ingreso SEP + Carrera Docente)">% B&S / Ingreso</th>
+              <th data-key="pct_ejec_total" class="num th-group th-group-alt" title="(Gasto Rem. + Gasto B&S) / (Ingreso SEP + Carrera Docente)">% Total / Ingreso</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -933,6 +947,13 @@ function recomputeRegistro(r) {
   const recursoTotal = r.marco_anual_proy + r.carrera_docente_anual;
   r.pct_ejec_total = recursoTotal ? Math.round(((r.gasto_rem_anual_proy + r.gasto_bys) / recursoTotal * 100) * 10) / 10 : 0;
 
+  // % "sobre Ingreso Total": a diferencia de % Ejec. Rem./B&S (que miden contra la META del
+  // 70%/30%, así que pueden pasar de 100% aunque el RBD gaste bien poco en total), estos miden
+  // gasto / (Ingreso SEP + Carrera Docente) TOTAL — mismo denominador para Rem., B&S y el ya
+  // existente pct_ejec_total, así que Rem.+B&S = Total siempre. Son solo informativos.
+  r.pct_rem_ing_total = recursoTotal ? Math.round((r.gasto_rem_anual_proy / recursoTotal * 100) * 10) / 10 : 0;
+  r.pct_bys_ing_total = recursoTotal ? Math.round((r.gasto_bys / recursoTotal * 100) * 10) / 10 : 0;
+
   if (r.pct_ejec_total >= 100) r.estado = 'deficit';
   else if (r.pct_ejec_total >= 90) r.estado = 'riesgo';
   else r.estado = 'superavit';
@@ -1047,6 +1068,9 @@ function updateRowDOM(rbd) {
   const saldoCell = row.querySelector('[data-field="saldo_total"]');
   saldoCell.textContent = fmtCLP(r.saldo_total);
   saldoCell.style.color = r.saldo_total < 0 ? 'var(--status-critical)' : 'var(--text-primary)';
+  row.querySelector('[data-field="pct_rem_ing_total"]').textContent = r.pct_rem_ing_total + '%';
+  row.querySelector('[data-field="pct_bys_ing_total"]').textContent = r.pct_bys_ing_total + '%';
+  row.querySelector('[data-field="pct_ejec_total"]').textContent = r.pct_ejec_total + '%';
   row.querySelector('[data-field="estado"]').innerHTML = estadoTagHTML(r);
   row.classList.toggle('alerta-critica', !!r.alerta_sep_sin_marco);
   renderKpis();
@@ -1267,7 +1291,7 @@ function renderTable() {
   currentFilteredRows = rows;
   const tbody = document.getElementById('tableBody');
   if (!rows.length) {
-    tbody.innerHTML = `<tr class="table-empty-row"><td colspan="12">Ningún establecimiento coincide con el filtro/búsqueda actual.</td></tr>`;
+    tbody.innerHTML = `<tr class="table-empty-row"><td colspan="15">Ningún establecimiento coincide con el filtro/búsqueda actual.</td></tr>`;
   } else {
     tbody.innerHTML = rows.map(r => `
     <tr class="rbd-row${r.alerta_sep_sin_marco ? ' alerta-critica' : ''}" data-rbd="${r.rbd}">
@@ -1281,6 +1305,9 @@ function renderTable() {
       <td class="num" data-field="gasto_bys">${fmtCLP(r.gasto_bys)}</td>
       <td class="num" data-field="pct_ejec_bys">${pctBarHTML(r.pct_ejec_bys)}</td>
       <td class="num" data-field="saldo_total" style="color:${r.saldo_total < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(r.saldo_total)}</td>
+      <td class="num pct-ing-total" data-field="pct_rem_ing_total">${r.pct_rem_ing_total}%</td>
+      <td class="num pct-ing-total" data-field="pct_bys_ing_total">${r.pct_bys_ing_total}%</td>
+      <td class="num pct-ing-total" data-field="pct_ejec_total">${r.pct_ejec_total}%</td>
       <td data-field="estado">${estadoTagHTML(r)}</td>
       <td class="col-acciones">
         <button class="row-action-btn" data-action="excel" data-rbd="${r.rbd}" title="Descargar Excel solo de este RBD">⬇ XLS</button>
@@ -1899,11 +1926,11 @@ function csvEscape(val) {
   return s;
 }
 document.getElementById('downloadBtn').addEventListener('click', () => {
-  const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','% Ejec. Remuneraciones (meta = 70% SEP + Carrera Docente)','Saldo post Remuneraciones','Gasto Subt22','Gasto Subt29','Gasto B&S total','% Ejec. B&S (meta 30%)','% Ejecución total','Saldo final','Estado','Alerta'];
+  const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','% Ejec. Remuneraciones (meta = 70% SEP + Carrera Docente)','Saldo post Remuneraciones','Gasto Subt22','Gasto Subt29','Gasto B&S total','% Ejec. B&S (meta 30%)','Saldo final','% Rem. / Ingreso Total','% B&S / Ingreso Total','% Total / Ingreso Total','Estado','Alerta'];
   const lines = [headers.map(csvEscape).join(';')];
   currentFilteredRows.forEach(r => {
     const alerta = r.alerta_sep_sin_marco ? 'GASTO SEP SIN MARCO ASIGNADO' : (r.anomalia ? 'Revisar' : '');
-    lines.push([r.rbd, r.nombre, r.marco_anual_proy, r.carrera_docente_anual, r.gasto_rem_anual_proy, r.pct_ejec_rem+'%', r.saldo_rem, r.gasto_subt22, r.gasto_subt29, r.gasto_bys, r.pct_ejec_bys+'%', r.pct_ejec_total+'%', r.saldo_total, estadoLabel[r.estado], alerta].map(csvEscape).join(';'));
+    lines.push([r.rbd, r.nombre, r.marco_anual_proy, r.carrera_docente_anual, r.gasto_rem_anual_proy, r.pct_ejec_rem+'%', r.saldo_rem, r.gasto_subt22, r.gasto_subt29, r.gasto_bys, r.pct_ejec_bys+'%', r.saldo_total, r.pct_rem_ing_total+'%', r.pct_bys_ing_total+'%', r.pct_ejec_total+'%', estadoLabel[r.estado], alerta].map(csvEscape).join(';'));
   });
   const csvContent = '﻿' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -2082,8 +2109,12 @@ function buildSingleRbdPrintHTML(rbd) {
     <table class="data-table" style="margin-bottom:10px;">
       <thead><tr>
         <th class="num">Ingreso SEP anual</th><th class="num">Carrera Docente</th><th class="num">Gasto Remuneraciones</th>
-        <th class="num">% Ejec. Rem.</th><th class="num">Saldo post Rem.</th><th class="num">Gasto B&S</th>
-        <th class="num">% Ejec. B&S</th><th class="num">Saldo final</th><th>Estado</th>
+        <th class="num" title="Sobre meta 70%">% Ejec. Rem.</th><th class="num">Saldo post Rem.</th><th class="num">Gasto B&S</th>
+        <th class="num" title="Sobre meta 30%">% Ejec. B&S</th><th class="num">Saldo final</th>
+        <th class="num pct-ing-total" title="Gasto Rem. / Ingreso Total">% Rem./Ingreso</th>
+        <th class="num pct-ing-total" title="Gasto B&S / Ingreso Total">% B&S/Ingreso</th>
+        <th class="num pct-ing-total" title="(Gasto Rem.+B&S) / Ingreso Total">% Total/Ingreso</th>
+        <th>Estado</th>
       </tr></thead>
       <tbody><tr>
         <td class="num">${fmtCLP(r.marco_anual_proy)}</td>
@@ -2094,6 +2125,9 @@ function buildSingleRbdPrintHTML(rbd) {
         <td class="num">${fmtCLP(r.gasto_bys)}</td>
         <td class="num">${r.pct_ejec_bys}%</td>
         <td class="num">${fmtCLP(r.saldo_total)}</td>
+        <td class="num pct-ing-total">${r.pct_rem_ing_total}%</td>
+        <td class="num pct-ing-total">${r.pct_bys_ing_total}%</td>
+        <td class="num pct-ing-total">${r.pct_ejec_total}%</td>
         <td>${estadoTagHTML(r)}</td>
       </tr></tbody>
     </table>

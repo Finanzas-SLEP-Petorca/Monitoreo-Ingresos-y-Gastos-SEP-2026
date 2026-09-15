@@ -84,6 +84,21 @@ SUBT22/SUBT29, esos gastos se cargan como compras).
 - Saldo final = (Ingreso SEP + Carrera Docente) − gasto remuneraciones − gasto bienes y
   servicios.
 
+### Dos familias de columnas "%" — no confundir
+
+La tabla tiene dos grupos de columnas de porcentaje, con un fondo celeste que marca el segundo
+grupo para diferenciarlos a simple vista:
+
+- **% Ejec. Remuneraciones / % Ejec. B&S** (fondo blanco): gasto / **meta** del 70% o 30%
+  respectivamente. 100% = gastó justo lo que la regla le permite. Pueden pasar de 100% (indican
+  que ese RBD ya superó su tope) aunque el establecimiento gaste poco en términos absolutos, si
+  su ingreso SEP también es bajo.
+- **% Rem. / Ingreso, % B&S / Ingreso, % Total / Ingreso** (fondo celeste, columnas "sobre
+  Ingreso Total"): gasto / **Ingreso Total** (SEP + Carrera Docente) — la fracción real del
+  ingreso ya gastada, sin pasar por el filtro del 70/30. Por diseño, % Rem./Ingreso +
+  % B&S/Ingreso = % Total/Ingreso. Son solo informativos: el estado (Déficit/En riesgo/Superávit)
+  de cada RBD se sigue definiendo por el cumplimiento de la meta 70/30, no por estas columnas.
+
 ## Alerta: establecimientos sin marco SEP con gasto SEP
 
 Tres establecimientos no tienen marco SEP asignado (Preferente/Prioritario/Carrera Docente =

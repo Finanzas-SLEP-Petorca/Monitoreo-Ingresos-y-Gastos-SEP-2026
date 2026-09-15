@@ -151,13 +151,20 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .compra-field { display:flex; flex-direction:column; gap:3px; }
   .compra-field-label { font-size:10px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.02em; }
   .compra-input { padding:6px 8px; border-radius:5px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); width:100%; box-sizing:border-box; }
+  .compra-form-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .add-compra-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
   .add-compra-btn:hover { opacity:.88; }
+  .compra-form-grid.editing .add-compra-btn { background:#b45309; border-color:#b45309; }
+  .compra-form-grid.editing { outline:2px solid #b45309; outline-offset:6px; border-radius:6px; }
+  .cancelar-edicion-btn { padding:6px 10px; border-radius:5px; border:1px solid var(--baseline); background:#fff; color:var(--text-secondary); font-size:12px; cursor:pointer; white-space:nowrap; }
+  .cancelar-edicion-btn:hover { background:var(--gridline); }
+  .cancelar-edicion-btn.hidden { display:none; }
   .compras-scroll { overflow-x:auto; margin-top:8px; }
   table.compras-table { min-width:1100px; table-layout:auto; }
   table.compras-table th, table.compras-table td { white-space:nowrap; }
-  .compra-del-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
-  .compra-del-btn:hover { opacity:.6; }
+  .compra-acciones-cell { display:flex; gap:2px; }
+  .compra-del-btn, .compra-edit-btn, .compra-dup-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
+  .compra-del-btn:hover, .compra-edit-btn:hover, .compra-dup-btn:hover { opacity:.6; }
   .detalle-sin-compras { color:var(--text-muted); font-style:italic; text-align:left !important; padding:10px 8px !important; }
 
   td.col-acciones, th.col-acciones { white-space:nowrap; }
@@ -1175,7 +1182,11 @@ function buildDetalleHTML(rbd, printMode) {
       <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
       <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
       <td>${c.documentoOriginal || ''}</td>
-      ${printMode ? '' : `<td><button type="button" class="compra-del-btn" data-rbd="${rbd}" data-compra-id="${id}" title="Eliminar compra">🗑</button></td>`}
+      ${printMode ? '' : `<td class="compra-acciones-cell">
+        <button type="button" class="compra-edit-btn" data-rbd="${rbd}" data-compra-id="${id}" title="Editar compra">✏️</button>
+        <button type="button" class="compra-dup-btn" data-rbd="${rbd}" data-compra-id="${id}" title="Duplicar compra">⧉</button>
+        <button type="button" class="compra-del-btn" data-rbd="${rbd}" data-compra-id="${id}" title="Eliminar compra">🗑</button>
+      </td>`}
     </tr>`;
   }
   function comprasSectionHTML() {
@@ -1196,7 +1207,10 @@ function buildDetalleHTML(rbd, printMode) {
       <label class="compra-field"><span class="compra-field-label">Monto gasto</span><input type="number" class="compra-input" data-field="montoGasto" placeholder="Monto gasto"></label>
       <label class="compra-field"><span class="compra-field-label">Monto documento</span><input type="number" class="compra-input" data-field="montoDocumento" placeholder="Monto documento"></label>
       <label class="compra-field"><span class="compra-field-label">Documento original</span><input type="text" class="compra-input" data-field="documentoOriginal" placeholder="Documento original (folio/nota)"></label>
-      <button type="button" class="add-compra-btn" data-rbd="${rbd}">+ Agregar compra</button>
+      <span class="compra-form-actions">
+        <button type="button" class="add-compra-btn" data-rbd="${rbd}">+ Agregar compra</button>
+        <button type="button" class="cancelar-edicion-btn hidden" data-rbd="${rbd}">✕ Cancelar edición</button>
+      </span>
     </div>`;
     return `
     <div class="compras-section">
@@ -1316,13 +1330,59 @@ function leerCamposCompra() {
   });
   return campos;
 }
+// El formulario sirve para tres acciones: agregar una compra nueva, editar una existente
+// (el botón ✏️ de su fila la carga en el formulario y marca data-editing-id) o duplicarla (el
+// botón ⧉ carga los mismos datos pero SIN marcar data-editing-id, así que al enviar el
+// formulario se crea una compra nueva con esos datos como punto de partida).
+function llenarFormularioCompra(campos) {
+  const wrap = document.querySelector('#modalBody .compra-form-grid');
+  if (!wrap) return;
+  wrap.querySelectorAll('.compra-input').forEach(el => {
+    const field = el.dataset.field;
+    el.value = campos[field] !== undefined && campos[field] !== null ? campos[field] : '';
+  });
+}
+function resetFormularioCompraUI() {
+  const wrap = document.querySelector('#modalBody .compra-form-grid');
+  if (wrap) { delete wrap.dataset.editingId; wrap.classList.remove('editing'); }
+  const btn = document.querySelector('#modalBody .add-compra-btn');
+  if (btn) btn.textContent = '+ Agregar compra';
+  const cancelBtn = document.querySelector('#modalBody .cancelar-edicion-btn');
+  if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+function iniciarEdicionCompra(rbd, compraId) {
+  const campos = ((CARGA_MANUAL.compras_por_rbd || {})[rbd] || {})[compraId];
+  if (!campos) return;
+  llenarFormularioCompra(campos);
+  const wrap = document.querySelector('#modalBody .compra-form-grid');
+  if (!wrap) return;
+  wrap.dataset.editingId = compraId;
+  wrap.classList.add('editing');
+  const btn = document.querySelector('#modalBody .add-compra-btn');
+  if (btn) btn.textContent = '💾 Guardar cambios';
+  const cancelBtn = document.querySelector('#modalBody .cancelar-edicion-btn');
+  if (cancelBtn) cancelBtn.classList.remove('hidden');
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function duplicarCompra(rbd, compraId) {
+  const campos = ((CARGA_MANUAL.compras_por_rbd || {})[rbd] || {})[compraId];
+  if (!campos) return;
+  resetFormularioCompraUI();
+  llenarFormularioCompra(campos);
+  document.querySelector('#modalBody .compra-form-grid')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function cancelarEdicionCompra() {
+  resetFormularioCompraUI();
+  document.querySelectorAll('#modalBody .compra-input').forEach(el => { el.value = ''; });
+}
 function agregarCompra(rbd) {
   const campos = leerCamposCompra();
   if (!campos) return;
   if (!campos.codigo) { alert('Elige un código de cuenta.'); return; }
   if (!campos.fechaDocumento) { alert('Ingresa la fecha del documento — determina el mes al que se suma la compra.'); return; }
   if (!campos.montoGasto) { alert('Ingresa el monto del gasto.'); return; }
-  const id = generarCompraId();
+  const wrap = document.querySelector('#modalBody .compra-form-grid');
+  const id = (wrap && wrap.dataset.editingId) || generarCompraId();
   if (!CARGA_MANUAL.compras_por_rbd) CARGA_MANUAL.compras_por_rbd = {};
   if (!CARGA_MANUAL.compras_por_rbd[rbd]) CARGA_MANUAL.compras_por_rbd[rbd] = {};
   CARGA_MANUAL.compras_por_rbd[rbd][id] = campos;
@@ -1414,6 +1474,12 @@ const modalBodyEl = document.getElementById('modalBody');
 modalBodyEl.addEventListener('click', (e) => {
   const addBtn = e.target.closest('.add-compra-btn');
   if (addBtn) { agregarCompra(addBtn.getAttribute('data-rbd')); return; }
+  const cancelEditBtn = e.target.closest('.cancelar-edicion-btn');
+  if (cancelEditBtn) { cancelarEdicionCompra(); return; }
+  const editBtn = e.target.closest('.compra-edit-btn');
+  if (editBtn) { iniciarEdicionCompra(editBtn.getAttribute('data-rbd'), editBtn.getAttribute('data-compra-id')); return; }
+  const dupBtn = e.target.closest('.compra-dup-btn');
+  if (dupBtn) { duplicarCompra(dupBtn.getAttribute('data-rbd'), dupBtn.getAttribute('data-compra-id')); return; }
   const delBtn = e.target.closest('.compra-del-btn');
   if (delBtn) { eliminarCompra(delBtn.getAttribute('data-rbd'), delBtn.getAttribute('data-compra-id')); return; }
 });

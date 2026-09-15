@@ -31,7 +31,9 @@ y Servicios (Subt. 22 y 29) se carga distinto: en vez de escribir un total mensu
 tiene un "Registro de compras" con los mismos campos que exige SUPEREDUC al cargar los gastos
 (código de cuenta oficial, tipo y número de documento, fechas, proveedor, montos, documento
 original) — el ítem y el mes se calculan solos a partir de esas compras, agrupadas por código de
-cuenta y por el mes de la Fecha Documento. El botón "⬇ Compras SUPEREDUC (CSV)" descarga todas las
+cuenta y por el mes de la Fecha Documento. Cada compra ya cargada se puede editar (✏️, corrige sus
+datos sin duplicarla), duplicar (⧉, precarga el formulario con los mismos datos para una compra
+parecida) o eliminar (🗑). El botón "⬇ Compras SUPEREDUC (CSV)" descarga todas las
 compras de todos los RBD ya en el formato exacto de la plantilla de SUPEREDUC; en la columna
 "Acciones" de cada fila, el botón "⬇ CSV SEP" descarga ese mismo formato pero solo con las compras
 de ese RBD — útil para cargar los gastos de un establecimiento a la vez en la plataforma de

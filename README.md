@@ -32,7 +32,10 @@ tiene un "Registro de compras" con los mismos campos que exige SUPEREDUC al carg
 (código de cuenta oficial, tipo y número de documento, fechas, proveedor, montos, documento
 original) — el ítem y el mes se calculan solos a partir de esas compras, agrupadas por código de
 cuenta y por el mes de la Fecha Documento. El botón "⬇ Compras SUPEREDUC (CSV)" descarga todas las
-compras de todos los RBD ya en el formato exacto de la plantilla de SUPEREDUC.
+compras de todos los RBD ya en el formato exacto de la plantilla de SUPEREDUC; en la columna
+"Acciones" de cada fila, el botón "⬇ CSV SEP" descarga ese mismo formato pero solo con las compras
+de ese RBD — útil para cargar los gastos de un establecimiento a la vez en la plataforma de
+SUPEREDUC, que exige subir por RBD.
 
 A diferencia de una planilla o de una sesión de navegador aislada, cada cambio (edición de celda,
 compra agregada o eliminada) se guarda solo (con un pequeño retraso de ~400ms tras dejar de

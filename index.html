@@ -1270,6 +1270,7 @@ function renderTable() {
       <td data-field="estado">${estadoTagHTML(r)}</td>
       <td class="col-acciones">
         <button class="row-action-btn" data-action="excel" data-rbd="${r.rbd}" title="Descargar Excel solo de este RBD">⬇ XLS</button>
+        <button class="row-action-btn" data-action="csvsep" data-rbd="${r.rbd}" title="Descargar compras SUPEREDUC (CSV) solo de este RBD">⬇ CSV SEP</button>
         <button class="row-action-btn" data-action="pdf" data-rbd="${r.rbd}" title="Descargar PDF solo de este RBD">🖨</button>
       </td>
     </tr>`).join('');
@@ -1364,6 +1365,7 @@ tableBodyEl.addEventListener('click', (e) => {
     const action = rowBtn.getAttribute('data-action');
     if (action === 'excel') exportRbdExcel(rbd);
     else if (action === 'pdf') exportRbdPdf(rbd);
+    else if (action === 'csvsep') downloadComprasSep(rbd);
     return;
   }
   const abrir = e.target.closest('[data-abrir-rbd]');
@@ -1885,11 +1887,12 @@ document.getElementById('downloadCargaBtn').addEventListener('click', () => {
 // --- Descargar compras en el formato exacto que exige SUPEREDUC al cargar los gastos
 // (Plantilla_Compras): RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;
 // Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;
-// Monto Documento;Documento Original — una fila por compra, de todos los RBD. ---
-document.getElementById('downloadComprasSepBtn').addEventListener('click', () => {
+// Monto Documento;Documento Original — una fila por compra. onlyRbd filtra a un solo RBD (botón
+// "⬇ CSV SEP" de la fila); sin onlyRbd trae todos los RBD (botón general de arriba). ---
+function comprasSepCsvLines(onlyRbd) {
   const headers = ['RBD', 'Subvencion', 'Codigo Cuenta', 'Tipo de Documento', 'Nro Documento', 'Fecha Documento', 'Fecha Pago', 'Descripcion Gasto', 'Rut Proveedor', 'Nombre Proveedor', 'Monto Gasto', 'Monto Documento', 'Documento Original'];
   const lines = [headers.map(csvEscape).join(';')];
-  registrosPara().forEach(r => {
+  registrosPara(onlyRbd).forEach(r => {
     const compras = (CARGA_MANUAL.compras_por_rbd || {})[r.rbd] || {};
     Object.values(compras)
       .sort((a, b) => (a.fechaDocumento || '').localeCompare(b.fechaDocumento || ''))
@@ -1900,15 +1903,23 @@ document.getElementById('downloadComprasSepBtn').addEventListener('click', () =>
         ].map(csvEscape).join(';'));
       });
   });
-  if (lines.length === 1) { alert('Todavía no hay compras registradas en ningún RBD.'); return; }
+  return lines;
+}
+function downloadComprasSep(onlyRbd) {
+  const lines = comprasSepCsvLines(onlyRbd);
+  if (lines.length === 1) {
+    alert(onlyRbd ? `El RBD ${onlyRbd} todavía no tiene compras registradas.` : 'Todavía no hay compras registradas en ningún RBD.');
+    return;
+  }
   const csvContent = '﻿' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `compras_sep_${new Date().toISOString().slice(0,10)}.csv`;
+  a.href = url; a.download = `compras_sep_${onlyRbd ? onlyRbd + '_' : ''}${new Date().toISOString().slice(0,10)}.csv`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-});
+}
+document.getElementById('downloadComprasSepBtn').addEventListener('click', () => downloadComprasSep());
 
 // --- Descargar / Importar Excel (mismo formato de 4 hojas que CARGA_MANUAL_SEP.xlsx) ---
 

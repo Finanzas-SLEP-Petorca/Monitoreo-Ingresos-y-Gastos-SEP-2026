@@ -26,18 +26,25 @@ en ambos lugares.
 
 ### Edición colaborativa en tiempo real
 
-Las 4 tablas de detalle (Ingreso SEP, Remuneraciones, Subt. 22 y Subt. 29) son editables directo
-en el navegador, mes a mes. A diferencia de una planilla o de una sesión de navegador aislada,
-cada cambio se guarda solo (con un pequeño retraso de ~400ms tras dejar de escribir, o al
-instante al salir de la celda) en una base de datos compartida (Cloud Firestore) y se propaga en
-segundos a todas las personas que tengan el panel abierto — sin recargar la página. El mismo
-concepto aplica a "+ Agregar ítem": el concepto nuevo aparece de inmediato para todos los RBD y
-para todos los usuarios conectados.
+Las tablas de Ingreso SEP y Remuneraciones son editables directo en el navegador, mes a mes. Bienes
+y Servicios (Subt. 22 y 29) se carga distinto: en vez de escribir un total mensual a mano, cada RBD
+tiene un "Registro de compras" con los mismos campos que exige SUPEREDUC al cargar los gastos
+(código de cuenta oficial, tipo y número de documento, fechas, proveedor, montos, documento
+original) — el ítem y el mes se calculan solos a partir de esas compras, agrupadas por código de
+cuenta y por el mes de la Fecha Documento. El botón "⬇ Compras SUPEREDUC (CSV)" descarga todas las
+compras de todos los RBD ya en el formato exacto de la plantilla de SUPEREDUC.
+
+A diferencia de una planilla o de una sesión de navegador aislada, cada cambio (edición de celda,
+compra agregada o eliminada) se guarda solo (con un pequeño retraso de ~400ms tras dejar de
+escribir, o al instante al agregar/eliminar una compra o salir de una celda) en una base de datos
+compartida (Cloud Firestore) y se propaga en segundos a todas las personas que tengan el panel
+abierto — sin recargar la página.
 
 Cada RBD muestra quién hizo la última edición y cuándo ("Última edición en este RBD: ..."), y la
 barra bajo el título muestra el estado general de sincronización. El botón "⬇ Descargar carga
 (JSON)" y "⬇ Excel" / "⬆ Importar Excel" siguen disponibles, ahora como respaldo manual — ya no
-son necesarios para que los cambios queden guardados.
+son necesarios para que los cambios queden guardados (la importación de Excel ya no trae hojas
+SUBT22/SUBT29, esos gastos se cargan como compras).
 
 ## Fuentes de datos
 

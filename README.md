@@ -40,6 +40,19 @@ escribir, o al instante al agregar/eliminar una compra o salir de una celda) en 
 compartida (Cloud Firestore) y se propaga en segundos a todas las personas que tengan el panel
 abierto — sin recargar la página.
 
+### Carga masiva de compras por Excel
+
+Si tienes muchas compras para cargar de una sola vez, no hace falta escribirlas una por una en el
+formulario: el botón "⬇ Excel" incluye una hoja **COMPRAS** (una fila por compra, con las mismas
+columnas del formulario — RBD, Código, Tipo y N° de documento, Fecha Documento, Fecha Pago,
+Descripción, Proveedor, Montos, Documento original — más una columna **ID**). Puedes editar esa
+hoja o pegar filas nuevas y volver a subirla con "⬆ Importar Excel": las filas con **ID vacío** se
+cargan como compras nuevas, y las filas con un **ID ya existente** (el que trae el propio Excel
+exportado) actualizan esa misma compra en vez de duplicarla — por eso conviene exportar primero,
+editar sobre esa base y volver a importar, en vez de partir de un Excel armado desde cero. Las
+fechas se pueden escribir como texto (`2026-03-15`) o como fecha de Excel, ambas se reconocen al
+importar.
+
 Cada RBD muestra quién hizo la última edición y cuándo ("Última edición en este RBD: ..."), y la
 barra bajo el título muestra el estado general de sincronización. El botón "⬇ Descargar carga
 (JSON)" y "⬇ Excel" / "⬆ Importar Excel" siguen disponibles, ahora como respaldo manual — ya no

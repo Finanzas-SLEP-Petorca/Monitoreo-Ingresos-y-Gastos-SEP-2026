@@ -147,8 +147,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   input.celda-input::placeholder { color:#b9b6a8; }
 
   .compras-section { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
-  .compra-form-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:8px; margin:10px 0; align-items:stretch; }
-  .compra-input { padding:6px 8px; border-radius:5px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); }
+  .compra-form-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:8px; margin:10px 0; align-items:end; }
+  .compra-field { display:flex; flex-direction:column; gap:3px; }
+  .compra-field-label { font-size:10px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.02em; }
+  .compra-input { padding:6px 8px; border-radius:5px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); width:100%; box-sizing:border-box; }
   .add-compra-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
   .add-compra-btn:hover { opacity:.88; }
   .compras-scroll { overflow-x:auto; margin-top:8px; }
@@ -1183,17 +1185,17 @@ function buildDetalleHTML(rbd, printMode) {
       .map(([id, c]) => filaCompra(id, c)).join('');
     const formHTML = printMode ? '' : `
     <div class="compra-form-grid">
-      <select class="compra-input" data-field="codigo">${optionsCuentas()}</select>
-      <select class="compra-input" data-field="tipoDocumento">${optionsTipoDocumento()}</select>
-      <input type="text" class="compra-input" data-field="nroDocumento" placeholder="N° documento">
-      <input type="date" class="compra-input" data-field="fechaDocumento" title="Fecha documento">
-      <input type="date" class="compra-input" data-field="fechaPago" title="Fecha pago">
-      <input type="text" class="compra-input" data-field="descripcion" placeholder="Descripción del gasto">
-      <input type="text" class="compra-input" data-field="rutProveedor" placeholder="RUT proveedor">
-      <input type="text" class="compra-input" data-field="nombreProveedor" placeholder="Nombre proveedor">
-      <input type="number" class="compra-input" data-field="montoGasto" placeholder="Monto gasto">
-      <input type="number" class="compra-input" data-field="montoDocumento" placeholder="Monto documento">
-      <input type="text" class="compra-input" data-field="documentoOriginal" placeholder="Documento original (folio/nota)">
+      <label class="compra-field"><span class="compra-field-label">Código de cuenta</span><select class="compra-input" data-field="codigo">${optionsCuentas()}</select></label>
+      <label class="compra-field"><span class="compra-field-label">Tipo de documento</span><select class="compra-input" data-field="tipoDocumento">${optionsTipoDocumento()}</select></label>
+      <label class="compra-field"><span class="compra-field-label">N° documento</span><input type="text" class="compra-input" data-field="nroDocumento" placeholder="N° documento"></label>
+      <label class="compra-field"><span class="compra-field-label">Fecha documento</span><input type="date" class="compra-input" data-field="fechaDocumento" title="Fecha documento"></label>
+      <label class="compra-field"><span class="compra-field-label">Fecha pago</span><input type="date" class="compra-input" data-field="fechaPago" title="Fecha pago"></label>
+      <label class="compra-field"><span class="compra-field-label">Descripción</span><input type="text" class="compra-input" data-field="descripcion" placeholder="Descripción del gasto"></label>
+      <label class="compra-field"><span class="compra-field-label">RUT proveedor</span><input type="text" class="compra-input" data-field="rutProveedor" placeholder="RUT proveedor"></label>
+      <label class="compra-field"><span class="compra-field-label">Nombre proveedor</span><input type="text" class="compra-input" data-field="nombreProveedor" placeholder="Nombre proveedor"></label>
+      <label class="compra-field"><span class="compra-field-label">Monto gasto</span><input type="number" class="compra-input" data-field="montoGasto" placeholder="Monto gasto"></label>
+      <label class="compra-field"><span class="compra-field-label">Monto documento</span><input type="number" class="compra-input" data-field="montoDocumento" placeholder="Monto documento"></label>
+      <label class="compra-field"><span class="compra-field-label">Documento original</span><input type="text" class="compra-input" data-field="documentoOriginal" placeholder="Documento original (folio/nota)"></label>
       <button type="button" class="add-compra-btn" data-rbd="${rbd}">+ Agregar compra</button>
     </div>`;
     return `
@@ -1927,16 +1929,16 @@ function sheetSimpleAOA(bucket, onlyRbd) {
   return rows;
 }
 
-function sheetItemsAOA(subt, items, onlyRbd) {
-  const headers = ['RBD', 'Establecimiento', 'Item', ...MESES_CARGA_TITLE, 'Total Año'];
+function sheetItemsAOA(subt, cuentas, onlyRbd) {
+  const headers = ['RBD', 'Establecimiento', 'Codigo', 'Item', ...MESES_CARGA_TITLE, 'Total Año'];
   const rows = [headers];
   registrosPara(onlyRbd).forEach(r => {
     const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
-    items.forEach(itemName => {
-      const it = ag ? ag.items.find(x => x.subtitulo === subt && x.item === itemName) : null;
+    cuentas.forEach(cuenta => {
+      const it = ag ? ag.items.find(x => x.subtitulo === subt && x.codigo === cuenta.codigo) : null;
       const vals = MESES_CARGA.map(m => it ? Math.round(it.meses[m] || 0) : 0);
       const total = it ? Math.round(it.total) : 0;
-      rows.push([Number(r.rbd), r.nombre, itemName, ...vals, total]);
+      rows.push([Number(r.rbd), r.nombre, cuenta.codigo, cuenta.nombre, ...vals, total]);
     });
   });
   return rows;
@@ -1957,12 +1959,29 @@ function sheetIngresoItemsAOA(onlyRbd) {
   return rows;
 }
 
+// --- COMPRAS: hoja de carga masiva — misma fuente de verdad que el "Registro de compras" del
+// detalle de cada RBD (una fila por compra, con su ID). La columna ID permite reimportar el
+// mismo Excel tras editarlo/agregar filas sin duplicar las compras ya cargadas: fila con ID
+// existente = actualiza esa compra, fila con ID vacío = compra nueva. ---
+function sheetComprasAOA(onlyRbd) {
+  const headers = ['ID', 'RBD', 'Establecimiento', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal'];
+  const rows = [headers];
+  registrosPara(onlyRbd).forEach(r => {
+    const compras = (CARGA_MANUAL.compras_por_rbd || {})[r.rbd] || {};
+    Object.entries(compras).forEach(([id, c]) => {
+      rows.push([id, Number(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', c.descripcion || '', c.rutProveedor || '', c.nombreProveedor || '', Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
+    });
+  });
+  return rows;
+}
+
 function buildCargaWorkbook(onlyRbd) {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetIngresoItemsAOA(onlyRbd)), 'INGRESO');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetSimpleAOA('rem_por_rbd', onlyRbd)), 'REMUNERACIONES');
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetItemsAOA('22', ITEMS_22, onlyRbd)), 'SUBT22');
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetItemsAOA('29', ITEMS_29, onlyRbd)), 'SUBT29');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetItemsAOA('22', CUENTAS_SEP_22, onlyRbd)), 'SUBT22');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetItemsAOA('29', CUENTAS_SEP_29, onlyRbd)), 'SUBT29');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetComprasAOA(onlyRbd)), 'COMPRAS');
   return wb;
 }
 
@@ -2104,14 +2123,79 @@ function importIngresoItemsSheet(ws) {
   return n;
 }
 
+// Excel guarda fechas como número de serie (días desde 1899-12-30) cuando la celda tiene
+// formato de fecha, y como texto en cualquier otro caso — rowsFromSheet no usa cellDates, así
+// que hay que convertir ambos casos a 'YYYY-MM-DD' a mano.
+function excelDateToISO(val) {
+  if (val === undefined || val === null || val === '' || val === 0) return '';
+  if (typeof val === 'number') {
+    const d = new Date(Math.round((val - 25569) * 86400 * 1000));
+    return d.toISOString().slice(0, 10);
+  }
+  const s = String(val).trim();
+  const iso = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);
+  if (iso) return `${iso[1]}-${iso[2].padStart(2, '0')}-${iso[3].padStart(2, '0')}`;
+  const dmy = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/.exec(s);
+  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2, '0')}-${dmy[1].padStart(2, '0')}`;
+  return s;
+}
+
+// Carga masiva de compras (hoja COMPRAS): una fila por compra, mismos campos que el formulario
+// "Registro de compras". La columna ID hace el reimport seguro — fila con ID ya existente
+// actualiza esa compra en vez de duplicarla; fila con ID vacío crea una compra nueva.
+function importComprasSheet(ws) {
+  const rows = rowsFromSheet(ws);
+  const porRbd = {};
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[1] === undefined || row[1] === null || String(row[1]).trim() === '') continue;
+    const rbd = String(Math.trunc(Number(row[1])));
+    const codigoRaw = row[3];
+    const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
+    if (!CUENTAS_SEP_BY_CODIGO[codigo]) continue;
+    const campos = {
+      codigo,
+      tipoDocumento: String(row[4] || '').trim(),
+      nroDocumento: String(row[5] || '').trim(),
+      fechaDocumento: excelDateToISO(row[6]),
+      fechaPago: excelDateToISO(row[7]),
+      descripcion: String(row[8] || '').trim(),
+      rutProveedor: String(row[9] || '').trim(),
+      nombreProveedor: String(row[10] || '').trim(),
+      montoGasto: Number(row[11]) || 0,
+      montoDocumento: Number(row[12]) || 0,
+      documentoOriginal: String(row[13] || '').trim(),
+    };
+    if (!campos.fechaDocumento || !campos.montoGasto) continue;
+    const id = (row[0] !== undefined && row[0] !== null && String(row[0]).trim() !== '') ? String(row[0]).trim() : generarCompraId();
+    if (!CARGA_MANUAL.compras_por_rbd) CARGA_MANUAL.compras_por_rbd = {};
+    if (!CARGA_MANUAL.compras_por_rbd[rbd]) CARGA_MANUAL.compras_por_rbd[rbd] = {};
+    CARGA_MANUAL.compras_por_rbd[rbd][id] = campos;
+    if (!porRbd[rbd]) porRbd[rbd] = {};
+    porRbd[rbd][id] = campos;
+    n++;
+  }
+  Object.keys(porRbd).forEach(rbd => {
+    recomputeItemsDesdeCompras(rbd);
+    const r = DATA.registros.find(x => x.rbd === rbd);
+    if (r) recomputeRegistro(r);
+    const ag = ensureAgregado(rbd);
+    scheduleRbdSave(rbd, { nombre: ag.nombre, compras: porRbd[rbd] });
+  });
+  if (modalRbdAbierto && porRbd[modalRbdAbierto]) renderModalContenido();
+  return n;
+}
+
 function importWorkbook(wb) {
   let resumen = [];
   if (wb.Sheets['INGRESO']) resumen.push('INGRESO: ' + importIngresoItemsSheet(wb.Sheets['INGRESO']) + ' filas');
   if (wb.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importSimpleSheet(wb.Sheets['REMUNERACIONES'], 'rem_por_rbd') + ' filas');
+  if (wb.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importComprasSheet(wb.Sheets['COMPRAS']) + ' filas');
   // Subt.22/29 ya no se importan como hojas de montos mensuales — ahora se cargan como
-  // compras (Registro de compras, dentro del detalle de cada RBD), con su propio código de
-  // cuenta y fecha de documento, así que una hoja "SUBT22"/"SUBT29" de un Excel viejo ya no
-  // aplica aquí.
+  // compras (hoja COMPRAS, o el "Registro de compras" dentro del detalle de cada RBD), con su
+  // propio código de cuenta y fecha de documento, así que una hoja "SUBT22"/"SUBT29" de un
+  // Excel viejo ya no aplica aquí.
   DATA.registros.forEach(recomputeRegistro);
   renderKpis();
   renderTable();
@@ -2129,12 +2213,12 @@ document.getElementById('importExcelInput').addEventListener('change', (e) => {
       const wb = XLSX.read(evt.target.result, { type: 'array' });
       const resumen = importWorkbook(wb);
       if (resumen.length === 0) {
-        alert('El archivo no tiene ninguna hoja con los nombres esperados (INGRESO, REMUNERACIONES, SUBT22, SUBT29). No se importó nada.');
+        alert('El archivo no tiene ninguna hoja con los nombres esperados (INGRESO, REMUNERACIONES, COMPRAS). No se importó nada.');
       } else {
         alert('Carga importada correctamente:\n' + resumen.join('\n') + '\n\nEl panel ya se actualizó con estos montos.');
       }
     } catch (err) {
-      alert('No se pudo leer el archivo. Verifica que sea un Excel con el mismo formato de CARGA_MANUAL_SEP.xlsx (columnas RBD | Establecimiento | Item | Enero..Diciembre | Total Año). Detalle: ' + err.message);
+      alert('No se pudo leer el archivo. Verifica que sea un Excel con el mismo formato de CARGA_MANUAL_SEP.xlsx (hoja COMPRAS con columnas ID | RBD | Establecimiento | Codigo | ...). Detalle: ' + err.message);
     }
     e.target.value = '';
   };

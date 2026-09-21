@@ -83,10 +83,14 @@ Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o nar
   ajusta por establecimiento, a medida que se van confirmando los pagos reales de cada mes.
 - **Bienes y Servicios**: las compras del "Registro de compras" siempre son reales — son gastos
   ya documentados, con proveedor y N° de documento. Para estimar meses que todavía no tienen
-  compras cargadas, existe la fila **"Bienes y Servicios (Proyección)"**, editable mes a mes,
-  siempre naranja — se SUMA al total de compras reales de ese mes (nunca lo reemplaza), así que
-  un mes puede tener compras reales y además una proyección de gasto adicional sin documentar
-  todavía.
+  compras cargadas, existe la sección **"Bienes y Servicios (Proyección) — por ítem"**: se puede
+  agregar cualquier cantidad de ítems por RBD eligiéndolos de la misma lista desplegable de
+  cuentas oficiales (Subt.22/29) que usa el Registro de compras, cada uno con su propia
+  proyección editable mes a mes (siempre naranja) y su botón 🗑 para quitarlo. El total de todos
+  los ítems se SUMA al total de compras reales de ese mes (nunca lo reemplaza), así que un mes
+  puede tener compras reales y además una o varias proyecciones de gasto adicional sin documentar
+  todavía, ya clasificadas por ítem igual que las compras. También se puede cargar/descargar de a
+  granel en la hoja "BYS_PROYECCION" del Excel de carga masiva (columnas Código/Item + 12 meses).
 
 El selector "Ver resumen (KPI y % Ejecución) acumulado hasta el mes:" de arriba de la tabla
 principal es un control aparte: solo dice hasta qué mes se suman los montos en las tarjetas KPI y

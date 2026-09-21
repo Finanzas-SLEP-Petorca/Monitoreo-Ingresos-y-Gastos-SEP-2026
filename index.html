@@ -678,6 +678,9 @@ const CARGA_MANUAL = {"fuente_archivo": "carga_manual/CARGA_MANUAL_SEP.xlsx", "f
 // (410500-411700, "GASTOS...") se clasifican como Subt.22 (Bienes y Servicios de Consumo); las
 // de 411800 ("ADQUISICIÓN de bienes...") como Subt.29 (Activos No Financieros) — coincide con
 // la nomenclatura presupuestaria (22 = gasto corriente, 29 = compra de un activo/bien durable).
+// Excepción: 410701-410707 (equipos — fotografía/filmación, pizarras interactivas, informáticos,
+// reproductores de imagen, multicopiadores, amplificación/sonido y otro equipamiento de apoyo
+// pedagógico) son también activos durables, así que van en Subt.29 pese a estar en ese rango.
 const CUENTAS_SEP_22 = [
   { codigo: "410501", nombre: "ASISTENCIA TECNICO PEDAGOGICA EDUCATIVA (REGISTRO ATE)" },
   { codigo: "410502", nombre: "ACCIONES FORMATIVAS Y PERFECCIONAMIENTO DE RR.HH." },
@@ -691,13 +694,6 @@ const CUENTAS_SEP_22 = [
   { codigo: "410607", nombre: "EVENTOS EDUCATIVOS Y CULTURALES" },
   { codigo: "410608", nombre: "EVALUACION DIAGNOSTICA" },
   { codigo: "410609", nombre: "OTROS GASTOS EN RECURSOS DE APRENDIZAJE" },
-  { codigo: "410701", nombre: "EQUIPOS DE FOTOGRAFIA Y FILMACION" },
-  { codigo: "410702", nombre: "PIZARRAS INTERACTIVAS" },
-  { codigo: "410703", nombre: "EQUIPOS INFORMATICOS Y LICENCIAS" },
-  { codigo: "410704", nombre: "EQUIPOS REPRODUCTORES DE IMAGEN" },
-  { codigo: "410705", nombre: "EQUIPOS MULTICOPIADORES" },
-  { codigo: "410706", nombre: "EQUIPOS DE AMPLIFICACION Y SONIDO" },
-  { codigo: "410707", nombre: "OTROS GASTOS EN EQUIPAMIENTO DE APOYO PEDAGOGICO" },
   { codigo: "410801", nombre: "UNIFORMES Y VESTUARIO" },
   { codigo: "410802", nombre: "OTROS GASTOS ALUMNOS" },
   { codigo: "410803", nombre: "TALLERES EXTRAPROGRAMATICOS" },
@@ -731,6 +727,13 @@ const CUENTAS_SEP_22 = [
   { codigo: "411704", nombre: "MANTENCION Y REPARACION DE MOBILIARIO ESCOLAR" },
 ];
 const CUENTAS_SEP_29 = [
+  { codigo: "410701", nombre: "EQUIPOS DE FOTOGRAFIA Y FILMACION" },
+  { codigo: "410702", nombre: "PIZARRAS INTERACTIVAS" },
+  { codigo: "410703", nombre: "EQUIPOS INFORMATICOS Y LICENCIAS" },
+  { codigo: "410704", nombre: "EQUIPOS REPRODUCTORES DE IMAGEN" },
+  { codigo: "410705", nombre: "EQUIPOS MULTICOPIADORES" },
+  { codigo: "410706", nombre: "EQUIPOS DE AMPLIFICACION Y SONIDO" },
+  { codigo: "410707", nombre: "OTROS GASTOS EN EQUIPAMIENTO DE APOYO PEDAGOGICO" },
   { codigo: "411802", nombre: "ADQUISICION DE MOBILIARIO" },
 ];
 const CUENTAS_SEP = [

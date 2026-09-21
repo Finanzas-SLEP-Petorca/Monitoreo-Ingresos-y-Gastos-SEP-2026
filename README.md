@@ -93,6 +93,14 @@ principal es un control aparte: solo dice hasta qué mes se suman los montos en 
 en el gráfico de "% Ejecución" — no tiene ningún efecto sobre el real/proyectado del detalle por
 RBD.
 
+Ese mismo desglose real/proyectado se repite arriba de la tabla principal, en tres filas de
+tarjetas KPI (sumando los 52 RBD): **"Real (ejecutado)"** (borde verde — Ingreso SEP, Carrera
+Docente, Gasto Remuneraciones y Gasto Bienes y Servicios ya ejecutados, con su Saldo), **"Proyectado"**
+(borde naranja — las mismas 5 cifras pero solo la parte proyectada) y **"Total (Real +
+Proyectado)"** (la tabla de siempre, con RBD en déficit, Datos a revisar y Gasto SEP sin marco).
+Sumando la tarjeta de una columna en "Real" más la misma columna en "Proyectado" da exacto el
+valor de "Total".
+
 ## Fuentes de datos
 
 - **Ingreso SEP (Preferente y Prioritario)**: Excel "Listado de Establecimientos" de

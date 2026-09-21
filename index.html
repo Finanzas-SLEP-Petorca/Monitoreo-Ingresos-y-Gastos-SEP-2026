@@ -55,6 +55,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   header.top h1 { font-size:22px; margin:0 0 4px; }
 
   .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:8px; margin-bottom:14px; }
+  .kpi-section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary); margin:0 0 6px 2px; }
+  .kpi-row-real .kpi-card { border-left:3px solid #0ca35c; }
+  .kpi-row-proy .kpi-card { border-left:3px solid #e08a00; }
   .kpi-card { background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:9px 11px; min-width:0; }
   .kpi-card .label { font-size:11px; color:var(--text-secondary); margin-bottom:3px; line-height:1.25; }
   .kpi-card .value { font-size:16px; font-weight:600; letter-spacing:-0.01em; overflow-wrap:anywhere; }
@@ -436,6 +439,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <div id="tab-panel" class="tab-content">
 
+  <div class="kpi-section-label">Real (ejecutado)</div>
+  <div class="kpi-row kpi-row-real" id="kpiRowReal"></div>
+
+  <div class="kpi-section-label">Proyectado</div>
+  <div class="kpi-row kpi-row-proy" id="kpiRowProy"></div>
+
+  <div class="kpi-section-label">Total (Real + Proyectado)</div>
   <div class="kpi-row" id="kpiRow"></div>
 
   <section>
@@ -788,6 +798,8 @@ const ING_PRIORITARIO_REAL = {"1121": [19647139, 20856564, 20063211, 21779752, 2
 function fmtCLP(n) { return '$' + Math.round(n).toLocaleString('es-CL'); }
 
 const kpiRow = document.getElementById('kpiRow');
+const kpiRowReal = document.getElementById('kpiRowReal');
+const kpiRowProy = document.getElementById('kpiRowProy');
 
 const estadoLabel = {deficit:'Déficit', riesgo:'En riesgo', superavit:'Superávit'};
 const estadoColor = {deficit:'var(--status-critical)', riesgo:'var(--status-warning)', superavit:'var(--status-good)'};
@@ -1009,6 +1021,16 @@ function sumHastaMes(mesesObj, hasta) {
   return s;
 }
 
+// Reparte la suma "hasta el mes" (hasta) de un objeto {MES: monto} en su parte real (meses
+// 1..realHastaMes, acotado por hasta) y su parte proyectada (el resto hasta "hasta") — usado
+// para desglosar Ingreso SEP y Remuneraciones en las tarjetas KPI "Real (ejecutado)" y
+// "Proyectado" de arriba.
+function sumRealProyHastaMes(mesesObj, realHastaMes, hasta) {
+  const total = sumHastaMes(mesesObj, hasta);
+  const real = sumHastaMes(mesesObj, Math.min(realHastaMes, hasta));
+  return { real, proy: total - real };
+}
+
 // Las casillas de resumen (KPI) se recalculan según el mes elegido en "Corte real /
 // proyectado: hasta" — muestran los montos acumulados SOLO hasta ese mes (no el año completo).
 // La tabla principal y el estado (déficit/riesgo/superávit) de cada RBD siguen siendo sobre el
@@ -1044,6 +1066,52 @@ function ingresoItemSumHasta(ing, itemName) {
   return it ? sumHastaMes(it.meses, corteMesIdx) : 0;
 }
 
+// Desglosa el mismo resumen de computeTotales() en su parte Real y su parte Proyectada, para
+// las dos primeras filas de tarjetas KPI. Ingreso SEP y Carrera Docente usan el corte fijo
+// DATA.n_meses (la fuente real de Mineduc); Remuneraciones usa el corte propio de cada RBD
+// (rem.real_hasta_mes); Bienes y Servicios no depende de ningún mes — las compras siempre son
+// reales y la fila "Proyección" siempre es proyectada, así que solo hay que sumarlas aparte.
+function computeTotalesRealProy() {
+  const regs = DATA.registros;
+  let ingresoReal = 0, ingresoProy = 0, carreraReal = 0, carreraProy = 0, remReal = 0, remProy = 0, bysReal = 0, bysProy = 0;
+  regs.forEach(r => {
+    const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
+    const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
+    const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
+    const bysProyEntry = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
+
+    ['Ingreso SEP Preferente', 'Ingreso SEP Prioritario'].forEach(nombre => {
+      const it = ing ? ing.items.find(x => x.item === nombre) : null;
+      if (!it) return;
+      const { real, proy } = sumRealProyHastaMes(it.meses, DATA.n_meses, corteMesIdx);
+      ingresoReal += real; ingresoProy += proy;
+    });
+    const itCarrera = ing ? ing.items.find(x => x.item === 'Carrera Docente') : null;
+    if (itCarrera) {
+      const { real, proy } = sumRealProyHastaMes(itCarrera.meses, DATA.n_meses, corteMesIdx);
+      carreraReal += real; carreraProy += proy;
+    }
+
+    if (rem) {
+      const hastaReal = rem.real_hasta_mes || DATA.n_meses;
+      const { real, proy } = sumRealProyHastaMes(rem.meses, hastaReal, corteMesIdx);
+      remReal += real; remProy += proy;
+    }
+
+    if (ag) ag.items.forEach(it => { bysReal += sumHastaMes(it.meses, corteMesIdx); });
+    if (bysProyEntry) bysProy += sumHastaMes(bysProyEntry.meses, corteMesIdx);
+  });
+
+  return {
+    ingresoReal: Math.round(ingresoReal), ingresoProy: Math.round(ingresoProy),
+    carreraReal: Math.round(carreraReal), carreraProy: Math.round(carreraProy),
+    remReal: Math.round(remReal), remProy: Math.round(remProy),
+    bysReal: Math.round(bysReal), bysProy: Math.round(bysProy),
+    saldoReal: Math.round(ingresoReal + carreraReal - remReal - bysReal),
+    saldoProy: Math.round(ingresoProy + carreraProy - remProy - bysProy),
+  };
+}
+
 function kpiCards(t) {
   const hastaTxt = `a ${MESES_CARGA_TITLE[corteMesIdx - 1]}`;
   return [
@@ -1058,6 +1126,36 @@ function kpiCards(t) {
   ];
 }
 
+function kpiCardsReal(rp) {
+  return [
+    { label: 'Ingreso SEP (Real)', value: fmtCLP(rp.ingresoReal), full: 'Preferente + Prioritario ya ejecutados (Liquidación Web Mineduc)' },
+    { label: 'Carrera Docente (Real)', value: fmtCLP(rp.carreraReal), full: 'Ya ejecutado' },
+    { label: 'Gasto Remuneraciones (Real)', value: fmtCLP(rp.remReal), full: 'Según el corte "reales hasta" de cada RBD' },
+    { label: 'Gasto Bienes y Servicios (Real)', value: fmtCLP(rp.bysReal), full: 'Compras ya documentadas (Subt.22+29)' },
+    { label: 'Saldo (Real)', value: fmtCLP(rp.saldoReal), full: 'Ingreso Real (+ Carrera Docente Real) − gasto Real', critical: rp.saldoReal < 0 },
+  ];
+}
+
+function kpiCardsProy(rp) {
+  return [
+    { label: 'Ingreso SEP (Proyectado)', value: fmtCLP(rp.ingresoProy), full: 'Promedio de los meses reales — editable' },
+    { label: 'Carrera Docente (Proyectado)', value: fmtCLP(rp.carreraProy), full: 'Meses aún no confirmados' },
+    { label: 'Gasto Remuneraciones (Proyectado)', value: fmtCLP(rp.remProy), full: 'Meses posteriores al corte "reales hasta" de cada RBD' },
+    { label: 'Gasto Bienes y Servicios (Proyectado)', value: fmtCLP(rp.bysProy), full: 'Fila "Bienes y Servicios (Proyección)" — se suma a las compras reales' },
+    { label: 'Saldo (Proyectado)', value: fmtCLP(rp.saldoProy), full: 'Ingreso Proyectado (+ Carrera Docente Proyectada) − gasto Proyectado', critical: rp.saldoProy < 0 },
+  ];
+}
+
+function renderKpiCardsInto(container, cards) {
+  container.innerHTML = '';
+  cards.forEach(k => {
+    const div = document.createElement('div');
+    div.className = 'kpi-card' + (k.critical ? ' critical' : '');
+    div.innerHTML = `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div>`;
+    container.appendChild(div);
+  });
+}
+
 function renderKpis() {
   const t = computeTotales();
   DATA.totales.marco_anual_proy = t.marco_anual_proy;
@@ -1067,14 +1165,11 @@ function renderKpis() {
   DATA.totales.n_deficit = t.n_deficit;
   DATA.totales.n_anomalias = t.n_anomalias;
   DATA.totales.n_alertas_sep_sin_marco = t.n_alertas_sep_sin_marco;
-  const cards = kpiCards(t);
-  kpiRow.innerHTML = '';
-  cards.forEach(k => {
-    const div = document.createElement('div');
-    div.className = 'kpi-card' + (k.critical ? ' critical' : '');
-    div.innerHTML = `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div>`;
-    kpiRow.appendChild(div);
-  });
+  renderKpiCardsInto(kpiRow, kpiCards(t));
+
+  const rp = computeTotalesRealProy();
+  renderKpiCardsInto(kpiRowReal, kpiCardsReal(rp));
+  renderKpiCardsInto(kpiRowProy, kpiCardsProy(rp));
 }
 
 // value ya viene como % de SU propia meta (100% = gastó justo la meta). El track va teñido

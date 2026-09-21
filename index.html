@@ -454,7 +454,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <button id="downloadResumenExcelBtn" type="button" style="background:#0e7490; border-color:#0e7490;" title="Excel del resumen general (mismas columnas que la tabla y el PDF general) — respeta el filtro/búsqueda actual, sin detalle por RBD">⬇ Excel (resumen general)</button>
         <button id="downloadComprasSepBtn" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras (Subt.22/29) de todos los RBD, en el formato exacto que pide SUPEREDUC al cargar los gastos">⬇ Compras SUPEREDUC (CSV)</button>
         <button id="downloadCargaBtn" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
-        <button id="limpiarDuplicadosBtn" type="button" style="background:#b45309; border-color:#b45309;" title="Revisa si quedaron compras duplicadas con ID &quot;0&quot; — un rastro del bug de carga masiva ya corregido — y permite eliminarlas (solo la copia duplicada, nunca la compra correcta)">🧹 Revisar duplicados (ID &quot;0&quot;)</button>
+        <button id="limpiarDuplicadosBtn" type="button" class="hidden" style="background:#b45309; border-color:#b45309;" title="Revisa si quedaron compras duplicadas con ID &quot;0&quot; — un rastro del bug de carga masiva ya corregido — y permite eliminarlas (solo la copia duplicada, nunca la compra correcta)">🧹 Revisar duplicados (ID &quot;0&quot;)</button>
       </div>
       <div class="corte-control">
         <label for="corteMesSelect">Ver resumen y colorear tablas hasta el mes:</label>
@@ -1464,6 +1464,10 @@ function detectarComprasIdLiteralCero() {
   return afectados;
 }
 async function limpiarComprasIdLiteralCero() {
+  if (!currentUser || !ADMIN_EMAILS.includes(currentUser.email)) {
+    alert('Esta herramienta de mantenimiento está restringida a Wilson Rojas.');
+    return;
+  }
   const afectados = detectarComprasIdLiteralCero();
   if (!afectados.length) {
     alert('No se encontraron compras con ID "0" (el rastro del bug de carga masiva ya corregido). No hay nada que limpiar.');
@@ -2480,6 +2484,14 @@ const ALLOWED_EMAILS = [
   "abraham.allel@sleppetorca.gob.cl"
 ];
 
+// Correos con acceso a herramientas administrativas/de mantenimiento (ej. "Revisar duplicados") —
+// deben estar en ALLOWED_EMAILS también, esto solo restringe un subconjunto más chico dentro de
+// esa lista, no reemplaza el control de acceso general del panel.
+const ADMIN_EMAILS = [
+  "wilson.rojas@sleppetorca.gob.cl",
+  "wilson.rojasabarca@gmail.com",
+];
+
 const CARGA_COLLECTION = 'sep_carga_rbd';
 const META_DOC_ID = '_meta';
 
@@ -2549,6 +2561,7 @@ function showApp(user) {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('user-display-name').textContent = getNameFromEmail(user.email);
+  document.getElementById('limpiarDuplicadosBtn').classList.toggle('hidden', !ADMIN_EMAILS.includes(user.email));
   startFirestoreSync();
 }
 

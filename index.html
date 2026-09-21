@@ -55,7 +55,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   header.top h1 { font-size:22px; margin:0 0 4px; }
 
   .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:8px; margin-bottom:14px; }
-  .kpi-section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary); margin:0 0 6px 2px; }
+  .kpi-row.kpi-row-collapsed { display:none; }
+  .kpi-section-label { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary); margin:0 0 6px 2px; background:none; border:none; padding:2px; cursor:pointer; font-family:inherit; }
+  .kpi-section-label:hover { color:var(--text-primary); }
+  .kpi-toggle-icon { display:inline-block; font-size:10px; width:10px; transition:transform .15s; }
+  .kpi-section-label.kpi-section-collapsed .kpi-toggle-icon { transform:rotate(-90deg); }
   .kpi-row-real .kpi-card { border-left:3px solid #0ca35c; }
   .kpi-row-proy .kpi-card { border-left:3px solid #e08a00; }
   .kpi-card { background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:9px 11px; min-width:0; }
@@ -439,13 +443,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <div id="tab-panel" class="tab-content">
 
-  <div class="kpi-section-label">Real (ejecutado)</div>
+  <button type="button" class="kpi-section-label" data-section="real" onclick="toggleKpiSection('real')"><span class="kpi-toggle-icon">▾</span> Real (ejecutado)</button>
   <div class="kpi-row kpi-row-real" id="kpiRowReal"></div>
 
-  <div class="kpi-section-label">Proyectado</div>
+  <button type="button" class="kpi-section-label" data-section="proy" onclick="toggleKpiSection('proy')"><span class="kpi-toggle-icon">▾</span> Proyectado</button>
   <div class="kpi-row kpi-row-proy" id="kpiRowProy"></div>
 
-  <div class="kpi-section-label">Total (Real + Proyectado)</div>
+  <button type="button" class="kpi-section-label" data-section="total" onclick="toggleKpiSection('total')"><span class="kpi-toggle-icon">▾</span> Total (Real + Proyectado)</button>
   <div class="kpi-row" id="kpiRow"></div>
 
   <section>
@@ -1066,41 +1070,40 @@ function ingresoItemSumHasta(ing, itemName) {
   return it ? sumHastaMes(it.meses, corteMesIdx) : 0;
 }
 
-// Desglosa el mismo resumen de computeTotales() en su parte Real y su parte Proyectada, para
-// las dos primeras filas de tarjetas KPI. Ingreso SEP y Carrera Docente usan el corte fijo
-// DATA.n_meses (la fuente real de Mineduc); Remuneraciones usa el corte propio de cada RBD
-// (rem.real_hasta_mes); Bienes y Servicios no depende de ningún mes — las compras siempre son
-// reales y la fila "Proyección" siempre es proyectada, así que solo hay que sumarlas aparte.
-function computeTotalesRealProy() {
-  const regs = DATA.registros;
+// Desglosa el Ingreso/Carrera Docente/Remuneraciones/B&S de UN RBD en su parte Real y su parte
+// Proyectada — mismo criterio que el coloreado del detalle: Ingreso y Carrera Docente usan el
+// corte fijo DATA.n_meses (la fuente real de Mineduc); Remuneraciones usa el corte propio del
+// RBD (rem.real_hasta_mes); Bienes y Servicios no depende de ningún mes — las compras siempre
+// son reales y la fila "Proyección" siempre es proyectada. Lo usan tanto las tarjetas KPI del
+// resumen general (sumando todos los RBD) como el PDF individual de un RBD.
+function computeRealProyParaRbd(r) {
+  const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
+  const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
+  const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
+  const bysProyEntry = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
+
   let ingresoReal = 0, ingresoProy = 0, carreraReal = 0, carreraProy = 0, remReal = 0, remProy = 0, bysReal = 0, bysProy = 0;
-  regs.forEach(r => {
-    const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
-    const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
-    const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
-    const bysProyEntry = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
 
-    ['Ingreso SEP Preferente', 'Ingreso SEP Prioritario'].forEach(nombre => {
-      const it = ing ? ing.items.find(x => x.item === nombre) : null;
-      if (!it) return;
-      const { real, proy } = sumRealProyHastaMes(it.meses, DATA.n_meses, corteMesIdx);
-      ingresoReal += real; ingresoProy += proy;
-    });
-    const itCarrera = ing ? ing.items.find(x => x.item === 'Carrera Docente') : null;
-    if (itCarrera) {
-      const { real, proy } = sumRealProyHastaMes(itCarrera.meses, DATA.n_meses, corteMesIdx);
-      carreraReal += real; carreraProy += proy;
-    }
-
-    if (rem) {
-      const hastaReal = rem.real_hasta_mes || DATA.n_meses;
-      const { real, proy } = sumRealProyHastaMes(rem.meses, hastaReal, corteMesIdx);
-      remReal += real; remProy += proy;
-    }
-
-    if (ag) ag.items.forEach(it => { bysReal += sumHastaMes(it.meses, corteMesIdx); });
-    if (bysProyEntry) bysProy += sumHastaMes(bysProyEntry.meses, corteMesIdx);
+  ['Ingreso SEP Preferente', 'Ingreso SEP Prioritario'].forEach(nombre => {
+    const it = ing ? ing.items.find(x => x.item === nombre) : null;
+    if (!it) return;
+    const { real, proy } = sumRealProyHastaMes(it.meses, DATA.n_meses, corteMesIdx);
+    ingresoReal += real; ingresoProy += proy;
   });
+  const itCarrera = ing ? ing.items.find(x => x.item === 'Carrera Docente') : null;
+  if (itCarrera) {
+    const { real, proy } = sumRealProyHastaMes(itCarrera.meses, DATA.n_meses, corteMesIdx);
+    carreraReal += real; carreraProy += proy;
+  }
+
+  if (rem) {
+    const hastaReal = rem.real_hasta_mes || DATA.n_meses;
+    const { real, proy } = sumRealProyHastaMes(rem.meses, hastaReal, corteMesIdx);
+    remReal += real; remProy += proy;
+  }
+
+  if (ag) ag.items.forEach(it => { bysReal += sumHastaMes(it.meses, corteMesIdx); });
+  if (bysProyEntry) bysProy += sumHastaMes(bysProyEntry.meses, corteMesIdx);
 
   return {
     ingresoReal: Math.round(ingresoReal), ingresoProy: Math.round(ingresoProy),
@@ -1110,6 +1113,17 @@ function computeTotalesRealProy() {
     saldoReal: Math.round(ingresoReal + carreraReal - remReal - bysReal),
     saldoProy: Math.round(ingresoProy + carreraProy - remProy - bysProy),
   };
+}
+
+// Suma computeRealProyParaRbd() de todos los RBD, para las dos primeras filas de tarjetas KPI
+// del resumen general.
+function computeTotalesRealProy() {
+  const acc = { ingresoReal:0, ingresoProy:0, carreraReal:0, carreraProy:0, remReal:0, remProy:0, bysReal:0, bysProy:0, saldoReal:0, saldoProy:0 };
+  DATA.registros.forEach(r => {
+    const rp = computeRealProyParaRbd(r);
+    Object.keys(acc).forEach(k => { acc[k] += rp[k]; });
+  });
+  return acc;
 }
 
 function kpiCards(t) {
@@ -1146,14 +1160,11 @@ function kpiCardsProy(rp) {
   ];
 }
 
+function kpiCardsHTML(cards) {
+  return cards.map(k => `<div class="kpi-card${k.critical ? ' critical' : ''}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div></div>`).join('');
+}
 function renderKpiCardsInto(container, cards) {
-  container.innerHTML = '';
-  cards.forEach(k => {
-    const div = document.createElement('div');
-    div.className = 'kpi-card' + (k.critical ? ' critical' : '');
-    div.innerHTML = `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div>`;
-    container.appendChild(div);
-  });
+  container.innerHTML = kpiCardsHTML(cards);
 }
 
 function renderKpis() {
@@ -1170,7 +1181,38 @@ function renderKpis() {
   const rp = computeTotalesRealProy();
   renderKpiCardsInto(kpiRowReal, kpiCardsReal(rp));
   renderKpiCardsInto(kpiRowProy, kpiCardsProy(rp));
+  applyAllKpiSectionStates();
 }
+
+// Cada una de las 3 filas de KPI (Real / Proyectado / Total) se puede colapsar de forma
+// independiente — la fila de arriba se veía "rara" y le quitaba espacio a "Estado por RBD" con
+// las 3 siempre abiertas. El estado se guarda en localStorage de este navegador (una
+// conveniencia por-persona, no compartida con el resto del equipo). Por defecto, Real y
+// Proyectado arrancan colapsadas y Total abierta — la vista que ya existía antes de agregarlas.
+const KPI_ROW_IDS = { real: 'kpiRowReal', proy: 'kpiRowProy', total: 'kpiRow' };
+function isKpiSectionCollapsed(key) {
+  try {
+    const saved = localStorage.getItem('kpiSeccionColapsada_' + key);
+    if (saved !== null) return saved === '1';
+  } catch (err) { /* localStorage no disponible (modo privado, etc.) — usar el valor por defecto */ }
+  return key !== 'total';
+}
+function applyKpiSectionState(key) {
+  const row = document.getElementById(KPI_ROW_IDS[key]);
+  const label = document.querySelector(`.kpi-section-label[data-section="${key}"]`);
+  const collapsed = isKpiSectionCollapsed(key);
+  if (row) row.classList.toggle('kpi-row-collapsed', collapsed);
+  if (label) label.classList.toggle('kpi-section-collapsed', collapsed);
+}
+function applyAllKpiSectionStates() {
+  Object.keys(KPI_ROW_IDS).forEach(applyKpiSectionState);
+}
+function toggleKpiSection(key) {
+  const collapsedAhora = isKpiSectionCollapsed(key);
+  try { localStorage.setItem('kpiSeccionColapsada_' + key, collapsedAhora ? '0' : '1'); } catch (err) { /* sin persistencia, igual cambia por esta carga de página */ }
+  applyKpiSectionState(key);
+}
+window.toggleKpiSection = toggleKpiSection;
 
 // value ya viene como % de SU propia meta (100% = gastó justo la meta). El track va teñido
 // con un tono claro del mismo color de la barra (no un gris neutro) para que el estado se lea
@@ -2344,12 +2386,18 @@ function exportRbdExcel(rbd) {
 function buildSingleRbdPrintHTML(rbd) {
   const r = DATA.registros.find(x => x.rbd === rbd);
   if (!r) return '<p>RBD no encontrado.</p>';
+  const rp = computeRealProyParaRbd(r);
   return `
     <div class="detalle-header" style="margin-bottom:14px;">
       <strong style="font-size:16px;">Monitor SEP 70/30 — Análisis individual RBD ${r.rbd}</strong><br>
       <span>${r.nombre}</span><br>
       <span class="detalle-sub">Regla 70% remuneraciones / 30% bienes y servicios sobre el Ingreso SEP anual — SLEP Petorca</span>
     </div>
+    <div class="kpi-section-label">Real (ejecutado)</div>
+    <div class="kpi-row kpi-row-real" style="margin-bottom:10px;">${kpiCardsHTML(kpiCardsReal(rp))}</div>
+    <div class="kpi-section-label">Proyectado</div>
+    <div class="kpi-row kpi-row-proy" style="margin-bottom:10px;">${kpiCardsHTML(kpiCardsProy(rp))}</div>
+    <div class="kpi-section-label">Total (Real + Proyectado)</div>
     <table class="data-table" style="margin-bottom:10px;">
       <thead><tr>
         <th class="num">Ingreso SEP anual</th><th class="num">Carrera Docente</th><th class="num">Gasto Remuneraciones</th>

@@ -740,7 +740,9 @@ const N_RBD_CON_MARCO = DATA.registros.filter(r => !r.sin_marco_sep).length;
 const N_RBD_SIN_MARCO = DATA.registros.length - N_RBD_CON_MARCO;
 // Corte real/proyectado: puramente visual (colorea columnas de mes en las tablas editables),
 // no cambia ningún cálculo. El usuario lo elige con el selector "Corte real / proyectado: hasta".
-let corteMesIdx = DATA.n_meses;
+// Por defecto se abre en Diciembre (año completo) en vez del último mes con datos reales
+// (DATA.n_meses) — el usuario puede igual elegir otro mes desde el selector.
+let corteMesIdx = MESES_CARGA.length;
 function mesEsReal(idx1based) { return idx1based <= corteMesIdx; }
 
 // --- Ingreso SEP dividido en 3 (detalle editable) ---

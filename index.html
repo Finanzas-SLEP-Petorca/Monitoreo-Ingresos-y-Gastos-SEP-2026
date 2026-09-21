@@ -182,6 +182,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .compra-del-btn:hover, .compra-edit-btn:hover, .compra-dup-btn:hover { opacity:.6; }
   .detalle-sin-compras { color:var(--text-muted); font-style:italic; text-align:left !important; padding:10px 8px !important; }
 
+  .bysproy-add-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  .bysproy-add-row select.bysproy-add-select { width:auto; min-width:280px; flex:0 1 auto; }
+  .add-bysproy-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .add-bysproy-btn:hover { opacity:.88; }
+  .bysproy-del-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
+  .bysproy-del-btn:hover { opacity:.6; }
+
   td.col-acciones, th.col-acciones { white-space:nowrap; }
   .row-action-btn { padding:3px 6px; font-size:11px; border-radius:4px; border:1px solid var(--baseline); background:#fff; color:var(--text-secondary); cursor:pointer; margin-right:3px; line-height:1; }
   .row-action-btn:hover { background:var(--gridline); }
@@ -219,7 +226,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media print {
     @page { size: landscape; margin: 10mm 8mm; }
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
-    .table-controls, .corte-control, .legend-row, footer, .expand-cell, .compra-form-grid, .col-acciones { display:none !important; }
+    .table-controls, .corte-control, .legend-row, footer, .expand-cell, .compra-form-grid, .bysproy-add-row, .col-acciones { display:none !important; }
     body, .wrap, .page-plane { background:#fff !important; }
     .wrap { max-width:none !important; padding:10px !important; }
     .table-scroll { max-height:none !important; overflow:visible !important; border:none !important; }
@@ -937,9 +944,10 @@ function seedIngresoItems() {
   });
 }
 
-// REMUNERACIONES: una fila por RBD (sin ítem). bucket: 'rem_por_rbd', o 'bys_proyeccion_por_rbd'
-// para la proyección mensual de Bienes y Servicios (Ingreso usa ensureIngresoAgregado/
-// ensureIngresoItem más arriba, porque tiene 3 filas por RBD).
+// REMUNERACIONES: una fila por RBD (sin ítem). bucket: 'rem_por_rbd' (Ingreso usa
+// ensureIngresoAgregado/ensureIngresoItem más arriba, porque tiene 3 filas por RBD; Bienes y
+// Servicios (Proyección) usa ensureBysProyeccion/ensureBysProyeccionItem más abajo, porque
+// también se divide en varios ítems elegidos de la misma lista de cuentas que las compras).
 function ensureSimple(rbd, bucket) {
   if (!CARGA_MANUAL[bucket]) CARGA_MANUAL[bucket] = {};
   if (!CARGA_MANUAL[bucket][rbd]) {
@@ -950,6 +958,50 @@ function ensureSimple(rbd, bucket) {
     if (bucket === 'rem_por_rbd') CARGA_MANUAL[bucket][rbd].real_hasta_mes = DATA.n_meses;
   }
   return CARGA_MANUAL[bucket][rbd];
+}
+
+// BIENES Y SERVICIOS (PROYECCIÓN): a diferencia de Remuneraciones (una sola fila por RBD), acá
+// el usuario puede agregar varios ítems por RBD, cada uno elegido de la misma lista oficial de
+// cuentas (CUENTAS_SEP) que usa el "Registro de compras" — así la proyección se puede desglosar
+// igual que el gasto real, en vez de ser un solo monto mensual sin clasificar. `meses`/`total` en
+// el nivel de arriba son SIEMPRE un agregado derivado (recomputeBysProyeccionAgregado) de la suma
+// de todos sus ítems — nunca se editan directo — para que el resto del código (KPIs, % Ejecución,
+// Reportes) siga leyendo "el total de B&S proyectado de este RBD" sin tener que saber que ahora
+// se compone de varios ítems.
+function ensureBysProyeccion(rbd) {
+  if (!CARGA_MANUAL.bys_proyeccion_por_rbd) CARGA_MANUAL.bys_proyeccion_por_rbd = {};
+  if (!CARGA_MANUAL.bys_proyeccion_por_rbd[rbd]) {
+    const reg = DATA.registros.find(r => r.rbd === rbd);
+    const meses = {};
+    MESES_CARGA.forEach(m => meses[m] = 0);
+    CARGA_MANUAL.bys_proyeccion_por_rbd[rbd] = { rbd, nombre: reg ? reg.nombre : rbd, items: [], meses, total: 0 };
+  }
+  return CARGA_MANUAL.bys_proyeccion_por_rbd[rbd];
+}
+function ensureBysProyeccionItem(bp, codigo) {
+  let it = bp.items.find(x => x.codigo === codigo);
+  if (!it) {
+    const meses = {};
+    MESES_CARGA.forEach(m => meses[m] = 0);
+    it = { codigo, meses, total: 0 };
+    bp.items.push(it);
+  }
+  return it;
+}
+function recomputeBysProyeccionAgregado(bp) {
+  const meses = {};
+  MESES_CARGA.forEach(m => meses[m] = 0);
+  bp.items.forEach(it => { MESES_CARGA.forEach(m => { meses[m] += it.meses[m] || 0; }); });
+  bp.meses = meses;
+  bp.total = Math.round(MESES_CARGA.reduce((s, m) => s + meses[m], 0));
+}
+// El nombre del ítem no se guarda en Firestore (igual que las compras): se deriva siempre del
+// código de cuenta, salvo el código especial "_LEGACY_" que representa el monto único, sin
+// desglosar por ítem, que ya existía antes de esta función (ver migración en aplicarSnapshot).
+function nombreItemBysProyeccion(codigo) {
+  if (codigo === '_LEGACY_') return 'Proyección general (dato anterior sin ítem asignado)';
+  const cat = CUENTAS_SEP_BY_CODIGO[codigo];
+  return cat ? `${cat.nombre} (Subt.${cat.subt})` : codigo;
 }
 
 function recomputeRegistro(r) {
@@ -1264,15 +1316,25 @@ function onCeldaInput(input) {
     totalCell = document.getElementById(`ingresoitemtotal-${rbd}-${ITEMS_INGRESO.indexOf(item)}`);
     if (totalCell) totalCell.textContent = fmtCLP(it.total);
     scheduleRbdSave(rbd, { nombre: ing.nombre, ingreso_items: { [item]: { item, meses: { [mes]: val }, total: it.total } } });
+  } else if (modo === 'bys_proy') {
+    const codigo = input.dataset.codigo;
+    const bp = ensureBysProyeccion(rbd);
+    const it = ensureBysProyeccionItem(bp, codigo);
+    it.meses[mes] = val;
+    it.total = MESES_CARGA.reduce((s, m) => s + (it.meses[m] || 0), 0);
+    recomputeBysProyeccionAgregado(bp);
+    totalCell = document.getElementById(`bysproyitemtotal-${rbd}-${codigo}`);
+    if (totalCell) totalCell.textContent = fmtCLP(it.total);
+    const totalGeneralCell = document.getElementById(`bysproytotal-${rbd}`);
+    if (totalGeneralCell) totalGeneralCell.textContent = fmtCLP(bp.total);
+    scheduleRbdSave(rbd, { nombre: bp.nombre, bys_proyeccion: { items: { [codigo]: { meses: { [mes]: val }, total: it.total } } } });
   } else {
-    const bucket = modo === 'bys_proy' ? 'bys_proyeccion_por_rbd' : 'rem_por_rbd';
-    const saveKey = modo === 'bys_proy' ? 'bys_proyeccion' : 'rem';
-    const simple = ensureSimple(rbd, bucket);
+    const simple = ensureSimple(rbd, 'rem_por_rbd');
     simple.meses[mes] = val;
     simple.total = MESES_CARGA.reduce((s, m) => s + (simple.meses[m] || 0), 0);
     totalCell = document.getElementById(`simpletotal-${rbd}-${modo}`);
     if (totalCell) totalCell.textContent = fmtCLP(simple.total);
-    scheduleRbdSave(rbd, { nombre: simple.nombre, [saveKey]: { meses: { [mes]: val }, total: simple.total } });
+    scheduleRbdSave(rbd, { nombre: simple.nombre, rem: { meses: { [mes]: val }, total: simple.total } });
   }
   const r = DATA.registros.find(x => x.rbd === rbd);
   if (r) { recomputeRegistro(r); updateRowDOM(rbd); }
@@ -1361,6 +1423,40 @@ function buildDetalleHTML(rbd, printMode) {
       <thead><tr><th>${label}</th>${mesHeaderCellsHTML(modo, rbd)}<th class="num">Total</th></tr></thead>
       <tbody><tr><td class="item-label">${label}</td>${cells}<td class="num item-total" id="simpletotal-${rbd}-${modo}">${fmtCLP(total)}</td></tr></tbody>
     </table>`;
+  }
+  // Bienes y Servicios (Proyección): a diferencia de Remuneraciones (filaSimple, una sola fila),
+  // acá se puede agregar cualquier cantidad de ítems por RBD, cada uno elegido de la misma lista
+  // oficial de cuentas (CUENTAS_SEP) que usa el "Registro de compras" — así el usuario puede
+  // dividir la proyección igual que ya divide el gasto real, en vez de cargar un solo monto sin
+  // clasificar. Cada fila se puede quitar por separado (🗑); el total de abajo es la suma de
+  // todos los ítems agregados.
+  function bysProyeccionSectionHTML() {
+    const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[rbd] : null;
+    const itemsList = bp ? bp.items : [];
+    const total = bp ? bp.total : 0;
+    const filas = itemsList.map(it => {
+      const cells = MESES_CARGA.map(m => celdaInputHTML(rbd, 'bys_proy', m, it.meses[m] || 0, `data-codigo="${it.codigo}"`, printMode)).join('');
+      const delCell = printMode ? '' : `<td class="compra-acciones-cell" style="width:32px;"><button type="button" class="bysproy-del-btn" data-rbd="${rbd}" data-codigo="${it.codigo}" title="Quitar ítem de la proyección">🗑</button></td>`;
+      return `<tr><td class="item-label">${nombreItemBysProyeccion(it.codigo)}</td>${cells}<td class="num item-total" id="bysproyitemtotal-${rbd}-${it.codigo}">${fmtCLP(it.total)}</td>${delCell}</tr>`;
+    }).join('');
+    const filasHTML = filas || `<tr><td colspan="${printMode ? 14 : 15}" class="detalle-sin-compras">Sin ítems de proyección todavía${printMode ? '' : ' — elige uno de la lista de abajo y agrégalo'}.</td></tr>`;
+    const totalRow = itemsList.length
+      ? `<tr><td class="item-label"><strong>Total Bienes y Servicios (Proyección)</strong></td>${MESES_CARGA.map(() => '<td></td>').join('')}<td class="num item-total" id="bysproytotal-${rbd}"><strong>${fmtCLP(total)}</strong></td>${printMode ? '' : '<td></td>'}</tr>`
+      : '';
+    const yaAgregados = new Set(itemsList.map(it => it.codigo));
+    const addRowHTML = printMode ? '' : `
+      <div class="bysproy-add-row">
+        <select class="compra-input bysproy-add-select" id="bysproyAddSelect-${rbd}">
+          <option value="">+ Elegir ítem de proyección para agregar…</option>
+          <optgroup label="Subt. 22 — Bienes y Servicios de Consumo">${CUENTAS_SEP_22.filter(c => !yaAgregados.has(c.codigo)).map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('')}</optgroup>
+          <optgroup label="Subt. 29 — Adquisición de Activos No Financieros">${CUENTAS_SEP_29.filter(c => !yaAgregados.has(c.codigo)).map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('')}</optgroup>
+        </select>
+        <button type="button" class="add-bysproy-btn" data-rbd="${rbd}">+ Agregar ítem</button>
+      </div>`;
+    return `<table class="detalle-table">${DETALLE_COLGROUP}
+      <thead><tr><th>Bienes y Servicios (Proyección) — por ítem</th>${mesHeaderCellsHTML('bys_proy', rbd)}<th class="num">Total</th>${printMode ? '' : '<th></th>'}</tr></thead>
+      <tbody>${filasHTML}${totalRow}</tbody>
+    </table>${addRowHTML}`;
   }
   function filaIngresoItems() {
     const ing = CARGA_MANUAL.ingreso_items_por_rbd[rbd];
@@ -1467,10 +1563,10 @@ function buildDetalleHTML(rbd, printMode) {
       <thead><tr><th>Ítem (Subt. 29)</th>${mesHeaderCellsHTML('item', rbd)}<th class="num">Total</th></tr></thead>
       <tbody>${filaItems(ITEMS_29, '29')}</tbody>
     </table>
-    <div style="margin-top:8px;">${filaSimple('bys_proyeccion_por_rbd', 'bys_proy', 'Bienes y Servicios (Proyección)')}</div>
+    <div style="margin-top:8px;">${bysProyeccionSectionHTML()}</div>
     ${comprasSectionHTML()}
     </div>
-    <div class="detalle-note">Ingreso SEP se divide en 3 filas — Preferente y Prioritario traen enero a julio reales (Liquidación Web Subvenciones Mineduc, por RBD) y agosto a diciembre parten como proyección editable (promedio de esos 7 meses); Carrera Docente parte en $0 y la completas tú mes a mes. Carrera Docente es de uso exclusivo en remuneraciones, así que se suma completa a la meta de remuneraciones (no al 30% de B&S). Remuneraciones parte en $0 en todos los meses — cárgala tú mes a mes, y el selector "reales hasta" de esa fila marca desde qué mes son solo una proyección tuya (no afecta ningún cálculo, es solo para que se vea claro). El total de "Preferente"+"Prioritario" alimenta "Ingreso SEP anual". Bienes y Servicios (Gasto B&S) = compras reales (Subt.22+Subt.29, siempre reales, se cargan como "Registro de compras" más abajo) + "Bienes y Servicios (Proyección)": una fila mensual editable, siempre proyectada, que se SUMA al total de compras de cada mes (no lo reemplaza) — sirve para estimar gasto de meses que todavía no tienen compras documentadas.</div>
+    <div class="detalle-note">Ingreso SEP se divide en 3 filas — Preferente y Prioritario traen enero a julio reales (Liquidación Web Subvenciones Mineduc, por RBD) y agosto a diciembre parten como proyección editable (promedio de esos 7 meses); Carrera Docente parte en $0 y la completas tú mes a mes. Carrera Docente es de uso exclusivo en remuneraciones, así que se suma completa a la meta de remuneraciones (no al 30% de B&S). Remuneraciones parte en $0 en todos los meses — cárgala tú mes a mes, y el selector "reales hasta" de esa fila marca desde qué mes son solo una proyección tuya (no afecta ningún cálculo, es solo para que se vea claro). El total de "Preferente"+"Prioritario" alimenta "Ingreso SEP anual". Bienes y Servicios (Gasto B&S) = compras reales (Subt.22+Subt.29, siempre reales, se cargan como "Registro de compras" más abajo) + "Bienes y Servicios (Proyección)": puedes agregar cualquier cantidad de ítems (elegidos de la misma lista de cuentas que las compras) con su propia proyección mensual, siempre proyectada, que se SUMA al total de compras de cada mes (no lo reemplaza) — sirve para estimar gasto de meses que todavía no tienen compras documentadas, ya clasificado por ítem.</div>
   </div>`;
 }
 
@@ -1644,6 +1740,45 @@ async function eliminarCompra(rbd, compraId) {
   }
 }
 
+// --- Bienes y Servicios (Proyección) por ítem: agregar/quitar filas del desglose. A
+// diferencia de una compra (que exige código + fecha + monto para agregarse), un ítem de
+// proyección se puede agregar en $0 y completarse después mes a mes — por eso se guarda de
+// inmediato (flushRbdSaveNow) apenas se agrega, para que no se pierda si llega una
+// actualización en tiempo real de otro RBD antes de que el usuario alcance a escribir un monto. ---
+function agregarBysProyeccionItem(rbd) {
+  const select = document.getElementById(`bysproyAddSelect-${rbd}`);
+  if (!select || !select.value) { alert('Elige un ítem de la lista antes de agregar.'); return; }
+  const codigo = select.value;
+  const bp = ensureBysProyeccion(rbd);
+  const it = ensureBysProyeccionItem(bp, codigo);
+  recomputeBysProyeccionAgregado(bp);
+  const r = DATA.registros.find(x => x.rbd === rbd);
+  if (r) { recomputeRegistro(r); updateRowDOM(rbd); }
+  if (modalRbdAbierto === rbd) renderModalContenido();
+  scheduleRbdSave(rbd, { nombre: bp.nombre, bys_proyeccion: { items: { [codigo]: { meses: it.meses, total: it.total } } } });
+  flushRbdSaveNow(rbd);
+}
+async function eliminarBysProyeccionItem(rbd, codigo) {
+  if (!confirm('¿Quitar este ítem de la proyección? No se puede deshacer.')) return;
+  flushRbdSaveNow(rbd);
+  const bp = ensureBysProyeccion(rbd);
+  bp.items = bp.items.filter(x => x.codigo !== codigo);
+  recomputeBysProyeccionAgregado(bp);
+  const r = DATA.registros.find(x => x.rbd === rbd);
+  if (r) { recomputeRegistro(r); updateRowDOM(rbd); }
+  if (modalRbdAbierto === rbd) renderModalContenido();
+  if (!currentUser) return;
+  try {
+    await setDoc(doc(db, CARGA_COLLECTION, rbd), {
+      bys_proyeccion: { items: { [codigo]: deleteField() } },
+      lastModifiedBy: currentUser.email,
+      lastModifiedAt: serverTimestamp(),
+    }, { merge: true });
+  } catch (err) {
+    alert('No se pudo quitar el ítem para el resto del equipo: ' + err.message);
+  }
+}
+
 // --- Limpieza puntual del bug de importComprasSheet corregido en el PR que trata el 0 de una
 // celda ID vacía como si fuera un ID real: bajo el código viejo, todas las filas nuevas de un
 // mismo RBD colisionaban en la clave literal "0" y se pisaban entre sí, así que sobrevivía una
@@ -1774,6 +1909,10 @@ modalBodyEl.addEventListener('click', (e) => {
   if (dupBtn) { duplicarCompra(dupBtn.getAttribute('data-rbd'), dupBtn.getAttribute('data-compra-id')); return; }
   const delBtn = e.target.closest('.compra-del-btn');
   if (delBtn) { eliminarCompra(delBtn.getAttribute('data-rbd'), delBtn.getAttribute('data-compra-id')); return; }
+  const addBysProyBtn = e.target.closest('.add-bysproy-btn');
+  if (addBysProyBtn) { agregarBysProyeccionItem(addBysProyBtn.getAttribute('data-rbd')); return; }
+  const delBysProyBtn = e.target.closest('.bysproy-del-btn');
+  if (delBysProyBtn) { eliminarBysProyeccionItem(delBysProyBtn.getAttribute('data-rbd'), delBysProyBtn.getAttribute('data-codigo')); return; }
 });
 modalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
@@ -2250,6 +2389,7 @@ document.getElementById('downloadCargaBtn').addEventListener('click', () => {
     ingreso_items_por_rbd: CARGA_MANUAL.ingreso_items_por_rbd,
     rem_por_rbd: CARGA_MANUAL.rem_por_rbd,
     compras_por_rbd: CARGA_MANUAL.compras_por_rbd,
+    bys_proyeccion_por_rbd: CARGA_MANUAL.bys_proyeccion_por_rbd,
     items_subt22: ITEMS_22,
     items_subt29: ITEMS_29,
   };
@@ -2348,6 +2488,23 @@ function sheetIngresoItemsAOA(onlyRbd) {
   return rows;
 }
 
+// BYS_PROYECCION: mismo formato que SUBT22/29 (Codigo + Item + 12 meses), pero solo exporta los
+// ítems que el usuario ya agregó por RBD (con ~100 códigos oficiales posibles entre Subt.22 y
+// 29, exportar todos siempre sería una pared de filas en $0, y a diferencia de esas dos hojas,
+// acá el usuario sí puede agregar/quitar ítems, así que no hace falta mostrar los que no aplican).
+function sheetBysProyeccionAOA(onlyRbd) {
+  const headers = ['RBD', 'Establecimiento', 'Codigo', 'Item', ...MESES_CARGA_TITLE, 'Total Año'];
+  const rows = [headers];
+  registrosPara(onlyRbd).forEach(r => {
+    const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
+    (bp ? bp.items : []).forEach(it => {
+      const vals = MESES_CARGA.map(m => Math.round(it.meses[m] || 0));
+      rows.push([Number(r.rbd), r.nombre, it.codigo, nombreItemBysProyeccion(it.codigo), ...vals, Math.round(it.total)]);
+    });
+  });
+  return rows;
+}
+
 // --- COMPRAS: hoja de carga masiva — misma fuente de verdad que el "Registro de compras" del
 // detalle de cada RBD (una fila por compra, con su ID). La columna ID permite reimportar el
 // mismo Excel tras editarlo/agregar filas sin duplicar las compras ya cargadas: fila con ID
@@ -2371,7 +2528,7 @@ function buildCargaWorkbook(onlyRbd) {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetItemsAOA('22', CUENTAS_SEP_22, onlyRbd)), 'SUBT22');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetItemsAOA('29', CUENTAS_SEP_29, onlyRbd)), 'SUBT29');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetComprasAOA(onlyRbd)), 'COMPRAS');
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetSimpleAOA('bys_proyeccion_por_rbd', onlyRbd)), 'BYS_PROYECCION');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysProyeccionAOA(onlyRbd)), 'BYS_PROYECCION');
   return wb;
 }
 
@@ -2487,7 +2644,7 @@ function rowsFromSheet(ws) {
 
 function importSimpleSheet(ws, bucket) {
   if (!CARGA_MANUAL[bucket]) CARGA_MANUAL[bucket] = {};
-  const saveKey = bucket === 'bys_proyeccion_por_rbd' ? 'bys_proyeccion' : 'rem';
+  const saveKey = 'rem';
   const rows = rowsFromSheet(ws);
   let n = 0;
   for (let i = 1; i < rows.length; i++) {
@@ -2528,6 +2685,38 @@ function importIngresoItemsSheet(ws) {
     scheduleRbdSave(rbd, { nombre, ingreso_items: { [item]: { item, meses, total: it.total } } });
     n++;
   }
+  return n;
+}
+
+// BYS_PROYECCION: mismo formato Codigo+Item que SUBT22/29 (ver sheetBysProyeccionAOA). Una fila
+// con un código de cuenta que no exista en CUENTAS_SEP_BY_CODIGO se ignora (igual que
+// importComprasSheet) — no hay forma segura de adivinar a qué ítem correspondía.
+function importBysProyeccionSheet(ws) {
+  const rows = rowsFromSheet(ws);
+  const porRbd = new Set();
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
+    const rbd = String(Math.trunc(Number(row[0])));
+    const nombre = row[1] || rbd;
+    const codigoRaw = row[2];
+    const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
+    if (!CUENTAS_SEP_BY_CODIGO[codigo]) continue;
+    const meses = {};
+    let total = 0;
+    MESES_CARGA.forEach((m, mi) => { const v = Number(row[4 + mi]) || 0; meses[m] = v; total += v; });
+    const bp = ensureBysProyeccion(rbd);
+    bp.nombre = nombre;
+    const it = ensureBysProyeccionItem(bp, codigo);
+    it.meses = meses;
+    it.total = Math.round(total);
+    recomputeBysProyeccionAgregado(bp);
+    scheduleRbdSave(rbd, { nombre, bys_proyeccion: { items: { [codigo]: { meses, total: it.total } } } });
+    porRbd.add(rbd);
+    n++;
+  }
+  if (modalRbdAbierto && porRbd.has(modalRbdAbierto)) renderModalContenido();
   return n;
 }
 
@@ -2606,7 +2795,7 @@ function importWorkbook(wb) {
   if (wb.Sheets['INGRESO']) resumen.push('INGRESO: ' + importIngresoItemsSheet(wb.Sheets['INGRESO']) + ' filas');
   if (wb.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importSimpleSheet(wb.Sheets['REMUNERACIONES'], 'rem_por_rbd') + ' filas');
   if (wb.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importComprasSheet(wb.Sheets['COMPRAS']) + ' filas');
-  if (wb.Sheets['BYS_PROYECCION']) resumen.push('BYS_PROYECCION: ' + importSimpleSheet(wb.Sheets['BYS_PROYECCION'], 'bys_proyeccion_por_rbd') + ' filas');
+  if (wb.Sheets['BYS_PROYECCION']) resumen.push('BYS_PROYECCION: ' + importBysProyeccionSheet(wb.Sheets['BYS_PROYECCION']) + ' filas');
   // Subt.22/29 ya no se importan como hojas de montos mensuales — ahora se cargan como
   // compras (hoja COMPRAS, o el "Registro de compras" dentro del detalle de cada RBD), con su
   // propio código de cuenta y fecha de documento, así que una hoja "SUBT22"/"SUBT29" de un
@@ -2914,7 +3103,7 @@ function ensureRbdsFaltantesEnFirestore(presentIds) {
       nombre: r.nombre,
       ingreso_items: {},
       rem: { meses: {}, total: 0, real_hasta_mes: DATA.n_meses },
-      bys_proyeccion: { meses: {}, total: 0 },
+      bys_proyeccion: { items: {} },
       compras: {},
       lastModifiedBy: currentUser.email,
       lastModifiedAt: serverTimestamp(),
@@ -2960,10 +3149,26 @@ function aplicarSnapshot(snapshot) {
     const remTotal = MESES_CARGA.reduce((s, m) => s + remMeses[m], 0);
     nuevoRem[rbd] = { rbd, nombre, meses: remMeses, total: remTotal, real_hasta_mes: data.rem?.real_hasta_mes || DATA.n_meses };
 
-    const bysProyMeses = {};
-    MESES_CARGA.forEach(m => bysProyMeses[m] = (data.bys_proyeccion?.meses && data.bys_proyeccion.meses[m]) || 0);
-    const bysProyTotal = MESES_CARGA.reduce((s, m) => s + bysProyMeses[m], 0);
-    nuevoBysProyeccion[rbd] = { rbd, nombre, meses: bysProyMeses, total: bysProyTotal };
+    const bysProyRaw = data.bys_proyeccion || {};
+    let bysProyItems = Object.keys(bysProyRaw.items || {}).map(codigo => {
+      const itRaw = bysProyRaw.items[codigo] || {};
+      const meses = {};
+      MESES_CARGA.forEach(m => meses[m] = (itRaw.meses && itRaw.meses[m]) || 0);
+      const total = MESES_CARGA.reduce((s, m) => s + meses[m], 0);
+      return { codigo, meses, total };
+    });
+    // Migración: documentos guardados antes de dividir la proyección por ítem traían un solo
+    // monto mensual en bys_proyeccion.meses/total (sin "items") — se conserva como un ítem
+    // "genérico" en vez de perderlo, para que el usuario lo reclasifique cuando quiera.
+    if (!bysProyItems.length && bysProyRaw.meses) {
+      const legacyMeses = {};
+      MESES_CARGA.forEach(m => legacyMeses[m] = bysProyRaw.meses[m] || 0);
+      const legacyTotal = MESES_CARGA.reduce((s, m) => s + legacyMeses[m], 0);
+      if (legacyTotal) bysProyItems = [{ codigo: '_LEGACY_', meses: legacyMeses, total: legacyTotal }];
+    }
+    const bp = { rbd, nombre, items: bysProyItems, meses: {}, total: 0 };
+    recomputeBysProyeccionAgregado(bp);
+    nuevoBysProyeccion[rbd] = bp;
 
     if (data.lastModifiedAt) {
       const t = data.lastModifiedAt.toDate ? data.lastModifiedAt.toDate() : new Date(data.lastModifiedAt);
@@ -3043,7 +3248,7 @@ async function seedFirestoreConDatosIniciales() {
       nombre: r.nombre,
       ingreso_items,
       rem: { meses: rem ? rem.meses : {}, total: rem ? rem.total : 0, real_hasta_mes: DATA.n_meses },
-      bys_proyeccion: { meses: {}, total: 0 },
+      bys_proyeccion: { items: {} },
       compras: {},
       lastModifiedBy: currentUser.email,
       lastModifiedAt: serverTimestamp(),

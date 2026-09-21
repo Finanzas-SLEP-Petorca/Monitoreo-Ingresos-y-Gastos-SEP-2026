@@ -447,10 +447,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <option value="superavit">Superávit</option>
         </select>
         <button id="downloadBtn" type="button">⬇ CSV</button>
-        <button id="downloadExcelBtn" type="button" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel</button>
+        <button id="downloadExcelBtn" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar con &quot;Importar Excel&quot;">⬇ Excel</button>
         <button id="importExcelBtn" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
         <input type="file" id="importExcelInput" accept=".xlsx" style="display:none;">
         <button id="exportPdfBtn" type="button" style="background:#374151; border-color:#374151;" title="PDF general (solo el resumen, sin detalle por RBD)">🖨 Exportar PDF (general)</button>
+        <button id="downloadResumenExcelBtn" type="button" style="background:#0e7490; border-color:#0e7490;" title="Excel del resumen general (mismas columnas que la tabla y el PDF general) — respeta el filtro/búsqueda actual, sin detalle por RBD">⬇ Excel (resumen general)</button>
         <button id="downloadComprasSepBtn" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras (Subt.22/29) de todos los RBD, en el formato exacto que pide SUPEREDUC al cargar los gastos">⬇ Compras SUPEREDUC (CSV)</button>
         <button id="downloadCargaBtn" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
       </div>
@@ -1925,13 +1926,20 @@ function csvEscape(val) {
   if (/[",;\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
   return s;
 }
-document.getElementById('downloadBtn').addEventListener('click', () => {
+// Resumen general (misma tabla que se ve en pantalla, respetando el filtro/búsqueda actual):
+// una fila de encabezados + una fila por RBD filtrado. La usan tanto "⬇ CSV" como
+// "⬇ Excel (resumen general)" para no mantener dos listas de columnas por separado.
+function resumenGeneralAOA() {
   const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','% Ejec. Remuneraciones (meta = 70% SEP + Carrera Docente)','Saldo post Remuneraciones','Gasto Subt22','Gasto Subt29','Gasto B&S total','% Ejec. B&S (meta 30%)','Saldo final','% Rem. / Ingreso Total','% B&S / Ingreso Total','% Total / Ingreso Total','Estado','Alerta'];
-  const lines = [headers.map(csvEscape).join(';')];
+  const rows = [headers];
   currentFilteredRows.forEach(r => {
     const alerta = r.alerta_sep_sin_marco ? 'GASTO SEP SIN MARCO ASIGNADO' : (r.anomalia ? 'Revisar' : '');
-    lines.push([r.rbd, r.nombre, r.marco_anual_proy, r.carrera_docente_anual, r.gasto_rem_anual_proy, r.pct_ejec_rem+'%', r.saldo_rem, r.gasto_subt22, r.gasto_subt29, r.gasto_bys, r.pct_ejec_bys+'%', r.saldo_total, r.pct_rem_ing_total+'%', r.pct_bys_ing_total+'%', r.pct_ejec_total+'%', estadoLabel[r.estado], alerta].map(csvEscape).join(';'));
+    rows.push([Number(r.rbd), r.nombre, r.marco_anual_proy, r.carrera_docente_anual, r.gasto_rem_anual_proy, r.pct_ejec_rem+'%', r.saldo_rem, r.gasto_subt22, r.gasto_subt29, r.gasto_bys, r.pct_ejec_bys+'%', r.saldo_total, r.pct_rem_ing_total+'%', r.pct_bys_ing_total+'%', r.pct_ejec_total+'%', estadoLabel[r.estado], alerta]);
   });
+  return rows;
+}
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const lines = resumenGeneralAOA().map(row => row.map(csvEscape).join(';'));
   const csvContent = '﻿' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -1939,6 +1947,12 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
   a.href = url; a.download = `monitor_sep_rbd_${new Date().toISOString().slice(0,10)}.csv`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
+});
+document.getElementById('downloadResumenExcelBtn').addEventListener('click', () => {
+  if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); return; }
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumenGeneralAOA()), 'RESUMEN');
+  XLSX.writeFile(wb, `Monitor_SEP_resumen_${new Date().toISOString().slice(0,10)}.xlsx`);
 });
 
 document.getElementById('downloadCargaBtn').addEventListener('click', () => {

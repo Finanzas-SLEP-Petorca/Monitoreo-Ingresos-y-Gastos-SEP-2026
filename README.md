@@ -64,6 +64,11 @@ barra bajo el título muestra el estado general de sincronización. El botón "�
 son necesarios para que los cambios queden guardados (la importación de Excel ya no trae hojas
 SUBT22/SUBT29, esos gastos se cargan como compras).
 
+El botón "⬇ Excel" descarga la carga completa (Ingreso, Remuneraciones, Compras) lista para
+reimportar; es distinto del botón "⬇ Excel (resumen general)", que descarga en una sola hoja el
+mismo resumen que se ve en pantalla y que trae "🖨 Exportar PDF (general)" (Ingreso SEP, gastos,
+% de ejecución, saldos, Estado) para todos los RBD que cumplan el filtro/búsqueda actual.
+
 ## Fuentes de datos
 
 - **Ingreso SEP (Preferente y Prioritario)**: Excel "Listado de Establecimientos" de

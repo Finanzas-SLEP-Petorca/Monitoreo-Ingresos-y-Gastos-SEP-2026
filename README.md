@@ -69,6 +69,30 @@ reimportar; es distinto del botón "⬇ Excel (resumen general)", que descarga e
 mismo resumen que se ve en pantalla y que trae "🖨 Exportar PDF (general)" (Ingreso SEP, gastos,
 % de ejecución, saldos, Estado) para todos los RBD que cumplan el filtro/búsqueda actual.
 
+### Real vs. proyectado
+
+Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o naranja
+("Proyectado"), con una regla distinta para cada una — no depende de un selector único:
+
+- **Ingreso SEP**: enero-julio son reales (vienen de la Liquidación Web Subvenciones Mineduc);
+  agosto-diciembre parten como una proyección editable (el promedio de esos 7 meses reales), que
+  se puede corregir a mano en cualquier momento.
+- **Remuneraciones**: no hay ninguna fuente automática que diga si una remuneración ya es real
+  o es una estimación, así que cada RBD tiene su propio selector "Remuneraciones reales hasta:
+  [mes]" — los meses hasta ahí se ven verdes, el resto naranjas, y siempre son editables. Se
+  ajusta por establecimiento, a medida que se van confirmando los pagos reales de cada mes.
+- **Bienes y Servicios**: las compras del "Registro de compras" siempre son reales — son gastos
+  ya documentados, con proveedor y N° de documento. Para estimar meses que todavía no tienen
+  compras cargadas, existe la fila **"Bienes y Servicios (Proyección)"**, editable mes a mes,
+  siempre naranja — se SUMA al total de compras reales de ese mes (nunca lo reemplaza), así que
+  un mes puede tener compras reales y además una proyección de gasto adicional sin documentar
+  todavía.
+
+El selector "Ver resumen (KPI y % Ejecución) acumulado hasta el mes:" de arriba de la tabla
+principal es un control aparte: solo dice hasta qué mes se suman los montos en las tarjetas KPI y
+en el gráfico de "% Ejecución" — no tiene ningún efecto sobre el real/proyectado del detalle por
+RBD.
+
 ## Fuentes de datos
 
 - **Ingreso SEP (Preferente y Prioritario)**: Excel "Listado de Establecimientos" de

@@ -101,6 +101,13 @@ Proyectado)"** (la tabla de siempre, con RBD en déficit, Datos a revisar y Gast
 Sumando la tarjeta de una columna en "Real" más la misma columna en "Proyectado" da exacto el
 valor de "Total".
 
+Cada una de esas tres filas de tarjetas se puede colapsar de forma independiente haciendo clic en
+su título ("Real (ejecutado)", "Proyectado" o "Total (Real + Proyectado)") — así se puede dejar
+solo la vista que interesa y liberar espacio para la tabla "Estado por RBD" de abajo. Por defecto
+"Real" y "Proyectado" arrancan colapsadas y "Total" abierta; el estado de cada fila se recuerda en
+este navegador (no se comparte con el resto del equipo). El PDF individual de cada RBD (botón 🖨 de
+cada fila) incluye este mismo desglose Real / Proyectado / Total.
+
 ## Fuentes de datos
 
 - **Ingreso SEP (Preferente y Prioritario)**: Excel "Listado de Establecimientos" de

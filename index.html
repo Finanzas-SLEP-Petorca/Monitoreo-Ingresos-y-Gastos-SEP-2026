@@ -2293,7 +2293,13 @@ function importComprasSheet(ws) {
       documentoOriginal: String(row[13] || '').trim(),
     };
     if (!campos.fechaDocumento || !campos.montoGasto) continue;
-    const id = (row[0] !== undefined && row[0] !== null && String(row[0]).trim() !== '') ? String(row[0]).trim() : generarCompraId();
+    // rowsFromSheet lee con defval:0, así que una celda ID vacía llega como el número 0 (no
+    // como '' ni undefined) — hay que tratar ese 0 como "sin ID" igual que una celda realmente
+    // vacía, si no, todas las filas nuevas de un mismo RBD colisionan en la clave "0" y se
+    // pisan entre sí, dejando solo la última compra de cada RBD (bug real: con un Excel de
+    // carga masiva de cientos de filas nuevas, esto botaba silenciosamente casi todas).
+    const idRaw = row[0];
+    const id = (idRaw !== undefined && idRaw !== null && idRaw !== 0 && String(idRaw).trim() !== '') ? String(idRaw).trim() : generarCompraId();
     if (!CARGA_MANUAL.compras_por_rbd) CARGA_MANUAL.compras_por_rbd = {};
     if (!CARGA_MANUAL.compras_por_rbd[rbd]) CARGA_MANUAL.compras_por_rbd[rbd] = {};
     CARGA_MANUAL.compras_por_rbd[rbd][id] = campos;

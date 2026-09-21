@@ -454,6 +454,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <button id="downloadResumenExcelBtn" type="button" style="background:#0e7490; border-color:#0e7490;" title="Excel del resumen general (mismas columnas que la tabla y el PDF general) — respeta el filtro/búsqueda actual, sin detalle por RBD">⬇ Excel (resumen general)</button>
         <button id="downloadComprasSepBtn" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras (Subt.22/29) de todos los RBD, en el formato exacto que pide SUPEREDUC al cargar los gastos">⬇ Compras SUPEREDUC (CSV)</button>
         <button id="downloadCargaBtn" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        <button id="limpiarDuplicadosBtn" type="button" style="background:#b45309; border-color:#b45309;" title="Revisa si quedaron compras duplicadas con ID &quot;0&quot; — un rastro del bug de carga masiva ya corregido — y permite eliminarlas (solo la copia duplicada, nunca la compra correcta)">🧹 Revisar duplicados (ID &quot;0&quot;)</button>
       </div>
       <div class="corte-control">
         <label for="corteMesSelect">Ver resumen y colorear tablas hasta el mes:</label>
@@ -1441,6 +1442,68 @@ async function eliminarCompra(rbd, compraId) {
     alert('No se pudo eliminar la compra para el resto del equipo: ' + err.message);
   }
 }
+
+// --- Limpieza puntual del bug de importComprasSheet corregido en el PR que trata el 0 de una
+// celda ID vacía como si fuera un ID real: bajo el código viejo, todas las filas nuevas de un
+// mismo RBD colisionaban en la clave literal "0" y se pisaban entre sí, así que sobrevivía una
+// sola compra por RBD bajo esa clave. Al corregir el bug y volver a importar el mismo Excel, esa
+// compra sobreviviente quedó DUPLICADA: la entrada vieja y corrupta (ID "0") sigue ahí, además de
+// la entrada nueva y correcta (con su propio ID) que trajo la reimportación. generarCompraId()
+// nunca genera "0", así que cualquier compra con esa clave literal es siempre un rastro de ese
+// bug — nunca una compra real — y se puede identificar y borrar con seguridad. ---
+function detectarComprasIdLiteralCero() {
+  const afectados = [];
+  Object.entries(CARGA_MANUAL.compras_por_rbd || {}).forEach(([rbd, compras]) => {
+    if (compras && Object.prototype.hasOwnProperty.call(compras, '0')) {
+      const r = DATA.registros.find(x => x.rbd === rbd);
+      afectados.push({ rbd, nombre: r ? r.nombre : rbd, compra: compras['0'] });
+    }
+  });
+  return afectados;
+}
+async function limpiarComprasIdLiteralCero() {
+  const afectados = detectarComprasIdLiteralCero();
+  if (!afectados.length) {
+    alert('No se encontraron compras con ID "0" (el rastro del bug de carga masiva ya corregido). No hay nada que limpiar.');
+    return;
+  }
+  const totalMonto = afectados.reduce((s, a) => s + (Number(a.compra.montoGasto) || 0), 0);
+  const detalle = afectados
+    .map(a => `RBD ${a.rbd} (${a.nombre}): ${fmtCLP(a.compra.montoGasto || 0)} — ${a.compra.descripcion || a.compra.codigo || 'sin descripción'}`)
+    .join('\n');
+  const ok = confirm(
+    `Se encontraron ${afectados.length} compras duplicadas con ID "0" (rastro del bug de carga masiva ya corregido), por un total de ${fmtCLP(totalMonto)}:\n\n${detalle}\n\n` +
+    `¿Eliminar estas ${afectados.length} entradas? Esto NO toca la compra correcta de cada RBD (la que tiene su propio ID) — solo borra la copia duplicada y corrupta. No se puede deshacer.`
+  );
+  if (!ok) return;
+  afectados.forEach(a => {
+    if (CARGA_MANUAL.compras_por_rbd[a.rbd]) delete CARGA_MANUAL.compras_por_rbd[a.rbd]['0'];
+    recomputeItemsDesdeCompras(a.rbd);
+    const r = DATA.registros.find(x => x.rbd === a.rbd);
+    if (r) { recomputeRegistro(r); updateRowDOM(a.rbd); }
+  });
+  renderReportFilters();
+  if (modalRbdAbierto && afectados.some(a => a.rbd === modalRbdAbierto)) renderModalContenido();
+  if (!currentUser) {
+    alert('Se limpió localmente, pero no hay sesión activa: no se pudo guardar el cambio para el resto del equipo.');
+    return;
+  }
+  try {
+    const batch = writeBatch(db);
+    afectados.forEach(a => {
+      batch.set(doc(db, CARGA_COLLECTION, a.rbd), {
+        compras: { '0': deleteField() },
+        lastModifiedBy: currentUser.email,
+        lastModifiedAt: serverTimestamp(),
+      }, { merge: true });
+    });
+    await batch.commit();
+    alert(`Listo: se eliminaron ${afectados.length} compras duplicadas por un total de ${fmtCLP(totalMonto)}.`);
+  } catch (err) {
+    alert('No se pudo guardar la limpieza para el resto del equipo: ' + err.message);
+  }
+}
+document.getElementById('limpiarDuplicadosBtn').addEventListener('click', limpiarComprasIdLiteralCero);
 const tableBodyEl = document.getElementById('tableBody');
 tableBodyEl.addEventListener('click', (e) => {
   const rowBtn = e.target.closest('.row-action-btn');

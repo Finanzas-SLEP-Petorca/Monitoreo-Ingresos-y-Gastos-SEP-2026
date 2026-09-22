@@ -149,6 +149,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   #reporteTable th.mes-real, #reporteTable th.mes-proy { white-space:normal; text-align:right; line-height:1.25; }
   #reporteTable th.mes-real { background:#e3f6ea; color:#0b7a3e; }
   #reporteTable th.mes-proy { background:#fdf1de; color:#a3630a; }
+  #reporteTable td.mes-real { background:rgba(12,163,92,0.08); }
+  #reporteTable td.mes-proy { background:rgba(224,138,0,0.08); }
   .mes-tag { display:block; font-size:8.5px; font-weight:500; text-transform:none; letter-spacing:0; opacity:.85; }
   table.detalle-table td { padding:4px 7px; border:1px solid var(--gridline); color:var(--text-primary); overflow:hidden; }
   table.detalle-table td.item-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-secondary); }
@@ -1988,18 +1990,35 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // Catálogo de conceptos reportables: los 3 ingresos SEP, Remuneraciones (fila única por RBD),
-// y cada ítem vivo de Subt.22/29 (incluye los agregados con "+ Agregar ítem").
+// cada ítem vivo de Subt.22/29 (incluye los agregados con "+ Agregar ítem" en Registro de
+// compras), el total agregado de Bienes y Servicios (Proyección), y cada ítem de esa misma
+// proyección por separado (elegido de la misma lista de cuentas que las compras) — así se puede
+// buscar p.ej. "arriendo" y encontrar tanto la compra real como su proyección, cada una por su
+// lado con su propio total.
 function buildConceptoCatalog() {
   const list = [
     { key: 'ingreso|Ingreso SEP Preferente', label: 'Ingreso SEP Preferente' },
     { key: 'ingreso|Ingreso SEP Prioritario', label: 'Ingreso SEP Prioritario' },
     { key: 'ingreso|Carrera Docente', label: 'Carrera Docente' },
     { key: 'rem', label: 'Remuneraciones (Subt. 21)' },
-    { key: 'bys_proy', label: 'Bienes y Servicios (Proyección)' },
+    { key: 'bys_proy', label: 'Bienes y Servicios (Proyección) — total' },
   ];
   ITEMS_22.forEach(item => list.push({ key: `22|${item}`, label: `${item} (Subt.22)` }));
   ITEMS_29.forEach(item => list.push({ key: `29|${item}`, label: `${item} (Subt.29)` }));
+  CUENTAS_SEP_22.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.nombre} (Proyección Subt.22)` }));
+  CUENTAS_SEP_29.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.nombre} (Proyección Subt.29)` }));
   return list;
+}
+
+// A qué regla real/proyectado (ver esRealParaModo) corresponde cada tipo de concepto del
+// reporte — la usa renderReporte() para colorear cada celda según si ese mes es real o
+// proyectado para ESE RBD y ESE concepto en particular (Remuneraciones varía por RBD, el resto
+// es igual para todos).
+function modoParaConcepto(key) {
+  if (key === 'rem') return 'rem';
+  if (key === 'bys_proy' || key.startsWith('bys_proy_item|')) return 'bys_proy';
+  if (key.startsWith('ingreso|')) return 'ingreso_item';
+  return 'item'; // '22|...' / '29|...' (compras Subt.22/29)
 }
 
 function getConceptoSeries(rbd, key) {
@@ -2010,6 +2029,12 @@ function getConceptoSeries(rbd, key) {
   if (key === 'bys_proy') {
     const s = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[rbd] : null;
     return s ? s.meses : {};
+  }
+  if (key.startsWith('bys_proy_item|')) {
+    const codigo = key.slice('bys_proy_item|'.length);
+    const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[rbd] : null;
+    const it = bp ? bp.items.find(x => x.codigo === codigo) : null;
+    return it ? it.meses : {};
   }
   if (key.startsWith('ingreso|')) {
     const itemName = key.slice('ingreso|'.length);
@@ -2108,14 +2133,12 @@ function renderReporte() {
 
   const colspan = 3 + mesesSel.length + 1;
   document.getElementById('reporteTheadRow').innerHTML = `<th>RBD</th><th>Establecimiento</th><th>Concepto</th>${
-    mesesSel.map(m => {
-      const idx = MESES_CARGA.indexOf(m) + 1;
-      const real = mesEsReal(idx);
-      return `<th class="num ${real ? 'mes-real' : 'mes-proy'}">${MESES_CARGA_ABREV[idx - 1]}<span class="mes-tag">${real ? 'Real' : 'Proy.'}</span></th>`;
-    }).join('')
+    mesesSel.map(m => `<th class="num">${MESES_CARGA_ABREV[MESES_CARGA.indexOf(m)]}</th>`).join('')
   }<th class="num">Total selección</th>`;
-  document.getElementById('reporteCorteNota').textContent =
-    `Corte real/proyectado: hasta ${MESES_CARGA_TITLE[corteMesIdx - 1]} — mismo selector del Panel principal ("Ver resumen acumulado hasta el mes").`;
+  document.getElementById('reporteCorteNota').innerHTML =
+    `Cada celda se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span> o ` +
+    `<span style="background:#fdf1de; color:#a3630a; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
+    `(Ingreso: real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}; Remuneraciones: el corte propio de cada RBD; compras Subt.22/29: siempre reales; Bienes y Servicios Proyección: siempre proyectada) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI.`;
 
   const tbody = document.getElementById('reporteTbody');
 
@@ -2128,15 +2151,24 @@ function renderReporte() {
 
   const rows = [];
   conceptosSel.forEach(c => {
+    const modo = modoParaConcepto(c.key);
     const subtotales = mesesSel.map(() => 0);
     rbdsSel.forEach(r => {
       const meses = getConceptoSeries(r.rbd, c.key);
       const valores = mesesSel.map(m => meses[m] || 0);
+      const realFlags = mesesSel.map(m => esRealParaModo(modo, r.rbd, MESES_CARGA.indexOf(m) + 1));
       valores.forEach((v, i) => { subtotales[i] += v; });
-      rows.push({ rbd: r.rbd, nombre: r.nombre, concepto: c.label, valores, total: valores.reduce((s, v) => s + v, 0) });
+      rows.push({ rbd: r.rbd, nombre: r.nombre, concepto: c.label, valores, realFlags, total: valores.reduce((s, v) => s + v, 0) });
     });
     if (rbdsSel.length > 1) {
-      rows.push({ rbd: '', nombre: '', concepto: `Subtotal — ${c.label}`, valores: subtotales, total: subtotales.reduce((s, v) => s + v, 0), esSubtotal: true });
+      // 'rem' varía por RBD (cada uno tiene su propio corte "reales hasta") — un subtotal mezcla
+      // RBD con cortes distintos, así que no se puede afirmar real/proyectado para ese mes sin
+      // elegir uno arbitrariamente. Los demás modos (ingreso, item, bys_proy) son iguales para
+      // todos los RBD, así que el subtotal sí se puede colorear con cualquiera de referencia.
+      const realFlagsSubtotal = (modo === 'rem')
+        ? mesesSel.map(() => null)
+        : mesesSel.map(m => esRealParaModo(modo, rbdsSel[0].rbd, MESES_CARGA.indexOf(m) + 1));
+      rows.push({ rbd: '', nombre: '', concepto: `Subtotal — ${c.label}`, valores: subtotales, realFlags: realFlagsSubtotal, total: subtotales.reduce((s, v) => s + v, 0), esSubtotal: true });
     }
   });
 
@@ -2145,7 +2177,11 @@ function renderReporte() {
       <td>${row.rbd}</td>
       <td>${row.nombre}</td>
       <td>${row.concepto}</td>
-      ${row.valores.map(v => `<td class="num">${fmtCLP(v)}</td>`).join('')}
+      ${row.valores.map((v, i) => {
+        const flag = row.realFlags[i];
+        const cls = flag === true ? 'mes-real' : flag === false ? 'mes-proy' : '';
+        return `<td class="num ${cls}">${fmtCLP(v)}</td>`;
+      }).join('')}
       <td class="num">${fmtCLP(row.total)}</td>
     </tr>
   `).join('');

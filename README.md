@@ -112,6 +112,18 @@ solo la vista que interesa y liberar espacio para la tabla "Estado por RBD" de a
 este navegador (no se comparte con el resto del equipo). El PDF individual de cada RBD (botón 🖨 de
 cada fila) incluye este mismo desglose Real / Proyectado / Total.
 
+### Pestaña "Reportes"
+
+Permite cruzar establecimiento × concepto × mes(es) para cualquier serie ya cargada (los 3
+ingresos SEP, Remuneraciones, cada ítem de compras Subt.22/29, el total de Bienes y Servicios
+(Proyección) y cada ítem de esa misma proyección por separado — se puede buscar, por ejemplo,
+"arriendo" y encontrar tanto la compra real como su proyección, cada una con su propio total).
+Cada celda del mes se colorea verde (real) o naranja (proyectada) según la misma regla que el
+detalle de cada RBD — Remuneraciones según el corte propio de cada establecimiento, así que al
+combinar varios RBD con cortes distintos en un mismo reporte, la fila "Subtotal" no se colorea
+(mezclaría criterios distintos). Este coloreado es independiente del selector "Ver resumen
+acumulado hasta el mes" del Panel principal, que solo afecta a las tarjetas KPI.
+
 ## Fuentes de datos
 
 - **Ingreso SEP (Preferente y Prioritario)**: Excel "Listado de Establecimientos" de

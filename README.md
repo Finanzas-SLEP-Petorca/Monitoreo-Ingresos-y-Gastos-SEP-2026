@@ -146,18 +146,21 @@ acumulado hasta el mes" del Panel principal, que solo afecta a las tarjetas KPI.
 
 ### Dos familias de columnas "%" — no confundir
 
-La tabla tiene dos grupos de columnas de porcentaje, con un fondo celeste que marca el segundo
-grupo para diferenciarlos a simple vista:
+La tabla tiene tres grupos de columnas de porcentaje:
 
 - **% Ejec. Remuneraciones / % Ejec. B&S** (fondo blanco): gasto / **meta** del 70% o 30%
   respectivamente. 100% = gastó justo lo que la regla le permite. Pueden pasar de 100% (indican
   que ese RBD ya superó su tope) aunque el establecimiento gaste poco en términos absolutos, si
-  su ingreso SEP también es bajo.
-- **% Rem. / Ingreso, % B&S / Ingreso, % Total / Ingreso** (fondo celeste, columnas "sobre
-  Ingreso Total"): gasto / **Ingreso Total** (SEP + Carrera Docente) — la fracción real del
-  ingreso ya gastada, sin pasar por el filtro del 70/30. Por diseño, % Rem./Ingreso +
-  % B&S/Ingreso = % Total/Ingreso. Son solo informativos: el estado (Déficit/En riesgo/Superávit)
-  de cada RBD se sigue definiendo por el cumplimiento de la meta 70/30, no por estas columnas.
+  su ingreso SEP también es bajo. Son solo informativos: no definen el Estado.
+- **% Rem. / Ingreso, % B&S / Ingreso** (fondo celeste claro, "% sobre Ingreso Total
+  (informativo)"): gasto / **Ingreso Total** (SEP + Carrera Docente) — la fracción real del
+  ingreso ya gastada, sin pasar por el filtro del 70/30. También son solo informativos.
+- **% Ejec. Total (Real+Proy)** (fondo celeste oscuro y en negrita, justo al lado de "Estado"):
+  (Gasto Remuneraciones + Gasto B&S) / Ingreso Total — igual a % Rem./Ingreso + % B&S/Ingreso, y
+  ya incluye tanto lo ejecutado como lo proyectado para lo que falta del año. Esta es la única
+  columna que realmente define el Estado de cada RBD: ≥100% Déficit, ≥90% Riesgo, el resto
+  Superávit — se destaca aparte de las demás para que quede claro de un vistazo por qué un RBD
+  quedó en ese estado.
 
 ## Alerta: establecimientos sin marco SEP con gasto SEP
 

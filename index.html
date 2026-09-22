@@ -111,6 +111,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   table.data-table td.pct-ing-total { background:#f6f9fc; color:var(--text-secondary); }
   table.data-table tbody tr:hover { background:var(--page-plane); }
   table.data-table tbody tr:hover td.pct-ing-total { background:#eef3f9; }
+  /* % Ejec. Total (Real+Proy): el número que en realidad decide el Estado (≥100% Déficit, ≥90%
+     Riesgo) — se destaca aparte de las columnas "informativo" (fondo más marcado y en negrita)
+     y se ubica justo al lado de la columna Estado, para que se entienda de un vistazo por qué
+     ese RBD quedó en ese estado. */
+  table.data-table th.pct-ejec-total-final, table.data-table td.pct-ejec-total-final { background:#dce7f5; font-weight:700; color:var(--text-primary); }
+  table.data-table tbody tr:hover td.pct-ejec-total-final { background:#cddcef; }
   .table-scroll { max-height:520px; overflow-y:auto; overflow-x:auto; border:1px solid var(--border); border-radius:8px; } table.data-table { min-width: 860px; }
   td[data-field="nombre"] .nombre-txt { display:inline-block; max-width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; vertical-align:bottom; }
 
@@ -499,7 +505,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="legend-row" style="margin-top:-4px; margin-bottom:10px;">
         <span><strong>% Ejec. Remuneraciones</strong>: gasto en remuneraciones / meta de remuneraciones de ese RBD (70% del Ingreso SEP + 100% de Carrera Docente, ya que ese ingreso solo puede usarse ahí). 100% = gastó justo la meta.</span>
         <span><strong>% Ejec. B&S</strong>: gasto Subt.22+29 / meta 30% del Ingreso SEP de ese RBD. 100% = gastó justo la meta.</span>
-        <span style="padding:1px 6px; border-radius:4px; background:#eef3f9;"><strong>% .../Ingreso</strong> (columnas con fondo celeste): NO es contra la meta 70/30, es gasto / Ingreso Total (SEP + Carrera Docente) — la fracción real del ingreso ya gastada. % Rem./Ingreso + % B&S/Ingreso = % Total/Ingreso.</span>
+        <span style="padding:1px 6px; border-radius:4px; background:#eef3f9;"><strong>% .../Ingreso</strong> (columnas con fondo celeste): NO es contra la meta 70/30, es gasto / Ingreso Total (SEP + Carrera Docente) — la fracción real del ingreso ya gastada, solo informativo.</span>
+        <span style="padding:1px 6px; border-radius:4px; background:#dce7f5; font-weight:600;">% Ejec. Total (Real+Proy): este SÍ es el número que define el Estado del RBD — ≥100% Déficit, ≥90% Riesgo, el resto Superávit. Ya incluye tanto lo ya ejecutado como lo proyectado para lo que falta del año.</span>
       </div>
       <div class="table-scroll">
         <table class="data-table">
@@ -512,7 +519,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <th class="th-group" colspan="3" title="Se mide contra la META del 70% del Ingreso SEP (+ Carrera Docente) — puede pasar de 100% aunque el gasto total del RBD sea bajo.">Remuneraciones — % sobre meta 70%</th>
               <th class="th-group" colspan="2" title="Se mide contra la META del 30% del Ingreso SEP.">Bienes y Servicios — % sobre meta 30%</th>
               <th data-key="saldo_total" class="num" rowspan="2">Saldo final</th>
-              <th class="th-group th-group-alt" colspan="3" title="Se mide contra el Ingreso SEP + Carrera Docente TOTAL (no contra la meta 70/30) — es la fracción real del ingreso que se ha gastado, no cuánto se ha usado del cupo asignado.">% sobre Ingreso Total (informativo)</th>
+              <th class="th-group th-group-alt" colspan="2" title="Se mide contra el Ingreso SEP + Carrera Docente TOTAL (no contra la meta 70/30) — es la fracción real del ingreso que se ha gastado, no cuánto se ha usado del cupo asignado. Solo informativo.">% sobre Ingreso Total (informativo)</th>
+              <th data-key="pct_ejec_total" class="num pct-ejec-total-final" rowspan="2" title="(Gasto Rem. + Gasto B&S) / (Ingreso SEP + Carrera Docente) — ya incluye lo ejecutado + lo proyectado. Este es el número que define el Estado: ≥100% Déficit, ≥90% Riesgo, el resto Superávit.">% Ejec. Total (Real+Proy)</th>
               <th data-key="estado" rowspan="2">Estado</th>
               <th class="col-acciones" rowspan="2" title="Análisis individual">Acciones</th>
             </tr>
@@ -524,7 +532,6 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <th data-key="pct_ejec_bys" class="num th-group" title="% Ejec. B&S (sobre meta 30%)">% Ejec. B&S</th>
               <th data-key="pct_rem_ing_total" class="num th-group th-group-alt" title="Gasto Remuneraciones / (Ingreso SEP + Carrera Docente)">% Rem. / Ingreso</th>
               <th data-key="pct_bys_ing_total" class="num th-group th-group-alt" title="Gasto B&S / (Ingreso SEP + Carrera Docente)">% B&S / Ingreso</th>
-              <th data-key="pct_ejec_total" class="num th-group th-group-alt" title="(Gasto Rem. + Gasto B&S) / (Ingreso SEP + Carrera Docente)">% Total / Ingreso</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -1616,7 +1623,7 @@ function renderTable() {
       <td class="num" data-field="saldo_total" style="color:${r.saldo_total < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(r.saldo_total)}</td>
       <td class="num pct-ing-total" data-field="pct_rem_ing_total">${r.pct_rem_ing_total}%</td>
       <td class="num pct-ing-total" data-field="pct_bys_ing_total">${r.pct_bys_ing_total}%</td>
-      <td class="num pct-ing-total" data-field="pct_ejec_total">${r.pct_ejec_total}%</td>
+      <td class="num pct-ejec-total-final" data-field="pct_ejec_total">${r.pct_ejec_total}%</td>
       <td data-field="estado">${estadoTagHTML(r)}</td>
       <td class="col-acciones">
         <button class="row-action-btn" data-action="excel" data-rbd="${r.rbd}" title="Descargar Excel solo de este RBD">⬇ XLS</button>
@@ -2438,7 +2445,7 @@ function csvEscape(val) {
 // una fila de encabezados + una fila por RBD filtrado. La usan tanto "⬇ CSV" como
 // "⬇ Excel (resumen general)" para no mantener dos listas de columnas por separado.
 function resumenGeneralAOA() {
-  const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','% Ejec. Remuneraciones (meta = 70% SEP + Carrera Docente)','Saldo post Remuneraciones','Gasto Subt22','Gasto Subt29','Gasto B&S Proyección','Gasto B&S total','% Ejec. B&S (meta 30%)','Saldo final','% Rem. / Ingreso Total','% B&S / Ingreso Total','% Total / Ingreso Total','Estado','Alerta'];
+  const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','% Ejec. Remuneraciones (meta = 70% SEP + Carrera Docente)','Saldo post Remuneraciones','Gasto Subt22','Gasto Subt29','Gasto B&S Proyección','Gasto B&S total','% Ejec. B&S (meta 30%)','Saldo final','% Rem. / Ingreso Total (informativo)','% B&S / Ingreso Total (informativo)','% Ejec. Total (Real+Proy) — define Estado','Estado','Alerta'];
   const rows = [headers];
   currentFilteredRows.forEach(r => {
     const alerta = r.alerta_sep_sin_marco ? 'GASTO SEP SIN MARCO ASIGNADO' : (r.anomalia ? 'Revisar' : '');
@@ -2658,9 +2665,9 @@ function buildSingleRbdPrintHTML(rbd) {
         <th class="num">Ingreso SEP anual</th><th class="num">Carrera Docente</th><th class="num">Gasto Remuneraciones</th>
         <th class="num" title="Sobre meta 70%">% Ejec. Rem.</th><th class="num">Saldo post Rem.</th><th class="num">Gasto B&S</th>
         <th class="num" title="Sobre meta 30%">% Ejec. B&S</th><th class="num">Saldo final</th>
-        <th class="num pct-ing-total" title="Gasto Rem. / Ingreso Total">% Rem./Ingreso</th>
-        <th class="num pct-ing-total" title="Gasto B&S / Ingreso Total">% B&S/Ingreso</th>
-        <th class="num pct-ing-total" title="(Gasto Rem.+B&S) / Ingreso Total">% Total/Ingreso</th>
+        <th class="num pct-ing-total" title="Gasto Rem. / Ingreso Total (informativo)">% Rem./Ingreso</th>
+        <th class="num pct-ing-total" title="Gasto B&S / Ingreso Total (informativo)">% B&S/Ingreso</th>
+        <th class="num pct-ejec-total-final" title="(Gasto Rem.+B&S) / Ingreso Total — este es el número que define el Estado">% Ejec. Total (Real+Proy)</th>
         <th>Estado</th>
       </tr></thead>
       <tbody><tr>
@@ -2674,7 +2681,7 @@ function buildSingleRbdPrintHTML(rbd) {
         <td class="num">${fmtCLP(r.saldo_total)}</td>
         <td class="num pct-ing-total">${r.pct_rem_ing_total}%</td>
         <td class="num pct-ing-total">${r.pct_bys_ing_total}%</td>
-        <td class="num pct-ing-total">${r.pct_ejec_total}%</td>
+        <td class="num pct-ejec-total-final">${r.pct_ejec_total}%</td>
         <td>${estadoTagHTML(r)}</td>
       </tr></tbody>
     </table>

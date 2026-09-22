@@ -155,12 +155,14 @@ La tabla tiene tres grupos de columnas de porcentaje:
 - **% Rem. / Ingreso, % B&S / Ingreso** (fondo celeste claro, "% sobre Ingreso Total
   (informativo)"): gasto / **Ingreso Total** (SEP + Carrera Docente) — la fracción real del
   ingreso ya gastada, sin pasar por el filtro del 70/30. También son solo informativos.
-- **% Ejec. Total (Real+Proy)** (fondo celeste oscuro y en negrita, justo al lado de "Estado"):
-  (Gasto Remuneraciones + Gasto B&S) / Ingreso Total — igual a % Rem./Ingreso + % B&S/Ingreso, y
-  ya incluye tanto lo ejecutado como lo proyectado para lo que falta del año. Esta es la única
+- **Saldo Final (Real+Proy) y % Ejec. Total (Real+Proy)** (fondo celeste oscuro y en negrita,
+  justo al lado de "Estado"): Ingreso Total − Gasto Total y (Gasto Remuneraciones + Gasto B&S) /
+  Ingreso Total respectivamente — ambos ya incluyen tanto lo ejecutado como lo proyectado para lo
+  que falta del año, así se ve cómo quedaría ese RBD si las proyecciones cargadas (Remuneraciones
+  futuras y Bienes y Servicios Proyección) se cumplen tal cual. El % Ejec. Total es la única
   columna que realmente define el Estado de cada RBD: ≥100% Déficit, ≥90% Riesgo, el resto
-  Superávit — se destaca aparte de las demás para que quede claro de un vistazo por qué un RBD
-  quedó en ese estado.
+  Superávit — ambas se destacan aparte de las demás para que quede claro de un vistazo por qué un
+  RBD quedó en ese estado.
 
 ## Alerta: establecimientos sin marco SEP con gasto SEP
 

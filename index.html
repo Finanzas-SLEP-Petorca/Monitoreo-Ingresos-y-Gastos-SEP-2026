@@ -54,7 +54,16 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   header.top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
   header.top h1 { font-size:22px; margin:0 0 4px; }
 
-  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:8px; margin-bottom:14px; }
+  /* Columnas FIJAS (no auto-fit) a propósito: Real/Proyectado tienen 5 tarjetas y Total tiene 8
+     (las mismas 5 + 3 propias de Total) — con auto-fit cada fila estira sus tarjetas para llenar
+     el ancho según SU PROPIA cantidad de tarjetas, así que el mismo concepto (p.ej. "Ingreso SEP")
+     terminaba en una columna distinta en cada fila. Con 5 columnas fijas en las tres filas, cada
+     concepto cae siempre en la misma columna de arriba a abajo, y las 3 tarjetas propias de Total
+     (sin Real/Proyectado) simplemente pasan a una segunda línea de esa misma grilla. */
+  .kpi-row { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:8px; margin-bottom:14px; }
+  @media (max-width:900px) {
+    .kpi-row { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
   .kpi-row.kpi-row-collapsed { display:none; }
   .kpi-section-label { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary); margin:0 0 6px 2px; background:none; border:none; padding:2px; cursor:pointer; font-family:inherit; }
   .kpi-section-label:hover { color:var(--text-primary); }

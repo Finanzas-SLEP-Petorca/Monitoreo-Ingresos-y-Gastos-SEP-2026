@@ -1865,6 +1865,16 @@ tableBodyEl.addEventListener('click', (e) => {
 // --- Modal de detalle por RBD: reemplaza la fila desplegable de antes. Se abre al hacer clic
 // en el RBD, el nombre del establecimiento, o el ícono ▸ de una fila; se cierra con el botón
 // ✕, la tecla Escape, o al hacer clic fuera del panel (sobre el fondo oscuro). ---
+// Esta función reconstruye TODO el HTML del modal (nunca hace un parche parcial) porque nunca
+// se confía en un total ya calculado — se recalcula siempre desde los meses/ítems recibidos
+// (ver aplicarSnapshot). El problema es que se llama no solo al abrir el modal, sino cada vez
+// que llega una actualización en tiempo real del RBD abierto — incluido el eco de lo que el
+// propio usuario acaba de escribir (scheduleRbdSave/flushRbdSave guarda ~400ms después de la
+// última tecla, y Firestore devuelve ese mismo cambio por el listener onSnapshot). Sin esto, la
+// pantalla se iba al inicio del scroll y se perdía el foco de la celda cada vez que se escribía
+// un dato, con la sensación de que la página "piensa" unos segundos entre cada número. Por eso
+// se guarda el scroll (vertical del modal + horizontal de cada tabla) y el campo con foco antes
+// de reemplazar el HTML, y se restauran después.
 function renderModalContenido() {
   const rbd = modalRbdAbierto;
   const r = DATA.registros.find(x => x.rbd === rbd);
@@ -1875,7 +1885,43 @@ function renderModalContenido() {
     `Gasto Remuneraciones: <strong>${fmtCLP(r.gasto_rem_anual_proy)}</strong> · ` +
     `Gasto B&S: <strong>${fmtCLP(r.gasto_bys)}</strong> · ` +
     `Saldo final: <strong>${fmtCLP(r.saldo_total)}</strong> · ${estadoTagHTML(r)}`;
-  document.getElementById('modalBody').innerHTML = buildDetalleHTML(rbd);
+
+  const modalBodyEl = document.getElementById('modalBody');
+  const activeEl = document.activeElement;
+  const enfocado = (activeEl && modalBodyEl.contains(activeEl) && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) ? {
+    id: activeEl.id || null,
+    tag: activeEl.tagName.toLowerCase(),
+    dataset: { ...activeEl.dataset },
+    caret: (typeof activeEl.selectionStart === 'number') ? activeEl.selectionStart : null,
+  } : null;
+  const scrollTop = modalBodyEl.scrollTop;
+  const scrollHorizEls = Array.from(modalBodyEl.querySelectorAll('.detalle-scroll, .compras-scroll'));
+  const scrollHorizVals = scrollHorizEls.map(el => el.scrollLeft);
+
+  modalBodyEl.innerHTML = buildDetalleHTML(rbd);
+
+  modalBodyEl.scrollTop = scrollTop;
+  const nuevosScrollHoriz = modalBodyEl.querySelectorAll('.detalle-scroll, .compras-scroll');
+  scrollHorizVals.forEach((left, i) => { if (nuevosScrollHoriz[i]) nuevosScrollHoriz[i].scrollLeft = left; });
+
+  if (enfocado) {
+    let match = null;
+    if (enfocado.id) {
+      match = modalBodyEl.querySelector(`#${enfocado.id}`);
+    } else {
+      const keys = Object.keys(enfocado.dataset);
+      if (keys.length) {
+        match = Array.from(modalBodyEl.querySelectorAll(enfocado.tag))
+          .find(el => keys.every(k => el.dataset[k] === enfocado.dataset[k]));
+      }
+    }
+    if (match) {
+      match.focus({ preventScroll: true });
+      if (enfocado.caret !== null && typeof match.setSelectionRange === 'function') {
+        try { match.setSelectionRange(enfocado.caret, enfocado.caret); } catch (err) { /* algunos <input type=number> no soportan selectionRange en todos los navegadores */ }
+      }
+    }
+  }
 }
 
 function abrirModalRbd(rbd) {

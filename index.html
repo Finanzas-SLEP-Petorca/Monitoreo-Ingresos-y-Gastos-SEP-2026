@@ -2012,10 +2012,14 @@ function buildConceptoCatalog() {
     { key: 'rem', label: 'Remuneraciones (Subt. 21)' },
     { key: 'bys_proy', label: 'Bienes y Servicios (Proyección) — total' },
   ];
-  ITEMS_22.forEach(item => list.push({ key: `22|${item}`, label: `${item} (Subt.22)` }));
-  ITEMS_29.forEach(item => list.push({ key: `29|${item}`, label: `${item} (Subt.29)` }));
-  CUENTAS_SEP_22.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.nombre} (Proyección Subt.22)` }));
-  CUENTAS_SEP_29.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.nombre} (Proyección Subt.29)` }));
+  // El key sigue armado con el NOMBRE del ítem (no el código) porque así lo busca
+  // getConceptoSeries en ag.items (ver itemsFromCompras) — el código acá es solo para que se
+  // vea y se pueda buscar en la etiqueta, tal como pidió el usuario ("necesito que también
+  // salgan los códigos SUPEREDUC").
+  CUENTAS_SEP_22.forEach(c => list.push({ key: `22|${c.nombre}`, label: `${c.codigo} · ${c.nombre} (Subt.22)` }));
+  CUENTAS_SEP_29.forEach(c => list.push({ key: `29|${c.nombre}`, label: `${c.codigo} · ${c.nombre} (Subt.29)` }));
+  CUENTAS_SEP_22.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.codigo} · ${c.nombre} (Proyección Subt.22)` }));
+  CUENTAS_SEP_29.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.codigo} · ${c.nombre} (Proyección Subt.29)` }));
   return list;
 }
 

@@ -1,16 +1,17 @@
 // Reglas de seguridad Firestore — proyecto "slep-petorca-finanzas-permisos"
 // Para desplegar: Firebase Console → Firestore Database → Reglas → pegar este contenido →
 // Publicar. Para agregar/quitar correos: editar la lista de isAllowed() de abajo Y la
-// constante ALLOWED_EMAILS en index.html (de este repo y de Calendariopermisos).
+// constante ALLOWED_EMAILS en index.html (de este repo y de los otros que comparten proyecto).
 //
-// Este proyecto Firebase aloja DOS apps con colecciones independientes en la misma base de
+// Este proyecto Firebase aloja TRES apps con colecciones independientes en la misma base de
 // datos, así que sus reglas viven juntas en un solo archivo (Firestore solo permite un
 // conjunto de reglas por base de datos):
-//   - "events"        → Calendariopermisos (github.com/Finanzas-SLEP-Petorca/Calendariopermisos)
-//   - "sep_carga_rbd" → este panel (Monitoreo Ingresos y Gastos SEP 2026)
-// Si se edita el bloque de una colección, no tocar el bloque de la otra — y mantener este
-// archivo igual al que está publicado en Firebase Console en ambos repositorios, ya que es el
-// mismo archivo real desplegado para las dos apps.
+//   - "events"          → Calendariopermisos (github.com/Finanzas-SLEP-Petorca/Calendariopermisos)
+//   - "sep_carga_rbd"   → este panel (Monitoreo Ingresos y Gastos SEP 2026)
+//   - "situacionDeficit" → Situación de Déficit / Financiamiento Remuneraciones P02 (otro repo)
+// Si se edita el bloque de una colección, no tocar el bloque de las otras — y mantener este
+// archivo igual al que está publicado en Firebase Console y en cada uno de los repositorios que
+// lo usan, ya que es el mismo archivo real desplegado para las tres apps.
 
 rules_version = '2';
 service cloud.firestore {
@@ -61,6 +62,24 @@ service cloud.firestore {
       allow read:   if isAllowed();
       allow create, update: if isAllowed();
       allow delete: if false;
+    }
+
+    // --- Situación de Déficit / Financiamiento Remuneraciones P02 (otro panel, mismo proyecto
+    // Firebase) ---
+    match /situacionDeficit/{year}/months/{monthId} {
+      allow read, write: if isAllowed();
+    }
+    match /situacionDeficit/{year}/eneroDetalle/{docId} {
+      allow read, write: if isAllowed();
+    }
+    match /situacionDeficit/{year}/estructura/{docId} {
+      allow read, write: if isAllowed();
+    }
+    match /situacionDeficit/{year}/estructura/{docId}/sacados/{sacadoId} {
+      allow read, write: if isAllowed();
+    }
+    match /situacionDeficit/{year}/changeLog/{entryId} {
+      allow read, write: if isAllowed();
     }
 
     match /{document=**} {

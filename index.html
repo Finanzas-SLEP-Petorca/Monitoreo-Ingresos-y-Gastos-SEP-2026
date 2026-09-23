@@ -2959,9 +2959,9 @@ function limpiarGastoRemuneraciones() {
 // ============== FIREBASE: acceso colaborativo en tiempo real ==============
 // Mismo proyecto Firebase que Calendariopermisos (slep-petorca-finanzas-permisos), colección
 // propia y separada "sep_carga_rbd" (no se toca ni se comparte con la colección "events" de
-// Calendariopermisos). Acceso por correo institucional + enlace mágico (passwordless), con la
-// misma whitelist de 9 correos. Sincronización en tiempo real vía onSnapshot (sin polling) y
-// persistencia offline vía IndexedDB.
+// Calendariopermisos). Acceso por correo institucional + enlace mágico (passwordless), con una
+// whitelist propia de correos (ver ALLOWED_EMAILS más abajo). Sincronización en tiempo real vía
+// onSnapshot (sin polling) y persistencia offline vía IndexedDB.
 // ============================================================================
 
 const firebaseConfig = {
@@ -2995,7 +2995,13 @@ const ALLOWED_EMAILS = [
   "wilson.rojasabarca@gmail.com",
   "javier.ilabaca@sleppetorca.gob.cl",
   "nicolas.campos@sleppetorca.gob.cl",
-  "abraham.allel@sleppetorca.gob.cl"
+  "abraham.allel@sleppetorca.gob.cl",
+  "camila.valenzuela@sleppetorca.gob.cl",
+  "cristian.urrutia@sleppetorca.gob.cl",
+  "ana.opazo@sleppetorca.gob.cl",
+  "mauricio.urrutia@sleppetorca.gob.cl",
+  "marcela.ortega@sleppetorca.gob.cl",
+  "carolina.villagra@sleppetorca.gob.cl"
 ];
 
 // Correos con acceso a herramientas administrativas/de mantenimiento (ej. "Revisar duplicados") —
@@ -3030,6 +3036,12 @@ const EMAIL_TO_NAME = {
   "javier.ilabaca@sleppetorca.gob.cl": "Javier Ilabaca",
   "nicolas.campos@sleppetorca.gob.cl": "Nicolas Campos",
   "abraham.allel@sleppetorca.gob.cl": "Abraham Allel",
+  "camila.valenzuela@sleppetorca.gob.cl": "Camila Valenzuela",
+  "cristian.urrutia@sleppetorca.gob.cl": "Cristian Urrutia",
+  "ana.opazo@sleppetorca.gob.cl": "Ana Opazo",
+  "mauricio.urrutia@sleppetorca.gob.cl": "Mauricio Urrutia",
+  "marcela.ortega@sleppetorca.gob.cl": "Marcela Ortega",
+  "carolina.villagra@sleppetorca.gob.cl": "Carolina Villagra",
 };
 function getNameFromEmail(email) {
   if (!email) return '';

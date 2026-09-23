@@ -28,7 +28,13 @@ service cloud.firestore {
         "wilson.rojasabarca@gmail.com",
         "javier.ilabaca@sleppetorca.gob.cl",
         "nicolas.campos@sleppetorca.gob.cl",
-        "abraham.allel@sleppetorca.gob.cl"
+        "abraham.allel@sleppetorca.gob.cl",
+        "camila.valenzuela@sleppetorca.gob.cl",
+        "cristian.urrutia@sleppetorca.gob.cl",
+        "ana.opazo@sleppetorca.gob.cl",
+        "mauricio.urrutia@sleppetorca.gob.cl",
+        "marcela.ortega@sleppetorca.gob.cl",
+        "carolina.villagra@sleppetorca.gob.cl"
       ];
     }
 

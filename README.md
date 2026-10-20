@@ -138,8 +138,9 @@ acumulado hasta el mes" del Panel principal, que solo afecta a las tarjetas KPI.
 ### Pestaña "Otras Fuentes"
 
 Primer paso de una ampliación mayor: hacer el seguimiento de fuentes de financiamiento distintas
-de SEP. Hoy son 7: Subvención General, PIE, Subvención de Mantención, Subvención Pro-Retención,
-JUNJI, FAEP y FIGA. A diferencia de SEP, estas fuentes **no tienen marco anual ni meta 70/30** —
+de SEP. Hoy son 9: Subvención General, PIE, Subvención de Mantención, Subvención Pro-Retención,
+JUNJI, FAEP, FIGA, Aporte Fiscal Extraordinario Educación y Aporte Fiscal Extraordinario JUNJI
+(estos dos últimos van como fuentes separadas a pedido del usuario). A diferencia de SEP, estas fuentes **no tienen marco anual ni meta 70/30** —
 el seguimiento es simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores
 (Superávit/Déficit).
 
@@ -151,18 +152,29 @@ el seguimiento es simplemente Ingreso vs. Gasto por fuente, con un Estado de sol
 - Todo se guarda en tiempo real vía Firestore (mismo documento `sep_carga_rbd/{rbd}` de SEP, bajo
   el campo nuevo `otras_fuentes`), sin requerir cambios en `firestore.rules`.
 
-**Dos variantes de forma, combinables.** El catálogo `FUENTES_OTRAS` describe cada fuente con dos
-campos independientes en vez de un único flag binario (necesario desde que FAEP/FIGA agregaron
-una tercera combinación):
+**Tres dimensiones independientes, combinables.** El catálogo `FUENTES_OTRAS` describe cada fuente
+con tres campos en vez de un único flag binario (necesario desde que FAEP/FIGA y los Aportes
+Fiscales agregaron combinaciones nuevas):
 
-- `incomeShape`: `'single'` (1 línea de Ingreso — General/PIE/Mantención/Pro-Retención/FAEP/FIGA)
-  o `'junji3'` (3 líneas — Operación, Homologación, Carrera Docente — hoy solo JUNJI). También
-  determina el universo de entidades: `'junji3'` usa los 13 **GESPARVU** (jardín infantil / sala
-  cuna) en vez de los 55 RBD + "AC" de SEP.
+- `incomeShape`: `'single'` (1 línea de Ingreso) o `'junji3'` (3 líneas — Operación,
+  Homologación, Carrera Docente — hoy solo JUNJI). Solo decide cuántas líneas de ingreso hay (y si
+  aplica el "Saldo Operación disponible para B&S"); ya no determina el universo de entidades.
+- `universo`: `'rbd_ac'` (los 55 RBD + la fila fija "AC") o `'gesparvu'` (los 13 **GESPARVU** —
+  jardín infantil / sala cuna —, sin AC). Define qué filas lista la pestaña y de qué fuentes
+  participa cada entidad (un mismo GESPARVU puede tener datos en JUNJI y en Aporte Fiscal JUNJI,
+  bajo claves distintas de `otras_fuentes`, sin pisarse).
 - `bysMode`: `'compras'` (Bienes y Servicios como "Registro de compras" con código de cuenta
   SUPEREDUC + documento/proveedor — General/PIE/Mantención/Pro-Retención) o `'concepto'` (ítems
-  por concepto libre, sin código ni documento — JUNJI/FAEP/FIGA, ninguna de las tres es parte del
-  sistema de rendición de cuentas de SUPEREDUC).
+  por concepto libre, sin código ni documento — JUNJI/FAEP/FIGA/Aportes Fiscales, ninguna es parte
+  del sistema de rendición de cuentas de SUPEREDUC).
+
+| Fuente | `incomeShape` | `bysMode` | `universo` | CSV SUPEREDUC |
+|---|---|---|---|---|
+| General / PIE / Mantención / Pro-Retención | `single` | `compras` | `rbd_ac` | Sí |
+| FAEP / FIGA | `single` | `concepto` | `rbd_ac` | No |
+| Aporte Fiscal Extraord. Educación | `single` | `concepto` | `rbd_ac` | No |
+| JUNJI | `junji3` | `concepto` | `gesparvu` | No |
+| Aporte Fiscal Extraord. JUNJI | `single` | `concepto` | `gesparvu` | No |
 
 **JUNJI** (`incomeShape:'junji3'`, `bysMode:'concepto'`): Operación financia Remuneraciones y
 Bienes y Servicios; Homologación y Carrera Docente financian solo Remuneraciones — el modal
@@ -175,7 +187,13 @@ del sistema de rendición de cuentas desde el periodo 2024 (dictamen N°67 de 20
 Superintendencia de Educación). Usan el mismo universo de entidades que las 4 fuentes "simples"
 (55 RBD + "AC").
 
-**Importar / exportar.** Cada una de las 7 pestañas tiene su propia fila de botones, igual
+**Aporte Fiscal Extraordinario Educación y Aporte Fiscal Extraordinario JUNJI**
+(`incomeShape:'single'`, `bysMode:'concepto'`): ingresos aparte, que se gastan en Remuneraciones y
+Bienes y Servicios y no se rinden por el libro de compras de SUPEREDUC. El de Educación usa el
+universo `rbd_ac` (55 RBD + "AC"); el de JUNJI usa el universo `gesparvu` (los 13 GESPARVU, sin
+AC) y tiene una sola línea de Ingreso (a diferencia de la fuente JUNJI, que tiene 3).
+
+**Importar / exportar.** Cada una de las 9 pestañas tiene su propia fila de botones, igual
 criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de los datos de SEP:
 
 - **⬇ Compras SUPEREDUC (CSV)** — solo en las 4 fuentes `bysMode:'compras'` (no en JUNJI/FAEP/

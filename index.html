@@ -748,6 +748,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-general"></tbody>
@@ -786,6 +787,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-pie"></tbody>
@@ -824,6 +826,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-mantenimiento"></tbody>
@@ -862,6 +865,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-prorretencion"></tbody>
@@ -899,6 +903,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-junji"></tbody>
@@ -937,6 +942,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-faep"></tbody>
@@ -975,6 +981,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-figa"></tbody>
@@ -1013,6 +1020,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-aporte_educ"></tbody>
@@ -1051,6 +1059,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
                 <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
+                <th class="col-acciones" title="Descargas individuales de esta entidad">Acciones</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-aporte_junji"></tbody>
@@ -2853,6 +2862,7 @@ function renderOtrasFuentesTable(fuenteKey) {
       <td class="num">${fmtCLP(b.gasto)}</td>
       <td class="num" style="color:${b.saldo < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(b.saldo)}</td>
       <td>${otrasFuentesEstadoTagHTML(of)}</td>
+      <td class="col-acciones">${otrasFuentesAccionesHTML(key, r.rbd)}</td>
     </tr>`;
   }).join('');
   tbody.innerHTML = filas;
@@ -2908,6 +2918,14 @@ FUENTES_OTRAS.forEach(f => {
   const tabla = document.getElementById('otrasFuentesTable-' + f.key);
   if (!tabla) return;
   tabla.addEventListener('click', (e) => {
+    const rowBtn = e.target.closest('.row-action-btn');
+    if (rowBtn) {
+      const rbd = rowBtn.getAttribute('data-rbd'), fuente = rowBtn.getAttribute('data-fuente'), action = rowBtn.getAttribute('data-action');
+      if (action === 'excel') exportOtraFuenteEntidadExcel(fuente, rbd);
+      else if (action === 'csv') descargarCsvOtraFuenteEntidad(fuente, rbd);
+      else if (action === 'pdf') exportOtraFuenteEntidadPdf(fuente, rbd);
+      return;
+    }
     const cell = e.target.closest('[data-abrir-otra-fuente]');
     if (cell) abrirOtrasFuentesModal(cell.getAttribute('data-abrir-otra-fuente'));
   });
@@ -3347,11 +3365,18 @@ document.addEventListener('keydown', (e) => {
 // los 13 GESPARVU de JUNJI) ordenado — sirve de base a todos los exportadores de abajo.
 function rbdCellValue(rbd) { return /^\d+$/.test(rbd) ? Number(rbd) : rbd; }
 
-function comprasOtraFuenteCsvLines(fuenteKey) {
+// Igual que registrosPara(onlyRbd) de SEP: el universo de la fuente, o solo una entidad si se pide
+// la descarga individual de la columna Acciones.
+function filasOtraFuenteExport(fuenteKey, onlyRbd) {
+  const filas = filasOtrasFuentes(fuenteKey);
+  return onlyRbd ? filas.filter(r => r.rbd === onlyRbd) : filas;
+}
+
+function comprasOtraFuenteCsvLines(fuenteKey, onlyRbd) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   const headers = ['RBD', 'Subvencion', 'Codigo Cuenta', 'Tipo de Documento', 'Nro Documento', 'Fecha Documento', 'Fecha Pago', 'Descripcion Gasto', 'Rut Proveedor', 'Nombre Proveedor', 'Monto Gasto', 'Monto Documento', 'Documento Original'];
   const lines = [headers.map(csvEscape).join(';')];
-  filasOtrasFuentes(fuenteKey).forEach(r => {
+  filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const compras = (of && of.compras) || {};
     Object.values(compras)
@@ -3365,16 +3390,20 @@ function comprasOtraFuenteCsvLines(fuenteKey) {
   });
   return lines;
 }
-function downloadComprasOtraFuente(fuenteKey) {
-  const lines = comprasOtraFuenteCsvLines(fuenteKey);
-  if (lines.length === 1) { alert('Todavía no hay compras registradas en ' + FUENTES_OTRAS_BY_KEY[fuenteKey].label + '.'); return; }
-  const csvContent = '﻿' + lines.join('\r\n');
+// Descarga un CSV (BOM UTF-8 + CRLF, igual que los demás CSV del archivo) a partir de sus líneas.
+function descargarCsvLineasOtraFuente(lines, nombreArchivo) {
+  const csvContent = '\ufeff' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `compras_${fuenteKey}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.href = url; a.download = nombreArchivo;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+function downloadComprasOtraFuente(fuenteKey) {
+  const lines = comprasOtraFuenteCsvLines(fuenteKey);
+  if (lines.length === 1) { alert('Todavía no hay compras registradas en ' + FUENTES_OTRAS_BY_KEY[fuenteKey].label + '.'); return; }
+  descargarCsvLineasOtraFuente(lines, `compras_${fuenteKey}_${new Date().toISOString().slice(0,10)}.csv`);
 }
 
 // Respaldo manual en JSON (igual criterio que downloadCargaBtn de SEP): no hace falta para que
@@ -3400,10 +3429,10 @@ function descargarCargaOtraFuente(fuenteKey) {
 // fuentes simples; ítems por concepto libre, en JUNJI) — mismo criterio de sheetSimpleAOA/
 // sheetComprasAOA de SEP, pero sin el valor "Item" en blanco (acá no aplica: cada hoja es una
 // sola línea, no 3 como el Ingreso SEP). ---
-function sheetOtraFuenteSimpleAOA(fuenteKey, campo) {
+function sheetOtraFuenteSimpleAOA(fuenteKey, campo, onlyRbd) {
   const headers = ['RBD', 'Nombre', ...MESES_CARGA_TITLE, 'Total Año'];
   const rows = [headers];
-  filasOtrasFuentes(fuenteKey).forEach(r => {
+  filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const entry = of ? of[campo] : null;
     const vals = MESES_CARGA.map(m => entry ? Math.round(entry.meses[m] || 0) : 0);
@@ -3412,10 +3441,10 @@ function sheetOtraFuenteSimpleAOA(fuenteKey, campo) {
   });
   return rows;
 }
-function sheetOtraFuenteComprasAOA(fuenteKey) {
+function sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd) {
   const headers = ['ID', 'RBD', 'Nombre', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal'];
   const rows = [headers];
-  filasOtrasFuentes(fuenteKey).forEach(r => {
+  filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const compras = (of && of.compras) || {};
     Object.entries(compras).forEach(([id, c]) => {
@@ -3424,10 +3453,10 @@ function sheetOtraFuenteComprasAOA(fuenteKey) {
   });
   return rows;
 }
-function sheetBysItemsAOA(fuenteKey, lista = 'bys_items') {
+function sheetBysItemsAOA(fuenteKey, lista = 'bys_items', onlyRbd) {
   const headers = ['RBD', 'Nombre', 'Concepto', ...MESES_CARGA_TITLE, 'Total Año'];
   const rows = [headers];
-  filasOtrasFuentes(fuenteKey).forEach(r => {
+  filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     (of ? (of[lista] || []) : []).forEach(it => {
       const vals = MESES_CARGA.map(m => Math.round(it.meses[m] || 0));
@@ -3438,32 +3467,32 @@ function sheetBysItemsAOA(fuenteKey, lista = 'bys_items') {
 }
 // Hoja META: el corte "Real hasta el mes" de cada entidad — sin ella el round-trip de Excel
 // perdería la distinción Real/Proyectado.
-function sheetMetaAOA(fuenteKey) {
+function sheetMetaAOA(fuenteKey, onlyRbd) {
   const rows = [['RBD', 'Nombre', 'RealHastaMes']];
-  filasOtrasFuentes(fuenteKey).forEach(r => {
+  filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     rows.push([rbdCellValue(r.rbd), r.nombre, of ? realHastaMesOtraFuente(of) : DATA.n_meses]);
   });
   return rows;
 }
-function buildOtraFuenteCargaWorkbook(fuenteKey) {
+function buildOtraFuenteCargaWorkbook(fuenteKey, onlyRbd) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   const wb = XLSX.utils.book_new();
   if (fuente.incomeShape === 'junji3') {
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_operacion')), 'ING_OPERACION');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_homologacion')), 'ING_HOMOLOGACION');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_carrera_docente')), 'ING_CARRERA_DOCENTE');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_operacion', onlyRbd)), 'ING_OPERACION');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_homologacion', onlyRbd)), 'ING_HOMOLOGACION');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_carrera_docente', onlyRbd)), 'ING_CARRERA_DOCENTE');
   } else {
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso')), 'INGRESO');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso', onlyRbd)), 'INGRESO');
   }
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'gasto_rem')), 'REMUNERACIONES');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'gasto_rem', onlyRbd)), 'REMUNERACIONES');
   if (fuente.bysMode === 'compras') {
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteComprasAOA(fuenteKey)), 'COMPRAS');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey, 'bys_proy_items')), 'BYS_PROY_ITEMS');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd)), 'COMPRAS');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey, 'bys_proy_items', onlyRbd)), 'BYS_PROY_ITEMS');
   } else {
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey)), 'BYS_ITEMS');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey, 'bys_items', onlyRbd)), 'BYS_ITEMS');
   }
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetMetaAOA(fuenteKey)), 'META');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetMetaAOA(fuenteKey, onlyRbd)), 'META');
   return wb;
 }
 function exportOtraFuenteExcel(fuenteKey) {
@@ -3609,6 +3638,151 @@ function importOtraFuenteWorkbook(wbIn, fuenteKey) {
 function exportOtraFuentePdf() {
   document.body.classList.remove('print-single-rbd');
   window.print();
+}
+
+// --- Columna "Acciones" (por fila) de las pestañas de fuente: ⬇ XLS / ⬇ CSV / 🖨, igual que la de
+// SEP pero leyendo otras_fuentes. El Excel individual usa el MISMO formato que el "⬇ Excel" de la
+// pestaña (solo que con la fila de esa entidad), así que se puede reimportar con "⬆ Importar
+// Excel" de la misma pestaña. El CSV es el formato SUPEREDUC en las fuentes con compras, y el
+// detalle mensual de la entidad en las que no son parte de ese sistema de rendición. ---
+function otrasFuentesAccionesHTML(fuenteKey, rbd) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const csvLabel = fuente.codigoSupereduc ? '⬇ CSV SUPEREDUC' : '⬇ CSV';
+  const csvTitle = fuente.codigoSupereduc
+    ? 'Descargar compras SUPEREDUC (CSV) solo de esta entidad'
+    : 'Descargar el detalle mensual (CSV) solo de esta entidad';
+  return `<button class="row-action-btn" data-action="excel" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="Descargar Excel solo de esta entidad (se puede reimportar con Importar Excel)">⬇ XLS</button>
+        <button class="row-action-btn" data-action="csv" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="${csvTitle}">${csvLabel}</button>
+        <button class="row-action-btn" data-action="pdf" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="Descargar PDF solo de esta entidad">🖨</button>`;
+}
+
+function exportOtraFuenteEntidadExcel(fuenteKey, rbd) {
+  if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); return; }
+  const wb = buildOtraFuenteCargaWorkbook(fuenteKey, rbd);
+  XLSX.writeFile(wb, `${fuenteKey}_${rbd}_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+// CSV de detalle mensual (fuentes sin SUPEREDUC): una fila por línea mensual de la entidad, con su
+// tipo (Real / Proyectado / Mixto según el corte "Real hasta"), y al final los totales
+// Real / Proyectado / Total y el corte. Mismo separador ";" que el CSV SUPEREDUC.
+function csvDetalleMensualOtraFuenteLines(fuenteKey, rbd) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const of = recomputeOtraFuente(rbd, fuenteKey);
+  const corte = realHastaMesOtraFuente(of);
+  const tipoPorCorte = corte >= 12 ? 'Real' : `Mixto (Real hasta ${MESES_CARGA_ABREV[corte - 1]})`;
+  const fila = (linea, tipo, obj) => [linea, tipo, ...MESES_CARGA.map(m => Math.round((obj.meses && obj.meses[m]) || 0)), Math.round(obj.total || 0)];
+  const lines = [['Linea', 'Tipo', ...MESES_CARGA_TITLE, 'Total'].map(csvEscape).join(';')];
+  const push = (cols) => lines.push(cols.map(csvEscape).join(';'));
+  if (fuente.incomeShape === 'junji3') {
+    push(fila('Ingreso Operación', tipoPorCorte, of.ingreso_operacion));
+    push(fila('Ingreso Homologación', tipoPorCorte, of.ingreso_homologacion));
+    push(fila('Ingreso Carrera Docente', tipoPorCorte, of.ingreso_carrera_docente));
+  } else {
+    push(fila('Ingreso', tipoPorCorte, of.ingreso));
+  }
+  push(fila('Gasto Remuneraciones', tipoPorCorte, of.gasto_rem));
+  if (fuente.bysMode === 'compras') {
+    (of.bys_items || []).forEach(it => push(fila(`B&S compras - ${it.codigo} ${it.item}`, 'Real', it)));
+    (of.bys_proy_items || []).forEach(it => push(fila(`B&S proyeccion - ${it.concepto}`, 'Proyectado', it)));
+  } else {
+    (of.bys_items || []).forEach(it => push(fila(`B&S - ${it.concepto}`, tipoPorCorte, it)));
+  }
+  const vacios = MESES_CARGA.map(() => '');
+  [['real', 'Real'], ['proy', 'Proyectado'], ['total', 'Total (Real+Proyectado)']].forEach(([k, etiqueta]) => {
+    const b = of.rp[k];
+    push([`Ingreso ${etiqueta}`, etiqueta, ...vacios, b.ingreso]);
+    push([`Gasto ${etiqueta}`, etiqueta, ...vacios, b.gasto]);
+    push([`Saldo ${etiqueta}`, etiqueta, ...vacios, b.saldo]);
+  });
+  push(['Estado (Total)', 'Total (Real+Proyectado)', ...vacios, estadoLabel[of.estado]]);
+  push(['Real hasta', '', ...vacios, MESES_CARGA_TITLE[corte - 1]]);
+  return lines;
+}
+function descargarCsvOtraFuenteEntidad(fuenteKey, rbd) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const fecha = new Date().toISOString().slice(0, 10);
+  if (fuente.codigoSupereduc) {
+    const lines = comprasOtraFuenteCsvLines(fuenteKey, rbd);
+    if (lines.length === 1) { alert('Esta entidad todavía no tiene compras registradas en ' + fuente.label + '.'); return; }
+    descargarCsvLineasOtraFuente(lines, `compras_${fuenteKey}_${rbd}_${fecha}.csv`);
+  } else {
+    descargarCsvLineasOtraFuente(csvDetalleMensualOtraFuenteLines(fuenteKey, rbd), `detalle_${fuenteKey}_${rbd}_${fecha}.csv`);
+  }
+}
+
+// PDF individual: arma en #printSingleWrap un resumen de solo lectura (sin <input>) y lo imprime
+// con el mismo mecanismo que exportRbdPdf de SEP (body.print-single-rbd oculta todo .wrap).
+function escHtmlOF(v) {
+  return String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+function filaMesesEstaticaHTML(label, obj, corte, forzarProy) {
+  const celdas = MESES_CARGA.map((m, i) => {
+    const v = Number(obj.meses && obj.meses[m]) || 0;
+    return `<td class="num ${claseMesOtraFuente(i, corte, forzarProy)}">${v ? fmtCLP(v) : ''}</td>`;
+  }).join('');
+  return `<tr><td class="item-label">${escHtmlOF(label)}</td>${celdas}<td class="num item-total">${fmtCLP(obj.total || 0)}</td></tr>`;
+}
+function tablaMesesEstaticaHTML(titulo, filas, corte, forzarProy) {
+  const cuerpo = filas.length
+    ? filas.map(f => filaMesesEstaticaHTML(f.label, f.obj, corte, forzarProy)).join('')
+    : `<tr><td colspan="14" class="detalle-sin-compras">Sin datos.</td></tr>`;
+  return `<table class="detalle-table" style="margin-top:8px;">${DETALLE_COLGROUP}
+      <thead><tr><th>${escHtmlOF(titulo)}</th>${mesHeaderCellsCorteHTML(corte, forzarProy)}<th class="num">Total</th></tr></thead>
+      <tbody>${cuerpo}</tbody></table>`;
+}
+function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const r = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
+  if (!r) return '<p>Entidad no encontrada.</p>';
+  const of = recomputeOtraFuente(rbd, fuenteKey);
+  const corte = realHastaMesOtraFuente(of);
+  const tEntidad = { nDeficit: of.estado === 'deficit' ? 1 : 0, nEntidades: 1 };
+  const kpis = (tipo) => {
+    const cards = kpiCardsOtraFuente(fuenteKey, tipo, of.rp[tipo], tEntidad);
+    cards[cards.length - 1].full = tipo === 'total' ? 'Ingreso − Gasto' : cards[cards.length - 1].full;
+    return kpiCardsHTML(cards);
+  };
+  const tablasIngreso = fuente.incomeShape === 'junji3'
+    ? [['Ingreso Operación', of.ingreso_operacion], ['Ingreso Homologación', of.ingreso_homologacion], ['Ingreso Carrera Docente', of.ingreso_carrera_docente]]
+    : [['Ingreso', of.ingreso]];
+  let bysHTML;
+  if (fuente.bysMode === 'compras') {
+    const compras = Object.values(of.compras || {}).sort((a, b) => (a.fechaDocumento || '').localeCompare(b.fechaDocumento || ''));
+    const filasCompras = compras.map(c => {
+      const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
+      return `<tr><td>${escHtmlOF(c.codigo)}${cat ? ' · ' + escHtmlOF(cat.nombre) : ''}</td><td>${escHtmlOF(c.tipoDocumento)}</td><td>${escHtmlOF(c.nroDocumento)}</td><td>${escHtmlOF(c.fechaDocumento)}</td><td>${escHtmlOF(c.fechaPago)}</td><td>${escHtmlOF(c.descripcion)}</td><td>${escHtmlOF(c.rutProveedor)}</td><td>${escHtmlOF(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td>${escHtmlOF(c.documentoOriginal)}</td></tr>`;
+    }).join('') || `<tr><td colspan="11" class="detalle-sin-compras">Sin compras registradas.</td></tr>`;
+    bysHTML = `
+      ${tablaMesesEstaticaHTML('Bienes y Servicios — compras (Real)', (of.bys_items || []).map(it => ({ label: `${it.codigo} · ${it.item}`, obj: it })), 12, false)}
+      ${tablaMesesEstaticaHTML('Proyección Bienes y Servicios', (of.bys_proy_items || []).map(it => ({ label: it.concepto, obj: it })), corte, true)}
+      <div class="detalle-header" style="margin-top:10px;"><strong>Registro de compras</strong></div>
+      <table class="detalle-table compras-table"><thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th></tr></thead><tbody>${filasCompras}</tbody></table>`;
+  } else {
+    bysHTML = tablaMesesEstaticaHTML('Bienes y Servicios (por concepto)', (of.bys_items || []).map(it => ({ label: it.concepto, obj: it })), corte, false);
+  }
+  return `
+    <div class="detalle-header" style="margin-bottom:14px;">
+      <strong style="font-size:16px;">${escHtmlOF(fuente.label)} — ${escHtmlOF(otrasFuentesTituloEntidad(r, fuenteKey))} · ${escHtmlOF(r.nombre)}</strong><br>
+      <span class="detalle-sub">Real hasta ${MESES_CARGA_TITLE[corte - 1]} · Estado (sobre el Total): ${otrasFuentesEstadoTagHTML(of)} — SLEP Petorca</span>
+    </div>
+    <div class="kpi-section-label">Real (ejecutado)</div>
+    <div class="kpi-row kpi-row-real" style="margin-bottom:10px;">${kpis('real')}</div>
+    <div class="kpi-section-label">Proyectado</div>
+    <div class="kpi-row kpi-row-proy" style="margin-bottom:10px;">${kpis('proy')}</div>
+    <div class="kpi-section-label">Total (Real + Proyectado)</div>
+    <div class="kpi-row" style="margin-bottom:10px;">${kpis('total')}</div>
+    ${tablasIngreso.map(([titulo, obj]) => tablaMesesEstaticaHTML(titulo, [{ label: titulo, obj }], corte, false)).join('')}
+    ${tablaMesesEstaticaHTML('Gasto Remuneraciones', [{ label: 'Gasto Remuneraciones', obj: of.gasto_rem }], corte, false)}
+    ${bysHTML}`;
+}
+function exportOtraFuenteEntidadPdf(fuenteKey, rbd) {
+  document.getElementById('printSingleWrap').innerHTML = buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey);
+  document.body.classList.add('print-single-rbd');
+  window.print();
+  setTimeout(() => {
+    document.body.classList.remove('print-single-rbd');
+    document.getElementById('printSingleWrap').innerHTML = '';
+  }, 300);
 }
 
 // Un listener por botón × fuente (CSV SUPEREDUC no aplica a JUNJI, por eso el guard `if`).

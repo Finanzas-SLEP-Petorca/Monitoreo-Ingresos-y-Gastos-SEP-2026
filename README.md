@@ -233,6 +233,23 @@ criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de 
   imprime la pestaña de fuente actualmente activa.
 - **⬇ Descargar carga (JSON)** — respaldo manual, igual criterio que el de Panel principal.
 
+**Acciones por fila.** Cada tabla de fuente tiene al final una columna **Acciones** (igual que la
+de SEP) con descargas individuales de esa entidad (RBD, "AC" o GESPARVU), que no salen en el PDF
+general:
+
+- **⬇ XLS** — Excel solo de esa entidad, con el mismo formato que el "⬇ Excel" de la pestaña (hojas
+  de ingreso, remuneraciones, compras o ítems de B&S, proyección y `META` con el corte), así que se
+  puede volver a cargar con "⬆ Importar Excel" de la misma pestaña sin tocar a las demás entidades.
+- **⬇ CSV SUPEREDUC** (General, PIE, Mantención, Pro-Retención) — las compras de esa entidad en el
+  formato de 13 columnas de SUPEREDUC. En las fuentes que no son parte de ese sistema (JUNJI,
+  FAEP, FIGA y los dos Aportes Fiscales) el botón es **⬇ CSV** y baja el **detalle mensual** de la
+  entidad: una fila por línea (ingresos, remuneraciones, ítems de B&S) con su tipo
+  (Real / Proyectado / Mixto), seguida de los totales Real, Proyectado y Total, el Estado y el mes
+  de corte "Real hasta".
+- **🖨** — PDF individual de esa entidad: encabezado con la fuente y la entidad, las tarjetas Real /
+  Proyectado / Total, las tablas mensuales con etiquetas Real/Proy y el registro de compras (o los
+  ítems por concepto), en texto de solo lectura; usa el mismo mecanismo que el PDF individual de SEP.
+
 **Pendiente, en una PR futura**: el selector de código de cuenta de "Registro de compras" (General,
 PIE, Mantención, Pro-Retención) usa por ahora el mismo catálogo completo de SEP (Subt. 22 y 29)
 como aproximación temporal. El Manual de Cuentas SUPEREDUC 2026 confirma que cada subvención

@@ -193,6 +193,30 @@ Bienes y Servicios y no se rinden por el libro de compras de SUPEREDUC. El de Ed
 universo `rbd_ac` (55 RBD + "AC"); el de JUNJI usa el universo `gesparvu` (los 13 GESPARVU, sin
 AC) y tiene una sola línea de Ingreso (a diferencia de la fuente JUNJI, que tiene 3).
 
+**Real / Proyectado / Total.** Cada pestaña de fuente distingue lo ejecutado de lo proyectado,
+con el mismo criterio que las remuneraciones de SEP:
+
+- Cada entidad × fuente tiene un corte **"Real hasta el mes"** (`otras_fuentes.{fuente}.real_hasta_mes`,
+  por defecto el mismo corte de datos reales de SEP). Los meses hasta el corte son **Real** y los
+  siguientes **Proyectado**, para el/los ingreso/s, las remuneraciones y — en las fuentes con
+  Bienes y Servicios por concepto (JUNJI, FAEP, FIGA, Aportes) — los ítems de B&S. El corte se
+  cambia por entidad en el modal, o para todas las entidades de la fuente con el control "Real
+  hasta el mes → Aplicar a todas las entidades" de la pestaña.
+- En las fuentes con **registro de compras** (General, PIE, Mantención, Pro-Retención) las compras
+  son **siempre Real** (gasto ya documentado, no depende del corte) y la proyección de Bienes y
+  Servicios se carga aparte en la sección "Proyección Bienes y Servicios (por concepto)" del modal
+  (`otras_fuentes.{fuente}.bys_proy_items`, concepto libre, siempre Proyectada).
+- Cada pestaña muestra 3 filas de tarjetas KPI colapsables — **Real (ejecutado)**, **Proyectado** y
+  **Total (Real + Proyectado)** — con Ingreso, Gasto Remuneraciones, Gasto Bienes y Servicios,
+  Gasto Total y Saldo (por defecto solo Total abierta, igual que Panel principal; el estado de cada
+  fila se recuerda en este navegador). Los chips "Total / Real / Proyectado" sobre la tabla cambian
+  la base de sus columnas numéricas; la columna **Estado** siempre es sobre el Total.
+- En el modal, los encabezados de mes llevan la etiqueta Real/Proy. según el corte de esa entidad y
+  el subtítulo muestra Saldo Total, Saldo Real y Saldo Proy.
+- Para otros módulos (Dashboard, % Ejecución, Reportes) está `computeTotalesOtraFuente(fuenteKey)`,
+  que devuelve `{ real, proy, total }` (cada uno `{ ingreso, rem, bys, gasto, saldo }`) más
+  `nEntidades / nDeficit / nSuperavit`; por entidad el desglose es `of.rp`.
+
 **Importar / exportar.** Cada una de las 9 pestañas tiene su propia fila de botones, igual
 criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de los datos de SEP:
 
@@ -201,8 +225,10 @@ criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de 
   SEP, con el código de Subvención oficial de cada una en la columna "Subvencion" (`GENERAL`,
   `PIE`, `MANTENIMIENTO`, `PRORETENCION`).
 - **⬇ Excel / ⬆ Importar Excel** — carga completa de la fuente en hojas (Ingreso, Remuneraciones,
-  Compras para las `bysMode:'compras'`; 3 hojas de Ingreso + Remuneraciones + Bienes y Servicios
-  por concepto para las `bysMode:'concepto'`), reimportable tal cual se exporta.
+  Compras + `BYS_PROY_ITEMS` para las `bysMode:'compras'`; hojas de Ingreso + Remuneraciones +
+  `BYS_ITEMS` por concepto para las `bysMode:'concepto'`) y una hoja `META` con el corte "Real hasta
+  el mes" de cada entidad, reimportable tal cual se exporta (el corte y la proyección de B&S
+  sobreviven al round-trip; si una hoja falta en el archivo, el import no toca esos datos).
 - **🖨 Exportar PDF** — mismo mecanismo de impresión del navegador que ya usa Panel principal;
   imprime la pestaña de fuente actualmente activa.
 - **⬇ Descargar carga (JSON)** — respaldo manual, igual criterio que el de Panel principal.
@@ -213,8 +239,8 @@ como aproximación temporal. El Manual de Cuentas SUPEREDUC 2026 confirma que ca
 tiene su propio subconjunto de cuentas habilitadas (p. ej. Mantención casi no admite
 remuneraciones, solo cuentas de infraestructura) — acotar el selector por fuente requiere
 transcribir con cuidado esa tabla completa (~130 cuentas × 9 columnas) antes de aplicarla, dado
-el riesgo de error en datos financieros. Tampoco están aún incluidos los dos Aportes Fiscales
-Extraordinarios (Educación y JUNJI), ni una pestaña Consolidada que sume todas las fuentes por RBD.
+el riesgo de error en datos financieros. Tampoco existe aún una vista que sume todas las fuentes por
+RBD (Dashboard / Reportes multi-fuente, en PRs siguientes).
 
 ## Fuentes de datos
 

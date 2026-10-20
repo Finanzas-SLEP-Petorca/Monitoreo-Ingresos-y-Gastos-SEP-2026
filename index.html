@@ -515,6 +515,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <button class="tab-btn" data-tab="of-mantenimiento" type="button">🔧 Mantención</button>
     <button class="tab-btn" data-tab="of-prorretencion" type="button">📌 Pro-Retención</button>
     <button class="tab-btn" data-tab="of-junji" type="button">🧸 JUNJI</button>
+    <button class="tab-btn" data-tab="of-faep" type="button">🏗️ FAEP</button>
+    <button class="tab-btn" data-tab="of-figa" type="button">🌐 FIGA</button>
   </div>
 
   <div id="tab-panel" class="tab-content">
@@ -882,6 +884,80 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-junji -->
 
+  <div id="tab-of-faep" class="tab-content hidden">
+    <section>
+      <h2>FAEP</h2>
+      <div class="panel">
+        <div class="detalle-empty">FAEP no es parte del sistema de rendición de cuentas de SUPEREDUC (excluido
+        explícitamente desde el periodo 2024 por el dictamen N°67 de 2023): se sigue como Ingreso vs. Gasto, sin
+        techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
+        fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <button id="downloadExcelOFBtn-faep" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de FAEP (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-faep" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-faep" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-faep" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-faep" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
+        <div class="table-scroll" style="margin-top:12px;">
+          <table class="data-table" id="otrasFuentesTable-faep">
+            <thead>
+              <tr>
+                <th>RBD</th>
+                <th>Nombre</th>
+                <th class="num">Ingreso Total</th>
+                <th class="num">Gasto Remuneraciones</th>
+                <th class="num">Gasto Bienes y Servicios</th>
+                <th class="num">Gasto Total</th>
+                <th class="num">Saldo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="otrasFuentesTbody-faep"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /#tab-of-faep -->
+
+  <div id="tab-of-figa" class="tab-content hidden">
+    <section>
+      <h2>FIGA</h2>
+      <div class="panel">
+        <div class="detalle-empty">FIGA no aparece en ningún manual de SUPEREDUC revisado (no es parte de ese
+        sistema de rendición): se sigue como Ingreso vs. Gasto, sin techo ni meta 70/30 — el Estado solo indica si
+        el saldo acumulado es Superávit o Déficit. Incluye una fila fija "AC — Administración Central" para gasto
+        del sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <button id="downloadExcelOFBtn-figa" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de FIGA (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-figa" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-figa" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-figa" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-figa" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
+        <div class="table-scroll" style="margin-top:12px;">
+          <table class="data-table" id="otrasFuentesTable-figa">
+            <thead>
+              <tr>
+                <th>RBD</th>
+                <th>Nombre</th>
+                <th class="num">Ingreso Total</th>
+                <th class="num">Gasto Remuneraciones</th>
+                <th class="num">Gasto Bienes y Servicios</th>
+                <th class="num">Gasto Total</th>
+                <th class="num">Saldo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="otrasFuentesTbody-figa"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /#tab-of-figa -->
+
 <div id="otrasFuentesModal" class="modal-overlay hidden">
   <div class="modal-panel">
     <div class="modal-header">
@@ -1097,25 +1173,35 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 
 // --- Otras Fuentes de financiamiento (además de SEP) ---
 // A diferencia de SEP (que tiene marco anual, meta 70/30 y Real/Proyectado — ver
-// recomputeRegistro), estas fuentes solo se identifican por Ingreso vs. Gasto, sin techo. El
-// campo "shape" deja espacio para que JUNJI (que ingresa en 3 líneas — Operación, Homologación,
-// Carrera Docente — en vez de 1) se agregue después sin rehacer este catálogo ni las funciones
-// que lo recorren.
+// recomputeRegistro), estas fuentes solo se identifican por Ingreso vs. Gasto, sin techo. Dos
+// campos independientes describen la "forma" de cada una (antes era un solo flag `shape`
+// binario — dejó de alcanzar al agregar FAEP/FIGA, que no son ni la forma de General/PIE/
+// Mantención/Pro-Retención ni la de JUNJI, sino una combinación nueva de ambas):
+//   - incomeShape: 'single' (1 línea `ingreso`) | 'junji3' (3 líneas — Operación, Homologación,
+//     Carrera Docente — hoy solo JUNJI; también determina el universo de entidades: 'junji3' usa
+//     GESPARVU_REGISTROS, 'single' usa RBD+AC).
+//   - bysMode: 'compras' (registro de compras con código de cuenta SUPEREDUC + documento/
+//     proveedor) | 'concepto' (ítems de Bienes y Servicios por concepto libre, sin código ni
+//     documento — para fuentes que no son parte del sistema de rendición de SUPEREDUC).
 // Nota sobre códigos de cuenta: el Manual de Cuentas SUPEREDUC 2026 (págs. 113-119) confirma que
 // cada subvención tiene su propio subconjunto de cuentas habilitadas (p.ej. Mantención casi no
 // tiene remuneraciones, solo infraestructura 411600-411610 + un par de mobiliario). Mientras no
-// se transcriba esa tabla completa por subvención, estas 4 fuentes usan el mismo catálogo
-// CUENTAS_SEP (22+29) que SEP como aproximación temporal — más amplio de lo que cada una
-// realmente admite ante SUPEREDUC. Acotar esto es trabajo pendiente de una PR futura.
+// se transcriba esa tabla completa por subvención, las 4 fuentes con bysMode:'compras' usan el
+// mismo catálogo CUENTAS_SEP (22+29) que SEP como aproximación temporal — más amplio de lo que
+// cada una realmente admite ante SUPEREDUC. Acotar esto es trabajo pendiente de una PR futura.
 // codigoSupereduc: código oficial de la Columna B (Subvención) que exige el CSV de SUPEREDUC
-// (Manual de Usuario Capítulo III, Tabla 01) — null para JUNJI, que no es parte de ese sistema
-// de rendición (confirmado: no aparece en ninguno de los manuales SUPEREDUC revisados).
+// (Manual de Usuario Capítulo III, Tabla 01) — null para las fuentes que no son parte de ese
+// sistema de rendición: JUNJI, FAEP (excluido explícitamente desde 2024 por el dictamen N°67 de
+// 2023 de la Superintendencia de Educación) y FIGA (no aparece en ningún manual SUPEREDUC
+// revisado).
 const FUENTES_OTRAS = [
-  { key: 'general', label: 'Subvención General', shape: 'simple', codigoSupereduc: 'GENERAL' },
-  { key: 'pie', label: 'PIE', shape: 'simple', codigoSupereduc: 'PIE' },
-  { key: 'mantenimiento', label: 'Subv. Mantención', shape: 'simple', codigoSupereduc: 'MANTENIMIENTO' },
-  { key: 'prorretencion', label: 'Subv. Pro-Retención', shape: 'simple', codigoSupereduc: 'PRORETENCION' },
-  { key: 'junji', label: 'JUNJI', shape: 'junji', codigoSupereduc: null },
+  { key: 'general', label: 'Subvención General', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'GENERAL' },
+  { key: 'pie', label: 'PIE', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'PIE' },
+  { key: 'mantenimiento', label: 'Subv. Mantención', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'MANTENIMIENTO' },
+  { key: 'prorretencion', label: 'Subv. Pro-Retención', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'PRORETENCION' },
+  { key: 'junji', label: 'JUNJI', incomeShape: 'junji3', bysMode: 'concepto', codigoSupereduc: null },
+  { key: 'faep', label: 'FAEP', incomeShape: 'single', bysMode: 'concepto', codigoSupereduc: null },
+  { key: 'figa', label: 'FIGA', incomeShape: 'single', bysMode: 'concepto', codigoSupereduc: null },
 ];
 const FUENTES_OTRAS_BY_KEY = {};
 FUENTES_OTRAS.forEach(f => { FUENTES_OTRAS_BY_KEY[f.key] = f; });
@@ -1145,7 +1231,8 @@ const GESPARVU_REGISTROS = [
   { rbd: '5404002', nombre: 'MUNDO DE PEQUES', comuna: 'Petorca' },
 ];
 function filasOtrasFuentes(fuenteKey) {
-  if (fuenteKey === 'junji') return GESPARVU_REGISTROS;
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  if (fuente && fuente.incomeShape === 'junji3') return GESPARVU_REGISTROS;
   return [...DATA.registros, AC_PSEUDO_RBD];
 }
 let otrasFuentesSel = FUENTES_OTRAS[0].key;
@@ -1414,29 +1501,27 @@ function ensureOtraFuente(rbd, fuenteKey) {
   if (!CARGA_MANUAL.otras_fuentes_por_rbd) CARGA_MANUAL.otras_fuentes_por_rbd = {};
   if (!CARGA_MANUAL.otras_fuentes_por_rbd[rbd]) CARGA_MANUAL.otras_fuentes_por_rbd[rbd] = {};
   if (!CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey]) {
-    const shape = (FUENTES_OTRAS_BY_KEY[fuenteKey] || {}).shape;
-    if (shape === 'junji') {
-      // JUNJI: 3 líneas de ingreso (Operación financia Remuneraciones Y B&S; Homologación y
-      // Carrera Docente financian SOLO Remuneraciones) y B&S por concepto libre, sin código de
-      // cuenta SUPEREDUC (JUNJI no es parte de ese sistema de rendición) ni registro de compras
-      // con documento/proveedor (no hay rendición formal de respaldo tipo SUPEREDUC acá).
-      CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey] = {
-        ingreso_operacion: { meses: mesesEnCero(), total: 0 },
-        ingreso_homologacion: { meses: mesesEnCero(), total: 0 },
-        ingreso_carrera_docente: { meses: mesesEnCero(), total: 0 },
-        gasto_rem: { meses: mesesEnCero(), total: 0 },
-        bys_items: [], gasto_bys_total: 0,
-        ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit', saldo_operacion_bys: 0,
-      };
+    const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey] || {};
+    // JUNJI (incomeShape:'junji3'): 3 líneas de ingreso (Operación financia Remuneraciones Y B&S;
+    // Homologación y Carrera Docente financian SOLO Remuneraciones — ver saldo_operacion_bys en
+    // recomputeOtraFuente). El resto (incomeShape:'single') usa 1 sola línea de ingreso.
+    // bysMode:'concepto' (JUNJI/FAEP/FIGA): sin código de cuenta SUPEREDUC ni registro de compras
+    // con documento/proveedor, porque ninguna es parte de ese sistema de rendición.
+    const entry = {
+      gasto_rem: { meses: mesesEnCero(), total: 0 },
+      bys_items: [], gasto_bys_total: 0,
+      ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit',
+    };
+    if (fuente.incomeShape === 'junji3') {
+      entry.ingreso_operacion = { meses: mesesEnCero(), total: 0 };
+      entry.ingreso_homologacion = { meses: mesesEnCero(), total: 0 };
+      entry.ingreso_carrera_docente = { meses: mesesEnCero(), total: 0 };
+      entry.saldo_operacion_bys = 0;
     } else {
-      CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey] = {
-        ingreso: { meses: mesesEnCero(), total: 0 },
-        gasto_rem: { meses: mesesEnCero(), total: 0 },
-        compras: {},
-        bys_items: [], gasto_bys_total: 0,
-        ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit',
-      };
+      entry.ingreso = { meses: mesesEnCero(), total: 0 };
     }
+    if (fuente.bysMode === 'compras') entry.compras = {};
+    CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey] = entry;
   }
   return CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey];
 }
@@ -1464,8 +1549,8 @@ function recomputeOtraFuenteBysItemsAgregado(of) {
 }
 function recomputeOtraFuente(rbd, fuenteKey) {
   const of = ensureOtraFuente(rbd, fuenteKey);
-  const shape = (FUENTES_OTRAS_BY_KEY[fuenteKey] || {}).shape;
-  if (shape === 'junji') {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey] || {};
+  if (fuente.incomeShape === 'junji3') {
     of.ingreso_total = of.ingreso_operacion.total + of.ingreso_homologacion.total + of.ingreso_carrera_docente.total;
     of.gasto_total = of.gasto_rem.total + of.gasto_bys_total;
     of.saldo_operacion_bys = of.ingreso_operacion.total - of.gasto_bys_total;
@@ -1479,12 +1564,13 @@ function recomputeOtraFuente(rbd, fuenteKey) {
 }
 function recomputeTodasOtrasFuentes(rbd) {
   // Cada entidad solo participa de las fuentes de su propio universo: un GESPARVU únicamente de
-  // JUNJI, un RBD/AC únicamente de las fuentes "simple" — evita crear entradas vacías cruzadas
-  // (ej. un RBD de SEP con un bucket "junji" que nunca se va a mostrar).
+  // las fuentes incomeShape:'junji3' (hoy solo JUNJI), un RBD/AC únicamente de las
+  // incomeShape:'single' — evita crear entradas vacías cruzadas (ej. un RBD de SEP con un bucket
+  // "junji" que nunca se va a mostrar).
   const esGesparvu = GESPARVU_REGISTROS.some(g => g.rbd === rbd);
   FUENTES_OTRAS.forEach(f => {
-    if (esGesparvu !== (f.shape === 'junji')) return;
-    if (f.shape !== 'junji') recomputeItemsOtraFuenteDesdeCompras(rbd, f.key);
+    if (esGesparvu !== (f.incomeShape === 'junji3')) return;
+    if (f.bysMode === 'compras') recomputeItemsOtraFuenteDesdeCompras(rbd, f.key);
     else recomputeOtraFuenteBysItemsAgregado(ensureOtraFuente(rbd, f.key));
     recomputeOtraFuente(rbd, f.key);
   });
@@ -2590,23 +2676,12 @@ function otrasFuentesTablaMes(titulo, rbd, fuenteKey, modo, obj, totalId) {
     </table>`;
 }
 
-function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
-  const of = recomputeOtraFuente(rbd, fuenteKey);
-  const fuenteLabel = FUENTES_OTRAS_BY_KEY[fuenteKey].label;
-  if (FUENTES_OTRAS_BY_KEY[fuenteKey].shape === 'junji') return buildJunjiDetalleHTML(rbd, fuenteKey, of, fuenteLabel);
-
+function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
   const compras = of.compras || {};
   const filasCompras = Object.entries(compras)
     .sort((a, b) => (b[1].fechaDocumento || '').localeCompare(a[1].fechaDocumento || ''))
     .map(([id, c]) => otrasFuentesFilaCompra(rbd, fuenteKey, id, c)).join('');
   return `
-  <div class="detalle-wrap">
-    <div class="detalle-header">
-      <strong>Detalle por mes — Ingreso y Remuneraciones (${fuenteLabel})</strong> — <span class="detalle-sub">Bienes y Servicios se carga como "Registro de compras" más abajo; su total mensual se calcula solo.</span>
-    </div>
-    <div class="detalle-scroll">
-    ${otrasFuentesTablaMes(`Ingreso (${fuenteLabel})`, rbd, fuenteKey, 'of_ingreso', of.ingreso, `oftotal-${rbd}-${fuenteKey}-of_ingreso`)}
-    ${otrasFuentesTablaMes(`Gasto Remuneraciones (${fuenteLabel})`, rbd, fuenteKey, 'of_gasto_rem', of.gasto_rem, `oftotal-${rbd}-${fuenteKey}-of_gasto_rem`)}
     <div class="compras-section" style="margin-top:14px;">
       <div class="detalle-header">
         <strong>Registro de compras (${fuenteLabel}) — Bienes y Servicios</strong> — <span class="detalle-sub">catálogo de cuentas provisorio (el mismo de SEP) mientras se acota por subvención — ver nota en FUENTES_OTRAS.</span>
@@ -2633,16 +2708,15 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
           <tbody>${filasCompras || `<tr><td colspan="12" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
         </table>
       </div>
-    </div>
-    </div>
-  </div>`;
+    </div>`;
 }
 
-// JUNJI: 3 líneas de Ingreso (Operación financia Remuneraciones Y Bienes y Servicios;
-// Homologación y Carrera Docente financian SOLO Remuneraciones — ver saldo_operacion_bys más
-// abajo, informativo, no bloquea la carga) + Bienes y Servicios por concepto libre, sin código
-// de cuenta SUPEREDUC ni registro de compras (JUNJI no rinde ante SUPEREDUC).
-function junjiFilaBysItem(rbd, fuenteKey, concepto, it) {
+// Bienes y Servicios por concepto libre (bysMode:'concepto' — hoy JUNJI/FAEP/FIGA): sin código de
+// cuenta SUPEREDUC ni registro de compras con documento/proveedor, porque ninguna de estas
+// fuentes es parte de ese sistema de rendición. `mostrarSaldoOperacion` solo aplica a JUNJI
+// (incomeShape:'junji3'), la única con más de una línea de ingreso y por lo tanto la única donde
+// tiene sentido decir cuál de ellas financia B&S.
+function bysItemFilaHTML(rbd, fuenteKey, concepto, it) {
   const cells = MESES_CARGA.map(m => `<td class="num"><input type="number" step="1" class="celda-input" value="${(it.meses[m] || 0) === 0 ? '' : it.meses[m]}" placeholder="0"
     data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="of_bys_item" data-concepto="${concepto.replace(/"/g, '&quot;')}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
   return `<tr>
@@ -2651,22 +2725,15 @@ function junjiFilaBysItem(rbd, fuenteKey, concepto, it) {
     <td class="num item-total" id="ofbysitem-${rbd}-${fuenteKey}-${concepto}">${fmtCLP(it.total)}</td>
   </tr>`;
 }
-function buildJunjiDetalleHTML(rbd, fuenteKey, of, fuenteLabel) {
-  const filasBys = of.bys_items.map(it => junjiFilaBysItem(rbd, fuenteKey, it.concepto, it)).join('');
+function bysConceptoSectionHTML(rbd, fuenteKey, of, mostrarSaldoOperacion) {
+  const filasBys = of.bys_items.map(it => bysItemFilaHTML(rbd, fuenteKey, it.concepto, it)).join('');
+  const saldoOperacionHTML = mostrarSaldoOperacion
+    ? ` Saldo Operación disponible para B&S: <strong id="ofsaldoopbys-${rbd}-${fuenteKey}" style="color:${of.saldo_operacion_bys < 0 ? 'var(--status-critical)' : 'inherit'}">${fmtCLP(of.saldo_operacion_bys)}</strong>`
+    : '';
   return `
-  <div class="detalle-wrap">
-    <div class="detalle-header">
-      <strong>Ingresos JUNJI</strong> — <span class="detalle-sub">Operación financia Remuneraciones y Bienes y Servicios; Homologación y Carrera Docente financian solo Remuneraciones.</span>
-    </div>
-    <div class="detalle-scroll">
-    ${otrasFuentesTablaMes('Ingreso Operación', rbd, fuenteKey, 'of_ingreso_operacion', of.ingreso_operacion, `oftotal-${rbd}-${fuenteKey}-of_ingreso_operacion`)}
-    ${otrasFuentesTablaMes('Ingreso Homologación', rbd, fuenteKey, 'of_ingreso_homologacion', of.ingreso_homologacion, `oftotal-${rbd}-${fuenteKey}-of_ingreso_homologacion`)}
-    ${otrasFuentesTablaMes('Ingreso Carrera Docente', rbd, fuenteKey, 'of_ingreso_carrera_docente', of.ingreso_carrera_docente, `oftotal-${rbd}-${fuenteKey}-of_ingreso_carrera_docente`)}
-    ${otrasFuentesTablaMes('Gasto Remuneraciones', rbd, fuenteKey, 'of_gasto_rem', of.gasto_rem, `oftotal-${rbd}-${fuenteKey}-of_gasto_rem`)}
     <div class="compras-section" style="margin-top:14px;">
       <div class="detalle-header">
-        <strong>Bienes y Servicios (por concepto)</strong> — <span class="detalle-sub">JUNJI no tiene código de cuenta SUPEREDUC: cada ítem se identifica por un concepto libre.
-        Saldo Operación disponible para B&S: <strong id="ofsaldoopbys-${rbd}-${fuenteKey}" style="color:${of.saldo_operacion_bys < 0 ? 'var(--status-critical)' : 'inherit'}">${fmtCLP(of.saldo_operacion_bys)}</strong></span>
+        <strong>Bienes y Servicios (por concepto)</strong> — <span class="detalle-sub">Esta fuente no tiene código de cuenta SUPEREDUC: cada ítem se identifica por un concepto libre.${saldoOperacionHTML}</span>
       </div>
       <div class="compra-form-grid">
         <label class="compra-field" style="flex:1 1 260px;"><span class="compra-field-label">Concepto</span><input type="text" id="juncon-${rbd}-${fuenteKey}" placeholder="Ej: Reparación sala cuna"></label>
@@ -2680,14 +2747,51 @@ function buildJunjiDetalleHTML(rbd, fuenteKey, of, fuenteLabel) {
           <tbody>${filasBys || `<tr><td colspan="14" class="detalle-sin-compras">Sin ítems de Bienes y Servicios todavía.</td></tr>`}</tbody>
         </table>
       </div>
+    </div>`;
+}
+
+function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
+  const of = recomputeOtraFuente(rbd, fuenteKey);
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const fuenteLabel = fuente.label;
+
+  let headerHTML, tablasMesesHTML;
+  if (fuente.incomeShape === 'junji3') {
+    headerHTML = `<strong>Ingresos ${fuenteLabel}</strong> — <span class="detalle-sub">Operación financia Remuneraciones y Bienes y Servicios; Homologación y Carrera Docente financian solo Remuneraciones.</span>`;
+    tablasMesesHTML = `
+    ${otrasFuentesTablaMes('Ingreso Operación', rbd, fuenteKey, 'of_ingreso_operacion', of.ingreso_operacion, `oftotal-${rbd}-${fuenteKey}-of_ingreso_operacion`)}
+    ${otrasFuentesTablaMes('Ingreso Homologación', rbd, fuenteKey, 'of_ingreso_homologacion', of.ingreso_homologacion, `oftotal-${rbd}-${fuenteKey}-of_ingreso_homologacion`)}
+    ${otrasFuentesTablaMes('Ingreso Carrera Docente', rbd, fuenteKey, 'of_ingreso_carrera_docente', of.ingreso_carrera_docente, `oftotal-${rbd}-${fuenteKey}-of_ingreso_carrera_docente`)}
+    ${otrasFuentesTablaMes('Gasto Remuneraciones', rbd, fuenteKey, 'of_gasto_rem', of.gasto_rem, `oftotal-${rbd}-${fuenteKey}-of_gasto_rem`)}`;
+  } else {
+    const bysSubtitle = fuente.bysMode === 'compras'
+      ? 'Bienes y Servicios se carga como "Registro de compras" más abajo; su total mensual se calcula solo.'
+      : 'Bienes y Servicios se carga por concepto más abajo; su total mensual se calcula solo.';
+    headerHTML = `<strong>Detalle por mes — Ingreso y Remuneraciones (${fuenteLabel})</strong> — <span class="detalle-sub">${bysSubtitle}</span>`;
+    tablasMesesHTML = `
+    ${otrasFuentesTablaMes(`Ingreso (${fuenteLabel})`, rbd, fuenteKey, 'of_ingreso', of.ingreso, `oftotal-${rbd}-${fuenteKey}-of_ingreso`)}
+    ${otrasFuentesTablaMes(`Gasto Remuneraciones (${fuenteLabel})`, rbd, fuenteKey, 'of_gasto_rem', of.gasto_rem, `oftotal-${rbd}-${fuenteKey}-of_gasto_rem`)}`;
+  }
+
+  const bysHTML = fuente.bysMode === 'compras'
+    ? comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel)
+    : bysConceptoSectionHTML(rbd, fuenteKey, of, fuente.incomeShape === 'junji3');
+
+  return `
+  <div class="detalle-wrap">
+    <div class="detalle-header">
+      ${headerHTML}
     </div>
+    <div class="detalle-scroll">
+    ${tablasMesesHTML}
+    ${bysHTML}
     </div>
   </div>`;
 }
 
 function otrasFuentesTituloEntidad(r, fuenteKey) {
   if (r.rbd === 'AC') return 'Administración Central';
-  if (fuenteKey === 'junji') return 'GESPARVU ' + r.rbd;
+  if (FUENTES_OTRAS_BY_KEY[fuenteKey].incomeShape === 'junji3') return 'GESPARVU ' + r.rbd;
   return 'RBD ' + r.rbd;
 }
 // Factorizado aparte de renderOtrasFuentesModalContenido (que reconstruye todo el modal, con el
@@ -2953,11 +3057,11 @@ function sheetOtraFuenteComprasAOA(fuenteKey) {
   });
   return rows;
 }
-function sheetJunjiBysItemsAOA() {
+function sheetBysItemsAOA(fuenteKey) {
   const headers = ['RBD', 'Nombre', 'Concepto', ...MESES_CARGA_TITLE, 'Total Año'];
   const rows = [headers];
-  GESPARVU_REGISTROS.forEach(r => {
-    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.junji;
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     (of ? of.bys_items : []).forEach(it => {
       const vals = MESES_CARGA.map(m => Math.round(it.meses[m] || 0));
       rows.push([rbdCellValue(r.rbd), r.nombre, it.concepto, ...vals, Math.round(it.total)]);
@@ -2968,16 +3072,18 @@ function sheetJunjiBysItemsAOA() {
 function buildOtraFuenteCargaWorkbook(fuenteKey) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   const wb = XLSX.utils.book_new();
-  if (fuente.shape === 'junji') {
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'ingreso_operacion')), 'ING_OPERACION');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'ingreso_homologacion')), 'ING_HOMOLOGACION');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'ingreso_carrera_docente')), 'ING_CARRERA_DOCENTE');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'gasto_rem')), 'REMUNERACIONES');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetJunjiBysItemsAOA()), 'BYS_ITEMS');
+  if (fuente.incomeShape === 'junji3') {
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_operacion')), 'ING_OPERACION');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_homologacion')), 'ING_HOMOLOGACION');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_carrera_docente')), 'ING_CARRERA_DOCENTE');
   } else {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso')), 'INGRESO');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'gasto_rem')), 'REMUNERACIONES');
+  }
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'gasto_rem')), 'REMUNERACIONES');
+  if (fuente.bysMode === 'compras') {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteComprasAOA(fuenteKey)), 'COMPRAS');
+  } else {
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey)), 'BYS_ITEMS');
   }
   return wb;
 }
@@ -3051,7 +3157,7 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
   if (otrasFuentesRbdAbierto && porRbd[otrasFuentesRbdAbierto]) renderOtrasFuentesModalContenido();
   return n;
 }
-function importJunjiBysItemsSheet(ws) {
+function importBysItemsSheet(ws, fuenteKey) {
   const rows = rowsFromSheet(ws);
   const porRbd = new Set();
   let n = 0;
@@ -3065,13 +3171,13 @@ function importJunjiBysItemsSheet(ws) {
     const meses = {};
     let total = 0;
     MESES_CARGA.forEach((m, mi) => { const v = Number(row[3 + mi]) || 0; meses[m] = v; total += v; });
-    const of = ensureOtraFuente(rbd, 'junji');
+    const of = ensureOtraFuente(rbd, fuenteKey);
     const it = ensureOtraFuenteBysItem(of, concepto);
     it.meses = meses;
     it.total = Math.round(total);
     recomputeOtraFuenteBysItemsAgregado(of);
-    recomputeOtraFuente(rbd, 'junji');
-    scheduleRbdSave(rbd, { nombre, otras_fuentes: { junji: { bys_items: { [concepto]: { concepto, meses, total: it.total } } } } });
+    recomputeOtraFuente(rbd, fuenteKey);
+    scheduleRbdSave(rbd, { nombre, otras_fuentes: { [fuenteKey]: { bys_items: { [concepto]: { concepto, meses, total: it.total } } } } });
     porRbd.add(rbd);
     n++;
   }
@@ -3081,16 +3187,18 @@ function importJunjiBysItemsSheet(ws) {
 function importOtraFuenteWorkbook(wbIn, fuenteKey) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   let resumen = [];
-  if (fuente.shape === 'junji') {
-    if (wbIn.Sheets['ING_OPERACION']) resumen.push('ING_OPERACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_OPERACION'], 'junji', 'ingreso_operacion') + ' filas');
-    if (wbIn.Sheets['ING_HOMOLOGACION']) resumen.push('ING_HOMOLOGACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_HOMOLOGACION'], 'junji', 'ingreso_homologacion') + ' filas');
-    if (wbIn.Sheets['ING_CARRERA_DOCENTE']) resumen.push('ING_CARRERA_DOCENTE: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_CARRERA_DOCENTE'], 'junji', 'ingreso_carrera_docente') + ' filas');
-    if (wbIn.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['REMUNERACIONES'], 'junji', 'gasto_rem') + ' filas');
-    if (wbIn.Sheets['BYS_ITEMS']) resumen.push('BYS_ITEMS: ' + importJunjiBysItemsSheet(wbIn.Sheets['BYS_ITEMS']) + ' filas');
+  if (fuente.incomeShape === 'junji3') {
+    if (wbIn.Sheets['ING_OPERACION']) resumen.push('ING_OPERACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_OPERACION'], fuenteKey, 'ingreso_operacion') + ' filas');
+    if (wbIn.Sheets['ING_HOMOLOGACION']) resumen.push('ING_HOMOLOGACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_HOMOLOGACION'], fuenteKey, 'ingreso_homologacion') + ' filas');
+    if (wbIn.Sheets['ING_CARRERA_DOCENTE']) resumen.push('ING_CARRERA_DOCENTE: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_CARRERA_DOCENTE'], fuenteKey, 'ingreso_carrera_docente') + ' filas');
   } else {
     if (wbIn.Sheets['INGRESO']) resumen.push('INGRESO: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['INGRESO'], fuenteKey, 'ingreso') + ' filas');
-    if (wbIn.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['REMUNERACIONES'], fuenteKey, 'gasto_rem') + ' filas');
+  }
+  if (wbIn.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['REMUNERACIONES'], fuenteKey, 'gasto_rem') + ' filas');
+  if (fuente.bysMode === 'compras') {
     if (wbIn.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importOtraFuenteComprasSheet(wbIn.Sheets['COMPRAS'], fuenteKey) + ' filas');
+  } else {
+    if (wbIn.Sheets['BYS_ITEMS']) resumen.push('BYS_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_ITEMS'], fuenteKey) + ' filas');
   }
   renderOtrasFuentesTable(fuenteKey);
   return resumen;
@@ -4475,35 +4583,31 @@ function aplicarSnapshot(snapshot) {
     const totalDeMeses = (m) => MESES_CARGA.reduce((s, k) => s + m[k], 0);
     FUENTES_OTRAS.forEach(f => {
       const raw = ofRaw[f.key] || {};
-      if (f.shape === 'junji') {
+      const entry = { bys_items: [], gasto_bys_total: 0, ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit' };
+      if (f.incomeShape === 'junji3') {
         const mOperacion = mesesDesde(raw, 'ingreso_operacion');
         const mHomologacion = mesesDesde(raw, 'ingreso_homologacion');
         const mCarreraDocente = mesesDesde(raw, 'ingreso_carrera_docente');
-        const mRem = mesesDesde(raw, 'gasto_rem');
-        const bysItems = Object.values(raw.bys_items || {}).map(it => {
+        entry.ingreso_operacion = { meses: mOperacion, total: totalDeMeses(mOperacion) };
+        entry.ingreso_homologacion = { meses: mHomologacion, total: totalDeMeses(mHomologacion) };
+        entry.ingreso_carrera_docente = { meses: mCarreraDocente, total: totalDeMeses(mCarreraDocente) };
+        entry.saldo_operacion_bys = 0;
+      } else {
+        const mIngreso = mesesDesde(raw, 'ingreso');
+        entry.ingreso = { meses: mIngreso, total: totalDeMeses(mIngreso) };
+      }
+      const mRem = mesesDesde(raw, 'gasto_rem');
+      entry.gasto_rem = { meses: mRem, total: totalDeMeses(mRem) };
+      if (f.bysMode === 'compras') {
+        entry.compras = raw.compras || {};
+      } else {
+        entry.bys_items = Object.values(raw.bys_items || {}).map(it => {
           const meses = {};
           MESES_CARGA.forEach(k => meses[k] = (it.meses && it.meses[k]) || 0);
           return { concepto: it.concepto || '', meses, total: totalDeMeses(meses) };
         });
-        of[f.key] = {
-          ingreso_operacion: { meses: mOperacion, total: totalDeMeses(mOperacion) },
-          ingreso_homologacion: { meses: mHomologacion, total: totalDeMeses(mHomologacion) },
-          ingreso_carrera_docente: { meses: mCarreraDocente, total: totalDeMeses(mCarreraDocente) },
-          gasto_rem: { meses: mRem, total: totalDeMeses(mRem) },
-          bys_items: bysItems, gasto_bys_total: 0,
-          ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit', saldo_operacion_bys: 0,
-        };
-      } else {
-        const mIngreso = mesesDesde(raw, 'ingreso');
-        const mRem = mesesDesde(raw, 'gasto_rem');
-        of[f.key] = {
-          ingreso: { meses: mIngreso, total: totalDeMeses(mIngreso) },
-          gasto_rem: { meses: mRem, total: totalDeMeses(mRem) },
-          compras: raw.compras || {},
-          bys_items: [], gasto_bys_total: 0,
-          ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit',
-        };
       }
+      of[f.key] = entry;
     });
     nuevoOtrasFuentes[rbd] = of;
 

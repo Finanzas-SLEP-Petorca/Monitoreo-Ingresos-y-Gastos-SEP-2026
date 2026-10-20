@@ -138,49 +138,53 @@ acumulado hasta el mes" del Panel principal, que solo afecta a las tarjetas KPI.
 ### Pestaña "Otras Fuentes"
 
 Primer paso de una ampliación mayor: hacer el seguimiento de fuentes de financiamiento distintas
-de SEP (Subvención General, PIE, Subvención de Mantención y Subvención Pro-Retención). A
-diferencia de SEP, estas fuentes **no tienen marco anual ni meta 70/30** — el seguimiento es
-simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores (Superávit/Déficit).
+de SEP. Hoy son 7: Subvención General, PIE, Subvención de Mantención, Subvención Pro-Retención,
+JUNJI, FAEP y FIGA. A diferencia de SEP, estas fuentes **no tienen marco anual ni meta 70/30** —
+el seguimiento es simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores
+(Superávit/Déficit).
 
 - Cada fuente es su propia pestaña de primer nivel (junto a Panel principal/Reportes/%
   Ejecución) — sin selector desplegable intermedio, se presiona directo.
 - La tabla incluye una fila fija adicional, **"AC" (Administración Central)**, para gasto a
   nivel del sostenedor que no corresponde a un establecimiento puntual — no aparece en el Panel
-  principal ni en Reportes de SEP, solo en esta pestaña.
-- Cada fila tiene su propio Ingreso (mensual) y Gasto Remuneraciones (mensual), editables en el
-  modal de detalle, más un "Registro de compras" para Bienes y Servicios — mismo formato de
-  columnas que exige SUPEREDUC (código de cuenta, tipo y N° de documento, fechas, proveedor,
-  montos), igual que el de SEP.
+  principal ni en Reportes de SEP, solo en esta pestaña (excepto en JUNJI, ver más abajo).
 - Todo se guarda en tiempo real vía Firestore (mismo documento `sep_carga_rbd/{rbd}` de SEP, bajo
   el campo nuevo `otras_fuentes`), sin requerir cambios en `firestore.rules`.
 
-**JUNJI.** A diferencia de las 4 fuentes anteriores, JUNJI es un proceso independiente de
-SUPEREDUC — no aparece en ninguno de los manuales oficiales revisados (Manual de Cuentas,
-Rendición de Compras, Instructivo de Control y Respaldo), así que no tiene código de cuenta ni
-rendición formal con documento/proveedor. Además, sus ingresos se declaran por **GESPARVU**
-(jardín infantil / sala cuna), no por RBD de establecimiento educacional — un universo de 13
-entidades totalmente distinto al de los 55 RBD de SEP (`GESPARVU_REGISTROS`), sin la fila "AC".
-Su modelo de datos también es distinto:
+**Dos variantes de forma, combinables.** El catálogo `FUENTES_OTRAS` describe cada fuente con dos
+campos independientes en vez de un único flag binario (necesario desde que FAEP/FIGA agregaron
+una tercera combinación):
 
-- **3 líneas de Ingreso** (Operación, Homologación, Carrera Docente) en vez de 1.
-- **Gasto Remuneraciones**: se financia con la suma de las 3 líneas de ingreso.
-- **Gasto Bienes y Servicios**: se financia solo con Ingreso Operación (Homologación y Carrera
-  Docente no pueden financiar B&S) — el modal muestra un "Saldo Operación disponible para B&S"
-  informativo (no bloquea la carga si se excede).
-- Los ítems de Bienes y Servicios se identifican por **concepto libre** (texto), no por código de
-  cuenta SUPEREDUC, y se cargan directo mes a mes (sin "Registro de compras" con documento/proveedor,
-  ya que JUNJI no tiene ese tipo de rendición formal).
+- `incomeShape`: `'single'` (1 línea de Ingreso — General/PIE/Mantención/Pro-Retención/FAEP/FIGA)
+  o `'junji3'` (3 líneas — Operación, Homologación, Carrera Docente — hoy solo JUNJI). También
+  determina el universo de entidades: `'junji3'` usa los 13 **GESPARVU** (jardín infantil / sala
+  cuna) en vez de los 55 RBD + "AC" de SEP.
+- `bysMode`: `'compras'` (Bienes y Servicios como "Registro de compras" con código de cuenta
+  SUPEREDUC + documento/proveedor — General/PIE/Mantención/Pro-Retención) o `'concepto'` (ítems
+  por concepto libre, sin código ni documento — JUNJI/FAEP/FIGA, ninguna de las tres es parte del
+  sistema de rendición de cuentas de SUPEREDUC).
 
-**Importar / exportar.** Cada una de las 5 pestañas tiene su propia fila de botones, igual
+**JUNJI** (`incomeShape:'junji3'`, `bysMode:'concepto'`): Operación financia Remuneraciones y
+Bienes y Servicios; Homologación y Carrera Docente financian solo Remuneraciones — el modal
+muestra un "Saldo Operación disponible para B&S" informativo (no bloquea la carga si se excede).
+
+**FAEP y FIGA** (`incomeShape:'single'`, `bysMode:'concepto'`): quedaron pendientes de la PR
+anterior porque, igual que JUNJI, ninguna de las dos aparece en los manuales SUPEREDUC revisados
+— de hecho, el propio Manual de Cuentas 2026 confirma que los convenios FAEP quedaron excluidos
+del sistema de rendición de cuentas desde el periodo 2024 (dictamen N°67 de 2023 de la
+Superintendencia de Educación). Usan el mismo universo de entidades que las 4 fuentes "simples"
+(55 RBD + "AC").
+
+**Importar / exportar.** Cada una de las 7 pestañas tiene su propia fila de botones, igual
 criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de los datos de SEP:
 
-- **⬇ Compras SUPEREDUC (CSV)** — solo en las 4 fuentes simples (no en JUNJI, que no es parte de
-  ese sistema de rendición): mismo formato de 13 columnas que el de SEP, con el código de
-  Subvención oficial de cada una en la columna "Subvencion" (`GENERAL`, `PIE`, `MANTENIMIENTO`,
-  `PRORETENCION`).
+- **⬇ Compras SUPEREDUC (CSV)** — solo en las 4 fuentes `bysMode:'compras'` (no en JUNJI/FAEP/
+  FIGA, que no son parte de ese sistema de rendición): mismo formato de 13 columnas que el de
+  SEP, con el código de Subvención oficial de cada una en la columna "Subvencion" (`GENERAL`,
+  `PIE`, `MANTENIMIENTO`, `PRORETENCION`).
 - **⬇ Excel / ⬆ Importar Excel** — carga completa de la fuente en hojas (Ingreso, Remuneraciones,
-  Compras para las 4 simples; 3 hojas de Ingreso + Remuneraciones + Bienes y Servicios por
-  concepto para JUNJI), reimportable tal cual se exporta.
+  Compras para las `bysMode:'compras'`; 3 hojas de Ingreso + Remuneraciones + Bienes y Servicios
+  por concepto para las `bysMode:'concepto'`), reimportable tal cual se exporta.
 - **🖨 Exportar PDF** — mismo mecanismo de impresión del navegador que ya usa Panel principal;
   imprime la pestaña de fuente actualmente activa.
 - **⬇ Descargar carga (JSON)** — respaldo manual, igual criterio que el de Panel principal.

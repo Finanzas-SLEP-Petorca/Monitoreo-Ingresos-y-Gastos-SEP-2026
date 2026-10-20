@@ -1,8 +1,8 @@
-# Monitoreo Ingresos y Gastos SEP 2026 — SLEP Petorca
+# Monitoreo Ingresos y Gastos 2026 — SLEP Petorca
 
-Panel de seguimiento de la Subvención Escolar Preferencial (SEP) por establecimiento (RBD),
-para el Servicio Local de Educación Pública (SLEP) Petorca. Compara el ingreso SEP de cada
-colegio contra el gasto real en remuneraciones (Subtítulo 21) y en bienes y servicios
+Panel de seguimiento de Ingresos y Gastos por establecimiento (RBD) y por fuente de
+financiamiento, para el Servicio Local de Educación Pública (SLEP) Petorca. Para SEP, compara
+el ingreso de cada colegio contra el gasto real en remuneraciones (Subtítulo 21) y en bienes y servicios
 (Subtítulos 22 y 29), aplicando la regla de que el 70% del ingreso SEP debe destinarse a
 remuneraciones y el 30% a bienes y servicios, e identifica déficit o superávit por
 establecimiento.

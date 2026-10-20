@@ -142,7 +142,8 @@ de SEP (Subvención General, PIE, Subvención de Mantención y Subvención Pro-R
 diferencia de SEP, estas fuentes **no tienen marco anual ni meta 70/30** — el seguimiento es
 simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores (Superávit/Déficit).
 
-- Selector de fuente arriba de la tabla; cada una se edita por separado.
+- Cada fuente es su propia pestaña de primer nivel (junto a Panel principal/Reportes/%
+  Ejecución) — sin selector desplegable intermedio, se presiona directo.
 - La tabla incluye una fila fija adicional, **"AC" (Administración Central)**, para gasto a
   nivel del sostenedor que no corresponde a un establecimiento puntual — no aparece en el Panel
   principal ni en Reportes de SEP, solo en esta pestaña.
@@ -169,6 +170,20 @@ Su modelo de datos también es distinto:
 - Los ítems de Bienes y Servicios se identifican por **concepto libre** (texto), no por código de
   cuenta SUPEREDUC, y se cargan directo mes a mes (sin "Registro de compras" con documento/proveedor,
   ya que JUNJI no tiene ese tipo de rendición formal).
+
+**Importar / exportar.** Cada una de las 5 pestañas tiene su propia fila de botones, igual
+criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de los datos de SEP:
+
+- **⬇ Compras SUPEREDUC (CSV)** — solo en las 4 fuentes simples (no en JUNJI, que no es parte de
+  ese sistema de rendición): mismo formato de 13 columnas que el de SEP, con el código de
+  Subvención oficial de cada una en la columna "Subvencion" (`GENERAL`, `PIE`, `MANTENIMIENTO`,
+  `PRORETENCION`).
+- **⬇ Excel / ⬆ Importar Excel** — carga completa de la fuente en hojas (Ingreso, Remuneraciones,
+  Compras para las 4 simples; 3 hojas de Ingreso + Remuneraciones + Bienes y Servicios por
+  concepto para JUNJI), reimportable tal cual se exporta.
+- **🖨 Exportar PDF** — mismo mecanismo de impresión del navegador que ya usa Panel principal;
+  imprime la pestaña de fuente actualmente activa.
+- **⬇ Descargar carga (JSON)** — respaldo manual, igual criterio que el de Panel principal.
 
 **Pendiente, en una PR futura**: el selector de código de cuenta de "Registro de compras" (General,
 PIE, Mantención, Pro-Retención) usa por ahora el mismo catálogo completo de SEP (Subt. 22 y 29)

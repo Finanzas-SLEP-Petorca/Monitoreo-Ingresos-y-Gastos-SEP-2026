@@ -705,6 +705,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">A diferencia de SEP, esta fuente solo se sigue como Ingreso vs. Gasto, sin
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <button id="downloadComprasOFBtn-general" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Subv. General, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadExcelOFBtn-general" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-general" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-general" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-general" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-general" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-general">
             <thead>
@@ -734,6 +742,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">A diferencia de SEP, esta fuente solo se sigue como Ingreso vs. Gasto, sin
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <button id="downloadComprasOFBtn-pie" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de PIE, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadExcelOFBtn-pie" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-pie" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-pie" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-pie" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-pie" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-pie">
             <thead>
@@ -763,6 +779,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">A diferencia de SEP, esta fuente solo se sigue como Ingreso vs. Gasto, sin
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <button id="downloadComprasOFBtn-mantenimiento" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Mantención, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadExcelOFBtn-mantenimiento" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-mantenimiento" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-mantenimiento" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-mantenimiento" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-mantenimiento" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-mantenimiento">
             <thead>
@@ -792,6 +816,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">A diferencia de SEP, esta fuente solo se sigue como Ingreso vs. Gasto, sin
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <button id="downloadComprasOFBtn-prorretencion" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Pro-Retención, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadExcelOFBtn-prorretencion" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-prorretencion" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-prorretencion" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-prorretencion" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-prorretencion" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-prorretencion">
             <thead>
@@ -821,6 +853,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">JUNJI es un proceso independiente de SUPEREDUC: se sigue como Ingreso vs. Gasto,
         sin techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Las filas son
         los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
+        <div class="table-controls">
+          <button id="downloadExcelOFBtn-junji" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de JUNJI (3 líneas de Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-junji" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-junji" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-junji" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-junji">
             <thead>
@@ -1068,12 +1107,15 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 // se transcriba esa tabla completa por subvención, estas 4 fuentes usan el mismo catálogo
 // CUENTAS_SEP (22+29) que SEP como aproximación temporal — más amplio de lo que cada una
 // realmente admite ante SUPEREDUC. Acotar esto es trabajo pendiente de una PR futura.
+// codigoSupereduc: código oficial de la Columna B (Subvención) que exige el CSV de SUPEREDUC
+// (Manual de Usuario Capítulo III, Tabla 01) — null para JUNJI, que no es parte de ese sistema
+// de rendición (confirmado: no aparece en ninguno de los manuales SUPEREDUC revisados).
 const FUENTES_OTRAS = [
-  { key: 'general', label: 'Subvención General', shape: 'simple' },
-  { key: 'pie', label: 'PIE', shape: 'simple' },
-  { key: 'mantenimiento', label: 'Subv. Mantención', shape: 'simple' },
-  { key: 'prorretencion', label: 'Subv. Pro-Retención', shape: 'simple' },
-  { key: 'junji', label: 'JUNJI', shape: 'junji' },
+  { key: 'general', label: 'Subvención General', shape: 'simple', codigoSupereduc: 'GENERAL' },
+  { key: 'pie', label: 'PIE', shape: 'simple', codigoSupereduc: 'PIE' },
+  { key: 'mantenimiento', label: 'Subv. Mantención', shape: 'simple', codigoSupereduc: 'MANTENIMIENTO' },
+  { key: 'prorretencion', label: 'Subv. Pro-Retención', shape: 'simple', codigoSupereduc: 'PRORETENCION' },
+  { key: 'junji', label: 'JUNJI', shape: 'junji', codigoSupereduc: null },
 ];
 const FUENTES_OTRAS_BY_KEY = {};
 FUENTES_OTRAS.forEach(f => { FUENTES_OTRAS_BY_KEY[f.key] = f; });
@@ -2820,6 +2862,288 @@ otrasFuentesModalBodyEl.addEventListener('focusout', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (otrasFuentesRbdAbierto) cerrarOtrasFuentesModal();
+});
+
+// ============================================================================
+// ============== OTRAS FUENTES: importar/exportar (CSV, Excel, JSON, PDF) ==============
+// Mismo contrato que los botones equivalentes de Panel principal (comprasSepCsvLines,
+// buildCargaWorkbook, downloadCargaBtn, exportPdfBtn) pero parametrizados por fuente, leyendo
+// CARGA_MANUAL.otras_fuentes_por_rbd en vez de los buckets de SEP — ninguna función de SEP se
+// toca ni se reutiliza directo.
+// ============================================================================
+
+// Igual que registrosPara(onlyRbd) de SEP, pero devuelve el universo de ESTA fuente (RBD+AC o
+// los 13 GESPARVU de JUNJI) ordenado — sirve de base a todos los exportadores de abajo.
+function rbdCellValue(rbd) { return /^\d+$/.test(rbd) ? Number(rbd) : rbd; }
+
+function comprasOtraFuenteCsvLines(fuenteKey) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const headers = ['RBD', 'Subvencion', 'Codigo Cuenta', 'Tipo de Documento', 'Nro Documento', 'Fecha Documento', 'Fecha Pago', 'Descripcion Gasto', 'Rut Proveedor', 'Nombre Proveedor', 'Monto Gasto', 'Monto Documento', 'Documento Original'];
+  const lines = [headers.map(csvEscape).join(';')];
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
+    const compras = (of && of.compras) || {};
+    Object.values(compras)
+      .sort((a, b) => (a.fechaDocumento || '').localeCompare(b.fechaDocumento || ''))
+      .forEach(c => {
+        lines.push([
+          r.rbd, fuente.codigoSupereduc, c.codigo, c.tipoDocumento, c.nroDocumento, c.fechaDocumento, c.fechaPago,
+          c.descripcion, c.rutProveedor, c.nombreProveedor, c.montoGasto, c.montoDocumento, c.documentoOriginal,
+        ].map(csvEscape).join(';'));
+      });
+  });
+  return lines;
+}
+function downloadComprasOtraFuente(fuenteKey) {
+  const lines = comprasOtraFuenteCsvLines(fuenteKey);
+  if (lines.length === 1) { alert('Todavía no hay compras registradas en ' + FUENTES_OTRAS_BY_KEY[fuenteKey].label + '.'); return; }
+  const csvContent = '﻿' + lines.join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `compras_${fuenteKey}_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Respaldo manual en JSON (igual criterio que downloadCargaBtn de SEP): no hace falta para que
+// los datos persistan (ya quedan en Firestore en tiempo real), solo por si alguien quiere una
+// copia aparte.
+function descargarCargaOtraFuente(fuenteKey) {
+  const out = {};
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
+    if (of) out[r.rbd] = of;
+  });
+  const blob = new Blob([JSON.stringify({ fuente: fuenteKey, otras_fuentes_por_rbd: out }, null, 2)], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `carga_${fuenteKey}_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert('Descargado. Esto es solo un respaldo manual — los cambios ya quedaron guardados automáticamente en tiempo real para todo el equipo.');
+}
+
+// --- Excel (export): una hoja por línea mensual (Ingreso o, en JUNJI, sus 3 líneas +
+// Remuneraciones) y una hoja de detalle para Bienes y Servicios (compras con código, en las 4
+// fuentes simples; ítems por concepto libre, en JUNJI) — mismo criterio de sheetSimpleAOA/
+// sheetComprasAOA de SEP, pero sin el valor "Item" en blanco (acá no aplica: cada hoja es una
+// sola línea, no 3 como el Ingreso SEP). ---
+function sheetOtraFuenteSimpleAOA(fuenteKey, campo) {
+  const headers = ['RBD', 'Nombre', ...MESES_CARGA_TITLE, 'Total Año'];
+  const rows = [headers];
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
+    const entry = of ? of[campo] : null;
+    const vals = MESES_CARGA.map(m => entry ? Math.round(entry.meses[m] || 0) : 0);
+    const total = entry ? Math.round(entry.total) : 0;
+    rows.push([rbdCellValue(r.rbd), r.nombre, ...vals, total]);
+  });
+  return rows;
+}
+function sheetOtraFuenteComprasAOA(fuenteKey) {
+  const headers = ['ID', 'RBD', 'Nombre', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal'];
+  const rows = [headers];
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
+    const compras = (of && of.compras) || {};
+    Object.entries(compras).forEach(([id, c]) => {
+      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', c.descripcion || '', c.rutProveedor || '', c.nombreProveedor || '', Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
+    });
+  });
+  return rows;
+}
+function sheetJunjiBysItemsAOA() {
+  const headers = ['RBD', 'Nombre', 'Concepto', ...MESES_CARGA_TITLE, 'Total Año'];
+  const rows = [headers];
+  GESPARVU_REGISTROS.forEach(r => {
+    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.junji;
+    (of ? of.bys_items : []).forEach(it => {
+      const vals = MESES_CARGA.map(m => Math.round(it.meses[m] || 0));
+      rows.push([rbdCellValue(r.rbd), r.nombre, it.concepto, ...vals, Math.round(it.total)]);
+    });
+  });
+  return rows;
+}
+function buildOtraFuenteCargaWorkbook(fuenteKey) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const wb = XLSX.utils.book_new();
+  if (fuente.shape === 'junji') {
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'ingreso_operacion')), 'ING_OPERACION');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'ingreso_homologacion')), 'ING_HOMOLOGACION');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'ingreso_carrera_docente')), 'ING_CARRERA_DOCENTE');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA('junji', 'gasto_rem')), 'REMUNERACIONES');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetJunjiBysItemsAOA()), 'BYS_ITEMS');
+  } else {
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso')), 'INGRESO');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'gasto_rem')), 'REMUNERACIONES');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteComprasAOA(fuenteKey)), 'COMPRAS');
+  }
+  return wb;
+}
+function exportOtraFuenteExcel(fuenteKey) {
+  if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); return; }
+  const wb = buildOtraFuenteCargaWorkbook(fuenteKey);
+  XLSX.writeFile(wb, `OtrasFuentes_${fuenteKey}_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+// --- Excel (import): mismo contrato round-trip que el export de arriba — releer exactamente
+// lo que generan sheetOtraFuenteSimpleAOA/sheetOtraFuenteComprasAOA/sheetJunjiBysItemsAOA. La
+// columna RBD admite tanto número (RBD/GESPARVU) como texto ("AC"). ---
+function importOtraFuenteSimpleSheet(ws, fuenteKey, campo) {
+  const rows = rowsFromSheet(ws);
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
+    const rbd = String(row[0]).trim();
+    const nombre = row[1] || rbd;
+    const meses = {};
+    let total = 0;
+    MESES_CARGA.forEach((m, mi) => { const v = Number(row[2 + mi]) || 0; meses[m] = v; total += v; });
+    const of = ensureOtraFuente(rbd, fuenteKey);
+    of[campo] = { meses, total: Math.round(total) };
+    recomputeOtraFuente(rbd, fuenteKey);
+    scheduleRbdSave(rbd, { nombre, otras_fuentes: { [fuenteKey]: { [campo]: { meses, total: Math.round(total) } } } });
+    n++;
+  }
+  return n;
+}
+function importOtraFuenteComprasSheet(ws, fuenteKey) {
+  const rows = rowsFromSheet(ws);
+  const porRbd = {};
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[1] === undefined || row[1] === null || String(row[1]).trim() === '') continue;
+    const rbd = String(row[1]).trim();
+    const codigoRaw = row[3];
+    const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
+    if (!CUENTAS_SEP_BY_CODIGO[codigo]) continue;
+    const campos = {
+      codigo,
+      tipoDocumento: String(row[4] || '').trim(),
+      nroDocumento: String(row[5] || '').trim(),
+      fechaDocumento: excelDateToISO(row[6]),
+      fechaPago: excelDateToISO(row[7]),
+      descripcion: String(row[8] || '').trim(),
+      rutProveedor: String(row[9] || '').trim(),
+      nombreProveedor: String(row[10] || '').trim(),
+      montoGasto: Number(row[11]) || 0,
+      montoDocumento: Number(row[12]) || 0,
+      documentoOriginal: String(row[13] || '').trim(),
+    };
+    if (!campos.fechaDocumento || !campos.montoGasto) continue;
+    const idRaw = row[0];
+    const id = (idRaw !== undefined && idRaw !== null && idRaw !== 0 && String(idRaw).trim() !== '') ? String(idRaw).trim() : generarCompraId();
+    const of = ensureOtraFuente(rbd, fuenteKey);
+    of.compras[id] = campos;
+    if (!porRbd[rbd]) porRbd[rbd] = {};
+    porRbd[rbd][id] = campos;
+    n++;
+  }
+  Object.keys(porRbd).forEach(rbd => {
+    recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey);
+    recomputeOtraFuente(rbd, fuenteKey);
+    const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
+    scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { compras: porRbd[rbd] } } });
+  });
+  if (otrasFuentesRbdAbierto && porRbd[otrasFuentesRbdAbierto]) renderOtrasFuentesModalContenido();
+  return n;
+}
+function importJunjiBysItemsSheet(ws) {
+  const rows = rowsFromSheet(ws);
+  const porRbd = new Set();
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
+    const rbd = String(row[0]).trim();
+    const nombre = row[1] || rbd;
+    const concepto = String(row[2] || '').trim();
+    if (!concepto) continue;
+    const meses = {};
+    let total = 0;
+    MESES_CARGA.forEach((m, mi) => { const v = Number(row[3 + mi]) || 0; meses[m] = v; total += v; });
+    const of = ensureOtraFuente(rbd, 'junji');
+    const it = ensureOtraFuenteBysItem(of, concepto);
+    it.meses = meses;
+    it.total = Math.round(total);
+    recomputeOtraFuenteBysItemsAgregado(of);
+    recomputeOtraFuente(rbd, 'junji');
+    scheduleRbdSave(rbd, { nombre, otras_fuentes: { junji: { bys_items: { [concepto]: { concepto, meses, total: it.total } } } } });
+    porRbd.add(rbd);
+    n++;
+  }
+  if (otrasFuentesRbdAbierto && porRbd.has(otrasFuentesRbdAbierto)) renderOtrasFuentesModalContenido();
+  return n;
+}
+function importOtraFuenteWorkbook(wbIn, fuenteKey) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  let resumen = [];
+  if (fuente.shape === 'junji') {
+    if (wbIn.Sheets['ING_OPERACION']) resumen.push('ING_OPERACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_OPERACION'], 'junji', 'ingreso_operacion') + ' filas');
+    if (wbIn.Sheets['ING_HOMOLOGACION']) resumen.push('ING_HOMOLOGACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_HOMOLOGACION'], 'junji', 'ingreso_homologacion') + ' filas');
+    if (wbIn.Sheets['ING_CARRERA_DOCENTE']) resumen.push('ING_CARRERA_DOCENTE: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_CARRERA_DOCENTE'], 'junji', 'ingreso_carrera_docente') + ' filas');
+    if (wbIn.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['REMUNERACIONES'], 'junji', 'gasto_rem') + ' filas');
+    if (wbIn.Sheets['BYS_ITEMS']) resumen.push('BYS_ITEMS: ' + importJunjiBysItemsSheet(wbIn.Sheets['BYS_ITEMS']) + ' filas');
+  } else {
+    if (wbIn.Sheets['INGRESO']) resumen.push('INGRESO: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['INGRESO'], fuenteKey, 'ingreso') + ' filas');
+    if (wbIn.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['REMUNERACIONES'], fuenteKey, 'gasto_rem') + ' filas');
+    if (wbIn.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importOtraFuenteComprasSheet(wbIn.Sheets['COMPRAS'], fuenteKey) + ' filas');
+  }
+  renderOtrasFuentesTable(fuenteKey);
+  return resumen;
+}
+
+// PDF: el mismo mecanismo que exportPdfBtn (window.print() + .hidden ya oculta las otras 7
+// pestañas) — no hace falta nada específico por fuente, lo que se ve es lo que se imprime.
+function exportOtraFuentePdf() {
+  document.body.classList.remove('print-single-rbd');
+  window.print();
+}
+
+// Un listener por botón × fuente (CSV SUPEREDUC no aplica a JUNJI, por eso el guard `if`).
+FUENTES_OTRAS.forEach(f => {
+  const key = f.key;
+  const csvBtn = document.getElementById('downloadComprasOFBtn-' + key);
+  if (csvBtn) csvBtn.addEventListener('click', () => downloadComprasOtraFuente(key));
+
+  const excelBtn = document.getElementById('downloadExcelOFBtn-' + key);
+  if (excelBtn) excelBtn.addEventListener('click', () => exportOtraFuenteExcel(key));
+
+  const importBtn = document.getElementById('importExcelOFBtn-' + key);
+  const importInput = document.getElementById('importExcelOFInput-' + key);
+  if (importBtn && importInput) {
+    importBtn.addEventListener('click', () => importInput.click());
+    importInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); e.target.value = ''; return; }
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const wbIn = XLSX.read(evt.target.result, { type: 'array' });
+          const resumen = importOtraFuenteWorkbook(wbIn, key);
+          if (resumen.length === 0) {
+            alert('El archivo no tiene ninguna hoja con los nombres esperados para ' + FUENTES_OTRAS_BY_KEY[key].label + '. No se importó nada.');
+          } else {
+            alert('Carga importada correctamente:\n' + resumen.join('\n') + '\n\nLa pestaña ya se actualizó con estos montos.');
+          }
+        } catch (err) {
+          alert('No se pudo leer el archivo. Verifica que sea un Excel exportado desde esta misma pestaña ("⬇ Excel"). Detalle: ' + err.message);
+        }
+        e.target.value = '';
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  const pdfBtn = document.getElementById('exportPdfOFBtn-' + key);
+  if (pdfBtn) pdfBtn.addEventListener('click', exportOtraFuentePdf);
+
+  const cargaBtn = document.getElementById('downloadCargaOFBtn-' + key);
+  if (cargaBtn) cargaBtn.addEventListener('click', () => descargarCargaOtraFuente(key));
 });
 
 // ============================================================================

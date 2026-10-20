@@ -267,6 +267,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .panel > .report-controls, .panel > .kpi-row, .panel > .ejec-chart-card,
     .panel > .corte-legend { flex-shrink:0; }
     .panel > .table-scroll { flex:1 1 0%; min-height:160px; max-height:none; }
+    /* Pestañas de fuente con las 3 filas KPI abiertas: el panel no debe encogerse por debajo de su
+       contenido fijo (si no, la tabla se dibuja fuera del borde del panel) — mejor que scrollee la página. */
+    .tab-content[id^="tab-of-"] > section, .tab-content[id^="tab-of-"] > section > .panel { min-height:min-content; }
   }
 
   @media print {
@@ -305,6 +308,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       text-align:right !important; color:#000 !important; font-size:8.5px !important;
       font-variant-numeric:tabular-nums !important; }
     .kpi-row { break-inside:avoid; page-break-inside:avoid; }
+    .of-kpi-row.kpi-row-collapsed { display:grid !important; }
+    .of-realproy-block .kpi-toggle-icon { display:none; }
     tr.detalle-row, tr.rbd-row, tr.otras-fuentes-row { break-inside:avoid; page-break-inside:avoid; }
     table.detalle-table { break-inside:auto; page-break-inside:auto; }
     table.detalle-table tr { break-inside:avoid; page-break-inside:avoid; }
@@ -375,6 +380,19 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .tab-btn { padding:8px 16px; border:none; background:none; font-size:13.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:7px; }
   .tab-btn:hover { color:var(--text-primary); background:var(--page-plane); }
   .tab-btn.active { color:var(--series-1); background:var(--tone-blue-bg); }
+
+  /* ---- Otras Fuentes: Real / Proyectado / Total ---- */
+  .of-realproy-block { flex-shrink:0; }
+  .of-vista-controls { align-items:center; margin:6px 0 4px; }
+  .of-vista-label { margin:0 0 6px 2px; flex-shrink:0; font-size:12px; color:var(--text-muted); }
+  .of-ctl-label { font-size:12px; font-weight:600; color:var(--text-secondary); }
+  .of-chips { display:inline-flex; gap:4px; padding:3px; border:1px solid var(--border); border-radius:8px; background:var(--page-plane); }
+  .table-controls .of-chip { padding:5px 12px; border:none; background:none; font-size:12.5px; font-weight:600; color:var(--text-secondary); border-radius:6px; cursor:pointer; }
+  .table-controls .of-chip:hover { color:var(--text-primary); background:var(--surface-1); opacity:1; }
+  .table-controls .of-chip.active { color:var(--series-1); background:var(--tone-blue-bg); }
+  .of-corte-select, .of-modal-corte-select { padding:5px 8px; border:1px solid var(--baseline); border-radius:6px; font-size:12.5px; background:#fff; color:var(--text-primary); }
+  .of-modal-corte { margin-bottom:8px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  td.of-real-hasta { white-space:nowrap; color:var(--text-secondary); }
   .tab-content.hidden { display:none !important; }
 
   /* ---- REPORTE PERSONALIZADO ---- */
@@ -723,12 +741,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-general"></tbody>
@@ -760,12 +779,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-pie"></tbody>
@@ -797,12 +817,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-mantenimiento"></tbody>
@@ -834,12 +855,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-prorretencion"></tbody>
@@ -870,12 +892,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-junji"></tbody>
@@ -907,12 +930,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-faep"></tbody>
@@ -944,12 +968,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-figa"></tbody>
@@ -981,12 +1006,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-aporte_educ"></tbody>
@@ -1018,12 +1044,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <tr>
                 <th>RBD</th>
                 <th>Nombre</th>
-                <th class="num">Ingreso Total</th>
+                <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
+                <th class="num">Ingreso</th>
                 <th class="num">Gasto Remuneraciones</th>
                 <th class="num">Gasto Bienes y Servicios</th>
                 <th class="num">Gasto Total</th>
                 <th class="num">Saldo</th>
-                <th>Estado</th>
+                <th title="El Estado siempre se calcula sobre el Total (Real + Proyectado)">Estado (Total)</th>
               </tr>
             </thead>
             <tbody id="otrasFuentesTbody-aporte_junji"></tbody>
@@ -1589,12 +1616,14 @@ function ensureOtraFuente(rbd, fuenteKey) {
     // JUNJI (incomeShape:'junji3'): 3 líneas de ingreso (Operación financia Remuneraciones Y B&S;
     // Homologación y Carrera Docente financian SOLO Remuneraciones — ver saldo_operacion_bys en
     // recomputeOtraFuente). El resto (incomeShape:'single') usa 1 sola línea de ingreso.
-    // bysMode:'concepto' (JUNJI/FAEP/FIGA): sin código de cuenta SUPEREDUC ni registro de compras
-    // con documento/proveedor, porque ninguna es parte de ese sistema de rendición.
+    // bysMode:'concepto' (JUNJI/FAEP/FIGA/Aportes): sin código de cuenta SUPEREDUC ni registro de
+    // compras con documento/proveedor, porque ninguna es parte de ese sistema de rendición.
+    // real_hasta_mes: corte Real/Proyectado de ESTA entidad×fuente (meses ≤ corte = Real).
     const entry = {
       gasto_rem: { meses: mesesEnCero(), total: 0 },
-      bys_items: [], gasto_bys_total: 0,
+      bys_items: [], gasto_bys_total: 0, gasto_bys_real: 0, gasto_bys_proy: 0,
       ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit',
+      real_hasta_mes: DATA.n_meses,
     };
     if (fuente.incomeShape === 'junji3') {
       entry.ingreso_operacion = { meses: mesesEnCero(), total: 0 };
@@ -1604,47 +1633,114 @@ function ensureOtraFuente(rbd, fuenteKey) {
     } else {
       entry.ingreso = { meses: mesesEnCero(), total: 0 };
     }
-    if (fuente.bysMode === 'compras') entry.compras = {};
+    // bysMode:'compras': las compras son siempre Real; la proyección de B&S vive aparte en
+    // bys_proy_items (por concepto libre, siempre Proyectada).
+    if (fuente.bysMode === 'compras') { entry.compras = {}; entry.bys_proy_items = []; }
+    computeRealProyOtraFuente(entry, fuenteKey);
     CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey] = entry;
   }
   return CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey];
 }
-// Bienes y Servicios de Otras Fuentes (fuentes "simple") NO tiene una capa de "proyección"
-// aparte como SEP: es directamente la suma de las compras cargadas (mismo criterio de
-// itemsFromCompras, agrupando por código de cuenta y mes de Fecha Documento) — coherente con el
-// pedido de "solo Ingreso vs. Gasto, sin techo" para estas fuentes.
+// Bienes y Servicios de las fuentes bysMode:'compras' (Real) = la suma de las compras cargadas
+// (mismo criterio de itemsFromCompras, agrupando por código de cuenta y mes de Fecha Documento).
+// El total de B&S (Real+Proy) lo arma recomputeOtraFuente.
 function recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey) {
   const of = ensureOtraFuente(rbd, fuenteKey);
   of.bys_items = itemsFromCompras(of.compras);
-  of.gasto_bys_total = of.bys_items.reduce((s, it) => s + it.total, 0);
 }
-// JUNJI: B&S es una lista de ítems por concepto libre (sin código de cuenta ni registro de
-// compras) — mismo patrón de agregación que recomputeBysProyeccionAgregado de SEP.
-function ensureOtraFuenteBysItem(of, concepto) {
-  let it = of.bys_items.find(x => x.concepto === concepto);
+// B&S por concepto libre (JUNJI/FAEP/FIGA/Aportes en `bys_items`; proyección de las fuentes
+// con compras en `bys_proy_items`) — mismo patrón de agregación que
+// recomputeBysProyeccionAgregado de SEP. `lista` elige cuál de las dos listas.
+function ensureOtraFuenteBysItem(of, concepto, lista = 'bys_items') {
+  if (!of[lista]) of[lista] = [];
+  let it = of[lista].find(x => x.concepto === concepto);
   if (!it) {
     it = { concepto, meses: mesesEnCero(), total: 0 };
-    of.bys_items.push(it);
+    of[lista].push(it);
   }
   return it;
 }
 function recomputeOtraFuenteBysItemsAgregado(of) {
   of.gasto_bys_total = Math.round(of.bys_items.reduce((s, it) => s + (it.total || 0), 0));
 }
+
+// --- Real / Proyectado por entidad×fuente ---
+// Criterio (mismo espíritu que rem.real_hasta_mes de SEP): los meses con índice ≤ real_hasta_mes
+// son Real y los siguientes Proyectado, para TODAS las líneas mensuales (ingreso/s, remuneraciones
+// y, en las fuentes bysMode:'concepto', los ítems de B&S). En las fuentes bysMode:'compras' las
+// compras son siempre Real (gasto ya documentado, no depende del corte) y la proyección de B&S
+// es una lista aparte (bys_proy_items) siempre Proyectada.
+function normalizarRealHastaMes(v) {
+  const n = Math.round(Number(v));
+  return (n >= 1 && n <= 12) ? n : DATA.n_meses;
+}
+function realHastaMesOtraFuente(of) { return normalizarRealHastaMes(of && of.real_hasta_mes); }
+function splitRealProyMeses(meses, corte) {
+  let real = 0, proy = 0;
+  MESES_CARGA.forEach((m, i) => {
+    const v = Number(meses && meses[m]) || 0;
+    if (i + 1 <= corte) real += v; else proy += v;
+  });
+  return { real, proy };
+}
+function bloqueRealProy(ingreso, rem, bys) {
+  const gasto = rem + bys;
+  return { ingreso, rem, bys, gasto, saldo: ingreso - gasto };
+}
+function computeRealProyOtraFuente(of, fuenteKey) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey] || {};
+  const corte = realHastaMesOtraFuente(of);
+  const lineasIngreso = fuente.incomeShape === 'junji3'
+    ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente]
+    : [of.ingreso];
+  let ingReal = 0, ingProy = 0;
+  lineasIngreso.forEach(l => { const s = splitRealProyMeses(l && l.meses, corte); ingReal += s.real; ingProy += s.proy; });
+  const rem = splitRealProyMeses(of.gasto_rem && of.gasto_rem.meses, corte);
+  let bysReal = 0, bysProy = 0;
+  if (fuente.bysMode === 'compras') {
+    bysReal = (of.bys_items || []).reduce((s, it) => s + (it.total || 0), 0);
+    bysProy = (of.bys_proy_items || []).reduce((s, it) => s + (it.total || 0), 0);
+  } else {
+    (of.bys_items || []).forEach(it => { const s = splitRealProyMeses(it.meses, corte); bysReal += s.real; bysProy += s.proy; });
+  }
+  const real = bloqueRealProy(Math.round(ingReal), Math.round(rem.real), Math.round(bysReal));
+  const proy = bloqueRealProy(Math.round(ingProy), Math.round(rem.proy), Math.round(bysProy));
+  const total = bloqueRealProy(real.ingreso + proy.ingreso, real.rem + proy.rem, real.bys + proy.bys);
+  of.rp = { real, proy, total };
+  of.gasto_bys_real = real.bys;
+  of.gasto_bys_proy = proy.bys;
+  return of.rp;
+}
+// ingreso_total / gasto_total / saldo / estado son SIEMPRE sobre el Total (Real+Proy); el desglose
+// Real y Proyectado vive en of.rp = { real, proy, total }, cada uno { ingreso, rem, bys, gasto, saldo }.
 function recomputeOtraFuente(rbd, fuenteKey) {
   const of = ensureOtraFuente(rbd, fuenteKey);
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey] || {};
+  const rp = computeRealProyOtraFuente(of, fuenteKey);
+  of.ingreso_total = rp.total.ingreso;
+  of.gasto_bys_total = rp.total.bys;
+  of.gasto_total = rp.total.gasto;
+  of.saldo = rp.total.saldo;
   if (fuente.incomeShape === 'junji3') {
-    of.ingreso_total = of.ingreso_operacion.total + of.ingreso_homologacion.total + of.ingreso_carrera_docente.total;
-    of.gasto_total = of.gasto_rem.total + of.gasto_bys_total;
     of.saldo_operacion_bys = of.ingreso_operacion.total - of.gasto_bys_total;
-  } else {
-    of.ingreso_total = of.ingreso.total;
-    of.gasto_total = of.gasto_rem.total + of.gasto_bys_total;
   }
-  of.saldo = of.ingreso_total - of.gasto_total;
   of.estado = of.saldo >= 0 ? 'superavit' : 'deficit';
   return of;
+}
+// Suma of.rp de todas las entidades de la fuente (RBD+AC o GESPARVU según su universo): lo
+// consumen las tarjetas KPI de cada pestaña y, más adelante, el Dashboard / % Ejecución /
+// Reportes. Devuelve { real, proy, total } (cada uno { ingreso, rem, bys, gasto, saldo }) más
+// nEntidades / nDeficit / nSuperavit (según el saldo Total).
+function computeTotalesOtraFuente(fuenteKey) {
+  const vacio = () => ({ ingreso: 0, rem: 0, bys: 0, gasto: 0, saldo: 0 });
+  const acc = { real: vacio(), proy: vacio(), total: vacio(), nEntidades: 0, nDeficit: 0, nSuperavit: 0 };
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = recomputeOtraFuente(r.rbd, fuenteKey);
+    ['real', 'proy', 'total'].forEach(k => Object.keys(acc[k]).forEach(c => { acc[k][c] += of.rp[k][c]; }));
+    acc.nEntidades++;
+    if (of.estado === 'deficit') acc.nDeficit++; else acc.nSuperavit++;
+  });
+  return acc;
 }
 function recomputeTodasOtrasFuentes(rbd) {
   // Cada entidad solo participa de las fuentes de su propio universo: un GESPARVU únicamente de
@@ -2047,12 +2143,6 @@ function mesHeaderCellsHTML(modo, rbd) {
     const real = esRealParaModo(modo, rbd, idx);
     return `<th class="num ${real ? 'mes-real' : 'mes-proy'}">${m}<span class="mes-tag">${real ? 'Real' : 'Proy.'}</span></th>`;
   }).join('');
-}
-// Otras Fuentes no distingue Real/Proyectado (a diferencia de SEP): es carga mensual simple, sin
-// corte. Usar mesHeaderCellsHTML aquí etiquetaría todo como "Real" (su default para cualquier modo
-// que no reconoce), lo que sugeriría falsamente que diciembre ya está ejecutado.
-function mesHeaderCellsPlainHTML() {
-  return MESES_CARGA_ABREV.map(m => `<th class="num">${m}</th>`).join('');
 }
 
 function buildDetalleHTML(rbd, printMode) {
@@ -2669,27 +2759,149 @@ function otrasFuentesEstadoTagHTML(of) {
   return `<span class="tag ${of.estado}">${estadoLabel[of.estado]}</span>`;
 }
 
+// --- Real / Proyectado / Total en cada pestaña de fuente ---
+// Cada pestaña muestra 3 filas de tarjetas KPI colapsables (Real / Proyectado / Total, igual que
+// Panel principal) y unos chips de vista que cambian la base de las columnas numéricas de la
+// tabla. El Estado SIEMPRE es sobre el Total (Real+Proy). El corte "Real hasta" vive por entidad
+// (modal) y se puede fijar de una vez para todas las entidades de la fuente (control de la pestaña).
+const OF_VISTAS = [
+  { key: 'total', label: 'Total (Real+Proy)' },
+  { key: 'real', label: 'Real' },
+  { key: 'proy', label: 'Proyectado' },
+];
+let otrasFuentesVista = 'total';
+const otrasFuentesCorteSel = {};
+FUENTES_OTRAS.forEach(f => { otrasFuentesCorteSel[f.key] = DATA.n_meses; });
+
+function kpiCardsOtraFuente(fuenteKey, tipo, b, t) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const suf = { real: 'Real', proy: 'Proyectado', total: 'Total' }[tipo];
+  const compras = fuente.bysMode === 'compras';
+  const corteTxt = tipo === 'real' ? 'Meses hasta el corte "Real hasta" de cada entidad'
+    : tipo === 'proy' ? 'Meses posteriores al corte "Real hasta" de cada entidad' : 'Real + Proyectado';
+  const bysTxt = tipo === 'real' ? (compras ? 'Compras ya documentadas' : corteTxt)
+    : tipo === 'proy' ? (compras ? 'Proyección de B&S — se suma a las compras reales' : corteTxt) : 'Real + Proyectado';
+  const saldoTxt = tipo === 'total'
+    ? `Ingreso − Gasto · ${t.nDeficit} de ${t.nEntidades} entidades en déficit`
+    : `Ingreso ${suf} − Gasto ${suf}`;
+  return [
+    { label: `Ingreso (${suf})`, value: fmtCLP(b.ingreso), full: corteTxt, tone: 'blue' },
+    { label: `Gasto Remuneraciones (${suf})`, value: fmtCLP(b.rem), full: corteTxt, tone: 'amber' },
+    { label: `Gasto Bienes y Servicios (${suf})`, value: fmtCLP(b.bys), full: bysTxt, tone: 'amber' },
+    { label: `Gasto Total (${suf})`, value: fmtCLP(b.gasto), full: 'Remuneraciones + Bienes y Servicios', tone: 'amber' },
+    { label: `Saldo (${suf})`, value: fmtCLP(b.saldo), full: saldoTxt, critical: b.saldo < 0, tone: b.saldo < 0 ? 'red' : 'green' },
+  ];
+}
+
+// Igual que las 3 filas de Panel principal: cada una se colapsa por separado y el estado se
+// guarda en localStorage de este navegador (conveniencia por-persona). Por defecto Total abierta,
+// Real y Proyectado colapsadas.
+function isOfKpiSectionCollapsed(key, section) {
+  try {
+    const saved = localStorage.getItem(`ofKpiSeccionColapsada_${key}_${section}`);
+    if (saved !== null) return saved === '1';
+  } catch (err) { /* localStorage no disponible — valor por defecto */ }
+  return section !== 'total';
+}
+function applyOfKpiSectionState(key, section) {
+  const row = document.getElementById(`ofKpiRow-${section}-${key}`);
+  const label = document.querySelector(`#ofRealProyBlock-${key} .kpi-section-label[data-of-section="${section}"]`);
+  const collapsed = isOfKpiSectionCollapsed(key, section);
+  if (row) row.classList.toggle('kpi-row-collapsed', collapsed);
+  if (label) label.classList.toggle('kpi-section-collapsed', collapsed);
+}
+function toggleOfKpiSection(key, section) {
+  const collapsedAhora = isOfKpiSectionCollapsed(key, section);
+  try { localStorage.setItem(`ofKpiSeccionColapsada_${key}_${section}`, collapsedAhora ? '0' : '1'); } catch (err) { /* sin persistencia */ }
+  applyOfKpiSectionState(key, section);
+}
+window.toggleOfKpiSection = toggleOfKpiSection;
+
+function renderOtrasFuentesKpis(key) {
+  if (!document.getElementById(`ofKpiRow-real-${key}`)) return;
+  const t = computeTotalesOtraFuente(key);
+  ['real', 'proy', 'total'].forEach(tipo => {
+    document.getElementById(`ofKpiRow-${tipo}-${key}`).innerHTML = kpiCardsHTML(kpiCardsOtraFuente(key, tipo, t[tipo], t));
+    applyOfKpiSectionState(key, tipo);
+  });
+  document.querySelectorAll(`#tab-of-${key} .of-chip`).forEach(b => b.classList.toggle('active', b.dataset.ofVista === otrasFuentesVista));
+  const vista = OF_VISTAS.find(v => v.key === otrasFuentesVista);
+  const lbl = document.getElementById(`ofVistaLabel-${key}`);
+  if (lbl) lbl.textContent = `Vista de la tabla: ${vista.label} · la columna Estado siempre se calcula sobre el Total (Real+Proy).`;
+  const sel = document.getElementById(`ofCorteSelect-${key}`);
+  if (sel && document.activeElement !== sel) sel.value = String(otrasFuentesCorteSel[key]);
+}
+
 // Cada fuente tiene su propia pestaña y su propia tabla (sin selector intermedio) — solo se
-// pinta la tabla de la fuente pedida, no las 5 de una vez, para no recalcular lo que no se ve.
+// pinta la tabla de la fuente pedida, no las 9 de una vez, para no recalcular lo que no se ve.
 function renderOtrasFuentesTable(fuenteKey) {
   const key = fuenteKey || otrasFuentesSel;
   const tbody = document.getElementById('otrasFuentesTbody-' + key);
   if (!tbody) return;
+  const vista = otrasFuentesVista;
   const filas = filasOtrasFuentes(key).map(r => {
     const of = recomputeOtraFuente(r.rbd, key);
+    const b = of.rp[vista];
+    const corteTxt = MESES_CARGA_ABREV[realHastaMesOtraFuente(of) - 1];
     return `<tr class="otras-fuentes-row" data-rbd="${r.rbd}">
       <td class="rbd-clickable" data-abrir-otra-fuente="${r.rbd}">${r.rbd}</td>
       <td class="rbd-clickable" data-abrir-otra-fuente="${r.rbd}"><span class="nombre-txt" title="${r.nombre}">${r.nombre}</span></td>
-      <td class="num">${fmtCLP(of.ingreso_total)}</td>
-      <td class="num">${fmtCLP(of.gasto_rem.total)}</td>
-      <td class="num">${fmtCLP(of.gasto_bys_total)}</td>
-      <td class="num">${fmtCLP(of.gasto_total)}</td>
-      <td class="num" style="color:${of.saldo < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(of.saldo)}</td>
+      <td class="of-real-hasta">${corteTxt}</td>
+      <td class="num">${fmtCLP(b.ingreso)}</td>
+      <td class="num">${fmtCLP(b.rem)}</td>
+      <td class="num">${fmtCLP(b.bys)}</td>
+      <td class="num">${fmtCLP(b.gasto)}</td>
+      <td class="num" style="color:${b.saldo < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(b.saldo)}</td>
       <td>${otrasFuentesEstadoTagHTML(of)}</td>
     </tr>`;
   }).join('');
   tbody.innerHTML = filas;
+  renderOtrasFuentesKpis(key);
 }
+
+// Arma, en cada pestaña de fuente, el bloque de las 3 filas KPI (antes de la fila de botones de
+// exportar) y la fila de controles (chips de vista + corte "Real hasta el mes") antes de la tabla.
+// Se genera por JS, parametrizado por fuente, en vez de repetir el mismo HTML 9 veces.
+function montarBloqueRealProyOtraFuente(f) {
+  const panel = document.querySelector(`#tab-of-${f.key} .panel`);
+  if (!panel || document.getElementById(`ofRealProyBlock-${f.key}`)) return;
+  const tablaScroll = panel.querySelector('.table-scroll');
+  const primerControles = panel.querySelector('.table-controls');
+  const secciones = [['real', 'kpi-row-real', 'Real (ejecutado)'], ['proy', 'kpi-row-proy', 'Proyectado'], ['total', '', 'Total (Real + Proyectado)']];
+  const bloque = document.createElement('div');
+  bloque.className = 'of-realproy-block';
+  bloque.id = `ofRealProyBlock-${f.key}`;
+  bloque.innerHTML = secciones.map(([sec, cls, label]) => `
+    <button type="button" class="kpi-section-label" data-of-section="${sec}" onclick="toggleOfKpiSection('${f.key}','${sec}')"><span class="kpi-toggle-icon">▾</span> ${label}</button>
+    <div class="kpi-row of-kpi-row ${cls}" id="ofKpiRow-${sec}-${f.key}"></div>`).join('');
+  panel.insertBefore(bloque, primerControles || tablaScroll);
+
+  const controles = document.createElement('div');
+  controles.className = 'table-controls of-vista-controls';
+  controles.innerHTML = `
+    <span class="of-ctl-label">Vista de la tabla:</span>
+    <span class="of-chips" role="group" aria-label="Vista de la tabla">${OF_VISTAS.map(v => `<button type="button" class="of-chip" data-of-vista="${v.key}">${v.label}</button>`).join('')}</span>
+    <span class="of-ctl-label" style="margin-left:10px;">Real hasta el mes:</span>
+    <select class="of-corte-select" id="ofCorteSelect-${f.key}">${MESES_CARGA_TITLE.map((m, i) => `<option value="${i + 1}">${m}</option>`).join('')}</select>
+    <button type="button" id="ofCorteAplicarBtn-${f.key}" title="Fija este mes como corte Real/Proyectado en todas las entidades de esta fuente">Aplicar a todas las entidades</button>`;
+  panel.insertBefore(controles, tablaScroll);
+
+  const vistaLabel = document.createElement('div');
+  vistaLabel.className = 'detalle-sub of-vista-label';
+  vistaLabel.id = `ofVistaLabel-${f.key}`;
+  panel.insertBefore(vistaLabel, tablaScroll);
+
+  controles.querySelectorAll('.of-chip').forEach(btn => btn.addEventListener('click', () => {
+    otrasFuentesVista = btn.dataset.ofVista;
+    otrasFuentesSel = f.key;
+    renderOtrasFuentesTable(f.key);
+  }));
+  controles.querySelector('.of-corte-select').addEventListener('change', (e) => {
+    otrasFuentesCorteSel[f.key] = Number(e.target.value);
+  });
+  document.getElementById(`ofCorteAplicarBtn-${f.key}`).addEventListener('click', () => aplicarCorteATodasOtraFuente(f.key));
+}
+FUENTES_OTRAS.forEach(montarBloqueRealProyOtraFuente);
 
 // Un listener de click por tabla (una por fuente) — todas abren el mismo modal compartido.
 FUENTES_OTRAS.forEach(f => {
@@ -2749,13 +2961,24 @@ function otrasFuentesOptionsTipoDocumento() {
   return `<option value="">Tipo de documento…</option>` + TIPOS_DOCUMENTO_SEP.map(t => `<option value="${t}">${t}</option>`).join('');
 }
 
+// Real/Proy por mes según el corte de la entidad (real_hasta_mes); forzarProy marca todos los
+// meses como Proyectado (la lista de proyección de B&S de las fuentes con compras).
+function claseMesOtraFuente(i, corte, forzarProy) { return (!forzarProy && i + 1 <= corte) ? 'mes-real' : 'mes-proy'; }
+function mesHeaderCellsCorteHTML(corte, forzarProy) {
+  return MESES_CARGA_ABREV.map((m, i) => {
+    const cls = claseMesOtraFuente(i, corte, forzarProy);
+    return `<th class="num ${cls}">${m}<span class="mes-tag">${cls === 'mes-real' ? 'Real' : 'Proy.'}</span></th>`;
+  }).join('');
+}
 function otrasFuentesFilaMesesHTML(rbd, fuenteKey, modo, obj) {
-  return MESES_CARGA.map(m => `<td class="num"><input type="number" step="1" class="celda-input" value="${(obj.meses[m] || 0) === 0 ? '' : obj.meses[m]}" placeholder="0"
+  const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
+  return MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, false)}"><input type="number" step="1" class="celda-input" value="${(obj.meses[m] || 0) === 0 ? '' : obj.meses[m]}" placeholder="0"
     data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
 }
 function otrasFuentesTablaMes(titulo, rbd, fuenteKey, modo, obj, totalId) {
+  const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
   return `<table class="detalle-table" style="margin-top:8px;">${DETALLE_COLGROUP}
-      <thead><tr><th>${titulo}</th>${mesHeaderCellsPlainHTML()}<th class="num">Total</th></tr></thead>
+      <thead><tr><th>${titulo}</th>${mesHeaderCellsCorteHTML(corte, false)}<th class="num">Total</th></tr></thead>
       <tbody><tr><td class="item-label">${titulo}</td>${otrasFuentesFilaMesesHTML(rbd, fuenteKey, modo, obj)}<td class="num item-total" id="${totalId}">${fmtCLP(obj.total)}</td></tr></tbody>
     </table>`;
 }
@@ -2795,40 +3018,51 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
     </div>`;
 }
 
-// Bienes y Servicios por concepto libre (bysMode:'concepto' — hoy JUNJI/FAEP/FIGA): sin código de
-// cuenta SUPEREDUC ni registro de compras con documento/proveedor, porque ninguna de estas
-// fuentes es parte de ese sistema de rendición. `mostrarSaldoOperacion` solo aplica a JUNJI
-// (incomeShape:'junji3'), la única con más de una línea de ingreso y por lo tanto la única donde
-// tiene sentido decir cuál de ellas financia B&S.
-function bysItemFilaHTML(rbd, fuenteKey, concepto, it) {
-  const cells = MESES_CARGA.map(m => `<td class="num"><input type="number" step="1" class="celda-input" value="${(it.meses[m] || 0) === 0 ? '' : it.meses[m]}" placeholder="0"
-    data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="of_bys_item" data-concepto="${concepto.replace(/"/g, '&quot;')}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
+// Bienes y Servicios por concepto libre: bysMode:'concepto' (JUNJI/FAEP/FIGA/Aportes, lista
+// `bys_items`, Real/Proy según el corte) y la PROYECCIÓN de B&S de las fuentes con compras (lista
+// `bys_proy_items`, siempre Proyectada) — sin código de cuenta SUPEREDUC ni documento/proveedor.
+// `mostrarSaldoOperacion` solo aplica a JUNJI (incomeShape:'junji3'), la única con más de una
+// línea de ingreso y por lo tanto la única donde tiene sentido decir cuál de ellas financia B&S.
+function bysItemFilaHTML(rbd, fuenteKey, concepto, it, modo = 'of_bys_item') {
+  const forzarProy = modo === 'of_bys_proy_item';
+  const lista = forzarProy ? 'bys_proy_items' : 'bys_items';
+  const prefijoId = forzarProy ? 'ofbysproyitem' : 'ofbysitem';
+  const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
+  const cells = MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, forzarProy)}"><input type="number" step="1" class="celda-input" value="${(it.meses[m] || 0) === 0 ? '' : it.meses[m]}" placeholder="0"
+    data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-concepto="${concepto.replace(/"/g, '&quot;')}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
   return `<tr>
-    <td class="item-label">${concepto} <button type="button" class="bysproy-del-btn of-bysitem-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-concepto="${concepto.replace(/"/g, '&quot;')}" title="Quitar ítem">🗑</button></td>
+    <td class="item-label">${concepto} <button type="button" class="bysproy-del-btn of-bysitem-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${lista}" data-concepto="${concepto.replace(/"/g, '&quot;')}" title="Quitar ítem">🗑</button></td>
     ${cells}
-    <td class="num item-total" id="ofbysitem-${rbd}-${fuenteKey}-${concepto}">${fmtCLP(it.total)}</td>
+    <td class="num item-total" id="${prefijoId}-${rbd}-${fuenteKey}-${concepto}">${fmtCLP(it.total)}</td>
   </tr>`;
 }
-function bysConceptoSectionHTML(rbd, fuenteKey, of, mostrarSaldoOperacion) {
-  const filasBys = of.bys_items.map(it => bysItemFilaHTML(rbd, fuenteKey, it.concepto, it)).join('');
+function bysConceptoSectionHTML(rbd, fuenteKey, of, mostrarSaldoOperacion, opts) {
+  const o = Object.assign({
+    lista: 'bys_items', modo: 'of_bys_item',
+    titulo: 'Bienes y Servicios (por concepto)',
+    nota: 'Esta fuente no tiene código de cuenta SUPEREDUC: cada ítem se identifica por un concepto libre.',
+    inputId: `juncon-${rbd}-${fuenteKey}`, forzarProy: false,
+  }, opts || {});
+  const corte = realHastaMesOtraFuente(of);
+  const filasBys = (of[o.lista] || []).map(it => bysItemFilaHTML(rbd, fuenteKey, it.concepto, it, o.modo)).join('');
   const saldoOperacionHTML = mostrarSaldoOperacion
     ? ` Saldo Operación disponible para B&S: <strong id="ofsaldoopbys-${rbd}-${fuenteKey}" style="color:${of.saldo_operacion_bys < 0 ? 'var(--status-critical)' : 'inherit'}">${fmtCLP(of.saldo_operacion_bys)}</strong>`
     : '';
   return `
     <div class="compras-section" style="margin-top:14px;">
       <div class="detalle-header">
-        <strong>Bienes y Servicios (por concepto)</strong> — <span class="detalle-sub">Esta fuente no tiene código de cuenta SUPEREDUC: cada ítem se identifica por un concepto libre.${saldoOperacionHTML}</span>
+        <strong>${o.titulo}</strong> — <span class="detalle-sub">${o.nota}${saldoOperacionHTML}</span>
       </div>
       <div class="compra-form-grid">
-        <label class="compra-field" style="flex:1 1 260px;"><span class="compra-field-label">Concepto</span><input type="text" id="juncon-${rbd}-${fuenteKey}" placeholder="Ej: Reparación sala cuna"></label>
+        <label class="compra-field" style="flex:1 1 260px;"><span class="compra-field-label">Concepto</span><input type="text" id="${o.inputId}" placeholder="Ej: Reparación sala cuna"></label>
         <span class="compra-form-actions">
-          <button type="button" class="add-compra-btn of-add-bysitem-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}">+ Agregar concepto</button>
+          <button type="button" class="add-compra-btn of-add-bysitem-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${o.lista}">+ Agregar concepto</button>
         </span>
       </div>
       <div class="detalle-scroll">
         <table class="detalle-table">${DETALLE_COLGROUP}
-          <thead><tr><th>Concepto</th>${mesHeaderCellsPlainHTML()}<th class="num">Total</th></tr></thead>
-          <tbody>${filasBys || `<tr><td colspan="14" class="detalle-sin-compras">Sin ítems de Bienes y Servicios todavía.</td></tr>`}</tbody>
+          <thead><tr><th>Concepto</th>${mesHeaderCellsCorteHTML(corte, o.forzarProy)}<th class="num">Total</th></tr></thead>
+          <tbody>${filasBys || `<tr><td colspan="14" class="detalle-sin-compras">Sin ítems de ${o.forzarProy ? 'proyección de ' : ''}Bienes y Servicios todavía.</td></tr>`}</tbody>
         </table>
       </div>
     </div>`;
@@ -2838,6 +3072,10 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
   const of = recomputeOtraFuente(rbd, fuenteKey);
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   const fuenteLabel = fuente.label;
+  const corte = realHastaMesOtraFuente(of);
+  const compras = fuente.bysMode === 'compras';
+  const corteSelectHTML = `<div class="of-modal-corte"><label class="of-ctl-label">Real hasta el mes: <select class="of-modal-corte-select" data-rbd="${rbd}" data-fuente="${fuenteKey}">${MESES_CARGA_TITLE.map((m, i) => `<option value="${i + 1}"${i + 1 === corte ? ' selected' : ''}>${m}</option>`).join('')}</select></label>
+    <span class="detalle-sub">Los meses hasta el corte son <strong>Real</strong> y los siguientes <strong>Proyectado</strong>${compras ? ' (las compras siempre son Real; la proyección de Bienes y Servicios se carga aparte, más abajo).' : '.'}</span></div>`;
 
   let headerHTML, tablasMesesHTML;
   if (fuente.incomeShape === 'junji3') {
@@ -2848,7 +3086,7 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
     ${otrasFuentesTablaMes('Ingreso Carrera Docente', rbd, fuenteKey, 'of_ingreso_carrera_docente', of.ingreso_carrera_docente, `oftotal-${rbd}-${fuenteKey}-of_ingreso_carrera_docente`)}
     ${otrasFuentesTablaMes('Gasto Remuneraciones', rbd, fuenteKey, 'of_gasto_rem', of.gasto_rem, `oftotal-${rbd}-${fuenteKey}-of_gasto_rem`)}`;
   } else {
-    const bysSubtitle = fuente.bysMode === 'compras'
+    const bysSubtitle = compras
       ? 'Bienes y Servicios se carga como "Registro de compras" más abajo; su total mensual se calcula solo.'
       : 'Bienes y Servicios se carga por concepto más abajo; su total mensual se calcula solo.';
     headerHTML = `<strong>Detalle por mes — Ingreso y Remuneraciones (${fuenteLabel})</strong> — <span class="detalle-sub">${bysSubtitle}</span>`;
@@ -2857,13 +3095,19 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
     ${otrasFuentesTablaMes(`Gasto Remuneraciones (${fuenteLabel})`, rbd, fuenteKey, 'of_gasto_rem', of.gasto_rem, `oftotal-${rbd}-${fuenteKey}-of_gasto_rem`)}`;
   }
 
-  const bysHTML = fuente.bysMode === 'compras'
-    ? comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel)
+  const bysHTML = compras
+    ? comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) + bysConceptoSectionHTML(rbd, fuenteKey, of, false, {
+        lista: 'bys_proy_items', modo: 'of_bys_proy_item', forzarProy: true,
+        titulo: 'Proyección Bienes y Servicios (por concepto)',
+        nota: 'Siempre Proyectado: estimación aparte que se suma a las compras reales (nunca las reemplaza). El concepto es libre.',
+        inputId: `juncon-proy-${rbd}-${fuenteKey}`,
+      })
     : bysConceptoSectionHTML(rbd, fuenteKey, of, fuente.incomeShape === 'junji3');
 
   return `
   <div class="detalle-wrap">
     <div class="detalle-header">
+      ${corteSelectHTML}
       ${headerHTML}
     </div>
     <div class="detalle-scroll">
@@ -2887,7 +3131,8 @@ function actualizarOtrasFuentesModalSubtitle(of) {
   el.innerHTML =
     `Ingreso Total: <strong>${fmtCLP(of.ingreso_total)}</strong> · ` +
     `Gasto Total: <strong>${fmtCLP(of.gasto_total)}</strong> · ` +
-    `Saldo: <strong>${fmtCLP(of.saldo)}</strong> · ${otrasFuentesEstadoTagHTML(of)}`;
+    `Saldo: <strong>${fmtCLP(of.saldo)}</strong> · ${otrasFuentesEstadoTagHTML(of)}` +
+    ` · <span class="detalle-sub">Saldo Real: <strong>${fmtCLP(of.rp.real.saldo)}</strong> · Saldo Proy.: <strong>${fmtCLP(of.rp.proy.saldo)}</strong></span>`;
 }
 function renderOtrasFuentesModalContenido() {
   const rbd = otrasFuentesRbdAbierto;
@@ -2917,13 +3162,17 @@ function onOtraFuenteCeldaInput(input) {
   const of = ensureOtraFuente(rbd, fuenteKey);
   const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
 
-  if (modo === 'of_bys_item') {
+  if (modo === 'of_bys_item' || modo === 'of_bys_proy_item') {
+    // Ítem de B&S por concepto: `bys_items` (fuentes de concepto) o `bys_proy_items` (proyección
+    // de las fuentes con compras).
+    const lista = modo === 'of_bys_proy_item' ? 'bys_proy_items' : 'bys_items';
+    const prefijoId = modo === 'of_bys_proy_item' ? 'ofbysproyitem' : 'ofbysitem';
     const concepto = input.dataset.concepto;
-    const it = ensureOtraFuenteBysItem(of, concepto);
+    const it = ensureOtraFuenteBysItem(of, concepto, lista);
     it.meses[mes] = val;
     it.total = MESES_CARGA.reduce((s, m) => s + (it.meses[m] || 0), 0);
     recomputeOtraFuenteBysItemsAgregado(of);
-    const itemTotalCell = document.getElementById(`ofbysitem-${rbd}-${fuenteKey}-${concepto}`);
+    const itemTotalCell = document.getElementById(`${prefijoId}-${rbd}-${fuenteKey}-${concepto}`);
     if (itemTotalCell) itemTotalCell.textContent = fmtCLP(it.total);
     const saldoOpCell = document.getElementById(`ofsaldoopbys-${rbd}-${fuenteKey}`);
     recomputeOtraFuente(rbd, fuenteKey);
@@ -2931,7 +3180,7 @@ function onOtraFuenteCeldaInput(input) {
       saldoOpCell.textContent = fmtCLP(of.saldo_operacion_bys);
       saldoOpCell.style.color = of.saldo_operacion_bys < 0 ? 'var(--status-critical)' : 'inherit';
     }
-    scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { bys_items: { [concepto]: { concepto, meses: { [mes]: val }, total: it.total } } } } });
+    scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { [lista]: { [concepto]: { concepto, meses: { [mes]: val }, total: it.total } } } } });
   } else {
     const campo = OTRA_FUENTE_MODO_CAMPO[modo];
     const bucket = of[campo];
@@ -2947,26 +3196,55 @@ function onOtraFuenteCeldaInput(input) {
 }
 window.onOtraFuenteCeldaInput = onOtraFuenteCeldaInput;
 
-function agregarBysItemOtraFuente(rbd, fuenteKey) {
-  const input = document.getElementById(`juncon-${rbd}-${fuenteKey}`);
+// Corte "Real hasta el mes" de UNA entidad (selector del modal).
+function cambiarCorteOtraFuente(rbd, fuenteKey, mes) {
+  const of = ensureOtraFuente(rbd, fuenteKey);
+  of.real_hasta_mes = normalizarRealHastaMes(mes);
+  recomputeOtraFuente(rbd, fuenteKey);
+  renderOtrasFuentesTable(fuenteKey);
+  if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
+  const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
+  scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { real_hasta_mes: of.real_hasta_mes } } });
+  flushRbdSaveNow(rbd);
+}
+// Corte "Real hasta el mes" de TODAS las entidades de la fuente (control de la pestaña).
+function aplicarCorteATodasOtraFuente(fuenteKey) {
+  const mes = normalizarRealHastaMes(otrasFuentesCorteSel[fuenteKey]);
+  const filas = filasOtrasFuentes(fuenteKey);
+  const label = FUENTES_OTRAS_BY_KEY[fuenteKey].label;
+  if (!confirm(`¿Fijar "Real hasta" en ${MESES_CARGA_TITLE[mes - 1]} para las ${filas.length} entidades de ${label}? Los meses posteriores pasan a Proyectado.`)) return;
+  filas.forEach(r => {
+    const of = ensureOtraFuente(r.rbd, fuenteKey);
+    of.real_hasta_mes = mes;
+    recomputeOtraFuente(r.rbd, fuenteKey);
+    scheduleRbdSave(r.rbd, { nombre: r.nombre, otras_fuentes: { [fuenteKey]: { real_hasta_mes: mes } } });
+    flushRbdSaveNow(r.rbd);
+  });
+  renderOtrasFuentesTable(fuenteKey);
+  if (otrasFuentesRbdAbierto) renderOtrasFuentesModalContenido();
+}
+
+function agregarBysItemOtraFuente(rbd, fuenteKey, lista = 'bys_items') {
+  const inputId = lista === 'bys_proy_items' ? `juncon-proy-${rbd}-${fuenteKey}` : `juncon-${rbd}-${fuenteKey}`;
+  const input = document.getElementById(inputId);
   const concepto = (input && input.value || '').trim();
   if (!concepto) { alert('Escribe un concepto antes de agregar.'); return; }
   const of = ensureOtraFuente(rbd, fuenteKey);
-  if (of.bys_items.some(it => it.concepto === concepto)) { alert('Ya existe un ítem con ese concepto.'); return; }
-  ensureOtraFuenteBysItem(of, concepto);
+  if ((of[lista] || []).some(it => it.concepto === concepto)) { alert('Ya existe un ítem con ese concepto.'); return; }
+  ensureOtraFuenteBysItem(of, concepto, lista);
   recomputeOtraFuenteBysItemsAgregado(of);
   recomputeOtraFuente(rbd, fuenteKey);
   renderOtrasFuentesTable();
   if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
   const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
-  scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { bys_items: { [concepto]: { concepto, meses: mesesEnCero(), total: 0 } } } } });
+  scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { [lista]: { [concepto]: { concepto, meses: mesesEnCero(), total: 0 } } } } });
   flushRbdSaveNow(rbd);
 }
-async function eliminarBysItemOtraFuente(rbd, fuenteKey, concepto) {
+async function eliminarBysItemOtraFuente(rbd, fuenteKey, concepto, lista = 'bys_items') {
   if (!confirm('¿Quitar este ítem de Bienes y Servicios? No se puede deshacer.')) return;
   flushRbdSaveNow(rbd);
   const of = ensureOtraFuente(rbd, fuenteKey);
-  of.bys_items = of.bys_items.filter(it => it.concepto !== concepto);
+  of[lista] = (of[lista] || []).filter(it => it.concepto !== concepto);
   recomputeOtraFuenteBysItemsAgregado(of);
   recomputeOtraFuente(rbd, fuenteKey);
   renderOtrasFuentesTable();
@@ -2974,7 +3252,7 @@ async function eliminarBysItemOtraFuente(rbd, fuenteKey, concepto) {
   if (!currentUser) return;
   try {
     await setDoc(doc(db, CARGA_COLLECTION, rbd), {
-      otras_fuentes: { [fuenteKey]: { bys_items: { [concepto]: deleteField() } } },
+      otras_fuentes: { [fuenteKey]: { [lista]: { [concepto]: deleteField() } } },
       lastModifiedBy: currentUser.email,
       lastModifiedAt: serverTimestamp(),
     }, { merge: true });
@@ -2984,7 +3262,8 @@ async function eliminarBysItemOtraFuente(rbd, fuenteKey, concepto) {
 }
 
 function leerCamposCompraOtraFuente() {
-  const wrap = document.querySelector('#otrasFuentesModalBody .compra-form-grid');
+  const primerCampo = document.querySelector('#otrasFuentesModalBody .compra-form-grid .of-compra-input');
+  const wrap = primerCampo && primerCampo.closest('.compra-form-grid');
   if (!wrap) return null;
   const campos = {};
   wrap.querySelectorAll(".compra-input.of-compra-input").forEach(el => {
@@ -3038,9 +3317,13 @@ otrasFuentesModalBodyEl.addEventListener('click', (e) => {
   const delBtn = e.target.closest('.of-compra-del-btn');
   if (delBtn) { eliminarCompraOtraFuente(delBtn.getAttribute('data-rbd'), delBtn.getAttribute('data-fuente'), delBtn.getAttribute('data-compra-id')); return; }
   const addBysItemBtn = e.target.closest('.of-add-bysitem-btn');
-  if (addBysItemBtn) { agregarBysItemOtraFuente(addBysItemBtn.getAttribute('data-rbd'), addBysItemBtn.getAttribute('data-fuente')); return; }
+  if (addBysItemBtn) { agregarBysItemOtraFuente(addBysItemBtn.getAttribute('data-rbd'), addBysItemBtn.getAttribute('data-fuente'), addBysItemBtn.getAttribute('data-lista') || 'bys_items'); return; }
   const delBysItemBtn = e.target.closest('.of-bysitem-del-btn');
-  if (delBysItemBtn) { eliminarBysItemOtraFuente(delBysItemBtn.getAttribute('data-rbd'), delBysItemBtn.getAttribute('data-fuente'), delBysItemBtn.getAttribute('data-concepto')); return; }
+  if (delBysItemBtn) { eliminarBysItemOtraFuente(delBysItemBtn.getAttribute('data-rbd'), delBysItemBtn.getAttribute('data-fuente'), delBysItemBtn.getAttribute('data-concepto'), delBysItemBtn.getAttribute('data-lista') || 'bys_items'); return; }
+});
+otrasFuentesModalBodyEl.addEventListener('change', (e) => {
+  const sel = e.target.closest && e.target.closest('.of-modal-corte-select');
+  if (sel) cambiarCorteOtraFuente(sel.dataset.rbd, sel.dataset.fuente, Number(sel.value));
 });
 otrasFuentesModalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
@@ -3141,15 +3424,25 @@ function sheetOtraFuenteComprasAOA(fuenteKey) {
   });
   return rows;
 }
-function sheetBysItemsAOA(fuenteKey) {
+function sheetBysItemsAOA(fuenteKey, lista = 'bys_items') {
   const headers = ['RBD', 'Nombre', 'Concepto', ...MESES_CARGA_TITLE, 'Total Año'];
   const rows = [headers];
   filasOtrasFuentes(fuenteKey).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
-    (of ? of.bys_items : []).forEach(it => {
+    (of ? (of[lista] || []) : []).forEach(it => {
       const vals = MESES_CARGA.map(m => Math.round(it.meses[m] || 0));
       rows.push([rbdCellValue(r.rbd), r.nombre, it.concepto, ...vals, Math.round(it.total)]);
     });
+  });
+  return rows;
+}
+// Hoja META: el corte "Real hasta el mes" de cada entidad — sin ella el round-trip de Excel
+// perdería la distinción Real/Proyectado.
+function sheetMetaAOA(fuenteKey) {
+  const rows = [['RBD', 'Nombre', 'RealHastaMes']];
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
+    rows.push([rbdCellValue(r.rbd), r.nombre, of ? realHastaMesOtraFuente(of) : DATA.n_meses]);
   });
   return rows;
 }
@@ -3166,9 +3459,11 @@ function buildOtraFuenteCargaWorkbook(fuenteKey) {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'gasto_rem')), 'REMUNERACIONES');
   if (fuente.bysMode === 'compras') {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteComprasAOA(fuenteKey)), 'COMPRAS');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey, 'bys_proy_items')), 'BYS_PROY_ITEMS');
   } else {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey)), 'BYS_ITEMS');
   }
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetMetaAOA(fuenteKey)), 'META');
   return wb;
 }
 function exportOtraFuenteExcel(fuenteKey) {
@@ -3241,7 +3536,7 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
   if (otrasFuentesRbdAbierto && porRbd[otrasFuentesRbdAbierto]) renderOtrasFuentesModalContenido();
   return n;
 }
-function importBysItemsSheet(ws, fuenteKey) {
+function importBysItemsSheet(ws, fuenteKey, lista = 'bys_items') {
   const rows = rowsFromSheet(ws);
   const porRbd = new Set();
   let n = 0;
@@ -3256,21 +3551,41 @@ function importBysItemsSheet(ws, fuenteKey) {
     let total = 0;
     MESES_CARGA.forEach((m, mi) => { const v = Number(row[3 + mi]) || 0; meses[m] = v; total += v; });
     const of = ensureOtraFuente(rbd, fuenteKey);
-    const it = ensureOtraFuenteBysItem(of, concepto);
+    const it = ensureOtraFuenteBysItem(of, concepto, lista);
     it.meses = meses;
     it.total = Math.round(total);
     recomputeOtraFuenteBysItemsAgregado(of);
     recomputeOtraFuente(rbd, fuenteKey);
-    scheduleRbdSave(rbd, { nombre, otras_fuentes: { [fuenteKey]: { bys_items: { [concepto]: { concepto, meses, total: it.total } } } } });
+    scheduleRbdSave(rbd, { nombre, otras_fuentes: { [fuenteKey]: { [lista]: { [concepto]: { concepto, meses, total: it.total } } } } });
     porRbd.add(rbd);
     n++;
   }
   if (otrasFuentesRbdAbierto && porRbd.has(otrasFuentesRbdAbierto)) renderOtrasFuentesModalContenido();
   return n;
 }
+// Hoja META: aplica el corte "Real hasta el mes" por entidad. Solo escribe lo que cambia (no
+// crea documentos de entidades que ya tienen ese mismo corte).
+function importOtraFuenteMetaSheet(ws, fuenteKey) {
+  const rows = rowsFromSheet(ws);
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
+    const rbd = String(row[0]).trim();
+    const mes = normalizarRealHastaMes(row[2]);
+    const of = ensureOtraFuente(rbd, fuenteKey);
+    if (realHastaMesOtraFuente(of) === mes) continue;
+    of.real_hasta_mes = mes;
+    recomputeOtraFuente(rbd, fuenteKey);
+    scheduleRbdSave(rbd, { nombre: row[1] || rbd, otras_fuentes: { [fuenteKey]: { real_hasta_mes: mes } } });
+    n++;
+  }
+  return n;
+}
 function importOtraFuenteWorkbook(wbIn, fuenteKey) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   let resumen = [];
+  if (wbIn.Sheets['META']) resumen.push('META (corte Real/Proy): ' + importOtraFuenteMetaSheet(wbIn.Sheets['META'], fuenteKey) + ' cambios');
   if (fuente.incomeShape === 'junji3') {
     if (wbIn.Sheets['ING_OPERACION']) resumen.push('ING_OPERACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_OPERACION'], fuenteKey, 'ingreso_operacion') + ' filas');
     if (wbIn.Sheets['ING_HOMOLOGACION']) resumen.push('ING_HOMOLOGACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_HOMOLOGACION'], fuenteKey, 'ingreso_homologacion') + ' filas');
@@ -3281,6 +3596,7 @@ function importOtraFuenteWorkbook(wbIn, fuenteKey) {
   if (wbIn.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['REMUNERACIONES'], fuenteKey, 'gasto_rem') + ' filas');
   if (fuente.bysMode === 'compras') {
     if (wbIn.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importOtraFuenteComprasSheet(wbIn.Sheets['COMPRAS'], fuenteKey) + ' filas');
+    if (wbIn.Sheets['BYS_PROY_ITEMS']) resumen.push('BYS_PROY_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_PROY_ITEMS'], fuenteKey, 'bys_proy_items') + ' filas');
   } else {
     if (wbIn.Sheets['BYS_ITEMS']) resumen.push('BYS_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_ITEMS'], fuenteKey) + ' filas');
   }
@@ -4667,7 +4983,7 @@ function aplicarSnapshot(snapshot) {
     const totalDeMeses = (m) => MESES_CARGA.reduce((s, k) => s + m[k], 0);
     FUENTES_OTRAS.forEach(f => {
       const raw = ofRaw[f.key] || {};
-      const entry = { bys_items: [], gasto_bys_total: 0, ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit' };
+      const entry = { bys_items: [], gasto_bys_total: 0, gasto_bys_real: 0, gasto_bys_proy: 0, ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit', real_hasta_mes: normalizarRealHastaMes(raw.real_hasta_mes) };
       if (f.incomeShape === 'junji3') {
         const mOperacion = mesesDesde(raw, 'ingreso_operacion');
         const mHomologacion = mesesDesde(raw, 'ingreso_homologacion');
@@ -4682,14 +4998,16 @@ function aplicarSnapshot(snapshot) {
       }
       const mRem = mesesDesde(raw, 'gasto_rem');
       entry.gasto_rem = { meses: mRem, total: totalDeMeses(mRem) };
+      const parseItemsConcepto = (rawItems) => Object.values(rawItems || {}).map(it => {
+        const meses = {};
+        MESES_CARGA.forEach(k => meses[k] = (it.meses && it.meses[k]) || 0);
+        return { concepto: it.concepto || '', meses, total: totalDeMeses(meses) };
+      });
       if (f.bysMode === 'compras') {
         entry.compras = raw.compras || {};
+        entry.bys_proy_items = parseItemsConcepto(raw.bys_proy_items);
       } else {
-        entry.bys_items = Object.values(raw.bys_items || {}).map(it => {
-          const meses = {};
-          MESES_CARGA.forEach(k => meses[k] = (it.meses && it.meses[k]) || 0);
-          return { concepto: it.concepto || '', meses, total: totalDeMeses(meses) };
-        });
+        entry.bys_items = parseItemsConcepto(raw.bys_items);
       }
       of[f.key] = entry;
     });

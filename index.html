@@ -1643,6 +1643,12 @@ function mesHeaderCellsHTML(modo, rbd) {
     return `<th class="num ${real ? 'mes-real' : 'mes-proy'}">${m}<span class="mes-tag">${real ? 'Real' : 'Proy.'}</span></th>`;
   }).join('');
 }
+// Otras Fuentes no distingue Real/Proyectado (a diferencia de SEP): es carga mensual simple, sin
+// corte. Usar mesHeaderCellsHTML aquí etiquetaría todo como "Real" (su default para cualquier modo
+// que no reconoce), lo que sugeriría falsamente que diciembre ya está ejecutado.
+function mesHeaderCellsPlainHTML() {
+  return MESES_CARGA_ABREV.map(m => `<th class="num">${m}</th>`).join('');
+}
 
 function buildDetalleHTML(rbd, printMode) {
   const registro = DATA.registros.find(x => x.rbd === rbd);
@@ -2343,7 +2349,7 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
   const of = recomputeOtraFuente(rbd, fuenteKey);
   const fuenteLabel = FUENTES_OTRAS_BY_KEY[fuenteKey].label;
   const filaMesesHTML = (modo, obj) => {
-    const cells = MESES_CARGA.map(m => `<td class="num mes-real"><input type="number" step="1" class="celda-input" value="${(obj.meses[m] || 0) === 0 ? '' : obj.meses[m]}" placeholder="0"
+    const cells = MESES_CARGA.map(m => `<td class="num"><input type="number" step="1" class="celda-input" value="${(obj.meses[m] || 0) === 0 ? '' : obj.meses[m]}" placeholder="0"
       data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
     return cells;
   };
@@ -2358,11 +2364,11 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
     </div>
     <div class="detalle-scroll">
     <table class="detalle-table">${DETALLE_COLGROUP}
-      <thead><tr><th>Ingreso (${fuenteLabel})</th>${mesHeaderCellsHTML('of_ingreso', rbd)}<th class="num">Total</th></tr></thead>
+      <thead><tr><th>Ingreso (${fuenteLabel})</th>${mesHeaderCellsPlainHTML()}<th class="num">Total</th></tr></thead>
       <tbody><tr><td class="item-label">Ingreso</td>${filaMesesHTML('of_ingreso', of.ingreso)}<td class="num item-total" id="oftotal-${rbd}-${fuenteKey}-of_ingreso">${fmtCLP(of.ingreso.total)}</td></tr></tbody>
     </table>
     <table class="detalle-table" style="margin-top:8px;">${DETALLE_COLGROUP}
-      <thead><tr><th>Gasto Remuneraciones (${fuenteLabel})</th>${mesHeaderCellsHTML('of_gasto_rem', rbd)}<th class="num">Total</th></tr></thead>
+      <thead><tr><th>Gasto Remuneraciones (${fuenteLabel})</th>${mesHeaderCellsPlainHTML()}<th class="num">Total</th></tr></thead>
       <tbody><tr><td class="item-label">Remuneraciones</td>${filaMesesHTML('of_gasto_rem', of.gasto_rem)}<td class="num item-total" id="oftotal-${rbd}-${fuenteKey}-of_gasto_rem">${fmtCLP(of.gasto_rem.total)}</td></tr></tbody>
     </table>
     <div class="compras-section" style="margin-top:14px;">

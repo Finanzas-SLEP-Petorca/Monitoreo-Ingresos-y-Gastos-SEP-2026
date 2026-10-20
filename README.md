@@ -12,7 +12,18 @@ establecimiento.
 Abre [`index.html`](./index.html) directamente en el navegador, o publícalo como página
 estática (por ejemplo con GitHub Pages apuntando a este archivo). Necesita conexión a internet
 para autenticarse y sincronizar (Firebase); la librería de Excel usada para exportar/importar
-sigue viniendo incluida en el propio archivo.
+sigue viniendo incluida en el propio archivo. Dentro del panel, el botón "❓ Cómo usar" (arriba a
+la derecha) tiene una guía rápida pensada para todo el equipo, sin pasos técnicos.
+
+### Paleta y formato
+
+Usa la misma paleta y formato que el resto de los paneles de Finanzas SLEP Petorca (Control de
+DC y Facturación, Panel Impresora de Pago Proveedores BancoEstado): fondo azul-gris claro,
+tarjetas blancas con sombra suave, acento azul, y tarjetas KPI en tonos pastel según el tipo de
+dato (azul = ingreso, ámbar = gasto, verde/rojo = saldo según el signo, gris = conteos neutros)
+— para que cada número se identifique de un vistazo, pensado para que lo mire más de una persona
+a la vez. Las variables de color viven en `:root` (no en una clase particular) justamente para
+que tanto la pantalla de login como el panel interno compartan la misma paleta.
 
 ### Acceso: correo institucional + enlace mágico
 

@@ -135,6 +135,33 @@ combinar varios RBD con cortes distintos en un mismo reporte, la fila "Subtotal"
 (mezclaría criterios distintos). Este coloreado es independiente del selector "Ver resumen
 acumulado hasta el mes" del Panel principal, que solo afecta a las tarjetas KPI.
 
+### Pestaña "Otras Fuentes"
+
+Primer paso de una ampliación mayor: hacer el seguimiento de fuentes de financiamiento distintas
+de SEP (Subvención General, PIE, Subvención de Mantención y Subvención Pro-Retención). A
+diferencia de SEP, estas fuentes **no tienen marco anual ni meta 70/30** — el seguimiento es
+simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores (Superávit/Déficit).
+
+- Selector de fuente arriba de la tabla; cada una se edita por separado.
+- La tabla incluye una fila fija adicional, **"AC" (Administración Central)**, para gasto a
+  nivel del sostenedor que no corresponde a un establecimiento puntual — no aparece en el Panel
+  principal ni en Reportes de SEP, solo en esta pestaña.
+- Cada fila tiene su propio Ingreso (mensual) y Gasto Remuneraciones (mensual), editables en el
+  modal de detalle, más un "Registro de compras" para Bienes y Servicios — mismo formato de
+  columnas que exige SUPEREDUC (código de cuenta, tipo y N° de documento, fechas, proveedor,
+  montos), igual que el de SEP.
+- Todo se guarda en tiempo real vía Firestore (mismo documento `sep_carga_rbd/{rbd}` de SEP, bajo
+  el campo nuevo `otras_fuentes`), sin requerir cambios en `firestore.rules`.
+
+**Pendiente, en una PR futura**: el selector de código de cuenta de "Registro de compras" usa por
+ahora el mismo catálogo completo de SEP (Subt. 22 y 29) como aproximación temporal. El Manual de
+Cuentas SUPEREDUC 2026 confirma que cada subvención tiene su propio subconjunto de cuentas
+habilitadas (p. ej. Mantención casi no admite remuneraciones, solo cuentas de infraestructura) —
+acotar el selector por fuente requiere transcribir con cuidado esa tabla completa (~130 cuentas ×
+9 columnas) antes de aplicarla, dado el riesgo de error en datos financieros. Tampoco están aún
+incluidos JUNJI (se rinde por GESPARVU, no por RBD), los dos Aportes Fiscales Extraordinarios, ni
+una pestaña Consolidada que sume todas las fuentes por RBD.
+
 ## Fuentes de datos
 
 - **Ingreso SEP (Preferente y Prioritario)**: Excel "Listado de Establecimientos" de

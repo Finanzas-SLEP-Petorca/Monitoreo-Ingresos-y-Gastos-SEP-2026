@@ -155,8 +155,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .tag.superavit { background:rgba(12,163,12,0.12); color:var(--status-good); }
   .tag.anomalia { background:rgba(235,104,52,0.15); color:#a3410f; margin-left:4px; }
   .tag.alerta-sep { background:var(--status-critical); color:#fff; margin-left:4px; }
-  tr.rbd-row.alerta-critica { background:rgba(208,59,59,0.07); }
-  tr.rbd-row.alerta-critica:hover { background:rgba(208,59,59,0.12); }
+  tr.rbd-row.alerta-critica, tr.otras-fuentes-row.alerta-critica { background:rgba(208,59,59,0.07); }
+  tr.rbd-row.alerta-critica:hover, tr.otras-fuentes-row.alerta-critica:hover { background:rgba(208,59,59,0.12); }
 
   /* Sin flexbox a propósito: .pct-bar-wrap usa inline-block + vertical-align en vez de
      inline-flex, porque un flex item con ancho en % dentro de una celda de tabla es justo el
@@ -172,7 +172,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .expand-cell { width:28px; text-align:center; }
   .expand-btn { background:none; border:none; cursor:pointer; font-size:12px; color:var(--text-muted); padding:2px 6px; }
   .expand-btn:hover { color:var(--series-1); }
-  tr.rbd-row:hover { background:rgba(42,120,214,0.04); }
+  tr.rbd-row:hover, tr.otras-fuentes-row:hover { background:rgba(42,120,214,0.04); }
   .detalle-wrap { padding:0; }
   .detalle-header { margin-bottom:8px; font-size:12px; }
   .detalle-header strong { color:var(--text-secondary); }
@@ -305,7 +305,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       text-align:right !important; color:#000 !important; font-size:8.5px !important;
       font-variant-numeric:tabular-nums !important; }
     .kpi-row { break-inside:avoid; page-break-inside:avoid; }
-    tr.detalle-row, tr.rbd-row { break-inside:avoid; page-break-inside:avoid; }
+    tr.detalle-row, tr.rbd-row, tr.otras-fuentes-row { break-inside:avoid; page-break-inside:avoid; }
     table.detalle-table { break-inside:auto; page-break-inside:auto; }
     table.detalle-table tr { break-inside:avoid; page-break-inside:avoid; }
     /* El botón "Exportar PDF" de arriba es solo a nivel general: nunca imprime el detalle
@@ -429,7 +429,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   /* ---- Fila: RBD/Establecimiento clickeables (abren el modal de detalle) ---- */
   .rbd-clickable { cursor:pointer; }
-  tr.rbd-row:hover .rbd-clickable { text-decoration:underline; }
+  tr.rbd-row:hover .rbd-clickable, tr.otras-fuentes-row:hover .rbd-clickable { text-decoration:underline; }
   .table-empty-row td { text-align:center; color:var(--text-muted); font-size:13px; padding:28px !important; }
 
   /* ---- MODAL: detalle editable por RBD ---- */
@@ -510,6 +510,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <button class="tab-btn active" data-tab="panel" type="button">📊 Panel principal</button>
     <button class="tab-btn" data-tab="reportes" type="button">📈 Reportes</button>
     <button class="tab-btn" data-tab="ejecucion" type="button">📉 % Ejecución</button>
+    <button class="tab-btn" data-tab="otras-fuentes" type="button">💰 Otras Fuentes</button>
   </div>
 
   <div id="tab-panel" class="tab-content">
@@ -688,6 +689,51 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </section>
   </div>
   <!-- /#tab-ejecucion -->
+
+  <div id="tab-otras-fuentes" class="tab-content hidden">
+    <section>
+      <h2>Otras Fuentes de financiamiento</h2>
+      <div class="panel">
+        <div class="detalle-empty">A diferencia de SEP, estas fuentes solo se siguen como Ingreso vs. Gasto, sin
+        techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
+        fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <select id="otrasFuentesSelect"></select>
+        </div>
+        <div class="table-scroll" style="margin-top:12px;">
+          <table class="data-table" id="otrasFuentesTable">
+            <thead>
+              <tr>
+                <th>RBD</th>
+                <th>Nombre</th>
+                <th class="num">Ingreso Total</th>
+                <th class="num">Gasto Remuneraciones</th>
+                <th class="num">Gasto Bienes y Servicios</th>
+                <th class="num">Gasto Total</th>
+                <th class="num">Saldo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="otrasFuentesTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /#tab-otras-fuentes -->
+
+<div id="otrasFuentesModal" class="modal-overlay hidden">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div>
+        <h3 id="otrasFuentesModalTitle"></h3>
+        <div class="modal-subtitle" id="otrasFuentesModalSubtitle"></div>
+      </div>
+      <button id="otrasFuentesModalCloseBtn" type="button" class="modal-close" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body" id="otrasFuentesModalBody"></div>
+  </div>
+</div>
 
 <div id="rbdModal" class="modal-overlay hidden">
   <div class="modal-panel">
@@ -888,6 +934,35 @@ CUENTAS_SEP.forEach(c => { CUENTAS_SEP_BY_CODIGO[c.codigo] = c; });
 // son la lista fija de nombres oficiales en vez de una lista libre editable por el usuario.
 const ITEMS_22 = CUENTAS_SEP_22.map(c => c.nombre);
 const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
+
+// --- Otras Fuentes de financiamiento (además de SEP) ---
+// A diferencia de SEP (que tiene marco anual, meta 70/30 y Real/Proyectado — ver
+// recomputeRegistro), estas fuentes solo se identifican por Ingreso vs. Gasto, sin techo. El
+// campo "shape" deja espacio para que JUNJI (que ingresa en 3 líneas — Operación, Homologación,
+// Carrera Docente — en vez de 1) se agregue después sin rehacer este catálogo ni las funciones
+// que lo recorren.
+// Nota sobre códigos de cuenta: el Manual de Cuentas SUPEREDUC 2026 (págs. 113-119) confirma que
+// cada subvención tiene su propio subconjunto de cuentas habilitadas (p.ej. Mantención casi no
+// tiene remuneraciones, solo infraestructura 411600-411610 + un par de mobiliario). Mientras no
+// se transcriba esa tabla completa por subvención, estas 4 fuentes usan el mismo catálogo
+// CUENTAS_SEP (22+29) que SEP como aproximación temporal — más amplio de lo que cada una
+// realmente admite ante SUPEREDUC. Acotar esto es trabajo pendiente de una PR futura.
+const FUENTES_OTRAS = [
+  { key: 'general', label: 'Subvención General', shape: 'simple' },
+  { key: 'pie', label: 'PIE', shape: 'simple' },
+  { key: 'mantenimiento', label: 'Subv. Mantención', shape: 'simple' },
+  { key: 'prorretencion', label: 'Subv. Pro-Retención', shape: 'simple' },
+];
+const FUENTES_OTRAS_BY_KEY = {};
+FUENTES_OTRAS.forEach(f => { FUENTES_OTRAS_BY_KEY[f.key] = f; });
+// Fila fija adicional, fuera de DATA.registros: gasto a nivel del sostenedor (Administración
+// Central) y no de un establecimiento puntual. Mismo documento Firestore (sep_carga_rbd/AC) y
+// mismo shape que cualquier RBD — solo que no participa del universo SEP (Panel principal,
+// Reportes de SEP), únicamente de esta pestaña.
+const AC_PSEUDO_RBD = { rbd: 'AC', nombre: 'Administración Central' };
+function filasOtrasFuentes() { return [...DATA.registros, AC_PSEUDO_RBD]; }
+let otrasFuentesSel = FUENTES_OTRAS[0].key;
+let otrasFuentesRbdAbierto = null; // rbd (o "AC") cuyo detalle está abierto en el modal de Otras Fuentes
 // Tipos de documento válidos (Sección 12 del manual SUPEREDUC) — se ofrecen todos sin filtrar
 // por código de cuenta (la matriz completa código×tipo tiene ~50 filas y variar según el año;
 // quien carga la compra ya sabe qué documento corresponde a su caso).
@@ -1139,6 +1214,47 @@ function recomputeBysProyeccionAgregado(bp) {
   bp.meses = meses;
   bp.total = Math.round(MESES_CARGA.reduce((s, m) => s + meses[m], 0));
 }
+
+// --- Otras Fuentes de financiamiento: una fila por RBD (o "AC") × fuente. A diferencia de SEP
+// (ingreso/rem/bys_proyeccion/compras separados), acá todo vive junto bajo un solo bucket por
+// ser una sola fuente a la vez por pantalla — ver FUENTES_OTRAS más arriba. ---
+function ensureOtraFuente(rbd, fuenteKey) {
+  if (!CARGA_MANUAL.otras_fuentes_por_rbd) CARGA_MANUAL.otras_fuentes_por_rbd = {};
+  if (!CARGA_MANUAL.otras_fuentes_por_rbd[rbd]) CARGA_MANUAL.otras_fuentes_por_rbd[rbd] = {};
+  if (!CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey]) {
+    const mesesIngreso = {}, mesesRem = {};
+    MESES_CARGA.forEach(m => { mesesIngreso[m] = 0; mesesRem[m] = 0; });
+    CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey] = {
+      ingreso: { meses: mesesIngreso, total: 0 },
+      gasto_rem: { meses: mesesRem, total: 0 },
+      compras: {},
+      bys_items: [], gasto_bys_total: 0,
+      ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit',
+    };
+  }
+  return CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey];
+}
+// Bienes y Servicios de Otras Fuentes NO tiene una capa de "proyección" aparte como SEP: es
+// directamente la suma de las compras cargadas (mismo criterio de itemsFromCompras, agrupando
+// por código de cuenta y mes de Fecha Documento) — coherente con el pedido de "solo Ingreso vs.
+// Gasto, sin techo" para estas 4 fuentes.
+function recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey) {
+  const of = ensureOtraFuente(rbd, fuenteKey);
+  of.bys_items = itemsFromCompras(of.compras);
+  of.gasto_bys_total = of.bys_items.reduce((s, it) => s + it.total, 0);
+}
+function recomputeOtraFuente(rbd, fuenteKey) {
+  const of = ensureOtraFuente(rbd, fuenteKey);
+  of.ingreso_total = of.ingreso.total;
+  of.gasto_total = of.gasto_rem.total + of.gasto_bys_total;
+  of.saldo = of.ingreso_total - of.gasto_total;
+  of.estado = of.saldo >= 0 ? 'superavit' : 'deficit';
+  return of;
+}
+function recomputeTodasOtrasFuentes(rbd) {
+  FUENTES_OTRAS.forEach(f => { recomputeItemsOtraFuenteDesdeCompras(rbd, f.key); recomputeOtraFuente(rbd, f.key); });
+}
+
 // El nombre del ítem no se guarda en Firestore (igual que las compras): se deriva siempre del
 // código de cuenta, salvo el código especial "_LEGACY_" que representa el monto único, sin
 // desglosar por ítem, que ya existía antes de esta función (ver migración en aplicarSnapshot).
@@ -1526,6 +1642,12 @@ function mesHeaderCellsHTML(modo, rbd) {
     const real = esRealParaModo(modo, rbd, idx);
     return `<th class="num ${real ? 'mes-real' : 'mes-proy'}">${m}<span class="mes-tag">${real ? 'Real' : 'Proy.'}</span></th>`;
   }).join('');
+}
+// Otras Fuentes no distingue Real/Proyectado (a diferencia de SEP): es carga mensual simple, sin
+// corte. Usar mesHeaderCellsHTML aquí etiquetaría todo como "Real" (su default para cualquier modo
+// que no reconoce), lo que sugeriría falsamente que diciembre ya está ejecutado.
+function mesHeaderCellsPlainHTML() {
+  return MESES_CARGA_ABREV.map(m => `<th class="num">${m}</th>`).join('');
 }
 
 function buildDetalleHTML(rbd, printMode) {
@@ -2130,6 +2252,252 @@ modalBodyEl.addEventListener('focusout', (e) => {
 });
 
 // ============================================================================
+// ============== OTRAS FUENTES: Subv. General, PIE, Mantención, Pro-Retención ==============
+// Mismo patrón de guardado en tiempo real que SEP (scheduleRbdSave/flushRbdSaveNow), pero con un
+// modelo bastante más simple (ver FUENTES_OTRAS y recomputeOtraFuente más arriba): sin marco
+// anual ni meta 70/30, solo Ingreso vs. Gasto por fuente. Vive en su propia pestaña
+// ("💰 Otras Fuentes") y su propio modal (#otrasFuentesModal), separados de los de SEP para no
+// arriesgar nada de lo ya probado.
+// ============================================================================
+
+const otrasFuentesSelectEl = document.getElementById('otrasFuentesSelect');
+otrasFuentesSelectEl.innerHTML = FUENTES_OTRAS.map(f => `<option value="${f.key}">${f.label}</option>`).join('');
+otrasFuentesSelectEl.value = otrasFuentesSel;
+otrasFuentesSelectEl.addEventListener('change', () => {
+  otrasFuentesSel = otrasFuentesSelectEl.value;
+  renderOtrasFuentesTable();
+  if (otrasFuentesRbdAbierto) renderOtrasFuentesModalContenido();
+});
+
+function otrasFuentesEstadoTagHTML(of) {
+  return `<span class="tag ${of.estado}">${estadoLabel[of.estado]}</span>`;
+}
+
+function renderOtrasFuentesTable() {
+  const fuenteKey = otrasFuentesSel;
+  const tbody = document.getElementById('otrasFuentesTbody');
+  const filas = filasOtrasFuentes().map(r => {
+    const of = recomputeOtraFuente(r.rbd, fuenteKey);
+    return `<tr class="otras-fuentes-row" data-rbd="${r.rbd}">
+      <td class="rbd-clickable" data-abrir-otra-fuente="${r.rbd}">${r.rbd}</td>
+      <td class="rbd-clickable" data-abrir-otra-fuente="${r.rbd}"><span class="nombre-txt" title="${r.nombre}">${r.nombre}</span></td>
+      <td class="num">${fmtCLP(of.ingreso_total)}</td>
+      <td class="num">${fmtCLP(of.gasto_rem.total)}</td>
+      <td class="num">${fmtCLP(of.gasto_bys_total)}</td>
+      <td class="num">${fmtCLP(of.gasto_total)}</td>
+      <td class="num" style="color:${of.saldo < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(of.saldo)}</td>
+      <td>${otrasFuentesEstadoTagHTML(of)}</td>
+    </tr>`;
+  }).join('');
+  tbody.innerHTML = filas;
+}
+
+document.getElementById('otrasFuentesTable').addEventListener('click', (e) => {
+  const cell = e.target.closest('[data-abrir-otra-fuente]');
+  if (cell) abrirOtrasFuentesModal(cell.getAttribute('data-abrir-otra-fuente'));
+});
+
+function abrirOtrasFuentesModal(rbd) {
+  otrasFuentesRbdAbierto = rbd;
+  renderOtrasFuentesModalContenido();
+  document.getElementById('otrasFuentesModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function cerrarOtrasFuentesModal() {
+  otrasFuentesRbdAbierto = null;
+  document.getElementById('otrasFuentesModal').classList.add('hidden');
+  document.getElementById('otrasFuentesModalBody').innerHTML = '';
+  document.body.style.overflow = '';
+}
+document.getElementById('otrasFuentesModalCloseBtn').addEventListener('click', cerrarOtrasFuentesModal);
+document.getElementById('otrasFuentesModal').addEventListener('click', (e) => {
+  if (e.target.id === 'otrasFuentesModal') cerrarOtrasFuentesModal();
+});
+
+function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
+  const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
+  return `<tr data-compra-id="${id}">
+    <td>${c.codigo}${cat ? ` · ${cat.nombre}` : ''}</td>
+    <td>${c.tipoDocumento || ''}</td>
+    <td>${c.nroDocumento || ''}</td>
+    <td>${c.fechaDocumento || ''}</td>
+    <td>${c.fechaPago || ''}</td>
+    <td>${c.descripcion || ''}</td>
+    <td>${c.rutProveedor || ''}</td>
+    <td>${c.nombreProveedor || ''}</td>
+    <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
+    <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
+    <td>${c.documentoOriginal || ''}</td>
+    <td class="compra-acciones-cell">
+      <button type="button" class="compra-del-btn of-compra-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-compra-id="${id}" title="Eliminar compra">🗑</button>
+    </td>
+  </tr>`;
+}
+
+function otrasFuentesOptionsCuentas() {
+  const grupo22 = CUENTAS_SEP_22.map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('');
+  const grupo29 = CUENTAS_SEP_29.map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('');
+  return `<option value="">Código cuenta…</option>
+    <optgroup label="Subt. 22 — Bienes y Servicios de Consumo">${grupo22}</optgroup>
+    <optgroup label="Subt. 29 — Adquisición de Activos No Financieros">${grupo29}</optgroup>`;
+}
+function otrasFuentesOptionsTipoDocumento() {
+  return `<option value="">Tipo de documento…</option>` + TIPOS_DOCUMENTO_SEP.map(t => `<option value="${t}">${t}</option>`).join('');
+}
+
+function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
+  const of = recomputeOtraFuente(rbd, fuenteKey);
+  const fuenteLabel = FUENTES_OTRAS_BY_KEY[fuenteKey].label;
+  const filaMesesHTML = (modo, obj) => {
+    const cells = MESES_CARGA.map(m => `<td class="num"><input type="number" step="1" class="celda-input" value="${(obj.meses[m] || 0) === 0 ? '' : obj.meses[m]}" placeholder="0"
+      data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
+    return cells;
+  };
+  const compras = of.compras || {};
+  const filasCompras = Object.entries(compras)
+    .sort((a, b) => (b[1].fechaDocumento || '').localeCompare(a[1].fechaDocumento || ''))
+    .map(([id, c]) => otrasFuentesFilaCompra(rbd, fuenteKey, id, c)).join('');
+  return `
+  <div class="detalle-wrap">
+    <div class="detalle-header">
+      <strong>Detalle por mes — Ingreso y Remuneraciones (${fuenteLabel})</strong> — <span class="detalle-sub">Bienes y Servicios se carga como "Registro de compras" más abajo; su total mensual se calcula solo.</span>
+    </div>
+    <div class="detalle-scroll">
+    <table class="detalle-table">${DETALLE_COLGROUP}
+      <thead><tr><th>Ingreso (${fuenteLabel})</th>${mesHeaderCellsPlainHTML()}<th class="num">Total</th></tr></thead>
+      <tbody><tr><td class="item-label">Ingreso</td>${filaMesesHTML('of_ingreso', of.ingreso)}<td class="num item-total" id="oftotal-${rbd}-${fuenteKey}-of_ingreso">${fmtCLP(of.ingreso.total)}</td></tr></tbody>
+    </table>
+    <table class="detalle-table" style="margin-top:8px;">${DETALLE_COLGROUP}
+      <thead><tr><th>Gasto Remuneraciones (${fuenteLabel})</th>${mesHeaderCellsPlainHTML()}<th class="num">Total</th></tr></thead>
+      <tbody><tr><td class="item-label">Remuneraciones</td>${filaMesesHTML('of_gasto_rem', of.gasto_rem)}<td class="num item-total" id="oftotal-${rbd}-${fuenteKey}-of_gasto_rem">${fmtCLP(of.gasto_rem.total)}</td></tr></tbody>
+    </table>
+    <div class="compras-section" style="margin-top:14px;">
+      <div class="detalle-header">
+        <strong>Registro de compras (${fuenteLabel}) — Bienes y Servicios</strong> — <span class="detalle-sub">catálogo de cuentas provisorio (el mismo de SEP) mientras se acota por subvención — ver nota en FUENTES_OTRAS.</span>
+      </div>
+      <div class="compra-form-grid">
+        <label class="compra-field"><span class="compra-field-label">Código de cuenta</span><select class="compra-input of-compra-input" data-field="codigo">${otrasFuentesOptionsCuentas()}</select></label>
+        <label class="compra-field"><span class="compra-field-label">Tipo de documento</span><select class="compra-input of-compra-input" data-field="tipoDocumento">${otrasFuentesOptionsTipoDocumento()}</select></label>
+        <label class="compra-field"><span class="compra-field-label">N° documento</span><input type="text" class="compra-input of-compra-input" data-field="nroDocumento" placeholder="N° documento"></label>
+        <label class="compra-field"><span class="compra-field-label">Fecha documento</span><input type="date" class="compra-input of-compra-input" data-field="fechaDocumento" title="Fecha documento"></label>
+        <label class="compra-field"><span class="compra-field-label">Fecha pago</span><input type="date" class="compra-input of-compra-input" data-field="fechaPago" title="Fecha pago"></label>
+        <label class="compra-field"><span class="compra-field-label">Descripción</span><input type="text" class="compra-input of-compra-input" data-field="descripcion" placeholder="Descripción del gasto"></label>
+        <label class="compra-field"><span class="compra-field-label">RUT proveedor</span><input type="text" class="compra-input of-compra-input" data-field="rutProveedor" placeholder="RUT proveedor"></label>
+        <label class="compra-field"><span class="compra-field-label">Nombre proveedor</span><input type="text" class="compra-input of-compra-input" data-field="nombreProveedor" placeholder="Nombre proveedor"></label>
+        <label class="compra-field"><span class="compra-field-label">Monto gasto</span><input type="number" class="compra-input of-compra-input" data-field="montoGasto" placeholder="Monto gasto"></label>
+        <label class="compra-field"><span class="compra-field-label">Monto documento</span><input type="number" class="compra-input of-compra-input" data-field="montoDocumento" placeholder="Monto documento"></label>
+        <label class="compra-field"><span class="compra-field-label">Documento original</span><input type="text" class="compra-input of-compra-input" data-field="documentoOriginal" placeholder="Documento original (folio/nota)"></label>
+        <span class="compra-form-actions">
+          <button type="button" class="add-compra-btn of-add-compra-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}">+ Agregar compra</button>
+        </span>
+      </div>
+      <div class="compras-scroll">
+        <table class="detalle-table compras-table">
+          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th><th></th></tr></thead>
+          <tbody>${filasCompras || `<tr><td colspan="12" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>`;
+}
+
+function renderOtrasFuentesModalContenido() {
+  const rbd = otrasFuentesRbdAbierto;
+  const fuenteKey = otrasFuentesSel;
+  const r = filasOtrasFuentes().find(x => x.rbd === rbd);
+  if (!r) { cerrarOtrasFuentesModal(); return; }
+  const of = recomputeOtraFuente(rbd, fuenteKey);
+  document.getElementById('otrasFuentesModalTitle').textContent = `${r.rbd === 'AC' ? 'Administración Central' : 'RBD ' + r.rbd} — ${r.nombre} · ${FUENTES_OTRAS_BY_KEY[fuenteKey].label}`;
+  document.getElementById('otrasFuentesModalSubtitle').innerHTML =
+    `Ingreso Total: <strong>${fmtCLP(of.ingreso_total)}</strong> · ` +
+    `Gasto Total: <strong>${fmtCLP(of.gasto_total)}</strong> · ` +
+    `Saldo: <strong>${fmtCLP(of.saldo)}</strong> · ${otrasFuentesEstadoTagHTML(of)}`;
+  document.getElementById('otrasFuentesModalBody').innerHTML = buildOtrasFuentesDetalleHTML(rbd, fuenteKey);
+}
+
+function onOtraFuenteCeldaInput(input) {
+  const rbd = input.dataset.rbd, fuenteKey = input.dataset.fuente, mes = input.dataset.mes, modo = input.dataset.modo;
+  const val = parseFloat(input.value.replace(/[^0-9.-]/g, '')) || 0;
+  const of = ensureOtraFuente(rbd, fuenteKey);
+  const bucket = modo === 'of_ingreso' ? of.ingreso : of.gasto_rem;
+  bucket.meses[mes] = val;
+  bucket.total = MESES_CARGA.reduce((s, m) => s + (bucket.meses[m] || 0), 0);
+  const totalCell = document.getElementById(`oftotal-${rbd}-${fuenteKey}-${modo}`);
+  if (totalCell) totalCell.textContent = fmtCLP(bucket.total);
+  const reg = filasOtrasFuentes().find(x => x.rbd === rbd);
+  scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { [modo === 'of_ingreso' ? 'ingreso' : 'gasto_rem']: { meses: { [mes]: val }, total: bucket.total } } } });
+  recomputeOtraFuente(rbd, fuenteKey);
+  renderOtrasFuentesTable();
+}
+window.onOtraFuenteCeldaInput = onOtraFuenteCeldaInput;
+
+function leerCamposCompraOtraFuente() {
+  const wrap = document.querySelector('#otrasFuentesModalBody .compra-form-grid');
+  if (!wrap) return null;
+  const campos = {};
+  wrap.querySelectorAll(".compra-input.of-compra-input").forEach(el => {
+    const field = el.dataset.field;
+    campos[field] = (field === 'montoGasto' || field === 'montoDocumento') ? (parseFloat(el.value) || 0) : (el.value || '').trim();
+  });
+  return campos;
+}
+function agregarCompraOtraFuente(rbd, fuenteKey) {
+  const campos = leerCamposCompraOtraFuente();
+  if (!campos || !campos.codigo || !campos.fechaDocumento || !campos.montoGasto) {
+    alert('Completa al menos código de cuenta, fecha de documento y monto gasto antes de agregar.');
+    return;
+  }
+  const id = generarCompraId();
+  const of = ensureOtraFuente(rbd, fuenteKey);
+  of.compras[id] = campos;
+  recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey);
+  recomputeOtraFuente(rbd, fuenteKey);
+  renderOtrasFuentesTable();
+  if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
+  const reg = filasOtrasFuentes().find(x => x.rbd === rbd);
+  scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { compras: { [id]: campos } } } });
+  flushRbdSaveNow(rbd);
+}
+async function eliminarCompraOtraFuente(rbd, fuenteKey, compraId) {
+  if (!confirm('¿Eliminar esta compra? No se puede deshacer.')) return;
+  flushRbdSaveNow(rbd);
+  const of = ensureOtraFuente(rbd, fuenteKey);
+  delete of.compras[compraId];
+  recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey);
+  recomputeOtraFuente(rbd, fuenteKey);
+  renderOtrasFuentesTable();
+  if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
+  if (!currentUser) return;
+  try {
+    await setDoc(doc(db, CARGA_COLLECTION, rbd), {
+      otras_fuentes: { [fuenteKey]: { compras: { [compraId]: deleteField() } } },
+      lastModifiedBy: currentUser.email,
+      lastModifiedAt: serverTimestamp(),
+    }, { merge: true });
+  } catch (err) {
+    alert('No se pudo eliminar la compra para el resto del equipo: ' + err.message);
+  }
+}
+
+const otrasFuentesModalBodyEl = document.getElementById('otrasFuentesModalBody');
+otrasFuentesModalBodyEl.addEventListener('click', (e) => {
+  const addBtn = e.target.closest('.of-add-compra-btn');
+  if (addBtn) { agregarCompraOtraFuente(addBtn.getAttribute('data-rbd'), addBtn.getAttribute('data-fuente')); return; }
+  const delBtn = e.target.closest('.of-compra-del-btn');
+  if (delBtn) { eliminarCompraOtraFuente(delBtn.getAttribute('data-rbd'), delBtn.getAttribute('data-fuente'), delBtn.getAttribute('data-compra-id')); return; }
+});
+otrasFuentesModalBodyEl.addEventListener('focusout', (e) => {
+  if (e.target.classList && e.target.classList.contains('celda-input')) {
+    flushRbdSaveNow(e.target.dataset.rbd);
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (otrasFuentesRbdAbierto) cerrarOtrasFuentesModal();
+});
+
+// ============================================================================
 // ============== REPORTES: pestaña de reportes personalizados ==============
 // Vista de solo lectura (no edita nada) para cruzar establecimiento × concepto × mes(es) y ver
 // el comportamiento de cualquier serie ya cargada, sin mezclarse con la tabla principal donde
@@ -2143,7 +2511,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.getElementById('tab-panel').classList.toggle('hidden', tab !== 'panel');
     document.getElementById('tab-reportes').classList.toggle('hidden', tab !== 'reportes');
     document.getElementById('tab-ejecucion').classList.toggle('hidden', tab !== 'ejecucion');
+    document.getElementById('tab-otras-fuentes').classList.toggle('hidden', tab !== 'otras-fuentes');
     if (tab === 'ejecucion') renderEjecucion();
+    if (tab === 'otras-fuentes') renderOtrasFuentesTable();
   });
 });
 
@@ -3367,6 +3737,7 @@ function ensureRbdsFaltantesEnFirestore(presentIds) {
       rem: { meses: {}, total: 0, real_hasta_mes: DATA.n_meses },
       bys_proyeccion: { items: {} },
       compras: {},
+      otras_fuentes: {},
       lastModifiedBy: currentUser.email,
       lastModifiedAt: serverTimestamp(),
     }, { merge: true });
@@ -3379,6 +3750,7 @@ function ensureRbdsFaltantesEnFirestore(presentIds) {
 
 function aplicarSnapshot(snapshot) {
   const nuevoAgregado = {}, nuevoIngreso = {}, nuevoRem = {}, nuevoCompras = {}, nuevoBysProyeccion = {};
+  const nuevoOtrasFuentes = {};
   const presentIds = new Set();
   let latestAt = null, latestEmail = null;
 
@@ -3432,6 +3804,27 @@ function aplicarSnapshot(snapshot) {
     recomputeBysProyeccionAgregado(bp);
     nuevoBysProyeccion[rbd] = bp;
 
+    // Otras Fuentes: "AC" (Administración Central) pasa por este mismo parseo aunque no esté en
+    // DATA.registros — no tiene ingreso_items/rem/bys_proyeccion/compras de SEP (quedan en
+    // blanco arriba, sin romper nada), pero sí puede traer otras_fuentes igual que cualquier RBD.
+    const ofRaw = data.otras_fuentes || {};
+    const of = {};
+    FUENTES_OTRAS.forEach(f => {
+      const raw = ofRaw[f.key] || {};
+      const mesesIngreso = {}, mesesRem = {};
+      MESES_CARGA.forEach(m => { mesesIngreso[m] = (raw.ingreso?.meses && raw.ingreso.meses[m]) || 0; mesesRem[m] = (raw.gasto_rem?.meses && raw.gasto_rem.meses[m]) || 0; });
+      const ingresoTotal = MESES_CARGA.reduce((s, m) => s + mesesIngreso[m], 0);
+      const remTotal = MESES_CARGA.reduce((s, m) => s + mesesRem[m], 0);
+      of[f.key] = {
+        ingreso: { meses: mesesIngreso, total: ingresoTotal },
+        gasto_rem: { meses: mesesRem, total: remTotal },
+        compras: raw.compras || {},
+        bys_items: [], gasto_bys_total: 0,
+        ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit',
+      };
+    });
+    nuevoOtrasFuentes[rbd] = of;
+
     if (data.lastModifiedAt) {
       const t = data.lastModifiedAt.toDate ? data.lastModifiedAt.toDate() : new Date(data.lastModifiedAt);
       rbdLastModified[rbd] = { by: data.lastModifiedBy || '', at: t };
@@ -3444,13 +3837,16 @@ function aplicarSnapshot(snapshot) {
   CARGA_MANUAL.rem_por_rbd = nuevoRem;
   CARGA_MANUAL.compras_por_rbd = nuevoCompras;
   CARGA_MANUAL.bys_proyeccion_por_rbd = nuevoBysProyeccion;
+  CARGA_MANUAL.otras_fuentes_por_rbd = nuevoOtrasFuentes;
 
   DATA.registros.forEach(recomputeRegistro);
+  filasOtrasFuentes().forEach(r => recomputeTodasOtrasFuentes(r.rbd));
   renderKpis();
   document.getElementById('rbdCountChip').textContent = N_RBD_CON_MARCO + ' RBD con marco SEP activo'
     + (N_RBD_SIN_MARCO ? ` + ${N_RBD_SIN_MARCO} en alerta (sin marco SEP)` : '');
   renderReportFilters();
   renderTable();
+  renderOtrasFuentesTable();
 
   const syncMsg = latestEmail && latestAt
     ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatFechaHoraChile(latestAt)}`

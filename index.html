@@ -371,7 +371,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media print { .header-logo { display:none !important; } }
 
   /* ---- PESTAÑAS (Panel principal / Reportes) ---- */
-  .tab-bar { display:flex; gap:4px; margin-bottom:16px; padding:4px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; box-shadow:0 1px 3px rgba(17,24,39,0.05); width:fit-content; }
+  .tab-bar { display:flex; gap:4px; margin-bottom:16px; padding:4px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; box-shadow:0 1px 3px rgba(17,24,39,0.05); width:fit-content; max-width:100%; flex-wrap:wrap; }
   .tab-btn { padding:8px 16px; border:none; background:none; font-size:13.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:7px; }
   .tab-btn:hover { color:var(--text-primary); background:var(--page-plane); }
   .tab-btn.active { color:var(--series-1); background:var(--tone-blue-bg); }
@@ -517,6 +517,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <button class="tab-btn" data-tab="of-junji" type="button">🧸 JUNJI</button>
     <button class="tab-btn" data-tab="of-faep" type="button">🏗️ FAEP</button>
     <button class="tab-btn" data-tab="of-figa" type="button">🌐 FIGA</button>
+    <button class="tab-btn" data-tab="of-aporte_educ" type="button">🏛️ Aporte Fiscal Educ.</button>
+    <button class="tab-btn" data-tab="of-aporte_junji" type="button">🍼 Aporte Fiscal JUNJI</button>
   </div>
 
   <div id="tab-panel" class="tab-content">
@@ -958,6 +960,80 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-figa -->
 
+  <div id="tab-of-aporte_educ" class="tab-content hidden">
+    <section>
+      <h2>Aporte Fiscal Extraordinario Educación</h2>
+      <div class="panel">
+        <div class="detalle-empty">El Aporte Fiscal Extraordinario de Educación es un ingreso aparte que no se rinde por el libro de compras de
+        SUPEREDUC: se sigue como Ingreso vs. Gasto, sin techo ni meta 70/30 — el Estado solo indica si el saldo
+        acumulado es Superávit o Déficit. Incluye una fila fija "AC — Administración Central" para gasto del
+        sostenedor que no es de un establecimiento puntual.</div>
+        <div class="table-controls">
+          <button id="downloadExcelOFBtn-aporte_educ" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de Aporte Fiscal Extraord. Educación (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-aporte_educ" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-aporte_educ" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-aporte_educ" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-aporte_educ" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
+        <div class="table-scroll" style="margin-top:12px;">
+          <table class="data-table" id="otrasFuentesTable-aporte_educ">
+            <thead>
+              <tr>
+                <th>RBD</th>
+                <th>Nombre</th>
+                <th class="num">Ingreso Total</th>
+                <th class="num">Gasto Remuneraciones</th>
+                <th class="num">Gasto Bienes y Servicios</th>
+                <th class="num">Gasto Total</th>
+                <th class="num">Saldo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="otrasFuentesTbody-aporte_educ"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /#tab-of-aporte_educ -->
+
+  <div id="tab-of-aporte_junji" class="tab-content hidden">
+    <section>
+      <h2>Aporte Fiscal Extraordinario JUNJI</h2>
+      <div class="panel">
+        <div class="detalle-empty">El Aporte Fiscal Extraordinario de JUNJI es un ingreso aparte, separado del de Educación, que no se rinde por
+        el libro de compras de SUPEREDUC: se sigue como Ingreso vs. Gasto, sin techo ni meta 70/30 — el Estado solo
+        indica si el saldo acumulado es Superávit o Déficit. Las filas son los 13 GESPARVU (jardín infantil / sala
+        cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
+        <div class="table-controls">
+          <button id="downloadExcelOFBtn-aporte_junji" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de Aporte Fiscal Extraord. JUNJI (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="importExcelOFBtn-aporte_junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
+          <input type="file" id="importExcelOFInput-aporte_junji" accept=".xlsx" style="display:none;">
+          <button id="exportPdfOFBtn-aporte_junji" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          <button id="downloadCargaOFBtn-aporte_junji" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        </div>
+        <div class="table-scroll" style="margin-top:12px;">
+          <table class="data-table" id="otrasFuentesTable-aporte_junji">
+            <thead>
+              <tr>
+                <th>RBD</th>
+                <th>Nombre</th>
+                <th class="num">Ingreso Total</th>
+                <th class="num">Gasto Remuneraciones</th>
+                <th class="num">Gasto Bienes y Servicios</th>
+                <th class="num">Gasto Total</th>
+                <th class="num">Saldo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="otrasFuentesTbody-aporte_junji"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /#tab-of-aporte_junji -->
+
 <div id="otrasFuentesModal" class="modal-overlay hidden">
   <div class="modal-panel">
     <div class="modal-header">
@@ -1173,13 +1249,17 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 
 // --- Otras Fuentes de financiamiento (además de SEP) ---
 // A diferencia de SEP (que tiene marco anual, meta 70/30 y Real/Proyectado — ver
-// recomputeRegistro), estas fuentes solo se identifican por Ingreso vs. Gasto, sin techo. Dos
+// recomputeRegistro), estas fuentes solo se identifican por Ingreso vs. Gasto, sin techo. Tres
 // campos independientes describen la "forma" de cada una (antes era un solo flag `shape`
-// binario — dejó de alcanzar al agregar FAEP/FIGA, que no son ni la forma de General/PIE/
-// Mantención/Pro-Retención ni la de JUNJI, sino una combinación nueva de ambas):
+// binario, y luego `incomeShape` además decidía el universo de entidades — dejó de alcanzar al
+// agregar los Aportes Fiscales Extraordinarios, que combinan ingreso de 1 línea con universo
+// GESPARVU en el caso del de JUNJI):
 //   - incomeShape: 'single' (1 línea `ingreso`) | 'junji3' (3 líneas — Operación, Homologación,
-//     Carrera Docente — hoy solo JUNJI; también determina el universo de entidades: 'junji3' usa
-//     GESPARVU_REGISTROS, 'single' usa RBD+AC).
+//     Carrera Docente — hoy solo JUNJI). Solo decide cuántas líneas de ingreso hay (y si aplica
+//     el "Saldo Operación disponible para B&S"); ya NO determina el universo de entidades.
+//   - universo: 'rbd_ac' (los RBD de DATA.registros + la fila fija "AC") | 'gesparvu' (los 13
+//     GESPARVU de GESPARVU_REGISTROS, sin AC) — qué filas lista la pestaña de esa fuente y de qué
+//     fuentes participa cada entidad (ver filasDeUniverso / recomputeTodasOtrasFuentes).
 //   - bysMode: 'compras' (registro de compras con código de cuenta SUPEREDUC + documento/
 //     proveedor) | 'concepto' (ítems de Bienes y Servicios por concepto libre, sin código ni
 //     documento — para fuentes que no son parte del sistema de rendición de SUPEREDUC).
@@ -1192,23 +1272,26 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 // codigoSupereduc: código oficial de la Columna B (Subvención) que exige el CSV de SUPEREDUC
 // (Manual de Usuario Capítulo III, Tabla 01) — null para las fuentes que no son parte de ese
 // sistema de rendición: JUNJI, FAEP (excluido explícitamente desde 2024 por el dictamen N°67 de
-// 2023 de la Superintendencia de Educación) y FIGA (no aparece en ningún manual SUPEREDUC
-// revisado).
+// 2023 de la Superintendencia de Educación), FIGA (no aparece en ningún manual SUPEREDUC
+// revisado) y los dos Aportes Fiscales Extraordinarios (ingresos aparte, no rendibles por el libro
+// de compras SUPEREDUC; se llevan separados por Educación y por JUNJI).
 const FUENTES_OTRAS = [
-  { key: 'general', label: 'Subvención General', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'GENERAL' },
-  { key: 'pie', label: 'PIE', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'PIE' },
-  { key: 'mantenimiento', label: 'Subv. Mantención', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'MANTENIMIENTO' },
-  { key: 'prorretencion', label: 'Subv. Pro-Retención', incomeShape: 'single', bysMode: 'compras', codigoSupereduc: 'PRORETENCION' },
-  { key: 'junji', label: 'JUNJI', incomeShape: 'junji3', bysMode: 'concepto', codigoSupereduc: null },
-  { key: 'faep', label: 'FAEP', incomeShape: 'single', bysMode: 'concepto', codigoSupereduc: null },
-  { key: 'figa', label: 'FIGA', incomeShape: 'single', bysMode: 'concepto', codigoSupereduc: null },
+  { key: 'general', label: 'Subvención General', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'GENERAL' },
+  { key: 'pie', label: 'PIE', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'PIE' },
+  { key: 'mantenimiento', label: 'Subv. Mantención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'MANTENIMIENTO' },
+  { key: 'prorretencion', label: 'Subv. Pro-Retención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'PRORETENCION' },
+  { key: 'junji', label: 'JUNJI', incomeShape: 'junji3', bysMode: 'concepto', universo: 'gesparvu', codigoSupereduc: null },
+  { key: 'faep', label: 'FAEP', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
+  { key: 'figa', label: 'FIGA', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
+  { key: 'aporte_educ', label: 'Aporte Fiscal Extraord. Educación', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
+  { key: 'aporte_junji', label: 'Aporte Fiscal Extraord. JUNJI', incomeShape: 'single', bysMode: 'concepto', universo: 'gesparvu', codigoSupereduc: null },
 ];
 const FUENTES_OTRAS_BY_KEY = {};
 FUENTES_OTRAS.forEach(f => { FUENTES_OTRAS_BY_KEY[f.key] = f; });
 // Fila fija adicional, fuera de DATA.registros: gasto a nivel del sostenedor (Administración
 // Central) y no de un establecimiento puntual. Mismo documento Firestore (sep_carga_rbd/AC) y
 // mismo shape que cualquier RBD — solo que no participa del universo SEP (Panel principal,
-// Reportes de SEP), únicamente de esta pestaña. No aplica a JUNJI (ver GESPARVU_REGISTROS).
+// Reportes de SEP), únicamente de esta pestaña. No aplica a las fuentes con universo:'gesparvu' (ver GESPARVU_REGISTROS).
 const AC_PSEUDO_RBD = { rbd: 'AC', nombre: 'Administración Central' };
 // JUNJI es un proceso independiente de SUPEREDUC (no aparece en ninguno de los manuales
 // SUPEREDUC revisados): sus ingresos se rinden por GESPARVU (jardín infantil / sala cuna), no
@@ -1230,10 +1313,11 @@ const GESPARVU_REGISTROS = [
   { rbd: '5404003', nombre: 'MIS PRIMEROS PASOS', comuna: 'Petorca' },
   { rbd: '5404002', nombre: 'MUNDO DE PEQUES', comuna: 'Petorca' },
 ];
+function filasDeUniverso(universo) {
+  return universo === 'gesparvu' ? GESPARVU_REGISTROS : [...DATA.registros, AC_PSEUDO_RBD];
+}
 function filasOtrasFuentes(fuenteKey) {
-  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
-  if (fuente && fuente.incomeShape === 'junji3') return GESPARVU_REGISTROS;
-  return [...DATA.registros, AC_PSEUDO_RBD];
+  return filasDeUniverso(FUENTES_OTRAS_BY_KEY[fuenteKey].universo);
 }
 let otrasFuentesSel = FUENTES_OTRAS[0].key;
 let otrasFuentesRbdAbierto = null; // rbd (o "AC") cuyo detalle está abierto en el modal de Otras Fuentes
@@ -1564,12 +1648,12 @@ function recomputeOtraFuente(rbd, fuenteKey) {
 }
 function recomputeTodasOtrasFuentes(rbd) {
   // Cada entidad solo participa de las fuentes de su propio universo: un GESPARVU únicamente de
-  // las fuentes incomeShape:'junji3' (hoy solo JUNJI), un RBD/AC únicamente de las
-  // incomeShape:'single' — evita crear entradas vacías cruzadas (ej. un RBD de SEP con un bucket
+  // las fuentes universo:'gesparvu' (JUNJI y Aporte Fiscal JUNJI), un RBD/AC únicamente de las
+  // universo:'rbd_ac' — evita crear entradas vacías cruzadas (ej. un RBD de SEP con un bucket
   // "junji" que nunca se va a mostrar).
   const esGesparvu = GESPARVU_REGISTROS.some(g => g.rbd === rbd);
   FUENTES_OTRAS.forEach(f => {
-    if (esGesparvu !== (f.incomeShape === 'junji3')) return;
+    if (esGesparvu !== (f.universo === 'gesparvu')) return;
     if (f.bysMode === 'compras') recomputeItemsOtraFuenteDesdeCompras(rbd, f.key);
     else recomputeOtraFuenteBysItemsAgregado(ensureOtraFuente(rbd, f.key));
     recomputeOtraFuente(rbd, f.key);
@@ -2791,7 +2875,7 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
 
 function otrasFuentesTituloEntidad(r, fuenteKey) {
   if (r.rbd === 'AC') return 'Administración Central';
-  if (FUENTES_OTRAS_BY_KEY[fuenteKey].incomeShape === 'junji3') return 'GESPARVU ' + r.rbd;
+  if (FUENTES_OTRAS_BY_KEY[fuenteKey].universo === 'gesparvu') return 'GESPARVU ' + r.rbd;
   return 'RBD ' + r.rbd;
 }
 // Factorizado aparte de renderOtrasFuentesModalContenido (que reconstruye todo el modal, con el
@@ -4626,8 +4710,8 @@ function aplicarSnapshot(snapshot) {
   CARGA_MANUAL.otras_fuentes_por_rbd = nuevoOtrasFuentes;
 
   DATA.registros.forEach(recomputeRegistro);
-  filasOtrasFuentes().forEach(r => recomputeTodasOtrasFuentes(r.rbd));
-  GESPARVU_REGISTROS.forEach(r => recomputeTodasOtrasFuentes(r.rbd));
+  filasDeUniverso('rbd_ac').forEach(r => recomputeTodasOtrasFuentes(r.rbd));
+  filasDeUniverso('gesparvu').forEach(r => recomputeTodasOtrasFuentes(r.rbd));
   renderKpis();
   document.getElementById('rbdCountChip').textContent = N_RBD_CON_MARCO + ' RBD con marco SEP activo'
     + (N_RBD_SIN_MARCO ? ` + ${N_RBD_SIN_MARCO} en alerta (sin marco SEP)` : '');

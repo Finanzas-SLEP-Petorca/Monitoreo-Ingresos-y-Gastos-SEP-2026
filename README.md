@@ -153,14 +153,31 @@ simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores (Sup
 - Todo se guarda en tiempo real vía Firestore (mismo documento `sep_carga_rbd/{rbd}` de SEP, bajo
   el campo nuevo `otras_fuentes`), sin requerir cambios en `firestore.rules`.
 
-**Pendiente, en una PR futura**: el selector de código de cuenta de "Registro de compras" usa por
-ahora el mismo catálogo completo de SEP (Subt. 22 y 29) como aproximación temporal. El Manual de
-Cuentas SUPEREDUC 2026 confirma que cada subvención tiene su propio subconjunto de cuentas
-habilitadas (p. ej. Mantención casi no admite remuneraciones, solo cuentas de infraestructura) —
-acotar el selector por fuente requiere transcribir con cuidado esa tabla completa (~130 cuentas ×
-9 columnas) antes de aplicarla, dado el riesgo de error en datos financieros. Tampoco están aún
-incluidos JUNJI (se rinde por GESPARVU, no por RBD), los dos Aportes Fiscales Extraordinarios, ni
-una pestaña Consolidada que sume todas las fuentes por RBD.
+**JUNJI.** A diferencia de las 4 fuentes anteriores, JUNJI es un proceso independiente de
+SUPEREDUC — no aparece en ninguno de los manuales oficiales revisados (Manual de Cuentas,
+Rendición de Compras, Instructivo de Control y Respaldo), así que no tiene código de cuenta ni
+rendición formal con documento/proveedor. Además, sus ingresos se declaran por **GESPARVU**
+(jardín infantil / sala cuna), no por RBD de establecimiento educacional — un universo de 13
+entidades totalmente distinto al de los 55 RBD de SEP (`GESPARVU_REGISTROS`), sin la fila "AC".
+Su modelo de datos también es distinto:
+
+- **3 líneas de Ingreso** (Operación, Homologación, Carrera Docente) en vez de 1.
+- **Gasto Remuneraciones**: se financia con la suma de las 3 líneas de ingreso.
+- **Gasto Bienes y Servicios**: se financia solo con Ingreso Operación (Homologación y Carrera
+  Docente no pueden financiar B&S) — el modal muestra un "Saldo Operación disponible para B&S"
+  informativo (no bloquea la carga si se excede).
+- Los ítems de Bienes y Servicios se identifican por **concepto libre** (texto), no por código de
+  cuenta SUPEREDUC, y se cargan directo mes a mes (sin "Registro de compras" con documento/proveedor,
+  ya que JUNJI no tiene ese tipo de rendición formal).
+
+**Pendiente, en una PR futura**: el selector de código de cuenta de "Registro de compras" (General,
+PIE, Mantención, Pro-Retención) usa por ahora el mismo catálogo completo de SEP (Subt. 22 y 29)
+como aproximación temporal. El Manual de Cuentas SUPEREDUC 2026 confirma que cada subvención
+tiene su propio subconjunto de cuentas habilitadas (p. ej. Mantención casi no admite
+remuneraciones, solo cuentas de infraestructura) — acotar el selector por fuente requiere
+transcribir con cuidado esa tabla completa (~130 cuentas × 9 columnas) antes de aplicarla, dado
+el riesgo de error en datos financieros. Tampoco están aún incluidos los dos Aportes Fiscales
+Extraordinarios (Educación y JUNJI), ni una pestaña Consolidada que sume todas las fuentes por RBD.
 
 ## Fuentes de datos
 

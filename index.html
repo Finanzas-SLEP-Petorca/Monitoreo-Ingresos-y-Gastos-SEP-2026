@@ -217,6 +217,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .detalle-note { font-size:10.5px; color:var(--text-muted); margin-top:8px; font-style:italic; }
   input.celda-input { width:100%; max-width:66px; text-align:right; border:1px solid #e8d98a; background:#fffbe0; color:#1a1aa6; font-size:10px; padding:3px 4px; border-radius:3px; font-variant-numeric: tabular-nums; box-sizing:border-box; }
   input.celda-input:focus { outline:2px solid var(--series-1); background:#fff9c4; }
+  input.celda-input.celda-invalida { border-color:var(--status-critical); background:#fdecec; color:var(--status-critical); }
   input.celda-input::placeholder { color:#b9b6a8; }
 
   .compras-section { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
@@ -371,6 +372,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .sync-dot.green { background:var(--status-good); }
   .sync-dot.yellow { background:var(--status-warning); }
   .sync-dot.red { background:var(--status-critical); }
+  .sync-text-rojo { color:var(--status-critical); font-weight:600; }
+  .sync-retry { background:none; border:none; padding:0; font-size:11.5px; font-weight:600; color:var(--series-1); text-decoration:underline; cursor:pointer; }
   .user-box { display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-secondary); white-space:nowrap; }
   .signout-btn { padding:5px 10px; border-radius:6px; border:1px solid var(--baseline); background:var(--surface-1); color:var(--text-secondary); font-size:11.5px; cursor:pointer; }
   .signout-btn:hover { background:var(--gridline); }
@@ -657,6 +660,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .modal-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:18px 22px; border-bottom:1px solid var(--border); flex-shrink:0; }
   .modal-header h3 { margin:0 0 4px; font-size:16.5px; }
   .modal-subtitle { font-size:12px; color:var(--text-secondary); }
+  /* Réplica del indicador de sincronización dentro de los modales (ahí es donde se edita): solo aparece si hay un problema */
+  .modal-sync { display:flex; align-items:center; gap:7px; padding:6px 22px; font-size:11.5px; border-bottom:1px solid var(--border); background:#fff8e1; color:var(--text-secondary); flex-shrink:0; }
+  .modal-sync.ms-red { background:#fdecec; color:#8a1f1f; font-weight:600; }
   .modal-close { background:none; border:none; font-size:19px; color:var(--text-muted); cursor:pointer; padding:2px 6px; line-height:1; border-radius:4px; }
   .modal-close:hover { color:var(--text-primary); background:var(--page-plane); }
   .modal-body { padding:18px 22px 24px; overflow-y:auto; }
@@ -711,6 +717,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="sync-bar" id="sync-bar">
         <span class="sync-dot" id="sync-indicator"></span>
         <span id="sync-text">Iniciando...</span>
+        <button type="button" id="sync-retry" class="sync-retry hidden">Reintentar</button>
       </div>
     </div>
     <div class="header-right">
@@ -1455,6 +1462,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       </div>
       <button id="otrasFuentesModalCloseBtn" type="button" class="modal-close" aria-label="Cerrar">✕</button>
     </div>
+    <div class="modal-sync hidden" role="status"><span class="sync-dot"></span><span class="modal-sync-text"></span><button type="button" class="sync-retry modal-sync-retry hidden">Reintentar</button></div>
     <div class="modal-body" id="otrasFuentesModalBody"></div>
   </div>
 </div>
@@ -1468,6 +1476,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       </div>
       <button id="modalCloseBtn" type="button" class="modal-close" aria-label="Cerrar">✕</button>
     </div>
+    <div class="modal-sync hidden" role="status"><span class="sync-dot"></span><span class="modal-sync-text"></span><button type="button" class="sync-retry modal-sync-retry hidden">Reintentar</button></div>
     <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
@@ -1651,6 +1660,69 @@ function objetoPlano(v) {
 // Texto seguro (null/objetos → ''), para campos de texto libre que llegan de Firestore.
 function textoSeguro(v) {
   return (typeof v === 'string') ? v : ((typeof v === 'number' && Number.isFinite(v)) ? String(v) : '');
+}
+
+// ============== MONTOS TECLEADOS (formato es-CL) ==============
+// Las celdas de monto son <input type="text" inputmode="numeric"> (no type="number": en ese tipo
+// selectionStart es null, el navegador descarta lo pegado con separadores y el valor cambia solo).
+// Reglas: "." es separador de miles solo si calza ^\d{1,3}(\.\d{3})+$ ("1.500.000" = 1500000, "1.500" = 1500);
+// una coma, o un punto con otra cantidad de dígitos detrás, es decimal ("1,5", "1.5", "1234.567"); vacío = 0
+// ("sin valor"); texto que no es un número se RECHAZA (ok:false) y quien llama no toca lo guardado.
+const MONTO_ABS_MAX = 1e15;
+function parseMontoCL(texto) {
+  const s0 = String(texto == null ? '' : texto).replace(/[\s$]/g, ''); // \s ya incluye el espacio duro
+  if (s0 === '') return { ok: true, valor: 0, vacio: true };
+  if (s0 === '-') return { ok: false, motivo: 'incompleto' }; // el "-" tecleado antes del número
+  const neg = s0[0] === '-';
+  const s = neg ? s0.slice(1) : s0;
+  let entero, dec = '';
+  let m = /^(\d{1,3}(?:\.\d{3})+)(?:,(\d*))?$/.exec(s); // miles con punto (+ coma decimal opcional)
+  if (m) { entero = m[1].replace(/\./g, ''); dec = m[2] || ''; }
+  else if ((m = /^(\d*)(?:[.,](\d*))?$/.exec(s)) && /\d/.test(s)) { entero = m[1] || '0'; dec = m[2] || ''; } // entero o decimal
+  else return { ok: false, motivo: 'formato' };
+  const n = Number(entero + (dec ? '.' + dec : '')) * (neg ? -1 : 1);
+  if (!Number.isFinite(n) || Math.abs(n) >= MONTO_ABS_MAX) return { ok: false, motivo: 'rango' };
+  return { ok: true, valor: n === 0 ? 0 : n };
+}
+// Texto que muestra una celda para un valor: vacío si es 0; entero sin separadores; decimal con coma.
+// parseMontoCL(formatoMontoCelda(v)) === v para todo número que acepta el parser.
+function formatoMontoCelda(v) {
+  const n = Number(v);
+  if (!n || !Number.isFinite(n)) return '';
+  if (Number.isInteger(n)) return String(n);
+  return n.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }).replace('.', ',');
+}
+const MONTO_AYUDA_INVALIDO = 'Monto no válido: usa solo números, por ejemplo 1500000 o 1.500.000 (coma para decimales). No se guardó.';
+
+// ============== CLAVES DE MAPA DE FIRESTORE (texto libre) ==============
+// Un concepto, un ID de compra, un ítem de ingreso… se usa como CLAVE de un mapa del documento del RBD.
+// Firestore rechaza el write ENTERO si una sola clave es "__algo__", está vacía o pesa > 1500 bytes UTF-8, y entonces
+// fallan todos los guardados de ese RBD. Se valida en el origen (al crear y al importar) con un mensaje claro.
+// (La barra "/" sí es válida en una clave de mapa; solo es inválida en un ID de documento: ver validarIdDocumento.)
+function validarClaveMapa(clave, etiqueta = 'El nombre') {
+  if (typeof clave !== 'string' || clave.trim() === '') return `${etiqueta} no puede estar vacío.`;
+  if (/^__.*__$/.test(clave)) return `${etiqueta} "${clave}" no es válido: no puede empezar y terminar con "__" (Firestore lo rechaza).`;
+  const bytes = new TextEncoder().encode(clave).length;
+  if (bytes > 1500) return `${etiqueta} es demasiado largo (${bytes} bytes; el máximo es 1500). Acórtalo.`;
+  return null;
+}
+// ID de documento (el RBD o código de entidad que viene de un Excel): además de lo anterior no puede llevar "/" ni ser "." o "..".
+function validarIdDocumento(id, etiqueta = 'El RBD') {
+  const e = validarClaveMapa(id, etiqueta);
+  if (e) return e;
+  if (id.includes('/') || id === '.' || id === '..') return `${etiqueta} "${id}" no es válido: no puede llevar "/" ni ser "." o "..".`;
+  return null;
+}
+// Para las importaciones: acumula las filas rechazadas y las informa al final junto al resumen.
+const importRechazos = [];
+function rechazarFilaImportacion(hoja, fila, motivo) { importRechazos.push(`${hoja}, fila ${fila}: ${motivo}`); }
+function resumenRechazosImportacion() {
+  if (!importRechazos.length) return [];
+  const n = importRechazos.length;
+  const lineas = importRechazos.slice(0, 8);
+  const extra = n > 8 ? [`… y ${n - 8} más`] : [];
+  importRechazos.length = 0;
+  return [`⚠ ${n === 1 ? '1 fila NO se importó' : `${n} filas NO se importaron`} por tener un nombre inválido:`, ...lineas.map(l => '   · ' + l), ...extra];
 }
 
 const DATA = {"meses": ["202601", "202602", "202603", "202604", "202605", "202606", "202607"], "n_meses": 7, "ultimo_mes": "202607", "registros": [{"rbd": "1121", "nombre": "LICEO PULMAHUE DE LA LIGUA", "marco_anual_proy": 270239850, "gasto_rem_ytd": 86672138, "gasto_rem_anual_proy": 148580808, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 189167895, "meta_bys_30": 81071955, "saldo_rem": 40587087, "saldo_bys": 81071955, "saldo_total": 121659042, "pct_ejec_rem": 55.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 55.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1122", "nombre": "ESCUELA REPUBLICA DE VENEZUELA", "marco_anual_proy": 212215845, "gasto_rem_ytd": 75940645, "gasto_rem_anual_proy": 130183965, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 148551092, "meta_bys_30": 63664754, "saldo_rem": 18367126, "saldo_bys": 63664754, "saldo_total": 82031880, "pct_ejec_rem": 61.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 61.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1123", "nombre": "ESCUELA GABRIELA MISTRAL", "marco_anual_proy": 394028109, "gasto_rem_ytd": 211133787, "gasto_rem_anual_proy": 361943637, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 275819676, "meta_bys_30": 118208433, "saldo_rem": -86123961, "saldo_bys": 118208433, "saldo_total": 32084472, "pct_ejec_rem": 91.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 91.9, "anomalia": false, "estado": "riesgo"}, {"rbd": "1125", "nombre": "ESCUELA DIEGO PORTALES", "marco_anual_proy": 104816547, "gasto_rem_ytd": 63018834, "gasto_rem_anual_proy": 108032289, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 73371583, "meta_bys_30": 31444964, "saldo_rem": -34660706, "saldo_bys": 31444964, "saldo_total": -3215742, "pct_ejec_rem": 103.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 103.1, "anomalia": false, "estado": "deficit"}, {"rbd": "1128", "nombre": "ESCUELA COMUNIDADES DE VALLE HERMOSO", "marco_anual_proy": 217566609, "gasto_rem_ytd": 59149842, "gasto_rem_anual_proy": 101399727, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 152296626, "meta_bys_30": 65269983, "saldo_rem": 50896899, "saldo_bys": 65269983, "saldo_total": 116166882, "pct_ejec_rem": 46.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 46.6, "anomalia": false, "estado": "superavit"}, {"rbd": "1129", "nombre": "ESCUELA ANGEL MENAY", "marco_anual_proy": 13154286, "gasto_rem_ytd": 88804, "gasto_rem_anual_proy": 152234, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 9208000, "meta_bys_30": 3946286, "saldo_rem": 9055766, "saldo_bys": 3946286, "saldo_total": 13002052, "pct_ejec_rem": 1.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 1.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1130", "nombre": "ESC. BASICA LOS HORNOS DE HUAQUEN", "marco_anual_proy": 23345142, "gasto_rem_ytd": 4914027, "gasto_rem_anual_proy": 8424047, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 16341599, "meta_bys_30": 7003543, "saldo_rem": 7917552, "saldo_bys": 7003543, "saldo_total": 14921095, "pct_ejec_rem": 36.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 36.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1131", "nombre": "ESC. BASICA CASAS VIEJAS DE LONGOTOMA", "marco_anual_proy": 25972071, "gasto_rem_ytd": 1225978, "gasto_rem_anual_proy": 2101678, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 18180450, "meta_bys_30": 7791621, "saldo_rem": 16078772, "saldo_bys": 7791621, "saldo_total": 23870393, "pct_ejec_rem": 8.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 8.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1132", "nombre": "ESCUELA BASICA POZA VERDE", "marco_anual_proy": 119382231, "gasto_rem_ytd": 42648373, "gasto_rem_anual_proy": 73111498, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 83567562, "meta_bys_30": 35814669, "saldo_rem": 10456064, "saldo_bys": 35814669, "saldo_total": 46270733, "pct_ejec_rem": 61.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 61.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1133", "nombre": "ESC.BASICA LAS CASAS DE HUAQUEN", "marco_anual_proy": 56299875, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 39409912, "meta_bys_30": 16889962, "saldo_rem": 39409912, "saldo_bys": 16889962, "saldo_total": 56299875, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1134", "nombre": "CARMEN SANCHEZ ARAYA", "marco_anual_proy": 13242879, "gasto_rem_ytd": 1255469, "gasto_rem_anual_proy": 2152234, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 9270015, "meta_bys_30": 3972864, "saldo_rem": 7117781, "saldo_bys": 3972864, "saldo_total": 11090645, "pct_ejec_rem": 16.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 16.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1135", "nombre": "ESCUELA BASICA LOS MOLLES", "marco_anual_proy": 36892992, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 25825094, "meta_bys_30": 11067898, "saldo_rem": 25825094, "saldo_bys": 11067898, "saldo_total": 36892992, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1136", "nombre": "ESCUELA BASICA PUYANCON", "marco_anual_proy": 52685169, "gasto_rem_ytd": 16441350, "gasto_rem_anual_proy": 28185170, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 36879618, "meta_bys_30": 15805551, "saldo_rem": 8694448, "saldo_bys": 15805551, "saldo_total": 24499999, "pct_ejec_rem": 53.5, "pct_ejec_bys": 0.0, "pct_ejec_total": 53.5, "anomalia": false, "estado": "superavit"}, {"rbd": "1137", "nombre": "ESCUELA BASICA HORTENCIA POWELL S.", "marco_anual_proy": 15156849, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 10609794, "meta_bys_30": 4547055, "saldo_rem": 10609794, "saldo_bys": 4547055, "saldo_total": 15156849, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1139", "nombre": "ESCUELA MINISTRO GOMEZ MILLAS", "marco_anual_proy": 25154754, "gasto_rem_ytd": 7309329, "gasto_rem_anual_proy": 12530279, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 17608328, "meta_bys_30": 7546426, "saldo_rem": 5078049, "saldo_bys": 7546426, "saldo_total": 12624475, "pct_ejec_rem": 49.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 49.8, "anomalia": false, "estado": "superavit"}, {"rbd": "1140", "nombre": "ESCUELA BASICA CARLOS ARIZTIA RUIZ", "marco_anual_proy": 31981968, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 22387378, "meta_bys_30": 9594590, "saldo_rem": 22387378, "saldo_bys": 9594590, "saldo_total": 31981968, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1142", "nombre": "ESCUELA LA CANELA", "marco_anual_proy": 45674784, "gasto_rem_ytd": 11231690, "gasto_rem_anual_proy": 19254325, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 31972349, "meta_bys_30": 13702435, "saldo_rem": 12718024, "saldo_bys": 13702435, "saldo_total": 26420459, "pct_ejec_rem": 42.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 42.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1143", "nombre": "ESCUELA BASICA QUEBRADILLA", "marco_anual_proy": 20092098, "gasto_rem_ytd": 5264804, "gasto_rem_anual_proy": 9025379, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 14064469, "meta_bys_30": 6027629, "saldo_rem": 5039090, "saldo_bys": 6027629, "saldo_total": 11066719, "pct_ejec_rem": 44.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 44.9, "anomalia": false, "estado": "superavit"}, {"rbd": "1144", "nombre": "ESCUELA BASICA PICHICUY", "marco_anual_proy": 28797930, "gasto_rem_ytd": 12958897, "gasto_rem_anual_proy": 22215252, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 20158551, "meta_bys_30": 8639379, "saldo_rem": -2056701, "saldo_bys": 8639379, "saldo_total": 6582678, "pct_ejec_rem": 77.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 77.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1145", "nombre": "ESCUELA ENRIQUE DOLL ROJAS", "marco_anual_proy": 38794485, "gasto_rem_ytd": 30943154, "gasto_rem_anual_proy": 53045409, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 27156140, "meta_bys_30": 11638346, "saldo_rem": -25889270, "saldo_bys": 11638346, "saldo_total": -14250924, "pct_ejec_rem": 136.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 136.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1147", "nombre": "ESCUELA FERNANDO GARCIA OLDINI", "marco_anual_proy": 65926875, "gasto_rem_ytd": 45975426, "gasto_rem_anual_proy": 78815016, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 46148812, "meta_bys_30": 19778062, "saldo_rem": -32666204, "saldo_bys": 19778062, "saldo_total": -12888141, "pct_ejec_rem": 119.5, "pct_ejec_bys": 0.0, "pct_ejec_total": 119.5, "anomalia": false, "estado": "deficit"}, {"rbd": "1148", "nombre": "LICEO JOSE MANUEL BORGONO NUNEZ", "marco_anual_proy": 244341870, "gasto_rem_ytd": 167119000, "gasto_rem_anual_proy": 286489715, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 171039309, "meta_bys_30": 73302561, "saldo_rem": -115450406, "saldo_bys": 73302561, "saldo_total": -42147845, "pct_ejec_rem": 117.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 117.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1149", "nombre": "LICEO CORDILLERA", "marco_anual_proy": 91364085, "gasto_rem_ytd": 65934178, "gasto_rem_anual_proy": 113030018, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 63954859, "meta_bys_30": 27409226, "saldo_rem": -49075159, "saldo_bys": 27409226, "saldo_total": -21665933, "pct_ejec_rem": 123.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 123.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1150", "nombre": "ESCUELA BASICA NEFTALI REYES B.", "marco_anual_proy": 5465478, "gasto_rem_ytd": 2156107, "gasto_rem_anual_proy": 3696182, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3825835, "meta_bys_30": 1639643, "saldo_rem": 129653, "saldo_bys": 1639643, "saldo_total": 1769296, "pct_ejec_rem": 67.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 67.6, "anomalia": false, "estado": "superavit"}, {"rbd": "1151", "nombre": "ESCUELA BASICA VILLA SANTA ANA", "marco_anual_proy": 5659560, "gasto_rem_ytd": 3394488, "gasto_rem_anual_proy": 5819123, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3961692, "meta_bys_30": 1697868, "saldo_rem": -1857431, "saldo_bys": 1697868, "saldo_total": -159563, "pct_ejec_rem": 102.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 102.8, "anomalia": false, "estado": "deficit"}, {"rbd": "1152", "nombre": "ESCUELA EDUARDO FREI MONTALVA", "marco_anual_proy": 64225842, "gasto_rem_ytd": 47825199, "gasto_rem_anual_proy": 81986054, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 44958089, "meta_bys_30": 19267753, "saldo_rem": -37027965, "saldo_bys": 19267753, "saldo_total": -17760212, "pct_ejec_rem": 127.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 127.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1153", "nombre": "ESCUELA BASICA EL CRUCERO", "marco_anual_proy": 2217225, "gasto_rem_ytd": 4198632, "gasto_rem_anual_proy": 7197657, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 1552058, "meta_bys_30": 665168, "saldo_rem": -5645600, "saldo_bys": 665168, "saldo_total": -4980432, "pct_ejec_rem": 324.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 324.6, "anomalia": false, "estado": "deficit"}, {"rbd": "1156", "nombre": "ESCUELA BASICA G-24", "marco_anual_proy": 32441541, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 22709079, "meta_bys_30": 9732462, "saldo_rem": 22709079, "saldo_bys": 9732462, "saldo_total": 32441541, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1157", "nombre": "ESCUELA BASICA LOS ALAMOS EL SOBRANTE", "marco_anual_proy": 27211641, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 19048149, "meta_bys_30": 8163492, "saldo_rem": 19048149, "saldo_bys": 8163492, "saldo_total": 27211641, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1158", "nombre": "ESCUELA BASICA BENANCIO PEREZ", "marco_anual_proy": 4329315, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3030520, "meta_bys_30": 1298794, "saldo_rem": 3030520, "saldo_bys": 1298794, "saldo_total": 4329315, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1160", "nombre": "ESCUELA HOGAR FRONTERIZA DE CHALACO", "marco_anual_proy": 9598803, "gasto_rem_ytd": 6896859, "gasto_rem_anual_proy": 11823189, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 6719162, "meta_bys_30": 2879641, "saldo_rem": -5104027, "saldo_bys": 2879641, "saldo_total": -2224386, "pct_ejec_rem": 123.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 123.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1161", "nombre": "ESCUELA BASICA PEDEGUA", "marco_anual_proy": 117441813, "gasto_rem_ytd": 65069793, "gasto_rem_anual_proy": 111548218, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 82209269, "meta_bys_30": 35232544, "saldo_rem": -29338949, "saldo_bys": 35232544, "saldo_total": 5893595, "pct_ejec_rem": 95.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 95.0, "anomalia": false, "estado": "riesgo"}, {"rbd": "1167", "nombre": "LICEO Y ESCUELA MUNICIPAL", "marco_anual_proy": 263010747, "gasto_rem_ytd": 126102032, "gasto_rem_anual_proy": 216174912, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 184107523, "meta_bys_30": 78903224, "saldo_rem": -32067389, "saldo_bys": 78903224, "saldo_total": 46835835, "pct_ejec_rem": 82.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 82.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1168", "nombre": "ESCUELA HANS WENKE MENGERS", "marco_anual_proy": 225940344, "gasto_rem_ytd": 168576701, "gasto_rem_anual_proy": 288988631, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 158158241, "meta_bys_30": 67782103, "saldo_rem": -130830390, "saldo_bys": 67782103, "saldo_total": -63048287, "pct_ejec_rem": 127.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 127.9, "anomalia": false, "estado": "deficit"}, {"rbd": "1170", "nombre": "ESCUELA BASICA VALLE DE ARTIFICIO", "marco_anual_proy": 103718850, "gasto_rem_ytd": 61866791, "gasto_rem_anual_proy": 106057356, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 72603195, "meta_bys_30": 31115655, "saldo_rem": -33454161, "saldo_bys": 31115655, "saldo_total": -2338506, "pct_ejec_rem": 102.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 102.3, "anomalia": false, "estado": "deficit"}, {"rbd": "1171", "nombre": "ESCUELA BASICA LA FRONTERA DE ALICAHUE", "marco_anual_proy": 12236412, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 8565488, "meta_bys_30": 3670924, "saldo_rem": 8565488, "saldo_bys": 3670924, "saldo_total": 12236412, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1173", "nombre": "ESCUELA ESTER SILVA SOMARRIVA BARTOLILLO", "marco_anual_proy": 96988563, "gasto_rem_ytd": 38295537, "gasto_rem_anual_proy": 65649492, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 67891994, "meta_bys_30": 29096569, "saldo_rem": 2242502, "saldo_bys": 29096569, "saldo_total": 31339071, "pct_ejec_rem": 67.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 67.7, "anomalia": false, "estado": "superavit"}, {"rbd": "1174", "nombre": "ESCUELA BASICA SAN LORENZO", "marco_anual_proy": 66121950, "gasto_rem_ytd": 41219138, "gasto_rem_anual_proy": 70661378, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 46285365, "meta_bys_30": 19836585, "saldo_rem": -24376013, "saldo_bys": 19836585, "saldo_total": -4539428, "pct_ejec_rem": 106.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 106.9, "anomalia": false, "estado": "deficit"}, {"rbd": "1176", "nombre": "ESCUELA PABLO NERUDA", "marco_anual_proy": 27015630, "gasto_rem_ytd": 25256264, "gasto_rem_anual_proy": 43296454, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 18910941, "meta_bys_30": 8104689, "saldo_rem": -24385513, "saldo_bys": 8104689, "saldo_total": -16280824, "pct_ejec_rem": 160.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 160.3, "anomalia": false, "estado": "deficit"}, {"rbd": "1178", "nombre": "ESCUELA BASICA LA VINA", "marco_anual_proy": 113782905, "gasto_rem_ytd": 54683674, "gasto_rem_anual_proy": 93743439, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 79648034, "meta_bys_30": 34134872, "saldo_rem": -14095406, "saldo_bys": 34134872, "saldo_total": 20039466, "pct_ejec_rem": 82.4, "pct_ejec_bys": 0.0, "pct_ejec_total": 82.4, "anomalia": false, "estado": "superavit"}, {"rbd": "1180", "nombre": "ESCUELA BASICA G-45", "marco_anual_proy": 158356164, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 110849315, "meta_bys_30": 47506849, "saldo_rem": 110849315, "saldo_bys": 47506849, "saldo_total": 158356164, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1181", "nombre": "ESCUELA BASICA LOS ANGELES", "marco_anual_proy": 8112729, "gasto_rem_ytd": 1941030, "gasto_rem_anual_proy": 3327480, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5678910, "meta_bys_30": 2433819, "saldo_rem": 2351430, "saldo_bys": 2433819, "saldo_total": 4785249, "pct_ejec_rem": 41.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 41.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1182", "nombre": "ESCUELA BASICA G-47", "marco_anual_proy": 6524547, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 4567183, "meta_bys_30": 1957364, "saldo_rem": 4567183, "saldo_bys": 1957364, "saldo_total": 6524547, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1191", "nombre": "ESCUELA PAPUDO", "marco_anual_proy": 205102704, "gasto_rem_ytd": 51823168, "gasto_rem_anual_proy": 88839718, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 143571893, "meta_bys_30": 61530811, "saldo_rem": 54732175, "saldo_bys": 61530811, "saldo_total": 116262986, "pct_ejec_rem": 43.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 43.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1192", "nombre": "ESCUELA RURAL PULLALLY", "marco_anual_proy": 232070370, "gasto_rem_ytd": 22607560, "gasto_rem_anual_proy": 38755815, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 162449259, "meta_bys_30": 69621111, "saldo_rem": 123693444, "saldo_bys": 69621111, "saldo_total": 193314555, "pct_ejec_rem": 16.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 16.7, "anomalia": false, "estado": "superavit"}, {"rbd": "11199", "nombre": "COLEGIO LUIS CRUZ MARTINEZ", "marco_anual_proy": 398901426, "gasto_rem_ytd": 126212294, "gasto_rem_anual_proy": 216363934, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 279230998, "meta_bys_30": 119670428, "saldo_rem": 62867064, "saldo_bys": 119670428, "saldo_total": 182537492, "pct_ejec_rem": 54.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 54.2, "anomalia": false, "estado": "superavit"}, {"rbd": "11206", "nombre": "ESCUELA MUNICIPAL LAS PUERTAS", "marco_anual_proy": 7372701, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5160891, "meta_bys_30": 2211810, "saldo_rem": 5160891, "saldo_bys": 2211810, "saldo_total": 7372701, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "12299", "nombre": "ESCUELA BASICA ANEXO PICHILEMU", "marco_anual_proy": 7292493, "gasto_rem_ytd": 268838, "gasto_rem_anual_proy": 460863, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5104745, "meta_bys_30": 2187748, "saldo_rem": 4643882, "saldo_bys": 2187748, "saldo_total": 6831630, "pct_ejec_rem": 6.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 6.3, "anomalia": false, "estado": "superavit"}, {"rbd": "12336", "nombre": "LICEO BICENTENARIO TECNICO PROFESIONAL DE MINERIA", "marco_anual_proy": 252228210, "gasto_rem_ytd": 127752393, "gasto_rem_anual_proy": 219004103, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 176559747, "meta_bys_30": 75668463, "saldo_rem": -42444356, "saldo_bys": 75668463, "saldo_total": 33224107, "pct_ejec_rem": 86.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 86.8, "anomalia": false, "estado": "superavit"}, {"rbd": "14479", "nombre": "ESCUELA BASICA MUNICIPAL ARAUCARIA", "marco_anual_proy": 239756457, "gasto_rem_ytd": 167482869, "gasto_rem_anual_proy": 287113489, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 167829520, "meta_bys_30": 71926937, "saldo_rem": -119283969, "saldo_bys": 71926937, "saldo_total": -47357032, "pct_ejec_rem": 119.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 119.8, "anomalia": false, "estado": "deficit"}, {"rbd": "40099", "nombre": "LICEO TECNICO PROFESIONAL PAPUDO", "marco_anual_proy": 102243084, "gasto_rem_ytd": 24938072, "gasto_rem_anual_proy": 42750982, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 71570159, "meta_bys_30": 30672925, "saldo_rem": 28819177, "saldo_bys": 30672925, "saldo_total": 59492102, "pct_ejec_rem": 41.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 41.8, "anomalia": false, "estado": "superavit"}, {"rbd": "40242", "nombre": "COLEGIO BICENTENARIO", "marco_anual_proy": 145323090, "gasto_rem_ytd": 85771435, "gasto_rem_anual_proy": 147036745, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 101726163, "meta_bys_30": 43596927, "saldo_rem": -45310582, "saldo_bys": 43596927, "saldo_total": -1713655, "pct_ejec_rem": 101.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 101.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1120", "nombre": "CENTRO DE EDUCACION DE ADULTOS LA LIGUA", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}, {"rbd": "11196", "nombre": "CTRO.REC.ATENC.DIVERS.CRAD PAUL PERCY HARRIS", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}, {"rbd": "1126", "nombre": "ESCUELA ESPECIAL SOL NACIENTE", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}], "totales": {"marco_anual_proy": 5087817897, "gasto_rem_anual_proy": 3708967894, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "saldo_total": 1378850003, "n_deficit": 15, "n_riesgo": 2, "n_superavit": 35, "n_anomalias": 0}, "fuente_marco": {"tipo": "Estado_RBD_2026.xlsx (columna TOTAL SEP, monto anual directo); reemplazado por la hoja INGRESO de la carga manual si el RBD tiene override", "incluye_carrera_docente": false}, "fuente_carga_manual": {"archivo": "carga_manual/CARGA_MANUAL_SEP.xlsx", "fecha_carga": "2026-08-19 16:51", "n_rbd_ingreso_override": 52, "n_rbd_rem_override": 52}};
@@ -3024,9 +3096,30 @@ function updateRowDOM(rbd) {
   renderKpis();
 }
 
+// Lee el monto de una celda (montos es-CL, ver parseMontoCL). Si el texto no es un número marca la celda
+// como inválida (borde rojo + aviso) y devuelve null: quien llama NO toca el valor guardado ni agenda guardado.
+// Mientras la celda tiene foco se deja el texto exactamente como lo tecleó la persona; al salir se normaliza.
+function leerMontoDeCelda(input) {
+  const r = parseMontoCL(input.value);
+  const invalido = !r.ok && r.motivo !== 'incompleto'; // un "-" solo es el comienzo de un negativo: no se marca
+  marcarCeldaInvalida(input, invalido);
+  return r.ok ? r.valor : null;
+}
+function marcarCeldaInvalida(input, invalido) {
+  input.classList.toggle('celda-invalida', invalido);
+  if (invalido) { input.title = MONTO_AYUDA_INVALIDO; input.setAttribute('aria-invalid', 'true'); }
+  else { input.removeAttribute('title'); input.removeAttribute('aria-invalid'); }
+}
+// Impide TECLEAR letras u otros símbolos en una celda de monto (lo pegado se valida con parseMontoCL).
+function bloquearTecleoNoNumerico(e) {
+  if (!e.target.classList || !e.target.classList.contains('celda-input')) return;
+  if (e.inputType === 'insertText' && typeof e.data === 'string' && /[^\d.,\-\s$]/.test(e.data)) e.preventDefault();
+}
+
 function onCeldaInput(input) {
   const rbd = input.dataset.rbd, mes = input.dataset.mes;
-  const val = parseFloat(input.value.replace(/[^0-9.-]/g, '')) || 0;
+  const val = leerMontoDeCelda(input);
+  if (val === null) return; // texto no numérico: se rechaza sin tocar lo guardado
   const modo = input.dataset.modo; // 'ingreso_item' | 'rem' | 'bys_proy'
   let totalCell;
   if (modo === 'ingreso_item') {
@@ -3087,7 +3180,7 @@ function celdaInputHTML(rbd, modo, mes, v, extra, printMode) {
   if (printMode) {
     return `<td class="num ${cls}">${v ? fmtCLP(v) : '—'}</td>`;
   }
-  return `<td class="num ${cls}"><input type="number" step="1" class="celda-input" value="${v === 0 ? '' : v}" placeholder="0"
+  return `<td class="num ${cls}"><input type="text" inputmode="numeric" autocomplete="off" class="celda-input" value="${formatoMontoCelda(v)}" placeholder="0"
             data-rbd="${rbd}" data-modo="${modo}" data-mes="${mes}" ${extra || ''}
             oninput="onCeldaInput(this)"></td>`;
 }
@@ -3436,6 +3529,7 @@ function agregarCompra(rbd) {
   if (r) { recomputeRegistro(r); updateRowDOM(rbd); }
   renderReportFilters();
   if (modalRbdAbierto === rbd) renderModalContenido();
+  cancelarEdicionCompra(); // formulario limpio y fuera del modo edición (el modal ya no se reconstruye, así que se limpia a mano)
   const ag = ensureAgregado(rbd);
   scheduleRbdSave(rbd, { nombre: ag.nombre, compras: { [id]: campos } });
   flushRbdSaveNow(rbd);
@@ -3443,6 +3537,8 @@ function agregarCompra(rbd) {
 async function eliminarCompra(rbd, compraId) {
   if (!confirm('¿Eliminar esta compra? No se puede deshacer.')) return;
   flushRbdSaveNow(rbd);
+  const wrapForm = document.querySelector('#modalBody .compra-form-grid');
+  if (wrapForm && wrapForm.dataset.editingId === compraId) cancelarEdicionCompra(); // se borra la compra que se estaba editando
   if (CARGA_MANUAL.compras_por_rbd && CARGA_MANUAL.compras_por_rbd[rbd]) {
     delete CARGA_MANUAL.compras_por_rbd[rbd][compraId];
   }
@@ -3585,17 +3681,94 @@ tableBodyEl.addEventListener('click', (e) => {
 // --- Modal de detalle por RBD: reemplaza la fila desplegable de antes. Se abre al hacer clic
 // en el RBD, el nombre del establecimiento, o el ícono ▸ de una fila; se cierra con el botón
 // ✕, la tecla Escape, o al hacer clic fuera del panel (sobre el fondo oscuro). ---
-// Esta función reconstruye TODO el HTML del modal (nunca hace un parche parcial) porque nunca
-// se confía en un total ya calculado — se recalcula siempre desde los meses/ítems recibidos
-// (ver aplicarSnapshot). El problema es que se llama no solo al abrir el modal, sino cada vez
-// que llega una actualización en tiempo real del RBD abierto — incluido el eco de lo que el
-// propio usuario acaba de escribir (scheduleRbdSave/flushRbdSave guarda ~400ms después de la
-// última tecla, y Firestore devuelve ese mismo cambio por el listener onSnapshot). Sin esto, la
-// pantalla se iba al inicio del scroll y se perdía el foco de la celda cada vez que se escribía
-// un dato, con la sensación de que la página "piensa" unos segundos entre cada número. Por eso
-// se guarda el scroll (vertical del modal + horizontal de cada tabla) y el campo con foco antes
-// de reemplazar el HTML, y se restauran después.
-function renderModalContenido() {
+// ---- Repintado de los modales SIN pisar lo que la persona está haciendo ----
+// El listener de Firestore está sobre TODA la colección: llega un snapshot por cada cambio de cualquier RBD
+// y además el eco de lo que el propio usuario acaba de escribir (≈400 ms después de dejar de teclear y otra vez
+// al resolverse serverTimestamp()). Si cada snapshot reemplazaba el innerHTML del modal, el <input> conservaba el
+// foco pero el cursor volvía al inicio y los dígitos tecleados se anteponían ("1500000" quedaba en "51"), y el
+// formulario de compra (campos a medias y modo edición) se perdía. Por eso, con el modal ya abierto, el contenido se
+// RECONCILIA con el DOM existente (morphContenedor): los nodos que siguen existiendo se actualizan en su lugar,
+// una celda con foco no se toca (y sus ediciones sin confirmar se superponen en aplicarSnapshot, así que el valor
+// tecleado nunca retrocede), el formulario de compra (.compra-form-grid) nunca se toca, y solo se agregan/quitan
+// las filas que realmente aparecieron o desaparecieron. Los totales siguen calculándose siempre desde los
+// meses/ítems recibidos (ver aplicarSnapshot): lo que se reconcilia es el HTML que se construye con ellos.
+function claveMorph(n) {
+  if (n.nodeType !== 1) return null;
+  if (n.id) return 'id:' + n.id;
+  if (n.tagName === 'TR') {
+    if (n.dataset.compraId !== undefined) return 'compra:' + n.dataset.compraId;
+    const c = n.querySelector('input.celda-input[data-codigo], input.celda-input[data-concepto]');
+    if (c) return 'fila:' + c.dataset.modo + ':' + (c.dataset.codigo !== undefined ? c.dataset.codigo : c.dataset.concepto);
+  }
+  return null;
+}
+function firmaMorph(n) {
+  if (n.nodeType !== 1) return '#' + n.nodeType;
+  return n.tagName === 'DIV' ? 'DIV.' + (n.classList[0] || '') : n.tagName; // solo la 1.ª clase: las demás cambian con el estado (p. ej. "editing")
+}
+function sincronizarAtributos(v, n) {
+  Array.from(v.attributes).forEach(a => { if (!n.hasAttribute(a.name)) v.removeAttribute(a.name); });
+  Array.from(n.attributes).forEach(a => { if (v.getAttribute(a.name) !== a.value) v.setAttribute(a.name, a.value); });
+}
+function tieneFocoMorph(el, opts) { return document.activeElement === el && el !== (opts && opts.sinFoco); }
+function morphHijos(viejo, nuevo, opts) {
+  const olds = Array.from(viejo.childNodes);
+  const porClave = new Map(), sinClave = [];
+  olds.forEach(o => { const k = claveMorph(o); if (k !== null && !porClave.has(k)) porClave.set(k, o); else sinClave.push(o); });
+  const usados = new Set(), finales = [];
+  Array.from(nuevo.childNodes).forEach(n => {
+    const k = claveMorph(n);
+    let o = null;
+    if (k !== null) { o = porClave.get(k) || null; if (o) porClave.delete(k); }
+    else {
+      const f = firmaMorph(n);
+      const i = sinClave.findIndex(x => claveMorph(x) === null && firmaMorph(x) === f);
+      if (i >= 0) { o = sinClave[i]; sinClave.splice(i, 1); }
+    }
+    if (o) { morphNodo(o, n, opts); usados.add(o); finales.push(o); } else finales.push(n);
+  });
+  olds.forEach(o => { if (!usados.has(o)) viejo.removeChild(o); });
+  let cursor = viejo.firstChild;
+  finales.forEach(f => { if (f === cursor) cursor = cursor.nextSibling; else viejo.insertBefore(f, cursor); });
+}
+function morphNodo(v, n, opts) {
+  if (v.nodeType !== 1) { if (v.nodeValue !== n.nodeValue) v.nodeValue = n.nodeValue; return; }
+  if (v.matches('.compra-form-grid')) return; // lo que la persona está escribiendo en el formulario: nunca se toca
+  if (v.tagName === 'INPUT' && v.classList.contains('celda-input')) {
+    if (tieneFocoMorph(v, opts)) return; // la celda que se está tecleando conserva su texto, su cursor y su foco
+    const nuevoValor = n.getAttribute('value') || '';
+    if (v.value !== nuevoValor) v.value = nuevoValor;
+    marcarCeldaInvalida(v, false);
+    return;
+  }
+  sincronizarAtributos(v, n);
+  if (v.tagName === 'SELECT') {
+    if (tieneFocoMorph(v, opts)) return;
+    const previo = v.value;
+    morphHijos(v, n, opts);
+    const marcada = n.querySelector('option[selected]'); // selector de datos (p. ej. "reales hasta") vs. selector de captura (se conserva)
+    const quiere = marcada ? marcada.value : previo;
+    if (v.value !== quiere && Array.from(v.options).some(o => o.value === quiere)) v.value = quiere;
+    return;
+  }
+  morphHijos(v, n, opts);
+}
+function morphContenedor(contenedor, html, opts) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  morphHijos(contenedor, tpl.content, opts);
+}
+// Si la compra que se estaba editando en el formulario desapareció (otra persona la borró), el formulario conserva lo
+// escrito pero pasa a "compra nueva": así "Guardar cambios" no vuelve a crear una compra que alguien eliminó.
+function revisarModoEdicionCompra(rbd) {
+  const wrap = document.querySelector('#modalBody .compra-form-grid');
+  if (!wrap || !wrap.dataset.editingId) return;
+  if (!((CARGA_MANUAL.compras_por_rbd || {})[rbd] || {})[wrap.dataset.editingId]) resetFormularioCompraUI();
+}
+
+let modalMorphEnCurso = false;
+function renderModalContenido(opts) {
+  if (modalMorphEnCurso) return; // quitar del DOM la celda con foco puede disparar focusout en medio del reconciliado
   const rbd = modalRbdAbierto;
   const r = DATA.registros.find(x => x.rbd === rbd);
   if (!r) { cerrarModal(); return; }
@@ -3607,6 +3780,13 @@ function renderModalContenido() {
     `Saldo Final (Real+Proy): <strong>${fmtCLP(r.saldo_total)}</strong> · ${estadoTagHTML(r)}`;
 
   const modalBodyEl = document.getElementById('modalBody');
+  if (modalBodyEl.dataset.rbd === rbd && modalBodyEl.firstElementChild) {
+    modalMorphEnCurso = true;
+    try { morphContenedor(modalBodyEl, buildDetalleHTML(rbd), opts); } // modal ya abierto: se reconcilia, no se reemplaza
+    finally { modalMorphEnCurso = false; }
+    revisarModoEdicionCompra(rbd);
+    return;
+  }
   const activeEl = document.activeElement;
   const enfocado = (activeEl && modalBodyEl.contains(activeEl) && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT')) ? {
     id: activeEl.id || null,
@@ -3619,6 +3799,7 @@ function renderModalContenido() {
   const scrollHorizVals = scrollHorizEls.map(el => el.scrollLeft);
 
   modalBodyEl.innerHTML = buildDetalleHTML(rbd);
+  modalBodyEl.dataset.rbd = rbd;
 
   modalBodyEl.scrollTop = scrollTop;
   const nuevosScrollHoriz = modalBodyEl.querySelectorAll('.detalle-scroll, .compras-scroll');
@@ -3646,6 +3827,7 @@ function renderModalContenido() {
 
 function abrirModalRbd(rbd) {
   modalRbdAbierto = rbd;
+  delete document.getElementById('modalBody').dataset.rbd; // al abrir siempre se construye de cero
   renderModalContenido();
   document.getElementById('rbdModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -3655,6 +3837,7 @@ function cerrarModal() {
   modalRbdAbierto = null;
   document.getElementById('rbdModal').classList.add('hidden');
   document.getElementById('modalBody').innerHTML = '';
+  delete document.getElementById('modalBody').dataset.rbd;
   document.body.style.overflow = '';
 }
 
@@ -3699,9 +3882,13 @@ modalBodyEl.addEventListener('click', (e) => {
   const delBysProyBtn = e.target.closest('.bysproy-del-btn');
   if (delBysProyBtn) { eliminarBysProyeccionItem(delBysProyBtn.getAttribute('data-rbd'), delBysProyBtn.getAttribute('data-codigo')); return; }
 });
+modalBodyEl.addEventListener('beforeinput', bloquearTecleoNoNumerico);
 modalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);
+    // Al salir de la celda: normaliza lo tecleado ("1.500.000" → 1500000), descarta un texto no válido (vuelve a lo
+    // guardado) y recoge lo que otras personas hayan cambiado en esa celda mientras tenía foco.
+    if (modalRbdAbierto) renderModalContenido({ sinFoco: e.target });
   }
 });
 
@@ -3883,6 +4070,7 @@ FUENTES_OTRAS.forEach(f => {
 
 function abrirOtrasFuentesModal(rbd) {
   otrasFuentesRbdAbierto = rbd;
+  delete document.getElementById('otrasFuentesModalBody').dataset.rbd; // al abrir siempre se construye de cero
   renderOtrasFuentesModalContenido();
   document.getElementById('otrasFuentesModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
@@ -3891,6 +4079,7 @@ function cerrarOtrasFuentesModal() {
   otrasFuentesRbdAbierto = null;
   document.getElementById('otrasFuentesModal').classList.add('hidden');
   document.getElementById('otrasFuentesModalBody').innerHTML = '';
+  delete document.getElementById('otrasFuentesModalBody').dataset.rbd;
   document.body.style.overflow = '';
 }
 document.getElementById('otrasFuentesModalCloseBtn').addEventListener('click', cerrarOtrasFuentesModal);
@@ -3951,7 +4140,7 @@ function mesHeaderCellsCorteHTML(corte, forzarProy) {
 }
 function otrasFuentesFilaMesesHTML(rbd, fuenteKey, modo, obj) {
   const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
-  return MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, false)}"><input type="number" step="1" class="celda-input" value="${(obj.meses[m] || 0) === 0 ? '' : obj.meses[m]}" placeholder="0"
+  return MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, false)}"><input type="text" inputmode="numeric" autocomplete="off" class="celda-input" value="${formatoMontoCelda(obj.meses[m])}" placeholder="0"
     data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
 }
 function otrasFuentesTablaMes(titulo, rbd, fuenteKey, modo, obj, totalId) {
@@ -4030,7 +4219,7 @@ function bysItemFilaHTML(rbd, fuenteKey, concepto, it, modo = 'of_bys_item') {
   const prefijoId = forzarProy ? 'ofbysproyitem' : 'ofbysitem';
   const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
   const conceptoHTML = escHtml(concepto);
-  const cells = MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, forzarProy)}"><input type="number" step="1" class="celda-input" value="${(it.meses[m] || 0) === 0 ? '' : it.meses[m]}" placeholder="0"
+  const cells = MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, forzarProy)}"><input type="text" inputmode="numeric" autocomplete="off" class="celda-input" value="${formatoMontoCelda(it.meses[m])}" placeholder="0"
     data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-concepto="${conceptoHTML}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
   return `<tr>
     <td class="item-label">${conceptoHTML} <button type="button" class="bysproy-del-btn of-bysitem-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${lista}" data-concepto="${conceptoHTML}" title="Quitar ítem">🗑</button></td>
@@ -4136,7 +4325,14 @@ function actualizarOtrasFuentesModalSubtitle(of) {
     `Saldo: <strong>${fmtCLP(of.saldo)}</strong> · ${otrasFuentesEstadoTagHTML(of)}` +
     ` · <span class="detalle-sub">Saldo Real: <strong>${fmtCLP(of.rp.real.saldo)}</strong> · Saldo Proy.: <strong>${fmtCLP(of.rp.proy.saldo)}</strong></span>`;
 }
-function renderOtrasFuentesModalContenido() {
+// Se llama al abrir el modal, al cambiar su estructura (agregar/quitar compras o conceptos, cambiar el corte) y desde
+// aplicarSnapshot en cada snapshot de Firestore, para que el modal refleje lo que otras personas cambian o borran. Con el modal
+// ya abierto se RECONCILIA con el DOM existente (morphContenedor, ver "Repintado de los modales" en el modal SEP): la celda con
+// foco, los formularios (compra / concepto nuevo) y el scroll no se tocan, las celdas sin foco toman el valor nuevo, y solo
+// aparecen o desaparecen las filas que realmente se agregaron o borraron (un ítem borrado ya no se puede editar y "resucitar").
+let otrasFuentesMorphEnCurso = false;
+function renderOtrasFuentesModalContenido(opts) {
+  if (otrasFuentesMorphEnCurso) return;
   const rbd = otrasFuentesRbdAbierto;
   const fuenteKey = otrasFuentesSel;
   const r = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
@@ -4144,7 +4340,16 @@ function renderOtrasFuentesModalContenido() {
   const of = recomputeOtraFuente(rbd, fuenteKey);
   document.getElementById('otrasFuentesModalTitle').textContent = `${otrasFuentesTituloEntidad(r, fuenteKey)} — ${r.nombre} · ${FUENTES_OTRAS_BY_KEY[fuenteKey].label}`;
   actualizarOtrasFuentesModalSubtitle(of);
-  document.getElementById('otrasFuentesModalBody').innerHTML = buildOtrasFuentesDetalleHTML(rbd, fuenteKey);
+  const cuerpo = document.getElementById('otrasFuentesModalBody');
+  const html = buildOtrasFuentesDetalleHTML(rbd, fuenteKey);
+  if (cuerpo.dataset.rbd === rbd && cuerpo.dataset.fuente === fuenteKey && cuerpo.firstElementChild) {
+    otrasFuentesMorphEnCurso = true;
+    try { morphContenedor(cuerpo, html, opts); } finally { otrasFuentesMorphEnCurso = false; }
+    return;
+  }
+  cuerpo.innerHTML = html;
+  cuerpo.dataset.rbd = rbd;
+  cuerpo.dataset.fuente = fuenteKey;
 }
 
 // Mapa modo -> nombre del campo en el objeto "of" / en Firestore. Cubre tanto la forma "simple"
@@ -4160,7 +4365,8 @@ const OTRA_FUENTE_MODO_CAMPO = {
 };
 function onOtraFuenteCeldaInput(input) {
   const rbd = input.dataset.rbd, fuenteKey = input.dataset.fuente, mes = input.dataset.mes, modo = input.dataset.modo;
-  const val = parseFloat(input.value.replace(/[^0-9.-]/g, '')) || 0;
+  const val = leerMontoDeCelda(input);
+  if (val === null) return; // texto no numérico: se rechaza sin tocar lo guardado
   const of = ensureOtraFuente(rbd, fuenteKey);
   const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
 
@@ -4231,6 +4437,8 @@ function agregarBysItemOtraFuente(rbd, fuenteKey, lista = 'bys_items') {
   const input = document.getElementById(inputId);
   const concepto = (input && input.value || '').trim();
   if (!concepto) { alert('Escribe un concepto antes de agregar.'); return; }
+  const errClave = validarClaveMapa(concepto, 'El concepto');
+  if (errClave) { alert(errClave + '\nNo se agregó el concepto.'); return; }
   const of = ensureOtraFuente(rbd, fuenteKey);
   if ((of[lista] || []).some(it => it.concepto === concepto)) { alert('Ya existe un ítem con ese concepto.'); return; }
   ensureOtraFuenteBysItem(of, concepto, lista);
@@ -4238,6 +4446,7 @@ function agregarBysItemOtraFuente(rbd, fuenteKey, lista = 'bys_items') {
   recomputeOtraFuente(rbd, fuenteKey);
   renderOtrasFuentesTable();
   if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
+  if (input) input.value = ''; // el modal ya no se reconstruye: el campo se limpia a mano
   const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
   scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { [lista]: { [concepto]: { concepto, meses: mesesEnCero(), total: 0 } } } } });
   flushRbdSaveNow(rbd);
@@ -4292,6 +4501,7 @@ function agregarCompraOtraFuente(rbd, fuenteKey) {
   recomputeOtraFuente(rbd, fuenteKey);
   renderOtrasFuentesTable();
   if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
+  document.querySelectorAll('#otrasFuentesModalBody .compra-form-grid .of-compra-input').forEach(el => { el.value = ''; }); // formulario limpio (el modal ya no se reconstruye)
   const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
   scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { compras: { [id]: campos } } } });
   flushRbdSaveNow(rbd);
@@ -4332,9 +4542,12 @@ otrasFuentesModalBodyEl.addEventListener('change', (e) => {
   const sel = e.target.closest && e.target.closest('.of-modal-corte-select');
   if (sel) cambiarCorteOtraFuente(sel.dataset.rbd, sel.dataset.fuente, Number(sel.value));
 });
+otrasFuentesModalBodyEl.addEventListener('beforeinput', bloquearTecleoNoNumerico);
 otrasFuentesModalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);
+    // Al salir de la celda: normaliza lo tecleado, descarta un texto no válido y recoge lo que otras personas cambiaron.
+    if (otrasFuentesRbdAbierto) renderOtrasFuentesModalContenido({ sinFoco: e.target });
   }
 });
 document.addEventListener('keydown', (e) => {
@@ -4502,6 +4715,8 @@ function importOtraFuenteSimpleSheet(ws, fuenteKey, campo) {
     const row = rows[i];
     if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
     const rbd = String(row[0]).trim();
+    const errRbd = validarIdDocumento(rbd, 'El RBD');
+    if (errRbd) { rechazarFilaImportacion(campo, i + 1, errRbd); continue; }
     const nombre = row[1] || rbd;
     const meses = {};
     let total = 0;
@@ -4525,6 +4740,8 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
     const row = rows[i];
     if (row[1] === undefined || row[1] === null || String(row[1]).trim() === '') continue;
     const rbd = String(row[1]).trim();
+    const errRbd = validarIdDocumento(rbd, 'El RBD');
+    if (errRbd) { rechazarFilaImportacion('COMPRAS', i + 1, errRbd); continue; }
     const codigoRaw = row[3];
     const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
     if (!CUENTAS_COMPRAS_BY_CODIGO[codigo]) continue;
@@ -4544,6 +4761,8 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
     if (!campos.fechaDocumento || !campos.montoGasto) continue;
     const idRaw = row[0];
     const id = (idRaw !== undefined && idRaw !== null && idRaw !== 0 && String(idRaw).trim() !== '') ? String(idRaw).trim() : generarCompraId();
+    const errId = validarClaveMapa(id, 'El ID de la compra');
+    if (errId) { rechazarFilaImportacion('COMPRAS', i + 1, errId); continue; }
     const of = ensureOtraFuente(rbd, fuenteKey);
     of.compras[id] = campos;
     if (!porRbd[rbd]) porRbd[rbd] = {};
@@ -4568,9 +4787,13 @@ function importBysItemsSheet(ws, fuenteKey, lista = 'bys_items') {
     const row = rows[i];
     if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
     const rbd = String(row[0]).trim();
+    const errRbd = validarIdDocumento(rbd, 'El RBD');
+    if (errRbd) { rechazarFilaImportacion(lista.toUpperCase(), i + 1, errRbd); continue; }
     const nombre = row[1] || rbd;
     const concepto = String(row[2] || '').trim();
     if (!concepto) continue;
+    const errConcepto = validarClaveMapa(concepto, 'El concepto');
+    if (errConcepto) { rechazarFilaImportacion(lista.toUpperCase(), i + 1, errConcepto); continue; }
     const meses = {};
     let total = 0;
     MESES_CARGA.forEach((m, mi) => { const v = Number(row[3 + mi]) || 0; meses[m] = v; total += v; });
@@ -4596,6 +4819,8 @@ function importOtraFuenteMetaSheet(ws, fuenteKey) {
     const row = rows[i];
     if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
     const rbd = String(row[0]).trim();
+    const errRbd = validarIdDocumento(rbd, 'El RBD');
+    if (errRbd) { rechazarFilaImportacion('META', i + 1, errRbd); continue; }
     const mes = normalizarRealHastaMes(row[2]);
     const of = ensureOtraFuente(rbd, fuenteKey);
     if (realHastaMesOtraFuente(of) === mes) continue;
@@ -4609,6 +4834,7 @@ function importOtraFuenteMetaSheet(ws, fuenteKey) {
 function importOtraFuenteWorkbook(wbIn, fuenteKey) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   let resumen = [];
+  importRechazos.length = 0;
   if (wbIn.Sheets['META']) resumen.push('META (corte Real/Proy): ' + importOtraFuenteMetaSheet(wbIn.Sheets['META'], fuenteKey) + ' cambios');
   if (fuente.incomeShape === 'junji3') {
     if (wbIn.Sheets['ING_OPERACION']) resumen.push('ING_OPERACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_OPERACION'], fuenteKey, 'ingreso_operacion') + ' filas');
@@ -4628,7 +4854,7 @@ function importOtraFuenteWorkbook(wbIn, fuenteKey) {
     if (wbIn.Sheets['BYS_ITEMS']) resumen.push('BYS_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_ITEMS'], fuenteKey) + ' filas');
   }
   renderOtrasFuentesTable(fuenteKey);
-  return resumen;
+  return resumen.concat(resumenRechazosImportacion());
 }
 
 // PDF: el mismo mecanismo que exportPdfBtn (window.print() + .hidden ya oculta las otras 7
@@ -6956,6 +7182,8 @@ function importIngresoItemsSheet(ws) {
     const rbd = String(Math.trunc(Number(row[0])));
     const nombre = row[1] || rbd;
     const item = row[2] || '';
+    const errItem = validarClaveMapa(String(item), 'El nombre del ítem de ingreso');
+    if (errItem) { rechazarFilaImportacion('INGRESO', i + 1, errItem); continue; }
     const meses = {};
     let total = 0;
     MESES_CARGA.forEach((m, mi) => { const v = Number(row[3 + mi]) || 0; meses[m] = v; total += v; });
@@ -7054,6 +7282,8 @@ function importComprasSheet(ws) {
     // carga masiva de cientos de filas nuevas, esto botaba silenciosamente casi todas).
     const idRaw = row[0];
     const id = (idRaw !== undefined && idRaw !== null && idRaw !== 0 && String(idRaw).trim() !== '') ? String(idRaw).trim() : generarCompraId();
+    const errId = validarClaveMapa(id, 'El ID de la compra');
+    if (errId) { rechazarFilaImportacion('COMPRAS', i + 1, errId); continue; }
     if (!CARGA_MANUAL.compras_por_rbd) CARGA_MANUAL.compras_por_rbd = {};
     if (!CARGA_MANUAL.compras_por_rbd[rbd]) CARGA_MANUAL.compras_por_rbd[rbd] = {};
     CARGA_MANUAL.compras_por_rbd[rbd][id] = campos;
@@ -7074,6 +7304,7 @@ function importComprasSheet(ws) {
 
 function importWorkbook(wb) {
   let resumen = [];
+  importRechazos.length = 0;
   if (wb.Sheets['INGRESO']) resumen.push('INGRESO: ' + importIngresoItemsSheet(wb.Sheets['INGRESO']) + ' filas');
   if (wb.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importSimpleSheet(wb.Sheets['REMUNERACIONES'], 'rem_por_rbd') + ' filas');
   if (wb.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importComprasSheet(wb.Sheets['COMPRAS']) + ' filas');
@@ -7085,7 +7316,7 @@ function importWorkbook(wb) {
   DATA.registros.forEach(recomputeRegistro);
   renderKpis();
   renderTable();
-  return resumen;
+  return resumen.concat(resumenRechazosImportacion());
 }
 
 document.getElementById('importExcelBtn').addEventListener('click', () => document.getElementById('importExcelInput').click());
@@ -7154,10 +7385,13 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
+// Si la persistencia en IndexedDB no se pudo activar (otra pestaña la tiene, navegador sin soporte, modo privado), los
+// cambios hechos sin conexión viven solo en memoria y se pierden al cerrar la pestaña (ver hayCambiosSinGuardar).
+let persistenciaOfflineActiva = true;
 try {
   await enableIndexedDbPersistence(db);
 } catch (e) {
-  // ignorar errores de multi-tab o ya activada
+  persistenciaOfflineActiva = false; // multi-tab, sin soporte o ya activada: no se interrumpe el arranque
 }
 
 const ALLOWED_EMAILS = [
@@ -7244,7 +7478,97 @@ function setSyncStatus(status, text) {
   if (!dot || !txt) return;
   dot.className = 'sync-dot ' + status;
   txt.textContent = text;
+  txt.classList.toggle('sync-text-rojo', status === 'red');
+  // Los modales cubren la barra de estado: se replica ahí solo lo que exige atención (rojo o sin conexión).
+  const retry = document.getElementById('sync-retry');
+  const visible = status === 'red' || /^Sin conexión/.test(text);
+  document.querySelectorAll('.modal-sync').forEach(el => {
+    el.classList.toggle('hidden', !visible);
+    el.classList.toggle('ms-red', status === 'red');
+    el.querySelector('.sync-dot').className = 'sync-dot ' + status;
+    el.querySelector('.modal-sync-text').textContent = text;
+    el.querySelector('.modal-sync-retry').classList.toggle('hidden', !(retry && !retry.classList.contains('hidden')));
+  });
 }
+
+// ============== INDICADOR DE SINCRONIZACIÓN: dice la verdad ==============
+// verde  "Sincronizado": el servidor confirmó todo (sin escrituras pendientes ni en vuelo, con conexión).
+// amarillo "Guardando…" (hay escrituras sin confirmar), "Sin conexión: …" (snapshot fromCache o navegador sin red) o un
+//          reintento automático con espera creciente tras un error TRANSITORIO.
+// rojo   persistente "N cambios sin guardar" + Reintentar: un error PERMANENTE (permiso, sesión, dato inválido) — no se
+//          reintenta en bucle; los cambios se conservan en memoria y en pantalla hasta reintentar a mano.
+// Se alimenta de snapshot.metadata (hasPendingWrites / fromCache, con includeMetadataChanges) y del resultado de cada setDoc.
+const syncEstado = {
+  fromCache: false,        // el último snapshot vino del caché local (sin confirmación del servidor)
+  hasPendingWrites: false, // el último snapshot trae escrituras locales que el servidor aún no confirma
+  vacioSinServidor: false, // snapshot vacío desde el caché: todavía no se sabe qué hay en el servidor
+  graciaInicial: true,     // al abrir, el primer snapshot suele ser del caché aunque haya red: no alarmar de inmediato
+  docsInvalidos: [],       // documentos con datos dañados (se omiten)
+  ultimaEdicion: null,     // { email, at } del snapshot más reciente
+  errorEscucha: null,      // el listener murió (p. ej. permission-denied al leer)
+};
+const CODIGOS_ERROR_TRANSITORIO = ['unavailable', 'deadline-exceeded', 'resource-exhausted', 'aborted'];
+const MOTIVO_ERROR_PERMANENTE = {
+  'permission-denied': 'No tienes permiso para guardar estos cambios en la base de datos',
+  'unauthenticated': 'Tu sesión no es válida o venció: cierra sesión y vuelve a entrar',
+  'invalid-argument': 'El servidor rechazó un dato (un nombre o un valor no válido)',
+  'failed-precondition': 'El servidor rechazó el cambio por una condición previa',
+};
+function codigoDeError(err) { return String((err && err.code) || '').replace(/^firestore\//, ''); }
+// Transitorio: se reintenta solo con espera creciente. Todo lo demás (permisos, sesión, dato inválido y también
+// cualquier error desconocido) es permanente: nunca un bucle de reintentos; se retiene el cambio para reintentar a mano.
+function esErrorTransitorio(err) { return CODIGOS_ERROR_TRANSITORIO.includes(codigoDeError(err)); }
+function retardoReintentoMs(n) { return Math.min(30000, 2000 * Math.pow(2, Math.max(0, n - 1))); } // 2 s, 4 s, 8 s, 16 s, 30 s, 30 s…
+
+// Cuántos cambios hay en un payload parcial: cada mes escrito de una celda, cada compra, cada corte "real hasta mes".
+function contarCambios(payload) {
+  let n = 0;
+  const rec = (v, clave) => {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) { if (clave === 'real_hasta_mes') n++; return; }
+    if (clave === 'compras') { n += Object.keys(v).length; return; }
+    if (clave === 'meses') { const vals = Object.values(v); n += vals.some(x => x) ? vals.length : 1; return; }
+    Object.keys(v).forEach(k => rec(v[k], k));
+  };
+  rec(payload, '');
+  return n;
+}
+function cambiosSinGuardar() {
+  return Object.values(pendingWrites).concat(Object.values(escrituraRetenida)).reduce((s, p) => s + contarCambios(p), 0);
+}
+function hayCambiosSinGuardar() {
+  return Object.keys(pendingWrites).length > 0 || Object.keys(escrituraRetenida).length > 0
+    || (escriturasEnVuelo > 0 && !persistenciaOfflineActiva); // sin IndexedDB lo enviado y no confirmado vive solo en esta pestaña
+}
+function actualizarIndicadorSync() {
+  const btn = document.getElementById('sync-retry');
+  const reintentar = (v) => { if (btn) btn.classList.toggle('hidden', !v); };
+  const retenidas = Object.keys(escrituraRetenida);
+  if (syncEstado.errorEscucha) { reintentar(false); setSyncStatus('red', syncEstado.errorEscucha); return; }
+  if (retenidas.length) {
+    const n = cambiosSinGuardar();
+    const motivo = MOTIVO_ERROR_PERMANENTE[ultimoErrorPermanente] || `No se pudo guardar (${ultimoErrorPermanente || 'error desconocido'})`;
+    reintentar(true);
+    setSyncStatus('red', `🔴 ${n} ${n === 1 ? 'cambio' : 'cambios'} sin guardar — ${motivo}. Siguen en pantalla pero NO están guardados.`);
+    return;
+  }
+  reintentar(false);
+  if (syncEstado.docsInvalidos.length) {
+    const d = syncEstado.docsInvalidos;
+    setSyncStatus('red', `🔴 ${d.length === 1 ? 'Documento' : 'Documentos'} con datos inválidos (${d.join(', ')}) — se omiten; avisa a quien administra el panel`);
+    return;
+  }
+  if (syncEstado.vacioSinServidor) { setSyncStatus('yellow', 'Sin conexión con el servidor — esperando datos (no se escribió nada)'); return; }
+  const sinRed = (syncEstado.fromCache && !syncEstado.graciaInicial) || navigator.onLine === false;
+  if (sinRed) { setSyncStatus('yellow', 'Sin conexión: los cambios se guardan en este navegador y se enviarán al reconectar'); return; }
+  if (syncEstado.fromCache) { setSyncStatus('yellow', 'Sincronizando...'); return; }
+  const enReintento = Object.keys(reintentosEscritura).length;
+  if (enReintento) { setSyncStatus('yellow', 'Guardando… el servidor no respondió; se reintenta automáticamente'); return; }
+  if (escriturasEnVuelo > 0 || syncEstado.hasPendingWrites || Object.keys(pendingWrites).length) { setSyncStatus('yellow', 'Guardando…'); return; }
+  const u = syncEstado.ultimaEdicion;
+  setSyncStatus('green', u ? `Sincronizado · última edición por ${getNameFromEmail(u.email)} ${formatFechaHoraChile(u.at)}` : 'Sincronizado');
+}
+window.addEventListener('online', actualizarIndicadorSync);
+window.addEventListener('offline', actualizarIndicadorSync);
 
 function ultimaEdicionRbdHTML(rbd) {
   const info = rbdLastModified[rbd];
@@ -7379,6 +7703,12 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 document.getElementById('signout-btn').addEventListener('click', async () => {
+  if (hayCambiosSinGuardar()) {
+    const n = cambiosSinGuardar();
+    const que = n > 0 ? `${n} ${n === 1 ? 'cambio' : 'cambios'} sin guardar` : 'cambios sin confirmar';
+    if (!confirm(`Hay ${que}. Si cierras sesión se perderán. ¿Cerrar sesión de todos modos?`)) return;
+  }
+  descartarCambiosSinGuardar(); // nunca se reenvían bajo otra sesión
   if (firestoreUnsub) firestoreUnsub();
   await signOut(auth);
   showLoginScreen();
@@ -7428,17 +7758,37 @@ function ensureRbdsFaltantesEnFirestore(presentIds) {
   });
 }
 
+// Ediciones del usuario que Firestore todavía no devuelve en un snapshot: lo escrito pero aún no enviado (debounce de
+// 400 ms o espera de un reintento) y lo que el servidor rechazó y se retiene para reintentar a mano. Se SUPERPONEN al
+// estado reconstruido antes de pintar, así lo que la persona tecleó nunca retrocede (ni por un snapshot de otro RBD, ni
+// por el eco de su propio guardado, ni por la reversión local que hace el SDK cuando un write es rechazado).
+function superponerEdicionesSinConfirmar(rbd, data) {
+  [escrituraRetenida[rbd], pendingWrites[rbd]].forEach(p => { if (p) deepMergeInto(data, p); });
+  return data;
+}
+let ultimoSnapshotAplicado = null;
+function reaplicarUltimoSnapshot() { if (ultimoSnapshotAplicado) aplicarSnapshot(ultimoSnapshotAplicado); }
+
 function aplicarSnapshot(snapshot) {
+  ultimoSnapshotAplicado = snapshot;
   const nuevoAgregado = {}, nuevoIngreso = {}, nuevoRem = {}, nuevoCompras = {}, nuevoBysProyeccion = {};
   const nuevoOtrasFuentes = {};
   const presentIds = new Set();
   const docsInvalidos = [];
   let latestAt = null, latestEmail = null;
 
-  snapshot.docs.forEach(d => {
+  // Los documentos del snapshot + los RBD con ediciones sin confirmar que aún no existen en él (un cambio en una
+  // entidad cuyo documento todavía no se crea no debe desaparecer de la pantalla).
+  const entradas = snapshot.docs.map(d => ({ id: d.id, data: () => d.data(), real: true }));
+  const idsDelSnapshot = new Set(entradas.map(e => e.id));
+  Object.keys(pendingWrites).concat(Object.keys(escrituraRetenida)).forEach(rbd => {
+    if (!idsDelSnapshot.has(rbd) && rbd !== META_DOC_ID) { idsDelSnapshot.add(rbd); entradas.push({ id: rbd, data: () => ({}), real: false }); }
+  });
+
+  entradas.forEach(d => {
     // El id se registra ANTES de leer el contenido: un documento dañado igual "existe", y nunca
     // debe tratarse como faltante (ensureRbdsFaltantes) ni recrearse encima.
-    presentIds.add(d.id);
+    if (d.real) presentIds.add(d.id);
     if (d.id === META_DOC_ID) return;
 
     const rbd = d.id;
@@ -7446,7 +7796,7 @@ function aplicarSnapshot(snapshot) {
     // a mano en la consola, un script, otro panel del mismo proyecto) no puede romper al resto.
     // Cada documento se lee dentro de su propio try/catch; si aun así falla, se omite y se avisa.
     try {
-      const data = objetoPlano(d.data());
+      const data = superponerEdicionesSinConfirmar(rbd, objetoPlano(d.data()));
       const nombre = textoSeguro(data.nombre) || rbd;
 
       // Compras: solo entradas que son objetos; textos como texto y montos como número.
@@ -7566,17 +7916,13 @@ function aplicarSnapshot(snapshot) {
   renderReportFilters();
   renderTable();
   renderOtrasFuentesTable();
+  if (otrasFuentesRbdAbierto) renderOtrasFuentesModalContenido(); // el modal de una fuente refleja cambios y borrados remotos (SEP: renderTable → renderModalContenido)
   renderDashboard();
   if (!document.getElementById('tab-reportes').classList.contains('hidden')) renderVisualizador();
 
-  if (docsInvalidos.length) {
-    setSyncStatus('red', `🔴 ${docsInvalidos.length === 1 ? 'Documento' : 'Documentos'} con datos inválidos (${docsInvalidos.join(', ')}) — se omiten; avisa a quien administra el panel`);
-  } else {
-    const syncMsg = latestEmail && latestAt
-      ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatFechaHoraChile(latestAt)}`
-      : 'Sincronizado';
-    setSyncStatus('green', syncMsg);
-  }
+  syncEstado.docsInvalidos = docsInvalidos;
+  syncEstado.ultimaEdicion = latestEmail && latestAt ? { email: latestEmail, at: latestAt } : null;
+  actualizarIndicadorSync();
 
   // Crear los RBD que faltan solo con un snapshot confirmado por el servidor: el caché local puede
   // estar desactualizado y no contener un RBD que sí existe (y ya tiene datos) en el servidor.
@@ -7608,33 +7954,66 @@ function snapshotDesdeCache(snapshot) {
   return !!(snapshot && snapshot.metadata && snapshot.metadata.fromCache);
 }
 
+let primerSnapshotAplicado = false; // ¿ya se pintó al menos un snapshot con documentos?
+let siembraEnCurso = false;
+let temporizadorGracia = null;
 function startFirestoreSync() {
   if (firestoreUnsub) firestoreUnsub();
+  syncEstado.fromCache = false; syncEstado.hasPendingWrites = false; syncEstado.vacioSinServidor = false;
+  syncEstado.errorEscucha = null; syncEstado.graciaInicial = true;
+  primerSnapshotAplicado = false; siembraEnCurso = false;
+  clearTimeout(temporizadorGracia);
+  temporizadorGracia = setTimeout(() => { syncEstado.graciaInicial = false; actualizarIndicadorSync(); }, 3000);
   setSyncStatus('yellow', 'Sincronizando...');
 
+  // includeMetadataChanges: además de los cambios de datos, llega un evento cuando solo cambian los METADATOS
+  // (hasPendingWrites al confirmarse una escritura, fromCache al pasar de caché a servidor). Eso permite que el
+  // indicador diga la verdad y que lo que depende de "snapshot confirmado por el servidor" (ensureRbdsFaltantes, la
+  // migración inicial) corra aunque el servidor no cambie ningún documento. Un evento solo de metadatos NO repinta nada.
   firestoreUnsub = onSnapshot(
     collection(db, CARGA_COLLECTION),
+    { includeMetadataChanges: true },
     (snapshot) => {
+      syncEstado.fromCache = snapshotDesdeCache(snapshot);
+      syncEstado.hasPendingWrites = !!(snapshot.metadata && snapshot.metadata.hasPendingWrites);
+      if (!syncEstado.fromCache) syncEstado.graciaInicial = false;
       if (snapshot.empty) {
         // OJO: un snapshot vacío que viene del CACHÉ (navegador sin caché, o sin conexión) NO
         // significa que la colección esté vacía en el servidor. Sembrar en ese caso escribiría los
         // 55 RBD con remuneraciones en $0 encima de los datos reales apenas vuelva la red. Solo se
         // siembra con un snapshot vacío confirmado por el servidor (fromCache = false).
         if (snapshotDesdeCache(snapshot)) {
-          setSyncStatus('yellow', 'Sin conexión con el servidor — esperando datos (no se escribió nada)');
+          syncEstado.vacioSinServidor = true;
+          actualizarIndicadorSync();
           return;
         }
+        syncEstado.vacioSinServidor = false;
+        if (siembraEnCurso) return; // los eventos de metadatos que siguen no deben sembrar dos veces
+        siembraEnCurso = true;
         seedFirestoreConDatosIniciales().catch(err => {
           console.error('Error en la migración inicial:', err);
+          siembraEnCurso = false;
           setSyncStatus('red', '🔴 Error en la carga inicial — revisa la consola');
         });
         return;
       }
+      syncEstado.vacioSinServidor = false;
+      if (primerSnapshotAplicado && snapshot.docChanges().length === 0) {
+        // Solo cambió un metadato: se actualiza el indicador SIN repintar. Si ahora el servidor confirmó el estado
+        // (fromCache pasó a false) se crean los RBD que falten, igual que con un snapshot normal.
+        actualizarIndicadorSync();
+        if (!snapshotDesdeCache(snapshot)) ensureRbdsFaltantesEnFirestore(new Set(snapshot.docs.map(d => d.id)));
+        return;
+      }
+      primerSnapshotAplicado = true;
       aplicarSnapshot(snapshot);
     },
     (error) => {
       console.error('Firestore error:', error);
-      setSyncStatus('red', '🔴 Sin conexión — los cambios se guardarán al reconectar');
+      syncEstado.errorEscucha = codigoDeError(error) === 'permission-denied'
+        ? '🔴 No tienes permiso para leer los datos (permission-denied) — avisa a quien administra el panel'
+        : '🔴 Se perdió la conexión con la base de datos' + (codigoDeError(error) ? ` (${codigoDeError(error)})` : '') + ' — recarga la página; lo ya escrito se guarda al reconectar';
+      actualizarIndicadorSync();
     }
   );
 }
@@ -7705,24 +8084,79 @@ function scheduleRbdSave(rbd, partial) {
   pendingTimers[rbd] = setTimeout(() => flushRbdSave(rbd), 400);
 }
 
+// Estado de lo que todavía NO está guardado en el servidor (ver "INDICADOR DE SINCRONIZACIÓN"):
+//   pendingWrites      lo tecleado y aún no enviado (debounce) o a la espera de un reintento automático (error transitorio)
+//   escrituraRetenida  lo que el servidor rechazó de forma PERMANENTE: se conserva en memoria (y en pantalla) hasta Reintentar
+//   reintentosEscritura  nº de reintentos automáticos consecutivos por RBD (espera 2, 4, 8, 16, 30, 30… s)
+const escrituraRetenida = {};
+const reintentosEscritura = {};
+let escriturasEnVuelo = 0;
+let ultimoErrorPermanente = '';
+const sinAuditoria = (payload) => { const o = { ...payload }; delete o.lastModifiedBy; delete o.lastModifiedAt; return o; };
+
 async function flushRbdSave(rbd) {
   clearTimeout(pendingTimers[rbd]);
   delete pendingTimers[rbd];
-  const payload = pendingWrites[rbd];
+  let payload = pendingWrites[rbd];
   delete pendingWrites[rbd];
-  if (!payload || !currentUser) return;
+  if (!currentUser) return;
+  // Lo que el servidor rechazó antes viaja junto con lo nuevo: el reintento manual y cualquier edición posterior lo reenvían.
+  if (escrituraRetenida[rbd]) { payload = deepMergeInto(escrituraRetenida[rbd], payload || {}); delete escrituraRetenida[rbd]; }
+  if (!payload) return;
   payload.lastModifiedBy = currentUser.email;
   payload.lastModifiedAt = serverTimestamp();
-  setSyncStatus('yellow', 'Sincronizando...');
+  escriturasEnVuelo++;
+  actualizarIndicadorSync();
   try {
     await setDoc(doc(db, CARGA_COLLECTION, rbd), payload, { merge: true });
+    delete reintentosEscritura[rbd];
   } catch (err) {
     console.error('Error guardando RBD', rbd, err);
-    setSyncStatus('red', '🔴 Sin conexión — este cambio se reintentará al reconectar');
-    pendingWrites[rbd] = deepMergeInto(payload, pendingWrites[rbd] || {});
-    pendingTimers[rbd] = setTimeout(() => flushRbdSave(rbd), 2000);
+    const cambio = sinAuditoria(payload);
+    if (esErrorTransitorio(err)) {
+      // Sin conexión estable, cuota o servidor ocupado: se reintenta solo, con espera creciente (tope 30 s).
+      pendingWrites[rbd] = deepMergeInto(cambio, pendingWrites[rbd] || {});
+      reintentosEscritura[rbd] = (reintentosEscritura[rbd] || 0) + 1;
+      clearTimeout(pendingTimers[rbd]);
+      pendingTimers[rbd] = setTimeout(() => flushRbdSave(rbd), retardoReintentoMs(reintentosEscritura[rbd]));
+    } else {
+      // Permiso, sesión, dato inválido o error desconocido: reintentar solo no serviría (sería un bucle). El cambio se
+      // conserva y el indicador queda en rojo hasta que la persona reintente o se resuelva la causa.
+      escrituraRetenida[rbd] = deepMergeInto(cambio, escrituraRetenida[rbd] || {});
+      ultimoErrorPermanente = codigoDeError(err);
+      delete reintentosEscritura[rbd];
+    }
+    // El SDK ya revirtió la escritura local y repintó con el valor anterior: se vuelve a superponer lo sin guardar.
+    reaplicarUltimoSnapshot();
+  } finally {
+    escriturasEnVuelo--;
+    actualizarIndicadorSync();
   }
 }
+
+// Al cerrar sesión (confirmado): lo que no se guardó se descarta de la memoria para que no se reenvíe con otra sesión.
+function descartarCambiosSinGuardar() {
+  Object.keys(pendingTimers).forEach(rbd => { clearTimeout(pendingTimers[rbd]); delete pendingTimers[rbd]; });
+  [pendingWrites, escrituraRetenida, reintentosEscritura].forEach(o => Object.keys(o).forEach(k => { delete o[k]; }));
+  ultimoErrorPermanente = '';
+  actualizarIndicadorSync();
+}
+
+// Botón "Reintentar" del indicador rojo: reenvía lo que el servidor rechazó (junto con lo que se haya escrito después).
+function reintentarGuardado() {
+  Object.keys(escrituraRetenida).forEach(rbd => { flushRbdSave(rbd); });
+}
+document.getElementById('sync-retry').addEventListener('click', reintentarGuardado);
+document.querySelectorAll('.modal-sync-retry').forEach(b => b.addEventListener('click', reintentarGuardado));
+
+// Aviso al cerrar o recargar la pestaña SOLO si hay cambios que no están a salvo (sin enviar, a la espera de un reintento
+// o rechazados). El guardado inmediato en pagehide/visibilitychange (más abajo) sigue funcionando igual.
+window.addEventListener('beforeunload', (e) => {
+  if (!hayCambiosSinGuardar()) return undefined;
+  e.preventDefault();
+  e.returnValue = 'Hay cambios sin guardar. Si cierras o recargas ahora se perderán.';
+  return e.returnValue;
+});
 
 // Guarda de inmediato (sin esperar el debounce) los cambios pendientes de un RBD — se usa al
 // salir de una celda (blur/focusout).

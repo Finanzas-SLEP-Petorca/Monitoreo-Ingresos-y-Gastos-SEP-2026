@@ -117,7 +117,7 @@ await correrSpec('07_documento_envenenado', async (t) => {
     t.bug('numero-enorme-rompe-aplicarSnapshot', `un monto finito enorme (1e20) en un documento lanza "RangeError: Invalid array length" en ejecucionChartSVG (yTicks.push en un bucle de yMax/25 pasos), fuera del try/catch por documento: aplicarSnapshot se aborta a medias (no se pintan fuentes, dashboard ni visualizador) y el indicador queda ${verde ? 'VERDE "Sincronizado" (sin "última edición")' : 'sin avisar'}${pierdeRojo ? '; combinado con un documento ilegible (1123) tampoco queda el rojo que lo nombra' : ''}`, roto);
   }
 
-  // ============================================================ P4) 15 dígitos (lo que el panel ACEPTA al teclear): congela el navegador de todos
+  // ============================================================ P4) montos enormes: el panel acepta hasta MONTO_ABS_MAX (1e13) y rechaza 15 dígitos; el gráfico no debe congelar el navegador de todos
   {
     const h = await boot({ fixture: 'default', allowErrors: [/Invalid array length/, /Invalid string length/] });
     let bloqueoMax = 0, bloqueos = [];
@@ -126,7 +126,7 @@ await correrSpec('07_documento_envenenado', async (t) => {
       const sel = celdaRem('1131', 'ENERO');
       await h.page.click(sel, { clickCount: 3 });                  // selecciona el valor actual
       await h.limpiarTareasLargas();
-      await h.page.keyboard.type('999999999999999');               // 15 dígitos: < 1e15 (MONTO_ABS_MAX), el panel lo acepta como válido
+      await h.page.keyboard.type('9999999999999');                 // 13 dígitos: < 1e13 (MONTO_ABS_MAX), el panel lo acepta como válido
       await h.page.evaluate(() => document.activeElement.blur());
       const t0 = Date.now();
       await h.page.evaluate(() => 1);                              // vuelve cuando el hilo principal responde de nuevo
@@ -136,8 +136,15 @@ await correrSpec('07_documento_envenenado', async (t) => {
       await h.page.evaluate(() => 1);
       bloqueos = await h.tareasLargas();
       bloqueoMax = Math.max(0, ...bloqueos);
-      t.info(`P4) tecleando 999999999999999 en remuneraciones: el hilo principal se bloqueó ${JSON.stringify(bloqueos)} ms (la página tardó ${esperaMs} ms en volver a responder)`);
-      t.eq((await h.servidor('1131')).data.rem.meses.ENERO, 999999999999999, 'P4) el panel guardó 999999999999999 (lo acepta: es < 1e15)');
+      t.info(`P4) tecleando 9999999999999 en remuneraciones: el hilo principal se bloqueó ${JSON.stringify(bloqueos)} ms (la página tardó ${esperaMs} ms en volver a responder)`);
+      t.eq((await h.servidor('1131')).data.rem.meses.ENERO, 9999999999999, 'P4) el panel guardó 9999999999999 (lo acepta: es < 1e13)');
+      // 15 dígitos (antes lo aceptaba, y congelaba el panel de todos): ahora se rechaza al teclear y no se guarda
+      await h.page.click(sel, { clickCount: 3 });
+      await h.page.keyboard.type('999999999999999');
+      await h.page.evaluate(() => document.activeElement.blur());
+      await h.page.waitForTimeout(1500);
+      await h.esperarEscriturasListas(60000).catch(() => {});
+      t.eq((await h.servidor('1131')).data.rem.meses.ENERO, 9999999999999, 'P4) 999999999999999 se rechaza (MONTO_ABS_MAX = 1e13): el servidor conserva 9999999999999');
     });
     await h.close();
     t.bug('monto-15-digitos-congela-el-panel', `un monto de 15 dígitos (aceptado por MONTO_ABS_MAX=1e15) bloquea el hilo principal ${Math.round(bloqueoMax / 1000)} s en CADA repintado de CADA navegador (bucle yTicks.push(v+=25) de ejecucionChartSVG con yMax enorme); bloqueos: ${JSON.stringify(bloqueos)} ms`, bloqueoMax > 5000);

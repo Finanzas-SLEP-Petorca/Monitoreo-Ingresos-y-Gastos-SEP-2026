@@ -60,7 +60,7 @@ await correrSpec('claves_invalidas', async (t) => {
     const casos = [
       ['__x__', /__/], ['____', /__/], ['__concepto__', /__/],
       ['', /Escribe un concepto/], ['   ', /Escribe un concepto/],
-      ['a'.repeat(1501), /demasiado largo/], ['ñ'.repeat(751), /demasiado largo/],
+      ['a'.repeat(1401), /demasiado largo/], ['ñ'.repeat(701), /demasiado largo/],
     ];
     for (const [texto, esperado] of casos) {
       const msg = await agregar(texto);
@@ -69,9 +69,9 @@ await correrSpec('claves_invalidas', async (t) => {
       t.eq((await filas()).length, base.length, `A) ${etiqueta}: no se agrega ninguna fila`);
     }
     t.eq((await h.writes()).filter(w => w.path === 'sep_carga_rbd/1121').length, 0, 'A) ningún concepto inválido llegó a escribirse');
-    t.eq(await page.inputValue(`${MODAL} #juncon-1121-faep`), 'ñ'.repeat(751), 'A) el campo conserva lo escrito para que la persona lo corrija');
-    // Válidos al borde: "/", un solo "__" de un lado y "__" a secas (no calza con __.*__) se aceptan; 1500 bytes exactos se aceptan
-    for (const valido of ['Agua/Luz', '__solo_al_inicio', 'solo_al_final__', '__', 'ñ'.repeat(750)]) {
+    t.eq(await page.inputValue(`${MODAL} #juncon-1121-faep`), 'ñ'.repeat(701), 'A) el campo conserva lo escrito para que la persona lo corrija');
+    // Válidos al borde: "/", un solo "__" de un lado y "__" a secas (no calza con __.*__) se aceptan; 1400 bytes exactos se aceptan (el servidor limita la RUTA completa a 1500; ver MAX_BYTES_CLAVE_MAPA)
+    for (const valido of ['Agua/Luz', '__solo_al_inicio', 'solo_al_final__', '__', 'ñ'.repeat(700)]) {
       const msg = await agregar(valido);
       t.eq(msg, '', `A) "${valido.slice(0, 24)}"${valido.length > 24 ? '…' : ''} (${new TextEncoder().encode(valido).length} bytes) es un concepto válido: sin avisos`);
       t.ok((await filas()).includes(valido), `A) "${valido.slice(0, 24)}" se agregó`);
@@ -95,7 +95,7 @@ await correrSpec('claves_invalidas', async (t) => {
   await escenario(t, 'B)', async () => {
     await clickTab(page, 'of-faep');
     await h.clearWrites();
-    const largo = 'x'.repeat(1501);
+    const largo = 'x'.repeat(1401);
     const buf = await xlsx(page, {
       BYS_ITEMS: [
         ['RBD', 'Nombre', 'Concepto', ...MESES, 'Total Año'],

@@ -223,6 +223,21 @@ Para una vista nueva en el golden master, agrega `R.vista('nombre', '#selector')
 `tests/golden/capture.mjs` y regenera el baseline (revisando el diff).
 Si un error de consola es esperado: `h.expectErrors(/texto/)`. Los `alert/confirm/prompt` se aceptan solos y quedan en `h.dialogs`.
 
+## Verificación contra el SDK real (`tests/e2e-real/`, opcional)
+
+El mock de arriba es rápido y determinista, pero lo escribimos nosotros: no demuestra cómo se comporta Firestore de verdad.
+`tests/e2e-real/` corre el panel contra el **SDK real de Firestore 10.12.0 y el emulador oficial** (necesita Java y red para el
+`setup.sh`; las dependencias, unos 280 MB, se instalan fuera del repositorio en `E2E_HOME`, por defecto `/home/user/.e2e-real`).
+
+```bash
+bash tests/e2e-real/setup.sh && node tests/e2e-real/run.mjs        # los 9 specs contra el árbol, ≈ 6 min
+node tests/e2e-real/run.mjs --matriz                                # además contra @069f9dd y @baseline, ≈ 15 min
+```
+
+Conviene correrlo antes de mergear cambios que toquen `onSnapshot`, el guardado (`flushRbdSave`), el indicador de sincronización o la
+siembra. Detalle y lista de lo que el mock modela mal (orden de snapshots, límite de 1500 bytes de la ruta completa, errores
+transitorios que el SDK nunca entrega a `setDoc`, tiempos de detección de red) en `tests/e2e-real/README.md`.
+
 ## Limitaciones
 
 - No prueba contra Firebase real ni el envío real del correo; las reglas de seguridad (`firestore.rules`) no se ejecutan.

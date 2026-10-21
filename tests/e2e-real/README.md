@@ -145,6 +145,8 @@ Verificadas con este arnés (o con el código fuente del SDK 10.12.0 citado):
 
 ## Hallazgos en la PR #57 (con evidencia reproducible y parche propuesto)
 
+> **Estado actual:** los cuatro parches (B1 a B4) ya se aplicaron a `index.html` dentro de la misma PR #57, además de bajar `MONTO_ABS_MAX` de 1e15 a 1e13; el spec 07 (P4) y `claves_invalidas` se ajustaron a esos límites (clave de mapa ≤ 1400 bytes, monto < 1e13). Los `.patch` de `parches/` quedan solo como referencia de lo que se encontró y ya no aplican limpios. Lo que sigue describe el estado ANTES de aplicarlos.
+
 Los parches están en `tests/e2e-real/parches/*.patch` (`git apply --check` los acepta; **no se aplicaron**: se validaron sobre copias de `index.html` con `APP_HTML=<copia>`).
 
 ### B1 — Lo ya enviado con `setDoc` y aún no reflejado por el SDK no se superpone al pintar (retroceso transitorio)

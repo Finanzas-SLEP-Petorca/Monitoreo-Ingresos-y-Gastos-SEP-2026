@@ -194,6 +194,18 @@ export async function boot(o = {}) {
     view: () => page.evaluate(() => window.__mockfb.view),
     events: () => page.evaluate(() => JSON.parse(JSON.stringify(window.__mockfb.events))),
     clearWrites: () => page.evaluate(() => window.__mockfb.clearWrites()),
+    // "Otra persona guardó algo en ese RBD": aplica `cuerpo` (código JS con `d` = el documento confirmado en el servidor y
+    // `arg`) y lo siembra como cambio remoto. Todo ocurre dentro de UN solo turno de la página, así que nunca pisa un write
+    // propio que se confirme "en medio". Marca la auditoría como otro usuario. Devuelve lo que devuelva el código.
+    remoto: (rbd, cuerpo, arg, coleccion = 'sep_carga_rbd') => page.evaluate(([rbd, cuerpo, arg, coleccion]) => {
+      const m = window.__mockfb;
+      const d = JSON.parse(JSON.stringify(m.store[coleccion + '/' + rbd] || { rbd }));
+      const r = (new Function('d', 'arg', cuerpo))(d, arg);
+      d.lastModifiedBy = 'juan.bustamante@sleppetorca.gob.cl';
+      d.lastModifiedAt = { __ts: (window.__FROZEN_NOW || 0) + 1000 + Math.round(performance.now()) };
+      m.seed({ [rbd]: d }, { collection: coleccion });
+      return r === undefined ? null : r;
+    }, [rbd, cuerpo, arg, coleccion]),
     prints: () => page.evaluate(() => window.__prints || []),
     opens: () => page.evaluate(() => window.__opens || []),
     waitIdle: (opts) => waitIdle(page, opts),

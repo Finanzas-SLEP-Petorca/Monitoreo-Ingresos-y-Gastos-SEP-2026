@@ -35,12 +35,13 @@ await correrSpec('semilla_cache', async (t) => {
     t.eq(await h.mock('queueLength'), 0, 'snapshot vacío fromCache:true: nada en la cola offline');
     const estado = await h.page.evaluate(() => ({ txt: document.getElementById('sync-text').textContent, cls: document.getElementById('sync-indicator').className }));
     t.ok(/Sin conexión/.test(estado.txt) && /yellow/.test(estado.cls), 'el estado avisa "Sin conexión" en amarillo (no "Sincronizado")', estado);
-    // Al volver la red con el servidor realmente vacío, el SDK no entrega un snapshot nuevo (cambia solo el metadato
-    // fromCache): no se siembra hasta la próxima carga. Es lo deseado: nunca sembrar sin confirmación del servidor.
+    // Al volver la red con el servidor realmente vacío el SDK solo cambia el metadato fromCache (ningún documento cambia). Desde F-03
+    // el listener usa includeMetadataChanges, así que ese evento SÍ llega: es la confirmación del servidor que faltaba (antes, con
+    // "solo un snapshot de caché y sin evento posterior del servidor", la siembra y ensureRbdsFaltantes no corrían hasta la próxima carga).
     await h.mock('setOffline', false);
     await h.waitIdle();
     await h.page.waitForTimeout(300);
-    t.eq(sembrados(await h.writes()).length, 0, 'al reconectar no se siembra por el solo cambio de metadatos (el siguiente snapshot de servidor decide)');
+    t.eq(sembrados(await h.writes()).length, 55, 'al reconectar, el evento fromCache→false confirma el vacío del servidor: se siembra una sola vez (55 RBD)');
     t.noErrores(h);
     await h.close();
   }

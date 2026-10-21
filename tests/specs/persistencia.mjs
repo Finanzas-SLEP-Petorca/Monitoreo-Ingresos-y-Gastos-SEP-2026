@@ -219,7 +219,8 @@ await correrSpec('persistencia', async (t) => {
   t.eq(await page.inputValue('input.celda-input[data-rbd="1123"][data-modo="rem"][data-mes="ENERO"]'), '5555555', 'un cambio de otro usuario (snapshot) se refleja en la UI sin recargar');
   await page.keyboard.press('Escape'); await h.waitIdle();
 
-  // ---------------------------------------------------------------- Error de escritura: se rechaza, se informa y se reintenta
+  // ---------------------------------------------------------------- Error de escritura: se rechaza, se informa (rojo) y se reintenta a mano
+  // (F-03: un error PERMANENTE como permission-denied ya no se reintenta en bucle; el detalle de los estados está en sync_estado)
   await h.clearWrites();
   h.expectErrors(/Error guardando RBD/);
   await abrirModalSep(h, '1128');
@@ -229,11 +230,14 @@ await correrSpec('persistencia', async (t) => {
   await page.waitForFunction(() => window.__mockfb.writes.some(x => x.status === 'rejected'), null, { timeout: 5000 });
   w = writesDe(await h.writes(), '1128');
   t.ok(w.length >= 1 && w[0].status === 'rejected' && w[0].error === 'permission-denied', 'write rechazado (permission-denied) queda registrado como rechazado', w[0]);
-  t.ok(/Sin conexión/.test(await page.textContent('#sync-text')), 'el indicador de sincronización avisa del error', await page.textContent('#sync-text'));
-  await page.waitForFunction(() => window.__mockfb.writes.some(x => x.status === 'acked'), null, { timeout: 15000 }); // el panel reintenta a los 2 s
+  await page.waitForFunction(() => document.getElementById('sync-indicator').classList.contains('red'), null, { timeout: 5000 });
+  t.ok(/No tienes permiso/.test(await page.textContent('#sync-text')) && /1 cambio sin guardar/.test(await page.textContent('#sync-text')), 'el indicador de sincronización queda en rojo y avisa del error', await page.textContent('#sync-text'));
+  t.eq(await page.inputValue('input.celda-input[data-rbd="1128"][data-modo="rem"][data-mes="DICIEMBRE"]'), '4242', 'lo tecleado sigue en pantalla aunque el servidor lo rechazó');
+  await page.click('#rbdModal .modal-sync-retry'); // el aviso también está dentro del modal abierto
+  await page.waitForFunction(() => window.__mockfb.writes.some(x => x.status === 'acked'), null, { timeout: 15000 });
   await h.waitIdle();
   w = writesDe(await h.writes(), '1128');
-  t.ok(w.length >= 2 && ultimo(w).status === 'acked' && ultimo(w).payload.rem.meses.DICIEMBRE === 4242, 'el panel reintenta el guardado y el servidor lo acepta', w.map(x => x.status));
+  t.ok(w.length >= 2 && ultimo(w).status === 'acked' && ultimo(w).payload.rem.meses.DICIEMBRE === 4242, 'el reintento manual reenvía el guardado y el servidor lo acepta', w.map(x => x.status));
   st = await h.store();
   t.eq(st[RUTA('1128')].rem.meses.DICIEMBRE, 4242, 'tras el reintento el servidor tiene el valor');
   await h.clearWrites();

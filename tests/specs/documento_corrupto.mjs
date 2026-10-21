@@ -99,7 +99,9 @@ await correrSpec('documento_corrupto', async (t) => {
 
   // ---- se corrige el documento: vuelve el estado verde y el RBD aparece completo
   await h.page.evaluate(() => { window.__rompe1123 = false; });
-  await h.mock('emitSnapshot'); // el documento del servidor ya era correcto: solo hace falta volver a entregarlo sin que "explote"
+  // El documento del servidor ya era correcto: solo hace falta que "explote" menos y que llegue un cambio de ese documento (el
+  // listener usa includeMetadataChanges: una re-entrega sin cambios de documentos solo actualiza el indicador y no repinta).
+  await h.remoto('1123', '');
   await h.waitIdle();
   await h.page.waitForFunction(() => document.getElementById('sync-indicator').classList.contains('green'), null, { timeout: 10000 });
   e = await estado(h.page);

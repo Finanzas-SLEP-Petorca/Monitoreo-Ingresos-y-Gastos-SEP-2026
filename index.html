@@ -132,6 +132,15 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .corte-legend .swatch { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; vertical-align:-1px; }
   .corte-legend .swatch.real { background:#0ca35c; }
   .corte-legend .swatch.proy { background:#e08a00; }
+  /* Notas largas de la pestaña SEP (cómo se calculan los %): ocultas por defecto para no restarle
+     altura útil al panel; se abren con un clic. Al imprimir no salen (ver @media print). */
+  .sep-notas { margin:0 0 8px; font-size:12px; color:var(--text-secondary); }
+  .sep-notas > summary { cursor:pointer; display:inline-block; padding:3px 10px; border-radius:6px; font-weight:600; font-size:12px; list-style:none;
+    background:var(--tone-blue-bg); color:var(--series-1); border:1px solid var(--tone-blue-border); }
+  .sep-notas > summary::-webkit-details-marker { display:none; }
+  .sep-notas > summary:hover { filter:brightness(0.97); }
+  .sep-notas[open] > summary { margin-bottom:6px; }
+  .sep-notas .corte-legend { display:block; margin:0 0 6px; }
 
   table.data-table { width:100%; border-collapse:collapse; font-size:12.5px; }
   table.data-table thead { position:sticky; top:0; z-index:2; }
@@ -266,7 +275,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .tab-content > section { flex:1 1 0%; display:flex; flex-direction:column; min-height:0; }
     .tab-content > section > h2 { flex-shrink:0; }
     .tab-content > section > .panel { flex:1 1 0%; display:flex; flex-direction:column; min-height:0; }
-    .panel > .table-controls, .panel > .corte-control, .panel > .legend-row,
+    .panel > .table-controls, .panel > .corte-control, .panel > .legend-row, .panel > .sep-notas,
     .panel > .report-controls, .panel > .kpi-row, .panel > .ejec-chart-card,
     .panel > .corte-legend { flex-shrink:0; }
     .panel > .table-scroll { flex:1 1 0%; min-height:160px; max-height:none; }
@@ -281,7 +290,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media print {
     @page { size: landscape; margin: 10mm 8mm; }
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
-    .table-controls, .corte-control, .legend-row, footer, .expand-cell, .compra-form-grid, .bysproy-add-row, .col-acciones { display:none !important; }
+    .table-controls, .corte-control, .legend-row, .sep-notas, footer, .expand-cell, .compra-form-grid, .bysproy-add-row, .col-acciones { display:none !important; }
     body, .wrap, .page-plane { background:#fff !important; }
     .wrap { max-width:none !important; padding:10px !important; }
     .table-scroll { max-height:none !important; overflow:visible !important; border:none !important; }
@@ -829,14 +838,17 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="corte-control">
         <label for="corteMesSelect">Ver resumen (KPI y % Ejecución) acumulado hasta el mes:</label>
         <select id="corteMesSelect"></select>
-        <span class="corte-legend">Las casillas de resumen de arriba y el gráfico de % Ejecución muestran los montos acumulados solo hasta este mes. No afecta si un monto se ve <span class="swatch real"></span>Real o <span class="swatch proy"></span>Proyectado en el detalle de cada RBD — eso ahora se marca aparte, en Ingreso/Remuneraciones/Compras/Proyección B&S.</span>
       </div>
-      <div class="legend-row" style="margin-top:-4px; margin-bottom:10px;">
+      <details class="sep-notas">
+        <summary>ℹ️ Cómo se calculan estos % y qué muestra el resumen (notas)</summary>
+        <span class="corte-legend">Las casillas de resumen de arriba y el gráfico de % Ejecución muestran los montos acumulados solo hasta este mes. No afecta si un monto se ve <span class="swatch real"></span>Real o <span class="swatch proy"></span>Proyectado en el detalle de cada RBD — eso ahora se marca aparte, en Ingreso/Remuneraciones/Compras/Proyección B&S.</span>
+        <div class="legend-row" style="margin-top:6px; margin-bottom:4px;">
         <span><strong>% Ejec. Remuneraciones</strong>: gasto en remuneraciones / meta de remuneraciones de ese RBD (70% del Ingreso SEP + 100% de Carrera Docente, ya que ese ingreso solo puede usarse ahí). 100% = gastó justo la meta.</span>
         <span><strong>% Ejec. B&S</strong>: gasto Subt.22+29 / meta 30% del Ingreso SEP de ese RBD. 100% = gastó justo la meta.</span>
         <span style="padding:1px 6px; border-radius:4px; background:#eef3f9;"><strong>% .../Ingreso</strong> (columnas con fondo celeste): NO es contra la meta 70/30, es gasto / Ingreso Total (SEP + Carrera Docente) — la fracción real del ingreso ya gastada, solo informativo.</span>
         <span style="padding:1px 6px; border-radius:4px; background:#dce7f5; font-weight:600;">Saldo Final y % Ejec. Total (ambos "Real+Proy"): ya incluyen tanto lo ya ejecutado como lo proyectado para lo que falta del año — así se ve cómo quedaría ese RBD si las proyecciones cargadas se cumplen tal cual. El % Ejec. Total es el número que define el Estado del RBD — ≥100% Déficit, ≥90% Riesgo, el resto Superávit.</span>
-      </div>
+        </div>
+      </details>
       <div class="table-scroll">
         <table class="data-table">
           <thead>

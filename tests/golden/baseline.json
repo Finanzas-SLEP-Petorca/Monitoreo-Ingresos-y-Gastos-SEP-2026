@@ -2,8 +2,8 @@
  "meta": {
   "esquema": 1,
   "baseline_ref": "0f16ace",
-  "html_bajo_prueba": "línea base 0f16ace (0f16aceda2ed)",
-  "html_sha1": "1b0767b0ba5603b389fa453a084afc8638d6acbc",
+  "html_bajo_prueba": "árbol de trabajo (index.html)",
+  "html_sha1": "0e7913d9e4103797aecdf9f819396b7ded4e9646",
   "fixture_sha1": "c5f4627fb5c44c5ba028c42539c639f2745c1358",
   "fixture": {
    "generado_por": "tests/fixtures/generate.mjs",
@@ -1177,7 +1177,7 @@
     "input [rbd=5401006,fuente=junji,modo=of_bys_item,concepto=Seguros & garantías,mes=NOVIEMBRE] = 393857",
     "input [rbd=5401006,fuente=junji,modo=of_bys_item,concepto=Seguros & garantías,mes=DICIEMBRE] = 393857"
    ],
-   "htmlHash": "091bafd5fb3ef0"
+   "htmlHash": "08b9151d9b4aa7"
   },
   "sep.default": {
    "text": [
@@ -1417,7 +1417,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "0e5ad82f4912f2"
+   "htmlHash": "03b87760369a96"
   },
   "sep.filtro-deficit": {
    "text": [
@@ -1501,7 +1501,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "135b339c8dcfce"
+   "htmlHash": "15ef86eac46386"
   },
   "sep.filtro-riesgo": {
    "text": [
@@ -1579,7 +1579,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "12c63225867f99"
+   "htmlHash": "1ad40e0cf7b164"
   },
   "sep.busqueda-liceo": {
    "text": [
@@ -1673,7 +1673,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "06d03d8222d2b2"
+   "htmlHash": "0b3b76b4bfeaf8"
   },
   "sep.corte-julio": {
    "text": [
@@ -1913,7 +1913,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "028ecaf773014c"
+   "htmlHash": "181a0b1e51c11d"
   },
   "sep.orden-rbd": {
    "text": [
@@ -2150,7 +2150,7 @@
     "✏️",
     "⧉",
     "🗑",
-    "410606 · BIBLIOTECAS, LIBROS Y REVISTAS Factura A&B-<7> 2026-03-15 2026-03-30 Libros \"Lenguaje\" & Matemática; O'Higgins, 2° ciclo 76.000.111-2 Editorial \"El Tío\" & Hijos $1.234.567 $1.469.135 Folio <123> & 'A'; \"B\"",
+    "410606 · BIBLIOTECAS, LIBROS Y REVISTAS Factura A&B-<7> 2026-03-15 2026-03-30 Libros \"Lenguaje\" & <b>Matemática</b>; O'Higgins, 2° ciclo 76.000.111-2 Editorial \"El Tío\" & Hijos <Ltda> $1.234.567 $1.469.135 Folio <123> & 'A'; \"B\"",
     "✏️",
     "⧉",
     "🗑",
@@ -2234,7 +2234,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "0c2bce8b727ee4"
+   "htmlHash": "1602195d220deb"
   },
   "modal.sep.1120": {
    "text": [
@@ -3177,7 +3177,7 @@
     "Gasto Total (Total) | $218.842.285",
     "Saldo (Total) | $345.459.430"
    ],
-   "htmlHash": "0828cd4c3302b9"
+   "htmlHash": "183c5e5b3597e3"
   },
   "of.general.real": {
    "text": [
@@ -3295,7 +3295,7 @@
     "Gasto Total (Total) | $218.842.285",
     "Saldo (Total) | $345.459.430"
    ],
-   "htmlHash": "1e9c5db5bb75ae"
+   "htmlHash": "0385de8c7bbb7a"
   },
   "of.general.proy": {
    "text": [
@@ -3413,7 +3413,7 @@
     "Gasto Total (Total) | $218.842.285",
     "Saldo (Total) | $345.459.430"
    ],
-   "htmlHash": "1bd9a7a385c36b"
+   "htmlHash": "1c990cc946f399"
   },
   "of.pie.total": {
    "text": [
@@ -3531,7 +3531,7 @@
     "Gasto Total (Total) | $223.181.425",
     "Saldo (Total) | $359.048.290"
    ],
-   "htmlHash": "09caf29ad318c7"
+   "htmlHash": "1c22865812abd7"
   },
   "of.mantenimiento.total": {
    "text": [
@@ -3649,7 +3649,7 @@
     "Gasto Total (Total) | $22.056.000",
     "Saldo (Total) | $614.120.575"
    ],
-   "htmlHash": "1f6a6c7132033b"
+   "htmlHash": "082948be3d109d"
   },
   "of.prorretencion.total": {
    "text": [
@@ -3767,7 +3767,7 @@
     "Gasto Total (Total) | $701.676.720",
     "Saldo (Total) | $1.068.832.415"
    ],
-   "htmlHash": "120c23da83bde5"
+   "htmlHash": "0279edce842634"
   },
   "of.junji.total": {
    "text": [
@@ -4792,7 +4792,7 @@
     "input [rbd=1121,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=NOVIEMBRE] = 317000",
     "input [rbd=1121,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=DICIEMBRE] = 317000"
    ],
-   "htmlHash": "09dd5b3bd5ad55"
+   "htmlHash": "17c3ec62b105ba"
   },
   "modal.of.general.AC": {
    "text": [
@@ -4945,7 +4945,7 @@
     "input [rbd=AC,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "1c0a4df4bd329c"
+   "htmlHash": "16a1438ecc2f75"
   },
   "modal.of.pie.1121": {
    "text": [
@@ -5089,7 +5089,7 @@
     "input [rbd=1121,fuente=pie,modo=of_bys_proy_item,concepto=Material didáctico,mes=NOVIEMBRE] = 505000",
     "input [rbd=1121,fuente=pie,modo=of_bys_proy_item,concepto=Material didáctico,mes=DICIEMBRE] = 505000"
    ],
-   "htmlHash": "148871b3461dcc"
+   "htmlHash": "0ea3febc098246"
   },
   "modal.of.mantenimiento.1121": {
    "text": [
@@ -5224,7 +5224,7 @@
     "input [rbd=1121,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 522000",
     "input [rbd=1121,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=DICIEMBRE] = 522000"
    ],
-   "htmlHash": "1d6b149f883ff7"
+   "htmlHash": "0adb6cd440c6dc"
   },
   "modal.of.mantenimiento.AC": {
    "text": [
@@ -5365,7 +5365,7 @@
     "input [rbd=AC,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "103e16ad5bc525"
+   "htmlHash": "0f62c446550925"
   },
   "modal.of.prorretencion.AC": {
    "text": [
@@ -5518,7 +5518,7 @@
     "input [rbd=AC,fuente=prorretencion,modo=of_bys_proy_item,concepto=Mantención menor,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=prorretencion,modo=of_bys_proy_item,concepto=Mantención menor,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "182ceef0e58a71"
+   "htmlHash": "0cba085ef3b53e"
   },
   "modal.of.junji.5402002": {
    "text": [
@@ -5738,7 +5738,7 @@
     "input [rbd=5402002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 508143",
     "input [rbd=5402002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 508143"
    ],
-   "htmlHash": "057ee497efa38c"
+   "htmlHash": "0e4d93600dfb97"
   },
   "modal.of.junji.5404002": {
    "text": [
@@ -5958,7 +5958,7 @@
     "input [rbd=5404002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 584286",
     "input [rbd=5404002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 584286"
    ],
-   "htmlHash": "013726ceaa81e8"
+   "htmlHash": "1cad8d2b77de8b"
   },
   "modal.of.faep.1121": {
    "text": [
@@ -6102,7 +6102,7 @@
     "input [rbd=1121,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 1232714",
     "input [rbd=1121,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=DICIEMBRE] = 1232714"
    ],
-   "htmlHash": "1c33cd843420c7"
+   "htmlHash": "04fb6d5b09b100"
   },
   "modal.of.faep.AC": {
    "text": [
@@ -6246,7 +6246,7 @@
     "input [rbd=AC,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 4928000",
     "input [rbd=AC,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=DICIEMBRE] = 4928000"
    ],
-   "htmlHash": "1d74335d7cf387"
+   "htmlHash": "0fa722ecd605ee"
   },
   "modal.of.figa.AC": {
    "text": [
@@ -6390,7 +6390,7 @@
     "input [rbd=AC,fuente=figa,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 4700000",
     "input [rbd=AC,fuente=figa,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 4700000"
    ],
-   "htmlHash": "08dc78b93a3e00"
+   "htmlHash": "0d682465de4a90"
   },
   "modal.of.aporte_educ.1121": {
    "text": [
@@ -6534,7 +6534,7 @@
     "input [rbd=1121,fuente=aporte_educ,modo=of_bys_item,concepto=Transporte escolar,mes=NOVIEMBRE] = 1019286",
     "input [rbd=1121,fuente=aporte_educ,modo=of_bys_item,concepto=Transporte escolar,mes=DICIEMBRE] = 1019286"
    ],
-   "htmlHash": "0e04a1b7514e63"
+   "htmlHash": "0b928434ab5174"
   },
   "modal.of.aporte_junji.5402002": {
    "text": [
@@ -6665,7 +6665,7 @@
     "input [rbd=5402002,fuente=aporte_junji,modo=of_bys_item,concepto=Alimentación,mes=NOVIEMBRE] = 124143",
     "input [rbd=5402002,fuente=aporte_junji,modo=of_bys_item,concepto=Alimentación,mes=DICIEMBRE] = 124143"
    ],
-   "htmlHash": "14bdb60aa8a3f4"
+   "htmlHash": "13530cfbf4cf49"
   },
   "ejec.sep.agregado": {
    "text": [
@@ -9664,9 +9664,12 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 95,
-   "sha1": "7642a18d21808e93afd7784f16069ed7ebd555f8",
+   "sha1": "23ab22fb58b5234e96e24e9b8bbb2a91337d60ef",
    "nFilasGz": 95,
-   "filasGz": "eNqlm8uO28gVhvfzFIQWM5uwU+dWF5RhwNdMkrkY40H2ajXRo4FaNNjqwSBvk6UXAwTIG8QvFhSLYhVbJZFCVqINi/111alz/vOf8k+v3/qPT7e/NfvNtt37N+3d9r6t3jw1+8Pa/7z91FZ3TfW23Tw9NPtD63/o2uxP75vNL+uTP39Y37f+bfO46bafwkurv6wfD63/6elQfeja35rmru38D+3Dbddkf/F9uz+0wz+Nz+m941P1Y7e93+7Xu68AUPmP7z54BtAK/Pv15vDUrT2wsx4V6lpRDTw+ovX9u8Ov86l7am7XVXhFDd6YGy18Qwj13/2b9qHpNtv1rvqufaxe7e+ax+rjp1feKVBKeVAGwSn/9sc3dfx6AIEBRDmljyBV83tYwqrZNZtD9+U/++1m7TWLGoigVjQ+IpTgoCZv9A0g3bDo2vjvtrdd0335Y129afaHLkAe7tY3HhxJoENSqGWkg5pyOjAK/Ot21zyncs4eUbBGSasnZSoJVIh4Q0Q1+Lfbx0O3vX3a3rXduvrHerdrqrtmV73atPvN+v5p7R1Tv3iACCbDk8ni6Xzxcj4BY0YolfGpMt/Dw7WAHJZPeSERlfE9PDwDFP9De1iHn7fpvny+2x5aL6J0gnMp3s7AgQe8IZYbbWwt/m9P63314cvnrvln9bE9tL4WYiNq/Bxh4Nxi+Vdfv65fmJf5vh0fSflViJr2sVqtvmv290/rX5vVqvq6enH78vv1oXn48q/DdrN+8efbl7768Ztvt/f32/3jnyr877+rzXaza1dhLZVSNwBQo1+9C791Fw7IavVuV/385Y+2f9+321/bx+pFCMiXKw9ILNp4YO2AxK/et7ttW70ApJfV19U3r77x1Wr1erVanfxWJytsjFC+rOOj+Ff7p926+rTuDmFHq9262rQPn7r++7v+1152umtUfQDUSFblEbDfTE6QVXjKp42FAUpCmomPAbEcAbiQCQxgCIThc2TCkyU7Huo+4wSeYxiaxGPPRiQvTDIWdJ9kQIPijIcDDx55jDJHnrum+qXdt92627aP0yNticyYcsDNpByswTt9IyI3zFyT/9h0v2034a1/3R+a+269ax6rD82h7TZrz+j6wwxKYMTEeH4yTConGwfj8ZFUP6QmKJPhzHkGYyEuGzhyGU+/jZTn5tPIcszjKqksB2KJhUJk2Run4AaJa/Hvm65rDnEv3+2qn9rbXeNrxpDtxs+Bh6Y8SsZa4R3SMYg4lQep4QzFXIYDFNOXA3ZiKSOACYGeqaXGgUlhbsYwBy5j0YLFMa4vVI5JmwysL6M2L/JJkDS/H7r1/temaz0ZTkQ5XJHIXhXUOuoPA5LJDxuXzOWbdhJE1miTNAeMj2BKVC4E0XXFsybgPnkOnwOcixHl8hM3nxi0okQLSSyV19DNB5uxQ9ZCIc7gwsoR5ArydOWIIa82Y1EtpQJanEhr0jaul86KDcVESkW1FhO71SqdPtRjoQFd5rkmvkDZqNHQWmMyqMk6TWQHi+NU7FLdA1fGoWV1D1WfvpGtgYyDJhzunFYEQzSSYDqDSspQc+kbbZ+riEEoowmhTXhZtoBMtMC4PKVGhHBeGDJQrweGz4ElFjbi2cKGFlIFGaOHz/Dw0u0q9x7h+xOsELqXsjka41KRSWW3qPGJl4oosBKjCUPvkdHhhM5lG3j35fNtL+yT7JS0f1KuL8ShkZytL2BZxWxknVYZTr+HksvMBanSASbhBLnmLwDKlelAxxqN2pkU+DIFne7qpGVTmXRSmBZPymx8dUsJGPtxK2gzPj7hG1SMYVIpearLKp2kpitWC8HFIqOBkDMammzruf5bJ4ElNdJMXpfFsa/ssIeOJN/DPvZNHvslKmMdFResmN5NiP/rtpBiz0VRDQ50JkaYKazZhaMA1kkut0YtaMqsC1cQoxwktkkOhm8HQjfvqlDKt5CSW1E2k1vq9Rjdp1sHilK2dTHSXB73RYmKBiGlWZUeXRlqtrth3Uc+GGbhjAef8ZzmVxDNp1EvZ9KXW2rUgeF4FpUxJicKccV4GvWelc0CXdLxK2UGni/UYAmHJK/UmJs4FmqmRMBLGmUFmXrnJI1LGpRpcWSbHpEwaNAjYewBE2Fq5UMznUUwjY/FzeL5HtBSX5adswzZz+9XqJS9BbXKO5exKS6JF76u1rHtZbhYZXBkkSlLbjEX9YtlI8nQSMVYQRlw4T5xbBFEtMvZcMJmZthIxr5UklA/U4y5L8bLtJUepFVqrDhW4HwPy9XFapeJc87b5iLTQjVqKTbwDtBkTCE7srlgmYGDosVRSots5lOAg0F2WtIpwGNx40m/Ps4t7FgjIKVDPLNJbrE8lyhNwDqXpAnHgjGS9OFdLGLBrz8ujMrWCMtUSxwoVDrmRxYyNkPCyeKctVkMTEEu5yK3SJjHpvPYdWZMYcNE5cK8yCSscfHuyeKpUzjbYfPI4SjgRE2hymMJcJyy9GgbcGiJi0C01JR2KprS8XNEoglS8nq8I8u5oh17c10G4VlDZ/AHFFEyCMIXJwThaBV3yiqbss3Y1plyRIuaVUA6VlLjXKqk4WuBBvNa/1z/ONa62PEWd+g6CxzM0JQrzakplyhBBGfbNxIsOplF50sweoYLRggmHjKFpDKofq3o0lpJcnU4jTTO9OJCS7V0P5YMk4IAduSJdq9Qobp6pEyo5mYclTlwqabvjVOnHOiMY7ouy/xTtuMwaupB6zLhXCVDGCJJWGWRFKWamIIf551WmUBzabJcDGyzKD+z7u1v4eDnHCFiORWb71T5zJ9Rr8U7AWJrvOao9WJfeRCjbIoiG3fP5gW2yMZAtFgIif2/7itIHBhoKCj80DadKmwor5GGxSJRxXYMkDm1Yzqa3RpOmyHvjMkG6pllCWWQWQcXhGMEa0KdEeCEQHIR/exEpYgByC3BIs+sNpSoUcEiJ5GqYbo1mSLz6MZOmfORpDqzIksmXWVdqKPPrk2edJ4nYyucGXo2n0gUcAZjaD4JYryDgc6ksaSOR9yo2WMklKXjcZd0eY2MWrRGJP0SMZIeV8hEqWNUaSJiLSYbCuDyWTbq+lEbuMFrRyUZEU6I8gKa9KCYlFtG48eW3Tyj5qcRJNBfUxk+R5Z+v6DgZB+HWA4zpazHx6K0MH2emd0oq2LXJyLjgTIxxRgo1M+p1nGSTflMEs2uDLSkXJn+QpG3VotkQJO1KQodi5QR0GXZbuaTH2kVQzgMHhIIPlsZkxRO8gp0Kke6rLTMcEPtqhAW5Jh4IJyvxNQfK74w/TRj2sE0GcbyZNjwgslwbK5QMaXuysRZjOGCWXBBdlHI3GNediknnoFbKph1nMqiUpimsiaOr4ye1/EqD2i+LHyMrmlmzRzIMHWxNgW2jnunLxUNEZdJsLRASpdJFhaN0l2f8O2c56xDbwy6ovHLZaar03Vsd3pPKrGFrbMTR2G0gERLPpbN5menPFZdP3EBMzgvyunkvNiYtC3MTYSAMbupZfM8VeC78v6BYR5se6ExLVh4hnbWTmRIczNlLrsMFpaeP4TBFtJKJ1vIxgTqoGjATqbaIlnUZ+OW0oo5WGSfcbQW2dnkLLpnRH1tSf0YSj59uigfHVw5+bSDuHZhop1waLJA+QXtYBefNmNnotwtEwDxfnHfxycEfrYiZ+xEUcbm5ktW/Io8y+b8Jgo1pOzupovR7PDStQOtHOY9z3jISgrA4YIGHmIIhxHOGMJuuA+p9Ky1qdmZorWpixfq9SJpjTDcihQn2a1IFUtJwsoD+XnyZp1cBs4NhzLWddcfoskYLhkkk7F/yxQvl04OOJuSZ06nPUN0dT1BNZgxjJDd81d9UUF0ly8CshYujhILHnV42VU2SI3S+8LxoweL75iCLVNTosZhGiQ1BcVs3v+UJTkCGKMlop1yLmfks4zPriZqVfpvEqUZZP/eJQdBon2srRrt4/jdKdPZ+26WxuxlUk22xWzav/hq0eBicwXK8NhdxTd9BczGLZ2QoiFdvE1ZGNuE917nwjkTh5EkwMdmPb5lSnnakALa8iRSn+G6egUxFgNCM56N+KKvWCnnLnotThf/w1BBovbvWladMDpiwA6Pjtjw7SmROxmUGpXdhMPJ9c8yzwJ3bvCXNbPkLDhhyYVyecittRQNDjxDtnSASrHFALFw7DGGF/wPCfggBw=="
+   "filasGz": "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",
+   "dialogos": [
+    "confirm: Atención: en 27 de 94 compras hay datos que la plataforma de SUPEREDUC rechazaría (o que se recortan):\n\n  • 19 filas: nota de crédito/débito sin \"Documento Original\" con formato número-TIPO (p. ej. 123-FAC)\n  • 8 filas: documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): SUPEREDUC los recibe en el Libro de Honorarios (Cap. IV), no en el de Compras\n\nEl archivo se descarga igual, con esos datos tal como están en el panel. Conviene corregirlos antes de subirlo.\n\n¿Descargar de todos modos?"
+   ]
   },
   "exp.sep.json-carga": {
    "filename": "carga_manual_data_2026-08-19.json",
@@ -9898,17 +9901,20 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 9,
-   "sha1": "e1e37495cc93c2370de460d7912fd4b0ba7d3d3d",
+   "sha1": "1e49b1dcd6be890b6bcc2b4523f66979323a867b",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "1121;SEP;410906;Factura exenta electrónica;6450;2026-01-03;2026-01-21;Gasto de prueba 1121-3;76.123.456-7;Librería Central Ltda.;1935000;2302650;DOC-1121-3",
-    "1121;SEP;411701;Boleta electrónica;9983;2026-02-25;2026-03-15;Gasto de prueba 1121-5;76.222.333-1;Distribuidora Valle del Aconcagua;943000;1122170;DOC-1121-5",
-    "1121;SEP;410606;Factura electrónica;5177;2026-03-05;2026-03-10;Gasto de prueba 1121-mm;76.222.333-1;Distribuidora Valle del Aconcagua;450000;535500;DOC-1121-mm",
-    "1121;SEP;410605;Nota de crédito;5506;2026-03-09;2026-03-20;Gasto de prueba 1121-1;12.345.678-5;Juan Pérez Soto;-534750;-534750;DOC-1121-1",
-    "1121;SEP;410606;Factura;A&B-<7>;2026-03-15;2026-03-30;\"Libros \"\"Lenguaje\"\" & <b>Matemática</b>; O'Higgins, 2° ciclo\";76.000.111-2;\"Editorial \"\"El Tío\"\" & Hijos <Ltda>\";1234567;1469135;\"Folio <123> & 'A'; \"\"B\"\"\"",
-    "1121;SEP;410606;Nota de crédito;7753;2026-03-20;2026-03-25;Anula parte de la compra de libros;77.654.321-K;Comercial Los Andes SpA;-200000;-238000;DOC-1121-nc",
-    "1121;SEP;411802;Nota de crédito;6781;2026-05-28;2026-06-03;Gasto de prueba 1121-2;77.654.321-K;Comercial Los Andes SpA;-171250;-171250;DOC-1121-2",
-    "1121;SEP;410606;Boleta exenta;6789;2026-07-28;2026-08-20;Gasto de prueba 1121-4;76.123.456-7;Librería Central Ltda.;1816000;2161040;DOC-1121-4"
+    "1121;SEP;410906;FACEX;6450;03-01-2026;21-01-2026;Gasto de prueba 1121-3;76123456-7;Librería Central Ltda.;1935000;2302650;",
+    "1121;SEP;411701;BOLEC;9983;25-02-2026;15-03-2026;Gasto de prueba 1121-5;76222333-1;Distribuidora Valle del Aconcagua;943000;1122170;",
+    "1121;SEP;410606;FACEL;5177;05-03-2026;10-03-2026;Gasto de prueba 1121-mm;76222333-1;Distribuidora Valle del Aconcagua;450000;535500;",
+    "1121;SEP;410605;NOTACRE;5506;09-03-2026;20-03-2026;Gasto de prueba 1121-1;12345678-5;Juan Pérez Soto;-534750;-534750;DOC-1121-1",
+    "1121;SEP;410606;FAC;A&B-<7>;15-03-2026;30-03-2026;\"Libros \"\"Lenguaje\"\" & <b>Matemática</b>; O'Higgins, 2° ciclo\";76000111-2;\"Editorial \"\"El Tío\"\" & Hijos <Ltda>\";1234567;1469135;",
+    "1121;SEP;410606;NOTACRE;7753;20-03-2026;25-03-2026;Anula parte de la compra de libros;77654321-K;Comercial Los Andes SpA;-200000;-238000;DOC-1121-nc",
+    "1121;SEP;411802;NOTACRE;6781;28-05-2026;03-06-2026;Gasto de prueba 1121-2;77654321-K;Comercial Los Andes SpA;-171250;-171250;DOC-1121-2",
+    "1121;SEP;410606;BOLE;6789;28-07-2026;20-08-2026;Gasto de prueba 1121-4;76123456-7;Librería Central Ltda.;1816000;2161040;"
+   ],
+   "dialogos": [
+    "confirm: Atención: en 3 de 8 compras hay datos que la plataforma de SUPEREDUC rechazaría (o que se recortan):\n\n  • 3 filas: nota de crédito/débito sin \"Documento Original\" con formato número-TIPO (p. ej. 123-FAC)\n\nEl archivo se descarga igual, con esos datos tal como están en el panel. Conviene corregirlos antes de subirlo.\n\n¿Descargar de todos modos?"
    ]
   },
   "exp.sep.fila.1125.csv-sin-compras": {
@@ -10228,7 +10234,7 @@
     "410606 · BIBLIOTECAS, LIBROS Y REVISTAS Boleta exenta 6789 2026-07-28 2026-08-20 Gasto de prueba 1121-4 76.123.456-7 Librería Central Ltda. $1.816.000 $2.161.040 DOC-1121-4",
     "411802 · ADQUISICION DE MOBILIARIO Nota de crédito 6781 2026-05-28 2026-06-03 Gasto de prueba 1121-2 77.654.321-K Comercial Los Andes SpA $-171.250 $-171.250 DOC-1121-2",
     "410606 · BIBLIOTECAS, LIBROS Y REVISTAS Nota de crédito 7753 2026-03-20 2026-03-25 Anula parte de la compra de libros 77.654.321-K Comercial Los Andes SpA $-200.000 $-238.000 DOC-1121-nc",
-    "410606 · BIBLIOTECAS, LIBROS Y REVISTAS Factura A&B-<7> 2026-03-15 2026-03-30 Libros \"Lenguaje\" & Matemática; O'Higgins, 2° ciclo 76.000.111-2 Editorial \"El Tío\" & Hijos $1.234.567 $1.469.135 Folio <123> & 'A'; \"B\"",
+    "410606 · BIBLIOTECAS, LIBROS Y REVISTAS Factura A&B-<7> 2026-03-15 2026-03-30 Libros \"Lenguaje\" & <b>Matemática</b>; O'Higgins, 2° ciclo 76.000.111-2 Editorial \"El Tío\" & Hijos <Ltda> $1.234.567 $1.469.135 Folio <123> & 'A'; \"B\"",
     "410605 · MATERIAL Y RECURSOS DIDACTICOS Nota de crédito 5506 2026-03-09 2026-03-20 Gasto de prueba 1121-1 12.345.678-5 Juan Pérez Soto $-534.750 $-534.750 DOC-1121-1",
     "410606 · BIBLIOTECAS, LIBROS Y REVISTAS Factura electrónica 5177 2026-03-05 2026-03-10 Gasto de prueba 1121-mm 76.222.333-1 Distribuidora Valle del Aconcagua $450.000 $535.500 DOC-1121-mm",
     "411701 · MANTENCION Y REPARACION DE BIENES MUEBLES Boleta electrónica 9983 2026-02-25 2026-03-15 Gasto de prueba 1121-5 76.222.333-1 Distribuidora Valle del Aconcagua $943.000 $1.122.170 DOC-1121-5",
@@ -10244,15 +10250,15 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 7,
-   "sha1": "57f5126bd217c4c7d7b69e258bd8e363a3fca204",
+   "sha1": "c752055a1c94fd0054529911068970627d338f38",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "1121;GENERAL;410503;Factura;7351;2026-03-08;2026-03-14;Gasto de prueba general-1121-1;76.123.456-7;Librería Central Ltda.;1226000;1458940;DOC-general-1121-1",
-    "AC;GENERAL;410502;Documento extranjero;4918;2026-03-14;2026-03-27;Gasto de prueba general-AC-2;76.222.333-1;Distribuidora Valle del Aconcagua;1296000;1542240;DOC-general-AC-2",
-    "AC;GENERAL;410503;Boleta;6628;2026-06-15;2026-06-27;Gasto de prueba general-AC-1;77.654.321-K;Comercial Los Andes SpA;179000;213010;DOC-general-AC-1",
-    "AC;GENERAL;410902;Factura;8458;2026-06-19;2026-07-01;Gasto de prueba general-AC-3;78.901.234-5;Ferretería El Roble;868000;1032920;DOC-general-AC-3",
-    "AC;GENERAL;410503;Documento extranjero;7171;2026-06-23;2026-07-03;Gasto de prueba general-AC-4;12.345.678-5;Juan Pérez Soto;2179000;2593010;DOC-general-AC-4",
-    "AC;GENERAL;410501;Factura;6092;2026-07-07;2026-07-12;Cuenta no habilitada para la subvención;78.901.234-5;Ferretería El Roble;-341000;-341000;DOC-general-AC-noh"
+    "1121;GENERAL;410503;FAC;7351;08-03-2026;14-03-2026;Gasto de prueba general-1121-1;76123456-7;Librería Central Ltda.;1226000;1458940;",
+    "AC;GENERAL;410502;DOCEX;4918;14-03-2026;27-03-2026;Gasto de prueba general-AC-2;76222333-1;Distribuidora Valle del Aconcagua;1296000;1542240;",
+    "AC;GENERAL;410503;BOL;6628;15-06-2026;27-06-2026;Gasto de prueba general-AC-1;77654321-K;Comercial Los Andes SpA;179000;213010;",
+    "AC;GENERAL;410902;FAC;8458;19-06-2026;01-07-2026;Gasto de prueba general-AC-3;78901234-5;Ferretería El Roble;868000;1032920;",
+    "AC;GENERAL;410503;DOCEX;7171;23-06-2026;03-07-2026;Gasto de prueba general-AC-4;12345678-5;Juan Pérez Soto;2179000;2593010;",
+    "AC;GENERAL;410501;FAC;6092;07-07-2026;12-07-2026;Cuenta no habilitada para la subvención;78901234-5;Ferretería El Roble;-341000;-341000;"
    ]
   },
   "exp.of.general.excel": {
@@ -10490,15 +10496,18 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 7,
-   "sha1": "be0e1d3ab08c97e4a02c08a8431f6a70438a59f0",
+   "sha1": "9da69d6399e5bede320d75d9b4624ab3d5009474",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "1121;PIE;410503;Boleta exenta;5463;2026-05-07;2026-05-30;Gasto de prueba pie-1121-1;77.654.321-K;Comercial Los Andes SpA;1858000;2211020;DOC-pie-1121-1",
-    "AC;PIE;411610;Nota de débito;7336;2026-02-15;2026-03-05;Gasto de prueba pie-AC-4;76.123.456-7;Librería Central Ltda.;73000;86870;DOC-pie-AC-4",
-    "AC;PIE;410501;Factura;7453;2026-03-13;2026-03-30;Cuenta no habilitada para la subvención;76.222.333-1;Distribuidora Valle del Aconcagua;641000;762790;DOC-pie-AC-noh",
-    "AC;PIE;411504;Boleta electrónica;1428;2026-05-10;2026-05-16;Gasto de prueba pie-AC-3;96.555.444-3;Servicios Integrales Petorca;1584000;1884960;DOC-pie-AC-3",
-    "AC;PIE;411501;Documento extranjero;8922;2026-06-28;2026-07-10;Gasto de prueba pie-AC-2;76.222.333-1;Distribuidora Valle del Aconcagua;820000;975800;DOC-pie-AC-2",
-    "AC;PIE;410503;Factura;1032;2026-07-07;2026-07-30;Gasto de prueba pie-AC-1;76.123.456-7;Librería Central Ltda.;1209000;1438710;DOC-pie-AC-1"
+    "1121;PIE;410503;BOLE;5463;07-05-2026;30-05-2026;Gasto de prueba pie-1121-1;77654321-K;Comercial Los Andes SpA;1858000;2211020;",
+    "AC;PIE;411610;NOTADEB;7336;15-02-2026;05-03-2026;Gasto de prueba pie-AC-4;76123456-7;Librería Central Ltda.;73000;86870;DOC-pie-AC-4",
+    "AC;PIE;410501;FAC;7453;13-03-2026;30-03-2026;Cuenta no habilitada para la subvención;76222333-1;Distribuidora Valle del Aconcagua;641000;762790;",
+    "AC;PIE;411504;BOLEC;1428;10-05-2026;16-05-2026;Gasto de prueba pie-AC-3;96555444-3;Servicios Integrales Petorca;1584000;1884960;",
+    "AC;PIE;411501;DOCEX;8922;28-06-2026;10-07-2026;Gasto de prueba pie-AC-2;76222333-1;Distribuidora Valle del Aconcagua;820000;975800;",
+    "AC;PIE;410503;FAC;1032;07-07-2026;30-07-2026;Gasto de prueba pie-AC-1;76123456-7;Librería Central Ltda.;1209000;1438710;"
+   ],
+   "dialogos": [
+    "confirm: Atención: en 1 de 6 compras hay datos que la plataforma de SUPEREDUC rechazaría (o que se recortan):\n\n  • 1 fila: nota de crédito/débito sin \"Documento Original\" con formato número-TIPO (p. ej. 123-FAC)\n\nEl archivo se descarga igual, con esos datos tal como están en el panel. Conviene corregirlos antes de subirlo.\n\n¿Descargar de todos modos?"
    ]
   },
   "exp.of.pie.excel": {
@@ -10736,16 +10745,19 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 8,
-   "sha1": "76877667164e0a61e7ec2bfb5db0044a3bc58585",
+   "sha1": "a8c0a67a3dedff81f66ca1ff6ae4a70c172662f3",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "1121;MANTENIMIENTO;410501;Factura;7749;2026-03-22;2026-04-08;Cuenta no habilitada para la subvención;12.345.678-5;Juan Pérez Soto;1936000;2303840;DOC-mantenimiento-1121-noh",
-    "1121;MANTENIMIENTO;410601;Boleta de honorarios electrónica;1479;2026-04-25;2026-05-14;Gasto de prueba mantenimiento-1121-1;76.222.333-1;Distribuidora Valle del Aconcagua;1339000;1593410;DOC-mantenimiento-1121-1",
-    "AC;MANTENIMIENTO;410501;Factura;2776;2026-02-14;2026-03-09;Cuenta no habilitada para la subvención;77.654.321-K;Comercial Los Andes SpA;823000;979370;DOC-mantenimiento-AC-noh",
-    "AC;MANTENIMIENTO;410601;Boleta exenta;1900;2026-04-28;2026-05-05;Gasto de prueba mantenimiento-AC-2;78.901.234-5;Ferretería El Roble;1140000;1356600;DOC-mantenimiento-AC-2",
-    "AC;MANTENIMIENTO;410604;Boleta exenta;4535;2026-05-23;2026-05-31;Gasto de prueba mantenimiento-AC-3;76.222.333-1;Distribuidora Valle del Aconcagua;2055000;2445450;DOC-mantenimiento-AC-3",
-    "AC;MANTENIMIENTO;410601;Factura electrónica;9689;2026-06-11;2026-06-21;Gasto de prueba mantenimiento-AC-4;96.555.444-3;Servicios Integrales Petorca;360000;428400;DOC-mantenimiento-AC-4",
-    "AC;MANTENIMIENTO;410601;Boleta;6715;2026-07-22;2026-08-09;Gasto de prueba mantenimiento-AC-1;77.654.321-K;Comercial Los Andes SpA;1793000;2133670;DOC-mantenimiento-AC-1"
+    "1121;MANTENIMIENTO;410501;FAC;7749;22-03-2026;08-04-2026;Cuenta no habilitada para la subvención;12345678-5;Juan Pérez Soto;1936000;2303840;",
+    "1121;MANTENIMIENTO;410601;BOLHE;1479;25-04-2026;14-05-2026;Gasto de prueba mantenimiento-1121-1;76222333-1;Distribuidora Valle del Aconcagua;1339000;1593410;",
+    "AC;MANTENIMIENTO;410501;FAC;2776;14-02-2026;09-03-2026;Cuenta no habilitada para la subvención;77654321-K;Comercial Los Andes SpA;823000;979370;",
+    "AC;MANTENIMIENTO;410601;BOLE;1900;28-04-2026;05-05-2026;Gasto de prueba mantenimiento-AC-2;78901234-5;Ferretería El Roble;1140000;1356600;",
+    "AC;MANTENIMIENTO;410604;BOLE;4535;23-05-2026;31-05-2026;Gasto de prueba mantenimiento-AC-3;76222333-1;Distribuidora Valle del Aconcagua;2055000;2445450;",
+    "AC;MANTENIMIENTO;410601;FACEL;9689;11-06-2026;21-06-2026;Gasto de prueba mantenimiento-AC-4;96555444-3;Servicios Integrales Petorca;360000;428400;",
+    "AC;MANTENIMIENTO;410601;BOL;6715;22-07-2026;09-08-2026;Gasto de prueba mantenimiento-AC-1;77654321-K;Comercial Los Andes SpA;1793000;2133670;"
+   ],
+   "dialogos": [
+    "confirm: Atención: en 1 de 7 compras hay datos que la plataforma de SUPEREDUC rechazaría (o que se recortan):\n\n  • 1 fila: documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): SUPEREDUC los recibe en el Libro de Honorarios (Cap. IV), no en el de Compras\n\nEl archivo se descarga igual, con esos datos tal como están en el panel. Conviene corregirlos antes de subirlo.\n\n¿Descargar de todos modos?"
    ]
   },
   "exp.of.mantenimiento.excel": {
@@ -10984,44 +10996,47 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 36,
-   "sha1": "c87a185767266c1d5c5a592b65c3f91a6cb95fa4",
+   "sha1": "41458fe3de49169b8bbfa94c4f5cee105c8a6a90",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "1121;PRORETENCION;410901;Boleta electrónica;9248;2026-07-18;2026-07-31;Gasto de prueba prorretencion-1121-1;12.345.678-5;Juan Pérez Soto;248000;295120;DOC-prorretencion-1121-1",
-    "1122;PRORETENCION;410904;Boleta electrónica;3478;2026-07-26;2026-08-19;Gasto de prueba prorretencion-1122-1;76.123.456-7;Librería Central Ltda.;1082000;1287580;DOC-prorretencion-1122-1",
-    "1122;PRORETENCION;410602;Boleta exenta;4830;2026-07-26;2026-08-18;Gasto de prueba prorretencion-1122-2;76.123.456-7;Librería Central Ltda.;1699000;2021810;DOC-prorretencion-1122-2",
-    "1129;PRORETENCION;410904;Nota de débito;3114;2026-02-01;2026-02-15;Gasto de prueba prorretencion-1129-1;12.345.678-5;Juan Pérez Soto;1859000;2212210;DOC-prorretencion-1129-1",
-    "1129;PRORETENCION;410603;Boleta;2764;2026-03-06;2026-03-26;Gasto de prueba prorretencion-1129-2;78.901.234-5;Ferretería El Roble;1044000;1242360;DOC-prorretencion-1129-2",
-    "1129;PRORETENCION;410601;Factura;3405;2026-03-08;2026-03-29;Gasto de prueba prorretencion-1129-3;76.222.333-1;Distribuidora Valle del Aconcagua;333000;396270;DOC-prorretencion-1129-3",
-    "1133;PRORETENCION;410804;Boleta de honorarios electrónica;6546;2026-02-14;2026-02-21;Gasto de prueba prorretencion-1133-1;76.123.456-7;Librería Central Ltda.;680000;809200;DOC-prorretencion-1133-1",
-    "1137;PRORETENCION;410804;Factura exenta electrónica;1736;2026-02-26;2026-03-19;Gasto de prueba prorretencion-1137-1;76.123.456-7;Librería Central Ltda.;1411000;1679090;DOC-prorretencion-1137-1",
-    "1137;PRORETENCION;410605;Boleta exenta;2049;2026-06-25;2026-07-10;Gasto de prueba prorretencion-1137-2;76.123.456-7;Librería Central Ltda.;1162000;1382780;DOC-prorretencion-1137-2",
-    "1143;PRORETENCION;410605;Documento extranjero;1555;2026-01-04;2026-01-28;Gasto de prueba prorretencion-1143-2;76.222.333-1;Distribuidora Valle del Aconcagua;300000;357000;DOC-prorretencion-1143-2",
-    "1143;PRORETENCION;410804;Factura electrónica;6051;2026-06-08;2026-06-20;Gasto de prueba prorretencion-1143-1;76.123.456-7;Librería Central Ltda.;1616000;1923040;DOC-prorretencion-1143-1",
-    "1143;PRORETENCION;410503;Boleta de honorarios electrónica;1352;2026-07-16;2026-08-01;Gasto de prueba prorretencion-1143-3;76.222.333-1;Distribuidora Valle del Aconcagua;1135000;1350650;DOC-prorretencion-1143-3",
-    "1148;PRORETENCION;410901;Boleta de honorarios electrónica;6912;2026-07-27;2026-08-11;Gasto de prueba prorretencion-1148-1;77.654.321-K;Comercial Los Andes SpA;1796000;2137240;DOC-prorretencion-1148-1",
-    "1152;PRORETENCION;410804;Boleta exenta;8652;2026-01-09;2026-01-24;Gasto de prueba prorretencion-1152-1;77.654.321-K;Comercial Los Andes SpA;2132000;2537080;DOC-prorretencion-1152-1",
-    "1152;PRORETENCION;410602;Nota de débito;9036;2026-07-21;2026-07-30;Gasto de prueba prorretencion-1152-2;77.654.321-K;Comercial Los Andes SpA;1431000;1702890;DOC-prorretencion-1152-2",
-    "1158;PRORETENCION;410601;Boleta electrónica;5283;2026-02-16;2026-03-11;Gasto de prueba prorretencion-1158-2;78.901.234-5;Ferretería El Roble;1069000;1272110;DOC-prorretencion-1158-2",
-    "1158;PRORETENCION;410804;Factura electrónica;5563;2026-03-02;2026-03-24;Gasto de prueba prorretencion-1158-1;12.345.678-5;Juan Pérez Soto;1428000;1699320;DOC-prorretencion-1158-1",
-    "1158;PRORETENCION;410605;Factura electrónica;3897;2026-07-15;2026-08-02;Gasto de prueba prorretencion-1158-3;78.901.234-5;Ferretería El Roble;1012000;1204280;DOC-prorretencion-1158-3",
-    "1168;PRORETENCION;410901;Nota de débito;2694;2026-05-26;2026-06-17;Gasto de prueba prorretencion-1168-1;76.222.333-1;Distribuidora Valle del Aconcagua;1129000;1343510;DOC-prorretencion-1168-1",
-    "1174;PRORETENCION;410604;Factura exenta electrónica;9673;2026-02-28;2026-03-08;Gasto de prueba prorretencion-1174-2;96.555.444-3;Servicios Integrales Petorca;1641000;1952790;DOC-prorretencion-1174-2",
-    "1174;PRORETENCION;410804;Factura;2319;2026-04-16;2026-04-27;Gasto de prueba prorretencion-1174-1;76.123.456-7;Librería Central Ltda.;283000;336770;DOC-prorretencion-1174-1",
-    "1181;PRORETENCION;410604;Factura exenta electrónica;6776;2026-03-11;2026-03-20;Gasto de prueba prorretencion-1181-2;78.901.234-5;Ferretería El Roble;608000;723520;DOC-prorretencion-1181-2",
-    "1181;PRORETENCION;410604;Factura electrónica;5805;2026-06-21;2026-07-15;Gasto de prueba prorretencion-1181-3;76.123.456-7;Librería Central Ltda.;2146000;2553740;DOC-prorretencion-1181-3",
-    "1181;PRORETENCION;410904;Boleta electrónica;3660;2026-07-01;2026-07-18;Gasto de prueba prorretencion-1181-1;76.123.456-7;Librería Central Ltda.;1593000;1895670;DOC-prorretencion-1181-1",
-    "11199;PRORETENCION;410804;Factura electrónica;6902;2026-04-14;2026-04-28;Gasto de prueba prorretencion-11199-1;76.123.456-7;Librería Central Ltda.;156000;185640;DOC-prorretencion-11199-1",
-    "14479;PRORETENCION;410804;Factura;8548;2026-04-25;2026-05-15;Gasto de prueba prorretencion-14479-1;76.222.333-1;Distribuidora Valle del Aconcagua;865000;1029350;DOC-prorretencion-14479-1",
-    "14479;PRORETENCION;410604;Factura exenta electrónica;1940;2026-05-12;2026-06-03;Gasto de prueba prorretencion-14479-2;96.555.444-3;Servicios Integrales Petorca;682000;811580;DOC-prorretencion-14479-2",
-    "11196;PRORETENCION;410804;Boleta exenta;9293;2026-02-06;2026-02-19;Gasto de prueba prorretencion-11196-1;96.555.444-3;Servicios Integrales Petorca;1475000;1755250;DOC-prorretencion-11196-1",
-    "11196;PRORETENCION;410604;Boleta de honorarios electrónica;5291;2026-05-14;2026-05-30;Gasto de prueba prorretencion-11196-2;78.901.234-5;Ferretería El Roble;1252000;1489880;DOC-prorretencion-11196-2",
-    "11196;PRORETENCION;410605;Nota de débito;8536;2026-07-03;2026-07-12;Gasto de prueba prorretencion-11196-3;76.123.456-7;Librería Central Ltda.;1349000;1605310;DOC-prorretencion-11196-3",
-    "AC;PRORETENCION;410901;Boleta de honorarios electrónica;8752;2026-03-15;2026-03-25;Gasto de prueba prorretencion-AC-1;76.222.333-1;Distribuidora Valle del Aconcagua;946000;1125740;DOC-prorretencion-AC-1",
-    "AC;PRORETENCION;410503;Boleta electrónica;2209;2026-03-16;2026-03-23;Gasto de prueba prorretencion-AC-2;76.123.456-7;Librería Central Ltda.;1455000;1731450;DOC-prorretencion-AC-2",
-    "AC;PRORETENCION;410501;Factura;6584;2026-06-07;2026-06-29;Cuenta no habilitada para la subvención;78.901.234-5;Ferretería El Roble;430000;511700;DOC-prorretencion-AC-noh",
-    "AC;PRORETENCION;410603;Boleta de honorarios electrónica;3047;2026-06-19;2026-06-25;Gasto de prueba prorretencion-AC-4;76.222.333-1;Distribuidora Valle del Aconcagua;405000;481950;DOC-prorretencion-AC-4",
-    "AC;PRORETENCION;410601;Factura exenta electrónica;2315;2026-07-16;2026-08-01;Gasto de prueba prorretencion-AC-3;96.555.444-3;Servicios Integrales Petorca;2189000;2604910;DOC-prorretencion-AC-3"
+    "1121;PRORETENCION;410901;BOLEC;9248;18-07-2026;31-07-2026;Gasto de prueba prorretencion-1121-1;12345678-5;Juan Pérez Soto;248000;295120;",
+    "1122;PRORETENCION;410904;BOLEC;3478;26-07-2026;19-08-2026;Gasto de prueba prorretencion-1122-1;76123456-7;Librería Central Ltda.;1082000;1287580;",
+    "1122;PRORETENCION;410602;BOLE;4830;26-07-2026;18-08-2026;Gasto de prueba prorretencion-1122-2;76123456-7;Librería Central Ltda.;1699000;2021810;",
+    "1129;PRORETENCION;410904;NOTADEB;3114;01-02-2026;15-02-2026;Gasto de prueba prorretencion-1129-1;12345678-5;Juan Pérez Soto;1859000;2212210;DOC-prorretencion-1129-1",
+    "1129;PRORETENCION;410603;BOL;2764;06-03-2026;26-03-2026;Gasto de prueba prorretencion-1129-2;78901234-5;Ferretería El Roble;1044000;1242360;",
+    "1129;PRORETENCION;410601;FAC;3405;08-03-2026;29-03-2026;Gasto de prueba prorretencion-1129-3;76222333-1;Distribuidora Valle del Aconcagua;333000;396270;",
+    "1133;PRORETENCION;410804;BOLHE;6546;14-02-2026;21-02-2026;Gasto de prueba prorretencion-1133-1;76123456-7;Librería Central Ltda.;680000;809200;",
+    "1137;PRORETENCION;410804;FACEX;1736;26-02-2026;19-03-2026;Gasto de prueba prorretencion-1137-1;76123456-7;Librería Central Ltda.;1411000;1679090;",
+    "1137;PRORETENCION;410605;BOLE;2049;25-06-2026;10-07-2026;Gasto de prueba prorretencion-1137-2;76123456-7;Librería Central Ltda.;1162000;1382780;",
+    "1143;PRORETENCION;410605;DOCEX;1555;04-01-2026;28-01-2026;Gasto de prueba prorretencion-1143-2;76222333-1;Distribuidora Valle del Aconcagua;300000;357000;",
+    "1143;PRORETENCION;410804;FACEL;6051;08-06-2026;20-06-2026;Gasto de prueba prorretencion-1143-1;76123456-7;Librería Central Ltda.;1616000;1923040;",
+    "1143;PRORETENCION;410503;BOLHE;1352;16-07-2026;01-08-2026;Gasto de prueba prorretencion-1143-3;76222333-1;Distribuidora Valle del Aconcagua;1135000;1350650;",
+    "1148;PRORETENCION;410901;BOLHE;6912;27-07-2026;11-08-2026;Gasto de prueba prorretencion-1148-1;77654321-K;Comercial Los Andes SpA;1796000;2137240;",
+    "1152;PRORETENCION;410804;BOLE;8652;09-01-2026;24-01-2026;Gasto de prueba prorretencion-1152-1;77654321-K;Comercial Los Andes SpA;2132000;2537080;",
+    "1152;PRORETENCION;410602;NOTADEB;9036;21-07-2026;30-07-2026;Gasto de prueba prorretencion-1152-2;77654321-K;Comercial Los Andes SpA;1431000;1702890;DOC-prorretencion-1152-2",
+    "1158;PRORETENCION;410601;BOLEC;5283;16-02-2026;11-03-2026;Gasto de prueba prorretencion-1158-2;78901234-5;Ferretería El Roble;1069000;1272110;",
+    "1158;PRORETENCION;410804;FACEL;5563;02-03-2026;24-03-2026;Gasto de prueba prorretencion-1158-1;12345678-5;Juan Pérez Soto;1428000;1699320;",
+    "1158;PRORETENCION;410605;FACEL;3897;15-07-2026;02-08-2026;Gasto de prueba prorretencion-1158-3;78901234-5;Ferretería El Roble;1012000;1204280;",
+    "1168;PRORETENCION;410901;NOTADEB;2694;26-05-2026;17-06-2026;Gasto de prueba prorretencion-1168-1;76222333-1;Distribuidora Valle del Aconcagua;1129000;1343510;DOC-prorretencion-1168-1",
+    "1174;PRORETENCION;410604;FACEX;9673;28-02-2026;08-03-2026;Gasto de prueba prorretencion-1174-2;96555444-3;Servicios Integrales Petorca;1641000;1952790;",
+    "1174;PRORETENCION;410804;FAC;2319;16-04-2026;27-04-2026;Gasto de prueba prorretencion-1174-1;76123456-7;Librería Central Ltda.;283000;336770;",
+    "1181;PRORETENCION;410604;FACEX;6776;11-03-2026;20-03-2026;Gasto de prueba prorretencion-1181-2;78901234-5;Ferretería El Roble;608000;723520;",
+    "1181;PRORETENCION;410604;FACEL;5805;21-06-2026;15-07-2026;Gasto de prueba prorretencion-1181-3;76123456-7;Librería Central Ltda.;2146000;2553740;",
+    "1181;PRORETENCION;410904;BOLEC;3660;01-07-2026;18-07-2026;Gasto de prueba prorretencion-1181-1;76123456-7;Librería Central Ltda.;1593000;1895670;",
+    "11199;PRORETENCION;410804;FACEL;6902;14-04-2026;28-04-2026;Gasto de prueba prorretencion-11199-1;76123456-7;Librería Central Ltda.;156000;185640;",
+    "14479;PRORETENCION;410804;FAC;8548;25-04-2026;15-05-2026;Gasto de prueba prorretencion-14479-1;76222333-1;Distribuidora Valle del Aconcagua;865000;1029350;",
+    "14479;PRORETENCION;410604;FACEX;1940;12-05-2026;03-06-2026;Gasto de prueba prorretencion-14479-2;96555444-3;Servicios Integrales Petorca;682000;811580;",
+    "11196;PRORETENCION;410804;BOLE;9293;06-02-2026;19-02-2026;Gasto de prueba prorretencion-11196-1;96555444-3;Servicios Integrales Petorca;1475000;1755250;",
+    "11196;PRORETENCION;410604;BOLHE;5291;14-05-2026;30-05-2026;Gasto de prueba prorretencion-11196-2;78901234-5;Ferretería El Roble;1252000;1489880;",
+    "11196;PRORETENCION;410605;NOTADEB;8536;03-07-2026;12-07-2026;Gasto de prueba prorretencion-11196-3;76123456-7;Librería Central Ltda.;1349000;1605310;DOC-prorretencion-11196-3",
+    "AC;PRORETENCION;410901;BOLHE;8752;15-03-2026;25-03-2026;Gasto de prueba prorretencion-AC-1;76222333-1;Distribuidora Valle del Aconcagua;946000;1125740;",
+    "AC;PRORETENCION;410503;BOLEC;2209;16-03-2026;23-03-2026;Gasto de prueba prorretencion-AC-2;76123456-7;Librería Central Ltda.;1455000;1731450;",
+    "AC;PRORETENCION;410501;FAC;6584;07-06-2026;29-06-2026;Cuenta no habilitada para la subvención;78901234-5;Ferretería El Roble;430000;511700;",
+    "AC;PRORETENCION;410603;BOLHE;3047;19-06-2026;25-06-2026;Gasto de prueba prorretencion-AC-4;76222333-1;Distribuidora Valle del Aconcagua;405000;481950;",
+    "AC;PRORETENCION;410601;FACEX;2315;16-07-2026;01-08-2026;Gasto de prueba prorretencion-AC-3;96555444-3;Servicios Integrales Petorca;2189000;2604910;"
+   ],
+   "dialogos": [
+    "confirm: Atención: en 10 de 35 compras hay datos que la plataforma de SUPEREDUC rechazaría (o que se recortan):\n\n  • 4 filas: nota de crédito/débito sin \"Documento Original\" con formato número-TIPO (p. ej. 123-FAC)\n  • 6 filas: documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): SUPEREDUC los recibe en el Libro de Honorarios (Cap. IV), no en el de Compras\n\nEl archivo se descarga igual, con esos datos tal como están en el panel. Conviene corregirlos antes de subirlo.\n\n¿Descargar de todos modos?"
    ]
   },
   "exp.of.prorretencion.excel": {
@@ -11393,10 +11408,10 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 2,
-   "sha1": "326aa4288ca3d863ed924742697805385f32c1e3",
+   "sha1": "b632b3f4c754b1129a066f92baee4e5ee3427b0d",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "1121;GENERAL;410503;Factura;7351;2026-03-08;2026-03-14;Gasto de prueba general-1121-1;76.123.456-7;Librería Central Ltda.;1226000;1458940;DOC-general-1121-1"
+    "1121;GENERAL;410503;FAC;7351;08-03-2026;14-03-2026;Gasto de prueba general-1121-1;76123456-7;Librería Central Ltda.;1226000;1458940;"
    ]
   },
   "exp.of.general.fila.AC.csv": {
@@ -11405,14 +11420,14 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 6,
-   "sha1": "3b02f0fdef055ce58ce3cbaf2defd012ffb5d049",
+   "sha1": "b13e449164c45375ff89502f56aadaf01dc68950",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "AC;GENERAL;410502;Documento extranjero;4918;2026-03-14;2026-03-27;Gasto de prueba general-AC-2;76.222.333-1;Distribuidora Valle del Aconcagua;1296000;1542240;DOC-general-AC-2",
-    "AC;GENERAL;410503;Boleta;6628;2026-06-15;2026-06-27;Gasto de prueba general-AC-1;77.654.321-K;Comercial Los Andes SpA;179000;213010;DOC-general-AC-1",
-    "AC;GENERAL;410902;Factura;8458;2026-06-19;2026-07-01;Gasto de prueba general-AC-3;78.901.234-5;Ferretería El Roble;868000;1032920;DOC-general-AC-3",
-    "AC;GENERAL;410503;Documento extranjero;7171;2026-06-23;2026-07-03;Gasto de prueba general-AC-4;12.345.678-5;Juan Pérez Soto;2179000;2593010;DOC-general-AC-4",
-    "AC;GENERAL;410501;Factura;6092;2026-07-07;2026-07-12;Cuenta no habilitada para la subvención;78.901.234-5;Ferretería El Roble;-341000;-341000;DOC-general-AC-noh"
+    "AC;GENERAL;410502;DOCEX;4918;14-03-2026;27-03-2026;Gasto de prueba general-AC-2;76222333-1;Distribuidora Valle del Aconcagua;1296000;1542240;",
+    "AC;GENERAL;410503;BOL;6628;15-06-2026;27-06-2026;Gasto de prueba general-AC-1;77654321-K;Comercial Los Andes SpA;179000;213010;",
+    "AC;GENERAL;410902;FAC;8458;19-06-2026;01-07-2026;Gasto de prueba general-AC-3;78901234-5;Ferretería El Roble;868000;1032920;",
+    "AC;GENERAL;410503;DOCEX;7171;23-06-2026;03-07-2026;Gasto de prueba general-AC-4;12345678-5;Juan Pérez Soto;2179000;2593010;",
+    "AC;GENERAL;410501;FAC;6092;07-07-2026;12-07-2026;Cuenta no habilitada para la subvención;78901234-5;Ferretería El Roble;-341000;-341000;"
    ]
   },
   "print.of.general.fila.1121": {
@@ -13167,11 +13182,14 @@
    "bom": true,
    "eol": "CRLF",
    "nLineas": 3,
-   "sha1": "462fa35b773164e01fbb1868264c3dc6344526fd",
+   "sha1": "b2f65d4f3a5d72bce4beeb4f0c683b428c68f4cd",
    "filas": [
     "RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;Monto Documento;Documento Original",
-    "1121;MANTENIMIENTO;410501;Factura;7749;2026-03-22;2026-04-08;Cuenta no habilitada para la subvención;12.345.678-5;Juan Pérez Soto;1936000;2303840;DOC-mantenimiento-1121-noh",
-    "1121;MANTENIMIENTO;410601;Boleta de honorarios electrónica;1479;2026-04-25;2026-05-14;Gasto de prueba mantenimiento-1121-1;76.222.333-1;Distribuidora Valle del Aconcagua;1339000;1593410;DOC-mantenimiento-1121-1"
+    "1121;MANTENIMIENTO;410501;FAC;7749;22-03-2026;08-04-2026;Cuenta no habilitada para la subvención;12345678-5;Juan Pérez Soto;1936000;2303840;",
+    "1121;MANTENIMIENTO;410601;BOLHE;1479;25-04-2026;14-05-2026;Gasto de prueba mantenimiento-1121-1;76222333-1;Distribuidora Valle del Aconcagua;1339000;1593410;"
+   ],
+   "dialogos": [
+    "confirm: Atención: en 1 de 2 compras hay datos que la plataforma de SUPEREDUC rechazaría (o que se recortan):\n\n  • 1 fila: documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): SUPEREDUC los recibe en el Libro de Honorarios (Cap. IV), no en el de Compras\n\nEl archivo se descarga igual, con esos datos tal como están en el panel. Conviene corregirlos antes de subirlo.\n\n¿Descargar de todos modos?"
    ]
   }
  }

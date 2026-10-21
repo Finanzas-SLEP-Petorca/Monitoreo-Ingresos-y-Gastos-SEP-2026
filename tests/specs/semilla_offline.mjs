@@ -1,4 +1,4 @@
-// (d) semilla_offline — BUG CONOCIDO: el panel siembra la colección con sus datos embebidos cuando el primer snapshot
+// (d) semilla_offline — BUG CORREGIDO (PR A3, modo 'enforced'): antes el panel sembraba la colección con sus datos embebidos cuando el primer snapshot
 // llega VACÍO pero desde el CACHÉ local (metadata.fromCache === true), p. ej. al abrirlo sin conexión por primera vez.
 // Un snapshot vacío de caché NO significa "la colección está vacía en el servidor": al reconectar, esas escrituras
 // pendientes (setDoc con merge:true) pisan los montos reales que el equipo ya había cargado.
@@ -10,7 +10,7 @@
 //                   "BUG CONOCIDO presente (esperado)" y NO falla; si ya no se reproduce avisa que hay que pasar a 'enforced'.
 //   'enforced'   -> el bug presente HACE FALLAR el spec (cambiar a este modo tras corregirlo, para que no reaparezca).
 // También se puede forzar desde fuera: KNOWN_BUG_EXPECTED=1 (known-bug) / KNOWN_BUG_EXPECTED=0 (enforced), o --expect-known-bugs / --enforce-bugs.
-const MODO_BUG = 'known-bug'; // <-- el agente que corrija el bug debe cambiarlo a 'enforced'
+const MODO_BUG = 'enforced'; // corregido en esta PR: si el bug reaparece, el spec FALLA
 
 import { boot, cargarFixture } from '../lib/boot.mjs';
 import { correrSpec } from '../lib/spec.mjs';

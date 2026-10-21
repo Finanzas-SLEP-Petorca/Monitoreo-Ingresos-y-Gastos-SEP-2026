@@ -33,9 +33,14 @@ Duración: ≈ 2 min la suite completa (golden ≈ 50 s). `-v` muestra la salida
 | `/ruta/a/copia.html`          | cualquier archivo (útil para probar una copia modificada sin tocar `index.html`)                     |
 
 ```bash
-APP_HTML=@baseline node tests/run.mjs          # la línea base debe dar todo PASS / KNOWN_BUG
-node tests/run.mjs                             # tu versión modificada contra la línea base
+APP_HTML=@baseline node tests/run.mjs          # la línea base (0f16ace)
+node tests/run.mjs                             # tu versión modificada contra el baseline versionado
 ```
+
+> **Desde la PR A (correcciones urgentes)** `tests/golden/baseline.json` refleja el `index.html` ya corregido (escape de HTML,
+> CSV SUPEREDUC con la plantilla oficial, ids seguros). Por eso `APP_HTML=@baseline` (0f16ace) ahora FALLA a propósito en el golden
+> y en los specs nuevos (`seguridad_xss`, `formulas_csv_excel`, `csv_supereduc_formato`, `semilla_cache`, `semilla_offline`,
+> `documento_corrupto`, `pagehide_flush`, `login_url`): es la prueba de que esos specs detectan los defectos originales.
 
 ### Flujo recomendado para un cambio grande en `index.html`
 
@@ -157,14 +162,21 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `smoke_tabs` | las 13 pestañas abren (con datos y con colección vacía), modales, 0 errores de consola/página/red, nada sale a la red |
 | `persistencia` | editar ingreso/remuneración/compra/ítems en SEP y fuentes → write correcto (ruta, `merge:true`, payload parcial, auditoría), deep-merge en el servidor, re-emit y recarga, `deleteField` al borrar, error de escritura + reintento, cambio de otro usuario |
 | `roundtrip_excel` | exportar → reimportar → exportar: mismas hojas, misma pantalla, mismos documentos (SEP, General, JUNJI, FAEP, Excel individual por fila) |
-| `semilla_offline` | **BUG CONOCIDO**: con snapshot vacío `fromCache:true` el panel intenta sembrar y, al reconectar, pisa datos reales |
+| `semilla_offline` | con snapshot vacío `fromCache:true` el panel NO siembra y, al reconectar, no pisa datos reales (bug corregido en la PR A; modo `enforced`) |
+| `semilla_cache` | siembra solo con vacío confirmado por el servidor; un RBD faltante se crea solo con escalares y solo con snapshot de servidor; ningún write envía `{}` |
+| `documento_corrupto` | un documento con valores nulos / no numéricos / de otro tipo (o que lanza al leerse) no rompe al resto: estado rojo, se omite, no se recrea |
+| `pagehide_flush` | `pagehide` / `visibilitychange→hidden` guardan al instante lo pendiente (todos los RBD), sin doble escritura y sin cambiar el debounce |
+| `seguridad_xss` | texto libre con `<img onerror>`, `<script>`, comillas y `&` en compras (SEP y fuentes), conceptos, ids de compra y `lastModifiedBy`: se ve literal y no se ejecuta nada en modales, tablas, Reportes, dashboard, % Ejecución e impresión; ids raros siguen funcionando |
+| `formulas_csv_excel` | apóstrofo solo en texto libre (descripción, proveedor, concepto) de CSV/Excel; nunca en montos, fechas, códigos, RUT ni N° de documento; exportar → reimportar no altera datos |
+| `csv_supereduc_formato` | CSV de compras (SEP y fuentes) con tipo por código, fechas dd-mm-aaaa, descripción ≤ 100, RUT con guion, Documento Original solo en NC/ND; aviso con conteo antes de descargar y cancelar no descarga; Firestore, pantalla y Excel de respaldo no cambian |
+| `login_url` | el enlace del correo vuelve a origen + ruta (http/https) o a la URL de producción (`file://`); se limpia la URL al completar el enlace |
 | `escritura_modal_tecleo` | **BUG CONOCIDO**: teclear `1500000` con pausas de 450 ms en el modal SEP deja `51` |
 | `auth_flujo` | lista de correos autorizados, "Acceso denegado", enlace de correo (válido, vencido, con prompt), cerrar sesión, administrador |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Bugs conocidos: `known-bug` vs `enforced`
 
-`semilla_offline.mjs` y `escritura_modal_tecleo.mjs` empiezan con `const MODO_BUG = 'known-bug';`
+`escritura_modal_tecleo.mjs` empieza con `const MODO_BUG = 'known-bug';` (`semilla_offline.mjs` ya está en `'enforced'`: su bug se corrigió)
 
 - `known-bug` (hoy): si el bug está presente imprime `BUG CONOCIDO presente (esperado)` y la suite **no falla** (estado `KNOWN_BUG`).
   Si el bug ya no se reproduce avisa en la tabla que hay que pasar a `enforced`.

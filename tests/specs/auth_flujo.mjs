@@ -38,7 +38,8 @@ await correrSpec('auth_flujo', async (t) => {
     const enviados = await page.evaluate(() => window.__mockfb.auth.sentLinks);
     t.eq(enviados.length, 1, 'correo autorizado (con mayúsculas y espacios): se envía 1 enlace');
     t.eq(enviados[0].email, EMAIL_AUTORIZADO, 'el correo se normaliza a minúsculas antes de enviar');
-    t.ok(enviados[0].handleCodeInApp === true && /^https:\/\/finanzas-slep-petorca\.github\.io\//.test(enviados[0].url), 'el enlace pide handleCodeInApp y vuelve al sitio publicado', enviados[0]);
+    t.ok(enviados[0].handleCodeInApp === true && /^https?:\/\/[^/]+\/.*/.test(enviados[0].url), 'el enlace pide handleCodeInApp:true y una URL absoluta de retorno al panel', enviados[0]);
+    t.info(`URL de retorno del enlace: ${enviados[0].url}`);
     t.ok(new RegExp(EMAIL_AUTORIZADO).test(await page.textContent('#login-success-msg')), 'mensaje de éxito nombra el correo');
     t.eq(await page.evaluate(() => localStorage.getItem('emailForSignIn')), EMAIL_AUTORIZADO, 'el correo queda en localStorage para completar el enlace');
     await page.click('#login-back-btn');

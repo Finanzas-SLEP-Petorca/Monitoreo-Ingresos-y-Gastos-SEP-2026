@@ -82,7 +82,14 @@ const SCRIPT_CAPTURA_IMPRESION = `(() => {
     window.__prints.push({
       bodyClass: document.body.className,
       activeTab: (document.querySelector('.tab-btn.active') || {}).dataset ? document.querySelector('.tab-btn.active').dataset.tab : null,
-      printWrap: txt(document.getElementById('printSingleWrap')),
+      printWrap: (() => { // #printSingleWrap está oculto en pantalla: se muestra un instante para que innerText conserve los saltos de línea
+        const w = document.getElementById('printSingleWrap');
+        if (!w) return '';
+        const prev = w.style.display; w.style.display = 'block';
+        const t = txt(w);
+        w.style.display = prev;
+        return t;
+      })(),
       visibleTabs: visibles.map(el => el.id),
       visibleText: visibles.map(txt).join('\\n'),
     });

@@ -149,7 +149,7 @@ export async function resumenDescarga(page, dl) {
 // Resumen estable de una llamada capturada a window.print() / window.open().
 export function resumenImpresion(p) {
   return {
-    kind: 'print', bodyClass: p.bodyClass, activeTab: p.activeTab, visibleTabs: p.visibleTabs,
+    bodyClass: p.bodyClass, activeTab: p.activeTab, visibleTabs: p.visibleTabs,
     printWrap: p.printWrap, visibleLineas: p.visibleText ? p.visibleText.split('\n').length : 0, visibleSha1: sha1(p.visibleText || ''),
   };
 }

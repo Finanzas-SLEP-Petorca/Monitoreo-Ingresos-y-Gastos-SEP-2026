@@ -34,6 +34,8 @@ service cloud.firestore {
         "cristian.urrutia@sleppetorca.gob.cl",
         "ana.opazo@sleppetorca.gob.cl",
         "mauricio.urrutia@sleppetorca.gob.cl",
+        "angelica.escudero@sleppetorca.gob.cl",
+        "paulina.saez@sleppetorca.gob.cl",
         "marcela.ortega@sleppetorca.gob.cl",
         "carolina.villagra@sleppetorca.gob.cl"
       ];

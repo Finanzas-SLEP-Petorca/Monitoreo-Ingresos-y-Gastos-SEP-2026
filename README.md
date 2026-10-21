@@ -538,7 +538,7 @@ en una colección propia y separada (`sep_carga_rbd`) que no comparte datos con 
   con la lista compartida de conceptos de gasto (`items_22`, `items_29`).
 - **Reglas de seguridad**: ver [`firestore.rules`](./firestore.rules) — debe pegarse
   manualmente en Firebase Console → Firestore Database → Reglas → Publicar (esto no se puede
-  automatizar desde el repositorio). Solo los 9 correos de la whitelist pueden leer/escribir, y
+  automatizar desde el repositorio). Solo los correos de la whitelist (la lista de `isAllowed()`, igual a `ALLOWED_EMAILS`) pueden leer/escribir, y
   ningún RBD puede borrarse desde el cliente.
 - **Migración inicial (una sola vez)**: la primera vez que alguien entra al panel con la
   colección `sep_carga_rbd` vacía, el propio `index.html` sube automáticamente los datos que hoy

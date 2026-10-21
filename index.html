@@ -376,10 +376,121 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media print { .header-logo { display:none !important; } }
 
   /* ---- PESTAÑAS (Panel principal / Reportes) ---- */
-  .tab-bar { display:flex; gap:4px; margin-bottom:16px; padding:4px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; box-shadow:0 1px 3px rgba(17,24,39,0.05); width:fit-content; max-width:100%; flex-wrap:wrap; }
-  .tab-btn { padding:8px 16px; border:none; background:none; font-size:13.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:7px; }
+  /* ---- BARRA DE PESTAÑAS agrupada: inicio (Panel principal/SEP) | fuentes | análisis ---- */
+  .tab-bar { display:flex; gap:8px; margin-bottom:16px; padding:0; background:none; border:none; box-shadow:none; width:auto; max-width:100%; flex-wrap:wrap; align-items:stretch; }
+  .tab-group { display:flex; gap:2px; padding:4px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; box-shadow:0 1px 3px rgba(17,24,39,0.05); flex-wrap:nowrap; }
+  .tab-btn { padding:8px 11px; border:none; background:none; font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:7px; white-space:nowrap; }
   .tab-btn:hover { color:var(--text-primary); background:var(--page-plane); }
   .tab-btn.active { color:var(--series-1); background:var(--tone-blue-bg); }
+  @media (max-width:560px) { .user-box { flex-wrap:wrap; white-space:normal; } .header-right { align-items:flex-start; } }
+  @media (max-width:760px) {
+    .tab-bar { flex-wrap:nowrap; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+    .tab-group { flex-shrink:0; }
+  }
+
+  /* ---- DASHBOARD (Panel principal) ---- */
+  .dash { --chart-ing: var(--series-1); --chart-gas: var(--series-2); --chart-bys: #7c3aed; }
+  .dash-head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  .dash-head h2 { margin:0; }
+  .dash-sub { color:var(--text-muted); font-size:12.5px; margin:3px 0 0; max-width:760px; }
+  .dash-controls { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .dash-chips { display:inline-flex; padding:3px; gap:2px; background:var(--surface-1); border:1px solid var(--border); border-radius:9px; }
+  .dash-chips button { border:none; background:none; padding:6px 12px; font-size:12.5px; font-weight:600; color:var(--text-secondary); border-radius:6px; cursor:pointer; }
+  .dash-chips button:hover { background:var(--page-plane); color:var(--text-primary); }
+  .dash-chips button.active { background:var(--tone-blue-bg); color:var(--series-1); }
+  .dash-pdf-btn { padding:7px 12px; border-radius:8px; border:1px solid #374151; background:#374151; color:#fff; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .dash-aviso { background:var(--tone-amber-bg); border:1px solid var(--tone-amber-border); color:var(--tone-amber-fg); border-radius:8px; padding:8px 12px; font-size:12.5px; margin-bottom:14px; }
+  .dash-strip { display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:12px; margin-bottom:22px; }
+  .dash-tile { border-radius:12px; padding:12px 14px; border:1px solid var(--border); background:var(--surface-1); min-width:0; }
+  .dash-tile .t-label { font-size:11.5px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.03em; }
+  .dash-tile .t-value { font-size:clamp(15px, 1.45vw, 21px); font-weight:700; margin-top:4px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .dash-tile .t-sub { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+  .dash-tile.tone-blue { background:var(--tone-blue-bg); border-color:var(--tone-blue-border); } .dash-tile.tone-blue .t-value { color:var(--tone-blue-fg); }
+  .dash-tile.tone-amber { background:var(--tone-amber-bg); border-color:var(--tone-amber-border); } .dash-tile.tone-amber .t-value { color:var(--tone-amber-fg); }
+  .dash-tile.tone-green { background:var(--tone-green-bg); border-color:var(--tone-green-border); } .dash-tile.tone-green .t-value { color:var(--tone-green-fg); }
+  .dash-tile.tone-red { background:var(--tone-red-bg); border-color:var(--tone-red-border); } .dash-tile.tone-red .t-value { color:var(--tone-red-fg); }
+  .dash-tile.tone-gray { background:var(--tone-gray-bg); border-color:var(--tone-gray-border); } .dash-tile.tone-gray .t-value { color:var(--tone-gray-fg); }
+  .dash h3.dash-h3 { font-size:14px; margin:0 0 10px; color:var(--text-primary); }
+  .dash-cards { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:12px; margin-bottom:22px; }
+  @media (max-width:1280px) { .dash-cards { grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+  @media (max-width:1000px) { .dash-cards { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+  @media (max-width:720px) { .dash-cards { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+  @media (max-width:480px) { .dash-cards { grid-template-columns:1fr; } }
+  .dash-card { background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:14px; cursor:pointer; box-shadow:0 1px 3px rgba(17,24,39,0.05); transition:border-color .12s, box-shadow .12s, transform .12s; min-width:0; }
+  .dash-card:hover, .dash-card:focus-visible { border-color:var(--series-1); box-shadow:0 6px 16px rgba(37,99,235,0.13); transform:translateY(-1px); outline:none; }
+  .dash-card .c-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .dash-card .c-name { font-weight:700; font-size:14px; display:flex; align-items:center; gap:6px; min-width:0; }
+  .dash-card .c-estado { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+  .dash-card .c-estado.ok { background:var(--tone-green-bg); color:var(--tone-green-fg); }
+  .dash-card .c-estado.mal { background:var(--tone-red-bg); color:var(--tone-red-fg); }
+  .dash-card .c-estado.nd { background:var(--tone-gray-bg); color:var(--tone-gray-fg); }
+  .dash-card .c-saldo-label { font-size:11px; color:var(--text-muted); margin-top:10px; text-transform:uppercase; letter-spacing:.03em; font-weight:700; }
+  .dash-card .c-saldo { font-size:24px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .dash-card .c-saldo.pos { color:var(--status-good); } .dash-card .c-saldo.neg { color:var(--status-critical); }
+  .dash-card .c-mini { margin-top:8px; display:grid; gap:5px; }
+  .dash-card .c-mini .row { display:grid; grid-template-columns:58px 1fr auto; gap:6px; align-items:center; font-size:11.5px; color:var(--text-secondary); }
+  .dash-card .c-mini .row .val { font-variant-numeric:tabular-nums; color:var(--text-primary); font-weight:600; }
+  .dash-track { height:8px; border-radius:4px; background:var(--tone-gray-bg); overflow:hidden; }
+  .dash-fill { height:100%; border-radius:0 4px 4px 0; min-width:2px; }
+  .dash-fill.ing { background:var(--chart-ing); } .dash-fill.gas { background:var(--chart-gas); }
+  .dash-fill.cero { min-width:0; width:0 !important; }
+  .dash-card .c-ejec { margin-top:10px; font-size:11.5px; color:var(--text-secondary); }
+  .dash-card .c-ejec .pct-line { display:flex; justify-content:space-between; margin-bottom:3px; }
+  .dash-card .c-def { margin-top:8px; font-size:11.5px; color:var(--text-secondary); }
+  .dash-card .c-def.alerta { color:var(--tone-red-fg); font-weight:600; }
+  .dash-grid2 { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin-bottom:16px; }
+  .dash-panel { background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:14px 16px; min-width:0; }
+  .dash-panel-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .dash-panel-head h3 { margin:0; font-size:14px; }
+  .dash-leyenda { display:flex; gap:12px; flex-wrap:wrap; font-size:11.5px; color:var(--text-secondary); }
+  .dash-leyenda .key { display:inline-flex; align-items:center; gap:5px; }
+  .dash-leyenda .sw { width:10px; height:10px; border-radius:2px; display:inline-block; }
+  .dash-nota-chart { font-size:11.5px; color:var(--text-muted); margin:0 0 8px; }
+  .dash-bars { display:grid; gap:7px; }
+  .dash-bar-row { display:grid; grid-template-columns:122px 1fr; gap:8px; align-items:center; padding:3px 4px; border-radius:7px; cursor:pointer; }
+  .dash-bar-row:hover, .dash-bar-row:focus-visible { background:var(--page-plane); outline:none; }
+  .dash-bar-row .b-name { font-size:11.5px; font-weight:600; color:var(--text-primary); line-height:1.2; overflow-wrap:anywhere; }
+  .dash-bar-row .b-lines { display:grid; gap:3px; min-width:0; }
+  .dash-bar-line { display:flex; align-items:center; gap:6px; min-width:0; }
+  .dash-bar-fill { height:10px; border-radius:0 4px 4px 0; width:calc((100% - 62px) * var(--r, 0)); min-width:2px; flex:0 0 auto; }
+  .dash-bar-fill.ing { background:var(--chart-ing); } .dash-bar-fill.gas { background:var(--chart-gas); }
+  .dash-bar-fill.cero { min-width:0; width:0; }
+  .dash-bar-val { font-size:11px; color:var(--text-secondary); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .dash-stack { display:flex; gap:2px; height:16px; min-width:0; }
+  .dash-stack .seg { display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; color:#fff; min-width:0; overflow:hidden; white-space:nowrap; }
+  .dash-stack .seg.rem { background:var(--chart-gas); border-radius:0; }
+  .dash-stack .seg.bys { background:var(--chart-bys); border-radius:0 4px 4px 0; }
+  .dash-stack .seg.rem:last-child { border-radius:0 4px 4px 0; }
+  .dash-stack .vacio { flex:1; background:var(--tone-gray-bg); border-radius:4px; color:var(--text-muted); font-size:10.5px; display:flex; align-items:center; padding-left:8px; }
+  .dash-linechart { width:100%; }
+  .dash-linechart svg { display:block; width:100%; height:auto; overflow:visible; }
+  .dash-linechart text { font-family:inherit; }
+  .dash-atencion { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+  .dash-atencion li { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; padding:8px 10px; border:1px solid var(--border); border-radius:8px; cursor:pointer; background:var(--surface-1); }
+  .dash-atencion li:hover, .dash-atencion li:focus-visible { background:var(--tone-red-bg); border-color:var(--tone-red-border); outline:none; }
+  .dash-atencion .a-fuente { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.03em; }
+  .dash-atencion .a-nombre { font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dash-atencion .a-saldo { font-size:13px; font-weight:700; color:var(--status-critical); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .dash-vacio { color:var(--text-muted); font-size:12.5px; padding:14px 4px; }
+  .dash-tabla { margin-top:10px; font-size:12px; }
+  .dash-tabla summary { cursor:pointer; color:var(--series-1); font-weight:600; }
+  .dash-tabla table { width:100%; border-collapse:collapse; margin-top:6px; }
+  .dash-tabla th, .dash-tabla td { padding:4px 6px; border-bottom:1px solid var(--gridline); text-align:right; font-variant-numeric:tabular-nums; }
+  .dash-tabla th:first-child, .dash-tabla td:first-child { text-align:left; }
+  #dashTooltip { position:fixed; z-index:9999; pointer-events:none; background:var(--brand-navy); color:#fff; border-radius:8px; padding:8px 10px; font-size:12px; box-shadow:0 6px 18px rgba(15,31,61,.35); max-width:290px; display:none; }
+  #dashTooltip .tt-title { font-weight:700; margin-bottom:4px; }
+  #dashTooltip .tt-row { display:flex; align-items:center; gap:6px; margin-top:2px; }
+  #dashTooltip .tt-key { width:12px; height:3px; border-radius:2px; display:inline-block; flex:none; }
+  #dashTooltip .tt-val { font-weight:700; font-variant-numeric:tabular-nums; }
+  #dashTooltip .tt-lab { color:#cbd5e1; }
+  @media (max-width:1100px) { .dash-strip { grid-template-columns:repeat(3, minmax(0, 1fr)); } .dash-grid2 { grid-template-columns:1fr; } }
+  @media (max-width:560px) { .dash-strip { grid-template-columns:repeat(2, minmax(0, 1fr)); } .dash-bar-row { grid-template-columns:92px 1fr; } .dash-tile .t-value { font-size:16px; } }
+  @media print {
+    .dash-controls, .dash-tabla summary, #dashTooltip { display:none !important; }
+    .dash-card { cursor:default; box-shadow:none; break-inside:avoid; transform:none !important; }
+    .dash-panel, .dash-tile { break-inside:avoid; }
+    .dash-bar-row, .dash-atencion li { cursor:default; }
+  }
 
   /* ---- Otras Fuentes: Real / Proyectado / Total ---- */
   .of-realproy-block { flex-shrink:0; }
@@ -525,21 +636,90 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </header>
 
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="panel" type="button">📊 Panel principal</button>
-    <button class="tab-btn" data-tab="reportes" type="button">📈 Reportes</button>
-    <button class="tab-btn" data-tab="ejecucion" type="button">📉 % Ejecución</button>
-    <button class="tab-btn" data-tab="of-general" type="button">💰 Subv. General</button>
-    <button class="tab-btn" data-tab="of-pie" type="button">🧩 PIE</button>
-    <button class="tab-btn" data-tab="of-mantenimiento" type="button">🔧 Mantención</button>
-    <button class="tab-btn" data-tab="of-prorretencion" type="button">📌 Pro-Retención</button>
-    <button class="tab-btn" data-tab="of-junji" type="button">🧸 JUNJI</button>
-    <button class="tab-btn" data-tab="of-faep" type="button">🏗️ FAEP</button>
-    <button class="tab-btn" data-tab="of-figa" type="button">🌐 FIGA</button>
-    <button class="tab-btn" data-tab="of-aporte_educ" type="button">🏛️ Aporte Fiscal Educ.</button>
-    <button class="tab-btn" data-tab="of-aporte_junji" type="button">🍼 Aporte Fiscal JUNJI</button>
+    <div class="tab-group" aria-label="Inicio">
+      <button class="tab-btn active" data-tab="dashboard" type="button">🏠 Panel principal</button>
+      <button class="tab-btn" data-tab="panel" type="button">🎓 SEP</button>
+    </div>
+    <div class="tab-group" aria-label="Fuentes de financiamiento">
+      <button class="tab-btn" data-tab="of-general" type="button">💰 Subv. General</button>
+      <button class="tab-btn" data-tab="of-pie" type="button">🧩 PIE</button>
+      <button class="tab-btn" data-tab="of-mantenimiento" type="button">🔧 Mantención</button>
+      <button class="tab-btn" data-tab="of-prorretencion" type="button">📌 Pro-Retención</button>
+      <button class="tab-btn" data-tab="of-junji" type="button">🧸 JUNJI</button>
+      <button class="tab-btn" data-tab="of-faep" type="button">🏗️ FAEP</button>
+      <button class="tab-btn" data-tab="of-figa" type="button">🌐 FIGA</button>
+      <button class="tab-btn" data-tab="of-aporte_educ" type="button">🏛️ Aporte Fiscal Educ.</button>
+      <button class="tab-btn" data-tab="of-aporte_junji" type="button">🍼 Aporte Fiscal JUNJI</button>
+    </div>
+    <div class="tab-group" aria-label="Análisis">
+      <button class="tab-btn" data-tab="ejecucion" type="button">📉 % Ejecución</button>
+      <button class="tab-btn" data-tab="reportes" type="button">📈 Reportes</button>
+    </div>
   </div>
 
-  <div id="tab-panel" class="tab-content">
+  <div id="tab-dashboard" class="tab-content">
+    <section class="dash">
+      <div class="dash-head">
+        <div>
+          <h2>Panel principal — resumen por fuente de financiamiento</h2>
+          <p class="dash-sub" id="dashNota">Cargando datos…</p>
+        </div>
+        <div class="dash-controls">
+          <div class="dash-chips" role="group" aria-label="Vista de las cifras">
+            <button type="button" class="active" data-dash-vista="total">Total (Real+Proy)</button>
+            <button type="button" data-dash-vista="real">Real</button>
+            <button type="button" data-dash-vista="proy">Proyectado</button>
+          </div>
+          <button type="button" id="dashPdfBtn" class="dash-pdf-btn">🖨 Exportar PDF</button>
+        </div>
+      </div>
+      <div id="dashAviso"></div>
+      <div class="dash-strip" id="dashStrip"></div>
+      <h3 class="dash-h3">Por fuente de financiamiento <span style="font-weight:400; color:var(--text-muted); font-size:12px;">— haz clic en una tarjeta para ir a su pestaña</span></h3>
+      <div class="dash-cards" id="dashCards"></div>
+      <div class="dash-grid2">
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <h3>Ingreso vs. Gasto por fuente</h3>
+            <div class="dash-leyenda"><span class="key"><span class="sw" style="background:var(--chart-ing)"></span>Ingreso</span><span class="key"><span class="sw" style="background:var(--chart-gas)"></span>Gasto</span></div>
+          </div>
+          <p class="dash-nota-chart">Millones de pesos (M). Clic en una fila para abrir la pestaña.</p>
+          <div class="dash-bars" id="dashChartCmp"></div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <h3>Composición del gasto</h3>
+            <div class="dash-leyenda"><span class="key"><span class="sw" style="background:var(--chart-gas)"></span>Remuneraciones</span><span class="key"><span class="sw" style="background:var(--chart-bys)"></span>Bienes y Servicios</span></div>
+          </div>
+          <p class="dash-nota-chart">% del gasto de cada fuente. Clic en una fila para abrir la pestaña.</p>
+          <div class="dash-bars" id="dashChartComp"></div>
+          <details class="dash-tabla" id="dashTablaFuentes"><summary>Ver datos en tabla</summary><div id="dashTablaFuentesBody"></div></details>
+        </div>
+      </div>
+      <div class="dash-grid2">
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <h3>Evolución mensual consolidada</h3>
+            <div class="dash-leyenda"><span class="key"><span class="sw" style="background:var(--chart-ing)"></span>Ingreso</span><span class="key"><span class="sw" style="background:var(--chart-gas)"></span>Gasto</span></div>
+          </div>
+          <p class="dash-nota-chart" id="dashNotaMensual">Suma de SEP y de todas las fuentes, enero a diciembre (millones de pesos).</p>
+          <div class="dash-linechart" id="dashChartMes"></div>
+          <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="dashTablaMesBody"></div></details>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <h3>Atención — entidades con peor saldo</h3>
+          </div>
+          <p class="dash-nota-chart" id="dashNotaAtencion">Las 8 entidades con saldo más negativo entre SEP y todas las fuentes. Clic para abrir su detalle.</p>
+          <ul class="dash-atencion" id="dashAtencion"></ul>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div id="dashTooltip" role="tooltip"></div>
+
+  <div id="tab-panel" class="tab-content hidden">
+  <div class="panel-sep-head"><h2 style="margin:0 0 4px;">🎓 SEP — Subvención Escolar Preferencial</h2><p class="dash-sub" style="margin:0 0 12px;">Monitoreo por establecimiento (RBD) con la regla 70% remuneraciones / 30% bienes y servicios.</p></div>
 
   <button type="button" class="kpi-section-label" data-section="real" onclick="toggleKpiSection('real')"><span class="kpi-toggle-icon">▾</span> Real (ejecutado)</button>
   <div class="kpi-row kpi-row-real" id="kpiRowReal"></div>
@@ -1113,7 +1293,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         clic en ese enlace quedas conectado. Solo entran los correos autorizados por Wilson Rojas; si el tuyo no está
         autorizado todavía, pídeselo a él.</p>
 
-        <h4>2. Panel principal</h4>
+        <h4>2. Panel principal (dashboard)</h4>
+        <p>Es la pantalla de entrada: muestra, para <strong>SEP</strong> y para cada fuente de financiamiento
+        (Subv. General, PIE, Mantención, Pro-Retención, JUNJI, FAEP, FIGA y los dos Aportes Fiscales Extraordinarios),
+        su saldo, cuánto ingresó, cuánto se gastó y cuántas entidades están en déficit. Los botones
+        <strong>Total / Real / Proyectado</strong> cambian todas las cifras. Al hacer clic en una tarjeta, en una barra
+        o en una entidad del panel "Atención" se abre la pestaña (o el detalle) correspondiente.</p>
+
+        <h4>3. Pestaña SEP</h4>
         <p>La tabla "Estado por RBD" muestra un establecimiento por fila: cuánto Ingreso SEP tiene, cuánto ha gastado
         en Remuneraciones y en Bienes y Servicios, y si le sobra o le falta plata (columna <strong>Estado</strong>:
         Superávit, Riesgo o Déficit). Haz clic en cualquier parte de una fila (el RBD, el nombre o la flechita ▸) para
@@ -1122,7 +1309,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         secciones colapsables: <strong>Real</strong>, <strong>Proyectado</strong> y <strong>Total</strong> — haz clic
         en el título de cada una para mostrarla u ocultarla.</p>
 
-        <h4>3. Cómo cargar los datos de un establecimiento</h4>
+        <h4>4. Pestañas de las otras fuentes de financiamiento</h4>
+        <p>Cada fuente tiene su propia pestaña, con una fila por entidad (RBD, "AC" para Administración Central, o los
+        GESPARVU en las fuentes JUNJI), las mismas tarjetas Real / Proyectado / Total y el control "Real hasta el mes".
+        A diferencia de SEP no tienen meta 70/30: el Estado solo indica Superávit o Déficit. Cada fila trae botones
+        para descargar su Excel (⬇ XLS), su CSV y su PDF individual (🖨), y arriba hay botones para importar y
+        exportar toda la fuente.</p>
+
+        <h4>5. Cómo cargar los datos de un establecimiento de SEP</h4>
         <ul>
           <li><strong>Ingreso SEP</strong> y <strong>Remuneraciones</strong>: se escriben directo en la celda del mes
           que corresponda, dentro del detalle del RBD.</li>
@@ -1136,29 +1330,29 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <p>Todo lo que edites se guarda solo (no hay botón "Guardar") y se comparte al instante con el resto del
         equipo, sin recargar la página.</p>
 
-        <h4>4. Real vs. Proyectado</h4>
+        <h4>6. Real vs. Proyectado</h4>
         <p>Cada celda de mes se marca <span class="help-tag real">Real</span> (ya ejecutado, verde) o
         <span class="help-tag proy">Proyectado</span> (una estimación, naranja) según el tipo de dato — las compras
         siempre son reales, la fila de proyección de B&S siempre es proyectada, y Remuneraciones tiene un selector
         propio por establecimiento ("Remuneraciones reales hasta: [mes]") para marcar desde cuándo ya no son datos
         reales sino una estimación tuya.</p>
 
-        <h4>5. Qué significan "Saldo Final (Real+Proy)" y "% Ejec. Total (Real+Proy)"</h4>
+        <h4>7. Qué significan "Saldo Final (Real+Proy)" y "% Ejec. Total (Real+Proy)" (SEP)</h4>
         <p>Estas dos columnas, destacadas en <span class="help-tag final">celeste</span> justo al lado de "Estado",
         ya suman lo ejecutado MÁS lo cargado como proyección — muestran cómo quedaría ese establecimiento a fin de
         año si las proyecciones cargadas se cumplen tal cual. El % Ejec. Total es el número que define el Estado:
         100% o más es Déficit, 90% o más es Riesgo, el resto es Superávit.</p>
 
-        <h4>6. Pestaña "Reportes"</h4>
+        <h4>8. Pestaña "Reportes"</h4>
         <p>Arma una tabla a medida eligiendo establecimientos, conceptos (Ingreso, Remuneraciones, cualquier ítem de
         compras o de su proyección — se puede buscar por nombre o por código SUPEREDUC) y meses. Cada celda se
         colorea real/proyectada igual que en el detalle de cada RBD. Se puede descargar en CSV, Excel o PDF.</p>
 
-        <h4>7. Pestaña "% Ejecución"</h4>
+        <h4>9. Pestaña "% Ejecución"</h4>
         <p>Muestra, mes a mes, cómo va el ritmo de gasto de Remuneraciones y Bienes y Servicios contra la meta anual
         (70%/30%), para un establecimiento o para todos juntos.</p>
 
-        <h4>8. Exportar e imprimir</h4>
+        <h4>10. Exportar e imprimir</h4>
         <p>Cada fila tiene botones para descargar el Excel o el CSV SUPEREDUC solo de ese establecimiento, y un
         PDF con su análisis individual (🖨). Arriba de la tabla hay botones equivalentes para todos los
         establecimientos a la vez (según el filtro/búsqueda actual).</p>
@@ -3835,10 +4029,433 @@ FUENTES_OTRAS.forEach(f => {
 // se ingresan los datos. Vive en su propia pestaña ("📈 Reportes").
 // ============================================================================
 
+// ============================================================================
+// ============== DASHBOARD (Panel principal): resumen de SEP + 9 fuentes ==============
+// Una tarjeta por fuente, franja consolidada, gráficos comparativos y panel de atención. Todo se
+// calcula con funciones que ya existen: SEP con computeTotales()/computeTotalesRealProy() (las
+// mismas de sus tarjetas KPI) y las fuentes con computeTotalesOtraFuente() (de.rp por entidad).
+// ============================================================================
+
+let dashVista = 'total'; // 'total' | 'real' | 'proy' — cambia TODAS las cifras del dashboard
+const DASH_VISTAS = { total: 'Total (Real+Proy)', real: 'Real (ejecutado)', proy: 'Proyectado' };
+const DASH_META = {
+  sep: { corto: 'SEP', icono: '🎓', tab: 'panel' },
+  general: { corto: 'Subv. General', icono: '💰' },
+  pie: { corto: 'PIE', icono: '🧩' },
+  mantenimiento: { corto: 'Mantención', icono: '🔧' },
+  prorretencion: { corto: 'Pro-Retención', icono: '📌' },
+  junji: { corto: 'JUNJI', icono: '🧸' },
+  faep: { corto: 'FAEP', icono: '🏗️' },
+  figa: { corto: 'FIGA', icono: '🌐' },
+  aporte_educ: { corto: 'Aporte Fiscal Educ.', icono: '🏛️' },
+  aporte_junji: { corto: 'Aporte Fiscal JUNJI', icono: '🍼' },
+};
+
+// Mismo contrato que computeTotalesOtraFuente: { real, proy, total, nEntidades, nDeficit,
+// nSuperavit }, cada bloque { ingreso, rem, bys, gasto, saldo }. Para SEP, "Ingreso" = Ingreso SEP
+// (Preferente + Prioritario) + Carrera Docente — el mismo ingreso que usa su KPI de Saldo — y el
+// bloque Total sale de computeTotales() (la fila "Total" de sus tarjetas KPI), así que las cifras
+// coinciden exactamente con la pestaña SEP, incluido el selector "Ver resumen hasta el mes".
+function computeTotalesSepParaDashboard() {
+  const t = computeTotales();
+  const rp = computeTotalesRealProy();
+  const real = bloqueRealProy(rp.ingresoReal + rp.carreraReal, rp.remReal, rp.bysReal);
+  const proy = bloqueRealProy(rp.ingresoProy + rp.carreraProy, rp.remProy, rp.bysProy);
+  const total = {
+    ingreso: t.marco_anual_proy + t.carrera_docente_anual,
+    rem: t.gasto_rem_anual_proy,
+    bys: t.gasto_bys,
+    gasto: t.gasto_rem_anual_proy + t.gasto_bys,
+    saldo: t.saldo_total,
+  };
+  return { real, proy, total, nEntidades: N_RBD_CON_MARCO, nDeficit: t.n_deficit, nSuperavit: Math.max(0, N_RBD_CON_MARCO - t.n_deficit) };
+}
+
+function dashFuentes() {
+  const lista = [{ key: 'sep', label: 'SEP', ...DASH_META.sep, t: computeTotalesSepParaDashboard() }];
+  FUENTES_OTRAS.forEach(f => {
+    lista.push({ key: f.key, label: f.label, ...DASH_META[f.key], tab: 'of-' + f.key, t: computeTotalesOtraFuente(f.key) });
+  });
+  return lista;
+}
+
+// Millones de pesos con coma decimal: 1.234.567 → "1,23 M". Los montos exactos van en tooltips y tablas.
+function fmtMillones(n) {
+  const m = (Number(n) || 0) / 1e6;
+  const abs = Math.abs(m);
+  const d = abs === 0 ? 0 : (abs >= 100 ? 0 : (abs >= 10 ? 1 : 2));
+  return m.toLocaleString('es-CL', { minimumFractionDigits: d, maximumFractionDigits: d }) + ' M';
+}
+function dashPct(gasto, ingreso) { return ingreso > 0 ? (gasto / ingreso) * 100 : null; }
+function fmtPct1(p) { return p.toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'; }
+function dashColorEjec(p) { return p >= 100 ? 'var(--status-critical)' : (p >= 90 ? 'var(--status-warning)' : 'var(--status-good)'); }
+
+// Activa una pestaña por código (data-tab): reusa el handler de clic de los botones, así que
+// muestra el div correcto y repinta lo que corresponda.
+function irAPestana(tabId) {
+  const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+  if (!btn) return;
+  btn.click();
+  try { btn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) { /* navegadores sin soporte */ }
+  window.scrollTo({ top: 0 });
+}
+window.irAPestana = irAPestana;
+
+function dashTile(label, value, sub, tone) {
+  return `<div class="dash-tile tone-${tone}"><div class="t-label">${label}</div><div class="t-value">${value}</div><div class="t-sub">${sub}</div></div>`;
+}
+
+function renderDashStrip(fuentes) {
+  const acc = { ingreso: 0, rem: 0, bys: 0, gasto: 0, saldo: 0 };
+  let nDef = 0, nEnt = 0;
+  fuentes.forEach(f => {
+    const b = f.t[dashVista];
+    Object.keys(acc).forEach(k => { acc[k] += b[k]; });
+    nDef += f.t.nDeficit; nEnt += f.t.nEntidades;
+  });
+  const vistaTxt = DASH_VISTAS[dashVista];
+  document.getElementById('dashStrip').innerHTML = [
+    dashTile('Ingreso', fmtCLP(acc.ingreso), `SEP + 9 fuentes · ${vistaTxt}`, 'blue'),
+    dashTile('Gasto Remuneraciones', fmtCLP(acc.rem), vistaTxt, 'amber'),
+    dashTile('Gasto Bienes y Servicios', fmtCLP(acc.bys), vistaTxt, 'amber'),
+    dashTile('Gasto Total', fmtCLP(acc.gasto), vistaTxt, 'amber'),
+    dashTile('Saldo consolidado', fmtCLP(acc.saldo), acc.saldo < 0 ? '▼ Déficit' : '▲ Superávit', acc.saldo < 0 ? 'red' : 'green'),
+    dashTile('Entidades en déficit', String(nDef), `suma de SEP y las fuentes · de ${nEnt} (saldo Total)`, nDef > 0 ? 'red' : 'gray'),
+  ].join('');
+  return acc;
+}
+
+function renderDashCards(fuentes) {
+  document.getElementById('dashCards').innerHTML = fuentes.map(f => {
+    const b = f.t[dashVista];
+    const hayDatos = b.ingreso !== 0 || b.gasto !== 0;
+    const maxBar = Math.max(b.ingreso, b.gasto, 1);
+    const pct = dashPct(b.gasto, b.ingreso);
+    let estadoHTML, saldoCls;
+    if (!hayDatos) { estadoHTML = '<span class="c-estado nd">Sin datos</span>'; saldoCls = ''; }
+    else if (b.saldo < 0) { estadoHTML = '<span class="c-estado mal">▼ Déficit</span>'; saldoCls = 'neg'; }
+    else { estadoHTML = '<span class="c-estado ok">▲ Superávit</span>'; saldoCls = 'pos'; }
+    let ejecHTML;
+    if (!hayDatos) ejecHTML = '<div class="c-ejec">Sin datos cargados todavía</div>';
+    else if (pct === null) ejecHTML = '<div class="c-ejec" style="color:var(--status-critical)">Hay gasto pero no hay ingreso cargado</div>';
+    else ejecHTML = `<div class="c-ejec"><div class="pct-line"><span>Ejecución (Gasto / Ingreso)</span><strong style="color:${dashColorEjec(pct)}">${fmtPct1(pct)}</strong></div><div class="dash-track"><div class="dash-fill" style="width:${Math.min(100, pct).toFixed(1)}%; background:${dashColorEjec(pct)}"></div></div></div>`;
+    const sepNota = f.key === 'sep' && corteMesIdx < 12 ? ` · acumulado a ${MESES_CARGA_TITLE[corteMesIdx - 1]}` : '';
+    return `<div class="dash-card" role="link" tabindex="0" data-dash-tab="${f.tab}" data-fuente="${f.key}" data-ing="${b.ingreso}" data-rem="${b.rem}" data-bys="${b.bys}" data-gas="${b.gasto}" data-saldo="${b.saldo}" aria-label="${f.label}: saldo ${fmtCLP(b.saldo)}. Abrir pestaña">
+      <div class="c-head"><div class="c-name" title="${f.label}"><span aria-hidden="true">${f.icono}</span><span>${f.corto}</span></div>${estadoHTML}</div>
+      <div class="c-saldo-label">Saldo ${DASH_VISTAS[dashVista]}${sepNota}</div>
+      <div class="c-saldo ${saldoCls}">${fmtCLP(b.saldo)}</div>
+      <div class="c-mini">
+        <div class="row"><span>Ingreso</span><div class="dash-track"><div class="dash-fill ing${b.ingreso > 0 ? '' : ' cero'}" style="width:${(Math.max(0, b.ingreso) / maxBar * 100).toFixed(1)}%"></div></div><span class="val">${fmtMillones(b.ingreso)}</span></div>
+        <div class="row"><span>Gasto</span><div class="dash-track"><div class="dash-fill gas${b.gasto > 0 ? '' : ' cero'}" style="width:${(Math.max(0, b.gasto) / maxBar * 100).toFixed(1)}%"></div></div><span class="val">${fmtMillones(b.gasto)}</span></div>
+      </div>
+      ${ejecHTML}
+      <div class="c-def${f.t.nDeficit > 0 ? ' alerta' : ''}">${f.t.nDeficit} de ${f.t.nEntidades} entidades en déficit</div>
+    </div>`;
+  }).join('');
+}
+
+// ---- Tooltip compartido (hover y foco). Todo el contenido entra con textContent. ----
+const dashTooltipEl = document.getElementById('dashTooltip');
+function dashTooltipMostrar(evt, titulo, filas) {
+  dashTooltipEl.textContent = '';
+  const t = document.createElement('div'); t.className = 'tt-title'; t.textContent = titulo; dashTooltipEl.appendChild(t);
+  filas.forEach(fila => {
+    const row = document.createElement('div'); row.className = 'tt-row';
+    if (fila.color) { const k = document.createElement('span'); k.className = 'tt-key'; k.style.background = fila.color; row.appendChild(k); }
+    const lab = document.createElement('span'); lab.className = 'tt-lab'; lab.textContent = fila.label; row.appendChild(lab);
+    const val = document.createElement('span'); val.className = 'tt-val'; val.textContent = fila.valor; row.appendChild(val);
+    dashTooltipEl.appendChild(row);
+  });
+  dashTooltipEl.style.display = 'block';
+  dashTooltipPosicionar(evt);
+}
+function dashTooltipPosicionar(evt) {
+  if (dashTooltipEl.style.display !== 'block') return;
+  let x, y;
+  if (evt && evt.clientX !== undefined && (evt.clientX || evt.clientY)) { x = evt.clientX + 14; y = evt.clientY + 14; }
+  else if (evt && evt.target && evt.target.getBoundingClientRect) { const r = evt.target.getBoundingClientRect(); x = r.left + 12; y = r.bottom + 6; }
+  else { x = 20; y = 20; }
+  const w = dashTooltipEl.offsetWidth, h = dashTooltipEl.offsetHeight;
+  if (x + w > window.innerWidth - 8) x = Math.max(8, window.innerWidth - w - 8);
+  if (y + h > window.innerHeight - 8) y = Math.max(8, y - h - 28);
+  dashTooltipEl.style.left = x + 'px'; dashTooltipEl.style.top = y + 'px';
+}
+function dashTooltipOcultar() { dashTooltipEl.style.display = 'none'; }
+
+function dashFilaInteractiva(el, titulo, filas, tab) {
+  el.addEventListener('pointerenter', e => dashTooltipMostrar(e, titulo, filas));
+  el.addEventListener('pointermove', dashTooltipPosicionar);
+  el.addEventListener('pointerleave', dashTooltipOcultar);
+  el.addEventListener('focus', e => dashTooltipMostrar(e, titulo, filas));
+  el.addEventListener('blur', dashTooltipOcultar);
+  el.addEventListener('click', () => { dashTooltipOcultar(); irAPestana(tab); });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dashTooltipOcultar(); irAPestana(tab); } });
+}
+
+function renderDashComparativo(fuentes) {
+  const host = document.getElementById('dashChartCmp');
+  host.textContent = '';
+  const max = Math.max(1, ...fuentes.map(f => Math.max(f.t[dashVista].ingreso, f.t[dashVista].gasto)));
+  fuentes.forEach(f => {
+    const b = f.t[dashVista];
+    const row = document.createElement('div');
+    row.className = 'dash-bar-row'; row.setAttribute('role', 'link'); row.tabIndex = 0; row.dataset.dashTab = f.tab; row.dataset.dashFuente = f.key;
+    row.setAttribute('aria-label', `${f.label}: ingreso ${fmtCLP(b.ingreso)}, gasto ${fmtCLP(b.gasto)}`);
+    const name = document.createElement('div'); name.className = 'b-name'; name.textContent = `${f.icono} ${f.corto}`; row.appendChild(name);
+    const lines = document.createElement('div'); lines.className = 'b-lines';
+    [['ing', b.ingreso], ['gas', b.gasto]].forEach(([tipo, v]) => {
+      const line = document.createElement('div'); line.className = 'dash-bar-line';
+      const fill = document.createElement('div'); fill.className = 'dash-bar-fill ' + tipo + (v > 0 ? '' : ' cero');
+      fill.style.setProperty('--r', String(Math.max(0, v) / max)); fill.dataset.dashBar = tipo;
+      const val = document.createElement('span'); val.className = 'dash-bar-val'; val.textContent = fmtMillones(v);
+      line.appendChild(fill); line.appendChild(val); lines.appendChild(line);
+    });
+    row.appendChild(lines);
+    dashFilaInteractiva(row, f.label + ' · ' + DASH_VISTAS[dashVista], [
+      { color: 'var(--chart-ing)', label: 'Ingreso', valor: fmtCLP(b.ingreso) },
+      { color: 'var(--chart-gas)', label: 'Gasto', valor: fmtCLP(b.gasto) },
+      { label: 'Saldo', valor: fmtCLP(b.saldo) },
+    ], f.tab);
+    host.appendChild(row);
+  });
+}
+
+function renderDashComposicion(fuentes) {
+  const host = document.getElementById('dashChartComp');
+  host.textContent = '';
+  fuentes.forEach(f => {
+    const b = f.t[dashVista];
+    const row = document.createElement('div');
+    row.className = 'dash-bar-row'; row.setAttribute('role', 'link'); row.tabIndex = 0; row.dataset.dashTab = f.tab; row.dataset.dashFuente = f.key;
+    row.setAttribute('aria-label', `${f.label}: remuneraciones ${fmtCLP(b.rem)}, bienes y servicios ${fmtCLP(b.bys)}`);
+    const name = document.createElement('div'); name.className = 'b-name'; name.textContent = `${f.icono} ${f.corto}`; row.appendChild(name);
+    const stack = document.createElement('div'); stack.className = 'dash-stack';
+    const remPos = Math.max(0, b.rem), bysPos = Math.max(0, b.bys), suma = remPos + bysPos;
+    if (suma <= 0) {
+      const v = document.createElement('div'); v.className = 'vacio'; v.textContent = 'sin gasto'; stack.appendChild(v);
+    } else {
+      [['rem', remPos], ['bys', bysPos]].forEach(([tipo, v]) => {
+        if (v <= 0) return;
+        const share = v / suma * 100;
+        const seg = document.createElement('div'); seg.className = 'seg ' + tipo; seg.style.flex = String(v); seg.dataset.dashSeg = tipo;
+        if (share >= 16) seg.textContent = Math.round(share) + '%';
+        stack.appendChild(seg);
+      });
+    }
+    row.appendChild(stack);
+    const pRem = suma > 0 ? remPos / suma * 100 : 0, pBys = suma > 0 ? bysPos / suma * 100 : 0;
+    dashFilaInteractiva(row, f.label + ' · ' + DASH_VISTAS[dashVista], [
+      { color: 'var(--chart-gas)', label: 'Remuneraciones', valor: `${fmtCLP(b.rem)} (${Math.round(pRem)}%)` },
+      { color: 'var(--chart-bys)', label: 'Bienes y Servicios', valor: `${fmtCLP(b.bys)} (${Math.round(pBys)}%)` },
+    ], f.tab);
+    host.appendChild(row);
+  });
+  // Vista de tabla (alternativa accesible a los dos gráficos de barras).
+  let html = '<table><thead><tr><th>Fuente</th><th>Ingreso</th><th>Remuneraciones</th><th>Bienes y Servicios</th><th>Gasto Total</th><th>Saldo</th><th>Gasto/Ingreso</th></tr></thead><tbody>';
+  fuentes.forEach(f => {
+    const b = f.t[dashVista]; const p = dashPct(b.gasto, b.ingreso);
+    html += `<tr><td>${f.corto}</td><td>${fmtCLP(b.ingreso)}</td><td>${fmtCLP(b.rem)}</td><td>${fmtCLP(b.bys)}</td><td>${fmtCLP(b.gasto)}</td><td>${fmtCLP(b.saldo)}</td><td>${p === null ? '—' : fmtPct1(p)}</td></tr>`;
+  });
+  document.getElementById('dashTablaFuentesBody').innerHTML = html + '</tbody></table>';
+}
+
+// ---- Evolución mensual consolidada: se arma mes a mes con las mismas reglas real/proyectado
+// que ya usan las pestañas (corte "Real hasta" por entidad en las fuentes; en SEP, Ingreso real
+// hasta DATA.n_meses y Remuneraciones hasta el corte de cada RBD; compras siempre reales; la
+// proyección de B&S siempre proyectada). Es la serie enero–diciembre completa: no depende del
+// selector "Ver resumen hasta el mes" de SEP. ---
+function serieMensualVacia() { return { ing: new Array(12).fill(0), gas: new Array(12).fill(0) }; }
+function serieMensualOtraFuente(fuenteKey, out) {
+  const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    const of = recomputeOtraFuente(r.rbd, fuenteKey);
+    const corte = realHastaMesOtraFuente(of);
+    const sumar = (meses, tipo, siempre) => MESES_CARGA.forEach((m, i) => {
+      const v = Number(meses && meses[m]) || 0;
+      const k = siempre || (i + 1 <= corte ? 'real' : 'proy');
+      out[k][tipo][i] += v;
+    });
+    const lineasIng = fuente.incomeShape === 'junji3' ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente] : [of.ingreso];
+    lineasIng.forEach(l => sumar(l && l.meses, 'ing'));
+    sumar(of.gasto_rem && of.gasto_rem.meses, 'gas');
+    if (fuente.bysMode === 'compras') {
+      (of.bys_items || []).forEach(it => sumar(it.meses, 'gas', 'real'));
+      (of.bys_proy_items || []).forEach(it => sumar(it.meses, 'gas', 'proy'));
+    } else {
+      (of.bys_items || []).forEach(it => sumar(it.meses, 'gas'));
+    }
+  });
+}
+function serieMensualSep(out) {
+  DATA.registros.forEach(r => {
+    const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
+    const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
+    const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
+    const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
+    if (ing) ing.items.forEach(it => MESES_CARGA.forEach((m, i) => { out[i + 1 <= DATA.n_meses ? 'real' : 'proy'].ing[i] += Number(it.meses[m]) || 0; }));
+    if (rem) { const hasta = rem.real_hasta_mes || DATA.n_meses; MESES_CARGA.forEach((m, i) => { out[i + 1 <= hasta ? 'real' : 'proy'].gas[i] += Number(rem.meses[m]) || 0; }); }
+    if (ag) ag.items.forEach(it => MESES_CARGA.forEach((m, i) => { out.real.gas[i] += Number(it.meses[m]) || 0; }));
+    if (bp) MESES_CARGA.forEach((m, i) => { out.proy.gas[i] += Number(bp.meses[m]) || 0; });
+  });
+}
+function computeSerieMensualDashboard() {
+  const out = { real: serieMensualVacia(), proy: serieMensualVacia() };
+  serieMensualSep(out);
+  FUENTES_OTRAS.forEach(f => serieMensualOtraFuente(f.key, out));
+  const sel = dashVista === 'total'
+    ? { ing: out.real.ing.map((v, i) => v + out.proy.ing[i]), gas: out.real.gas.map((v, i) => v + out.proy.gas[i]) }
+    : out[dashVista];
+  return sel;
+}
+function dashNiceMax(v) {
+  if (v <= 0) return 1;
+  const exp = Math.pow(10, Math.floor(Math.log10(v)));
+  const f = v / exp;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * exp;
+}
+
+let dashMesAncho = 0;
+function renderDashMensual() {
+  const host = document.getElementById('dashChartMes');
+  const serie = computeSerieMensualDashboard();
+  const W = Math.max(300, Math.round(host.clientWidth || 560));
+  dashMesAncho = host.clientWidth || 0;
+  const H = 250, m = { l: 46, r: 14, t: 16, b: 28 };
+  const max = dashNiceMax(Math.max(...serie.ing, ...serie.gas));
+  const x = i => m.l + (W - m.l - m.r) * i / 11;
+  const y = v => m.t + (H - m.t - m.b) * (1 - Math.max(0, v) / max);
+  const mk = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  let g = '';
+  for (let k = 0; k <= 4; k++) {
+    const v = max * k / 4;
+    g += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="${k === 0 ? 'var(--baseline)' : 'var(--gridline)'}" stroke-width="1"/>`;
+    g += `<text x="${m.l - 6}" y="${(y(v) + 4).toFixed(1)}" text-anchor="end" font-size="10.5" fill="var(--text-muted)">${fmtMillones(v).replace(' M', '')}</text>`;
+  }
+  MESES_CARGA_ABREV.forEach((ab, i) => { g += `<text x="${x(i).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-size="10.5" fill="var(--text-muted)">${ab}</text>`; });
+  const ult = 11;
+  const ring = 'stroke="var(--surface-1)" stroke-width="2"';
+  const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución mensual de ingreso y gasto consolidados">
+    ${g}
+    <path d="${mk(serie.ing)}" fill="none" stroke="var(--chart-ing)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${mk(serie.gas)}" fill="none" stroke="var(--chart-gas)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${x(ult).toFixed(1)}" cy="${y(serie.ing[ult]).toFixed(1)}" r="4.5" fill="var(--chart-ing)" ${ring}/>
+    <circle cx="${x(ult).toFixed(1)}" cy="${y(serie.gas[ult]).toFixed(1)}" r="4.5" fill="var(--chart-gas)" ${ring}/>
+    <line id="dashCross" x1="0" x2="0" y1="${m.t}" y2="${H - m.b}" stroke="var(--text-muted)" stroke-width="1" style="display:none"/>
+    <circle id="dashCrossIng" r="4.5" fill="var(--chart-ing)" ${ring} style="display:none"/>
+    <circle id="dashCrossGas" r="4.5" fill="var(--chart-gas)" ${ring} style="display:none"/>
+    <rect id="dashHit" x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${H - m.t - m.b}" fill="transparent"/>
+  </svg>`;
+  host.innerHTML = svg;
+  const hit = host.querySelector('#dashHit'), cross = host.querySelector('#dashCross');
+  const cIng = host.querySelector('#dashCrossIng'), cGas = host.querySelector('#dashCrossGas');
+  const idxDe = e => {
+    const r = hit.getBoundingClientRect();
+    const px = (e.clientX - r.left) / (r.width || 1) * (W - m.l - m.r);
+    return Math.max(0, Math.min(11, Math.round(px / ((W - m.l - m.r) / 11))));
+  };
+  hit.addEventListener('pointermove', e => {
+    const i = idxDe(e);
+    cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.style.display = '';
+    cIng.setAttribute('cx', x(i)); cIng.setAttribute('cy', y(serie.ing[i])); cIng.style.display = '';
+    cGas.setAttribute('cx', x(i)); cGas.setAttribute('cy', y(serie.gas[i])); cGas.style.display = '';
+    dashTooltipMostrar(e, MESES_CARGA_TITLE[i], [
+      { color: 'var(--chart-ing)', label: 'Ingreso', valor: fmtCLP(serie.ing[i]) },
+      { color: 'var(--chart-gas)', label: 'Gasto', valor: fmtCLP(serie.gas[i]) },
+      { label: 'Saldo del mes', valor: fmtCLP(serie.ing[i] - serie.gas[i]) },
+    ]);
+  });
+  hit.addEventListener('pointerleave', () => { cross.style.display = 'none'; cIng.style.display = 'none'; cGas.style.display = 'none'; dashTooltipOcultar(); });
+  // Vista de tabla.
+  let html = '<table><thead><tr><th>Mes</th><th>Ingreso</th><th>Gasto</th><th>Saldo del mes</th></tr></thead><tbody>';
+  MESES_CARGA_TITLE.forEach((mes, i) => { html += `<tr><td>${mes}</td><td>${fmtCLP(serie.ing[i])}</td><td>${fmtCLP(serie.gas[i])}</td><td>${fmtCLP(serie.ing[i] - serie.gas[i])}</td></tr>`; });
+  const tI = serie.ing.reduce((a, b) => a + b, 0), tG = serie.gas.reduce((a, b) => a + b, 0);
+  html += `<tr><td><strong>Total</strong></td><td><strong>${fmtCLP(tI)}</strong></td><td><strong>${fmtCLP(tG)}</strong></td><td><strong>${fmtCLP(tI - tG)}</strong></td></tr></tbody></table>`;
+  document.getElementById('dashTablaMesBody').innerHTML = html;
+}
+
+// ---- Panel "Atención": las 8 entidades con el saldo más negativo (según la vista elegida). ----
+function dashEntidadesEnDeficit(fuentes) {
+  const lista = [];
+  DATA.registros.forEach(r => {
+    const s = dashVista === 'total' ? r.saldo_total : (() => { const rp = computeRealProyParaRbd(r); return dashVista === 'real' ? rp.saldoReal : rp.saldoProy; })();
+    if (s < 0) lista.push({ fuente: 'SEP', fkey: 'sep', tab: 'panel', rbd: r.rbd, titulo: 'RBD ' + r.rbd, nombre: r.nombre, saldo: s });
+  });
+  FUENTES_OTRAS.forEach(f => {
+    filasOtrasFuentes(f.key).forEach(r => {
+      const of = recomputeOtraFuente(r.rbd, f.key);
+      const s = of.rp[dashVista].saldo;
+      if (s < 0) lista.push({ fuente: DASH_META[f.key].corto, fkey: f.key, tab: 'of-' + f.key, rbd: r.rbd, titulo: otrasFuentesTituloEntidad(r, f.key), nombre: r.nombre, saldo: s });
+    });
+  });
+  return lista.sort((a, b) => a.saldo - b.saldo);
+}
+function abrirEntidadDesdeDashboard(e) {
+  irAPestana(e.tab);
+  if (e.fkey === 'sep') abrirModalRbd(e.rbd);
+  else { otrasFuentesSel = e.fkey; abrirOtrasFuentesModal(e.rbd); }
+}
+function renderDashAtencion(fuentes) {
+  const ul = document.getElementById('dashAtencion');
+  ul.textContent = '';
+  const todas = dashEntidadesEnDeficit(fuentes);
+  document.getElementById('dashNotaAtencion').textContent = `Las 8 entidades con saldo más negativo entre SEP y todas las fuentes (${DASH_VISTAS[dashVista]}) — ${todas.length} en total con saldo negativo. Clic para abrir su detalle.`;
+  if (!todas.length) {
+    const li = document.createElement('li'); li.className = 'dash-vacio'; li.style.cursor = 'default'; li.style.border = 'none';
+    li.textContent = 'Ninguna entidad con saldo negativo en esta vista.'; ul.appendChild(li); return;
+  }
+  todas.slice(0, 8).forEach(e => {
+    const li = document.createElement('li'); li.tabIndex = 0; li.setAttribute('role', 'link');
+    li.dataset.atencionFuente = e.fkey; li.dataset.atencionRbd = e.rbd;
+    const izq = document.createElement('div');
+    const f = document.createElement('div'); f.className = 'a-fuente'; f.textContent = `${e.fuente} · ${e.titulo}`;
+    const n = document.createElement('div'); n.className = 'a-nombre'; n.textContent = e.nombre; n.title = e.nombre;
+    izq.appendChild(f); izq.appendChild(n);
+    const s = document.createElement('div'); s.className = 'a-saldo'; s.textContent = '▼ ' + fmtCLP(e.saldo);
+    li.appendChild(izq); li.appendChild(s);
+    li.addEventListener('click', () => abrirEntidadDesdeDashboard(e));
+    li.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrirEntidadDesdeDashboard(e); } });
+    ul.appendChild(li);
+  });
+}
+
+function renderDashboard() {
+  if (!document.getElementById('dashCards')) return;
+  const fuentes = dashFuentes();
+  const acc = renderDashStrip(fuentes);
+  const hayAlgo = fuentes.some(f => f.t.total.ingreso !== 0 || f.t.total.gasto !== 0);
+  document.getElementById('dashAviso').innerHTML = hayAlgo ? '' : '<div class="dash-aviso">Todavía no hay datos cargados en SEP ni en las fuentes de financiamiento. Elige una pestaña y carga ingresos y gastos para ver el resumen.</div>';
+  document.getElementById('dashNota').textContent =
+    `Cifras en vista ${DASH_VISTAS[dashVista]}. SEP: acumulado hasta ${MESES_CARGA_TITLE[corteMesIdx - 1]} (selector de la pestaña SEP). Fuentes: "Real hasta" propio de cada entidad (por defecto ${MESES_CARGA_TITLE[DATA.n_meses - 1]}). Saldo consolidado: ${fmtCLP(acc.saldo)}.`;
+  document.querySelectorAll('.dash-chips button').forEach(b => b.classList.toggle('active', b.dataset.dashVista === dashVista));
+  renderDashCards(fuentes);
+  renderDashComparativo(fuentes);
+  renderDashComposicion(fuentes);
+  renderDashMensual();
+  renderDashAtencion(fuentes);
+}
+
+document.querySelectorAll('.dash-chips button').forEach(b => b.addEventListener('click', () => { dashVista = b.dataset.dashVista; renderDashboard(); }));
+document.getElementById('dashCards').addEventListener('click', e => { const c = e.target.closest('.dash-card'); if (c) irAPestana(c.dataset.dashTab); });
+document.getElementById('dashCards').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const c = e.target.closest('.dash-card'); if (!c) return;
+  e.preventDefault(); irAPestana(c.dataset.dashTab);
+});
+document.getElementById('dashPdfBtn').addEventListener('click', () => { document.body.classList.remove('print-single-rbd'); window.print(); });
+let dashResizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(dashResizeTimer);
+  dashResizeTimer = setTimeout(() => {
+    const host = document.getElementById('dashChartMes');
+    if (host && host.offsetParent !== null && Math.abs((host.clientWidth || 0) - dashMesAncho) > 8) renderDashMensual();
+  }, 150);
+});
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
     const tab = btn.getAttribute('data-tab');
+    document.getElementById('tab-dashboard').classList.toggle('hidden', tab !== 'dashboard');
     document.getElementById('tab-panel').classList.toggle('hidden', tab !== 'panel');
     document.getElementById('tab-reportes').classList.toggle('hidden', tab !== 'reportes');
     document.getElementById('tab-ejecucion').classList.toggle('hidden', tab !== 'ejecucion');
@@ -3847,6 +4464,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
       if (div) div.classList.toggle('hidden', tab !== 'of-' + f.key);
     });
     if (tab === 'ejecucion') renderEjecucion();
+    if (tab === 'dashboard') renderDashboard();
     // Las 5 pestañas de fuentes se repintan siempre al activarse (no solo la primera vez), por si
     // llegó un cambio de otro usuario mientras esta pestaña estaba oculta.
     const fuenteDelTab = FUENTES_OTRAS.find(f => 'of-' + f.key === tab);
@@ -5210,6 +5828,7 @@ function aplicarSnapshot(snapshot) {
   renderReportFilters();
   renderTable();
   renderOtrasFuentesTable();
+  renderDashboard();
 
   const syncMsg = latestEmail && latestAt
     ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatFechaHoraChile(latestAt)}`

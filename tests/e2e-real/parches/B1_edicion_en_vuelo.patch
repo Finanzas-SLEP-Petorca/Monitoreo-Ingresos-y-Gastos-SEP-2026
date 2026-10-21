@@ -1,0 +1,48 @@
+diff --git a/index.html b/index.html
+index 9533e8a..d87c195 100644
+--- a/index.html
++++ b/index.html
+@@ -7763,7 +7763,7 @@ function ensureRbdsFaltantesEnFirestore(presentIds) {
+ // estado reconstruido antes de pintar, así lo que la persona tecleó nunca retrocede (ni por un snapshot de otro RBD, ni
+ // por el eco de su propio guardado, ni por la reversión local que hace el SDK cuando un write es rechazado).
+ function superponerEdicionesSinConfirmar(rbd, data) {
+-  [escrituraRetenida[rbd], pendingWrites[rbd]].forEach(p => { if (p) deepMergeInto(data, p); });
++  [...(enVuelo[rbd] || []), escrituraRetenida[rbd], pendingWrites[rbd]].forEach(p => { if (p) deepMergeInto(data, p); });
+   return data;
+ }
+ let ultimoSnapshotAplicado = null;
+@@ -8089,6 +8089,7 @@ function scheduleRbdSave(rbd, partial) {
+ //   escrituraRetenida  lo que el servidor rechazó de forma PERMANENTE: se conserva en memoria (y en pantalla) hasta Reintentar
+ //   reintentosEscritura  nº de reintentos automáticos consecutivos por RBD (espera 2, 4, 8, 16, 30, 30… s)
+ const escrituraRetenida = {};
++const enVuelo = {};            // rbd -> [cambios ya enviados con setDoc que el SDK puede no haber reflejado todavía en sus snapshots]
+ const reintentosEscritura = {};
+ let escriturasEnVuelo = 0;
+ let ultimoErrorPermanente = '';
+@@ -8105,6 +8106,8 @@ async function flushRbdSave(rbd) {
+   if (!payload) return;
+   payload.lastModifiedBy = currentUser.email;
+   payload.lastModifiedAt = serverTimestamp();
++  const copiaEnVuelo = JSON.parse(JSON.stringify(sinAuditoria(payload)));   // lo que viaja, para superponerlo mientras el SDK no lo refleje
++  (enVuelo[rbd] = enVuelo[rbd] || []).push(copiaEnVuelo);
+   escriturasEnVuelo++;
+   actualizarIndicadorSync();
+   try {
+@@ -8129,6 +8132,8 @@ async function flushRbdSave(rbd) {
+     // El SDK ya revirtió la escritura local y repintó con el valor anterior: se vuelve a superponer lo sin guardar.
+     reaplicarUltimoSnapshot();
+   } finally {
++    enVuelo[rbd] = (enVuelo[rbd] || []).filter(x => x !== copiaEnVuelo);
++    if (!enVuelo[rbd].length) delete enVuelo[rbd];
+     escriturasEnVuelo--;
+     actualizarIndicadorSync();
+   }
+@@ -8137,7 +8142,7 @@ async function flushRbdSave(rbd) {
+ // Al cerrar sesión (confirmado): lo que no se guardó se descarta de la memoria para que no se reenvíe con otra sesión.
+ function descartarCambiosSinGuardar() {
+   Object.keys(pendingTimers).forEach(rbd => { clearTimeout(pendingTimers[rbd]); delete pendingTimers[rbd]; });
+-  [pendingWrites, escrituraRetenida, reintentosEscritura].forEach(o => Object.keys(o).forEach(k => { delete o[k]; }));
++  [pendingWrites, escrituraRetenida, reintentosEscritura, enVuelo].forEach(o => Object.keys(o).forEach(k => { delete o[k]; }));
+   ultimoErrorPermanente = '';
+   actualizarIndicadorSync();
+ }

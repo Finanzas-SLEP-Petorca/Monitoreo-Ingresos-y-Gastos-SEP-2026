@@ -25,3 +25,7 @@ __pycache__/
 tests/.cache/
 tests/.tmp/
 tests/out/
+
+# Arnés contra el SDK real de Firestore (tests/e2e-real): lo regenerable queda fuera; las dependencias viven en E2E_HOME (fuera del repo).
+tests/e2e-real/.cache/
+tests/e2e-real/node_modules/

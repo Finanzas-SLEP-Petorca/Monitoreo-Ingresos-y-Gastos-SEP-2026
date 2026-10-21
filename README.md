@@ -361,13 +361,44 @@ general:
   Proyectado / Total, las tablas mensuales con etiquetas Real/Proy y el registro de compras (o los
   ítems por concepto), en texto de solo lectura; usa el mismo mecanismo que el PDF individual de SEP.
 
-**Pendiente, en una PR futura**: el selector de código de cuenta de "Registro de compras" (General,
-PIE, Mantención, Pro-Retención) usa por ahora el mismo catálogo completo de SEP (Subt. 22 y 29)
-como aproximación temporal. El Manual de Cuentas SUPEREDUC 2026 confirma que cada subvención
-tiene su propio subconjunto de cuentas habilitadas (p. ej. Mantención casi no admite
-remuneraciones, solo cuentas de infraestructura) — acotar el selector por fuente requiere
-transcribir con cuidado esa tabla completa (~130 cuentas × 9 columnas) antes de aplicarla, dado
-el riesgo de error en datos financieros.
+#### Plan de Cuentas SUPEREDUC 2026 en el registro de compras
+
+El selector de **Código de cuenta** del "Registro de compras" de **Subv. General, PIE, Mantención y
+Pro-Retención** ya no usa el catálogo completo de SEP: ofrece solo las cuentas que el Manual de
+Cuentas SUPEREDUC 2026 (sección 11, matriz «Plan de Cuentas Rendición Recursos 2026») habilita para
+esa subvención. Lo que se ve y cómo funciona:
+
+- **Selector acotado** por subvención (Subt. 22 y 29): Subv. General 77 cuentas, PIE 28,
+  Mantención 28, Pro-Retención 23 (SEP, que no cambia, sigue con sus 51). Las cuentas **●**
+  (habilitadas *sujetas a exigencias de pertinencia*, secciones 9 y 10 del manual) llevan el punto
+  junto al nombre: se pueden usar, pero hay que poder justificar la pertinencia.
+- **Fila AC (Administración Central)**: en **Subv. General** usa la columna «Adm. Central Subv.
+  Gral.» del manual (52 cuentas). El manual no trae columna de Adm. Central para PIE, Mantención ni
+  Pro-Retención, así que ahí la fila AC usa la misma columna de la fuente (decisión de producto, no
+  del manual).
+- **Nota del registro**: bajo el título dice cuántas cuentas están habilitadas y, si la subvención
+  no admite personal (Mantención: ninguna cuenta 4101xx-4104xx), lo avisa — y marca con ⚠ si ya hay
+  Remuneraciones cargadas.
+- **Validación al agregar**: una cuenta no habilitada para esa subvención (o inexistente) se
+  rechaza con un aviso, sin guardar nada.
+- **⚠ en compras ya cargadas**: las compras que se registraron con el catálogo antiguo, o que
+  entran por Excel, con una cuenta no habilitada **no se borran ni se pierden** (siguen sumando en
+  Bienes y Servicios): quedan con la fila resaltada en ⚠, un resumen sobre la tabla y una línea en el
+  mensaje de importación, porque SUPEREDUC las rechazaría al rendir. Se corrigen reclasificando la
+  cuenta o eliminando la compra.
+- Los códigos de cuenta que no estaban en el catálogo SEP (p. ej. 410801 Uniformes, 411001-411008
+  servicios básicos, 411605 instalaciones de gas) se agregaron al libro de compras; como el manual no
+  indica el subtítulo en esa tabla, **se infirió por categoría**: 4107xx y 4118xx → Subt. 29, el
+  resto → Subt. 22 (supuesto documentado en `data/plan_cuentas_2026_verificacion.md`).
+
+La matriz está embebida en `index.html` (bloque `PLAN_CUENTAS_2026`, 239 cuentas × 9 columnas) y se
+extrajo del PDF —la tabla es una imagen— con `scripts/extract_plan_cuentas.py`; la comparación contra
+el catálogo SEP, la coherencia de Adm. Central y la revisión visual de las 8 páginas están en
+`data/plan_cuentas_2026_verificacion.md`. Para regenerarla:
+`python3 scripts/extract_plan_cuentas.py --debug-dir /tmp/pc --inyectar index.html`.
+
+**Pendiente**: el tipo de documento por código de cuenta (Manual de Cuentas, sección 12, págs.
+120-124) todavía no restringe el selector «Tipo de documento».
 
 ## Fuentes de datos
 
@@ -432,12 +463,16 @@ index.html           Panel autocontenido (HTML + CSS + JS), listo para publicar 
 firestore.rules       Reglas de seguridad de Firestore (pegar manualmente en Firebase Console).
 scripts/              Pipeline en Python usado para armar los datos que alimentan el panel
                        a partir de los Excel de origen (Estado_RBD_2026.xlsx, remuneraciones
-                       SIGFE/CasChile, Liquidación Web Subvenciones, Carrera Docente/CPEIP).
+                       SIGFE/CasChile, Liquidación Web Subvenciones, Carrera Docente/CPEIP), y
+                       extract_plan_cuentas.py (matriz del Plan de Cuentas 2026 desde el PDF).
+data/                 plan_cuentas_2026.json (matriz de cuentas por subvención, dato normativo
+                       sin cifras) y plan_cuentas_2026_verificacion.md (cómo se verificó).
 ```
 
 Los scripts de `scripts/` esperan los Excel de origen en una carpeta `CARGA/` local (no
 incluida en este repositorio: son datos internos de SLEP Petorca). No se publican Excel, CSV
-ni JSON con cifras reales por establecimiento — solo el código y el dashboard ya armado.
+ni JSON con cifras reales por establecimiento — solo el código, el dashboard ya armado y la
+matriz normativa del Plan de Cuentas (excepción puntual en `.gitignore`).
 
 ## Firebase (acceso y sincronización en tiempo real)
 

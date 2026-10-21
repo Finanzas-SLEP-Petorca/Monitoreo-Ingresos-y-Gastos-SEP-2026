@@ -486,9 +486,17 @@ def main():
     ap.add_argument('--pdf', default=DEFAULT_PDF)
     ap.add_argument('--out', default=DEFAULT_OUT)
     ap.add_argument('--debug-dir', default=None, help='carpeta para imágenes de control superpuestas')
+    ap.add_argument('--desde-json', default=None, metavar='JSON',
+                    help='no vuelve a extraer: toma la matriz de este JSON (solo útil con --inyectar)')
     ap.add_argument('--inyectar', default=None, metavar='INDEX_HTML',
                     help='reemplaza el bloque PLAN_CUENTAS_2026 de este index.html por la matriz extraída')
     args = ap.parse_args()
+    if args.desde_json:
+        if not args.inyectar:
+            sys.exit('--desde-json solo tiene sentido junto con --inyectar')
+        with open(args.desde_json, encoding='utf-8') as f:
+            inyectar(args.inyectar, json.load(f))
+        return
     categorias, cuentas, titulos, stats, problemas, corregidos, reread = extract(args.pdf, args.debug_dir)
     errores = validar(categorias, cuentas)
     out = {

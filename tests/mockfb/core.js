@@ -13,6 +13,8 @@
 //     existente (igual que el SDK real, que lo trata como "hoja"); los arreglos reemplazan.
 //   - setDoc sin merge reemplaza el documento; deleteField() fuera de merge/update es un error.
 //   - `undefined` en un valor es un error (invalid-argument) como en el SDK real.
+//   - un nombre de campo (clave de mapa) vacío, "__algo__" o de más de 1500 bytes UTF-8 es invalid-argument y el write ENTERO
+//     se rechaza (en el SDK real los dos primeros al llamar a setDoc y el tercero lo rechaza el servidor).
 //   - writeBatch: set/update/delete/commit, máx. 500 operaciones, no reutilizable tras commit.
 //   - Eco local: cada write se aplica al instante en la vista local, los listeners reciben un snapshot
 //     asíncrono con hasPendingWrites=true (y lastModifiedAt=null: serverTimestamp aún sin resolver);
@@ -120,6 +122,21 @@
     if (v === null || typeof v !== 'object' || v instanceof FieldValue || v instanceof Timestamp || v instanceof Date) return;
     if (Array.isArray(v)) { v.forEach(x => assertNoUndefined(x, where)); return; }
     Object.keys(v).forEach(k => assertNoUndefined(v[k], where));
+  }
+
+  // Nombres de campo (claves de mapa) que Firestore rechaza: vacíos, "__algo__" (reservados) y de más de 1500 bytes UTF-8.
+  // El SDK real lanza los dos primeros al llamar a setDoc y el servidor rechaza el tercero; el mock lanza los tres al
+  // llamar (invalid-argument), igual que en producción: un solo concepto inválido hace fallar el write ENTERO del RBD.
+  function assertFieldNames(v, where, ruta) {
+    if (v === null || typeof v !== 'object' || v instanceof FieldValue || v instanceof Timestamp || v instanceof Date) return;
+    if (Array.isArray(v)) { v.forEach(x => assertFieldNames(x, where, ruta)); return; }
+    Object.keys(v).forEach(k => {
+      const donde = (ruta ? ruta + '.' : '') + k;
+      if (k === '') throw new FirebaseError('invalid-argument', `Function ${where} called with invalid data. Document fields must not be empty (found in ${ruta || 'the document root'})`);
+      if (/^__.*__$/.test(k)) throw new FirebaseError('invalid-argument', `Function ${where} called with invalid data. Document fields cannot begin and end with "__" (found in field ${donde})`);
+      if (new TextEncoder().encode(k).length > 1500) throw new FirebaseError('invalid-argument', `Function ${where} called with invalid data. Field names must be at most 1500 bytes (found in ${ruta || 'the document root'})`);
+      assertFieldNames(v[k], where, donde);
+    });
   }
 
   // Resuelve un FieldValue sobre el valor existente (increment/arrayUnion/arrayRemove) o a timestamp.
@@ -557,6 +574,7 @@
   function validateData(data, who, mode) {
     if (!isPlainObject(data)) throw new FirebaseError('invalid-argument', `Function ${who}() called with invalid data. Data must be an object, but it was: ${data === null ? 'null' : typeof data}`);
     assertNoUndefined(data, who + '()');
+    assertFieldNames(data, who + '()', '');
     void mode;
   }
 

@@ -142,6 +142,23 @@ escribir, o al instante al agregar/eliminar una compra o salir de una celda) en 
 compartida (Cloud Firestore) y se propaga en segundos a todas las personas que tengan el panel
 abierto — sin recargar la página.
 
+**Cómo se escriben los montos.** Las celdas de monto aceptan lo que se teclea o se pega con formato
+chileno: `1500000`, `1.500.000`, `1,5`, `1.234,5`, `$ 1.500.000`, `-2.500`. El punto es separador de
+miles **solo** si calza con grupos de 3 dígitos (`1.500`, `12.345.678`); una coma, o un punto con otra
+cantidad de dígitos detrás, es decimal (`1,5`, `1.5`, `1234.567`); vacío = 0 (sin valor). Un texto que no
+es un número (`abc`, `1.2.3`) se **rechaza**: la celda se marca en rojo, no se guarda nada y, al salir de
+la celda, vuelve al valor que estaba guardado. Teclear letras no hace nada. Mientras la celda tiene el foco
+se muestra exactamente lo que escribiste; al salir se normaliza (`1.500.000` → `1500000`).
+
+**Lo que escribes no se altera por lo que hagan otras personas.** El panel recibe un cambio por cada
+edición de cualquiera de las ~17 personas conectadas (de cualquier RBD) y el eco de tu propio guardado.
+Con el modal de detalle abierto esos cambios se **reconcilian** con lo que ya está en pantalla (no se
+reconstruye el modal): la celda que estás tecleando conserva su texto, su cursor y su foco; el
+formulario de compra (campos a medias y modo edición "💾 Guardar cambios") no se toca; y solo
+aparecen o desaparecen las filas que realmente se agregaron o borraron. Lo que ya tecleaste y aún no
+llegó a Firestore se superpone a lo recibido, así que nunca retrocede. El modal de las fuentes
+(Otras Fuentes) funciona igual y además refleja los cambios y borrados que hacen otras personas.
+
 ### Carga masiva de compras por Excel
 
 Si tienes muchas compras para cargar de una sola vez, no hace falta escribirlas una por una en el
@@ -154,6 +171,14 @@ exportado) actualizan esa misma compra en vez de duplicarla — por eso conviene
 editar sobre esa base y volver a importar, en vez de partir de un Excel armado desde cero. Las
 fechas se pueden escribir como texto (`2026-03-15`) o como fecha de Excel, ambas se reconocen al
 importar.
+
+**Nombres válidos.** Un concepto de B&S, el ID de una compra o el nombre de un ítem de ingreso se usan
+como *clave* dentro del documento del RBD, y Firestore rechaza el guardado **completo** de ese RBD si
+una clave está vacía, es de la forma `__algo__` o pesa más de 1500 bytes (UTF-8). Por eso se validan
+al crear el concepto (aviso claro, no se agrega) y al importar un Excel: las filas con un nombre
+inválido se **omiten** y el resumen de la importación las lista (hoja, fila y motivo); el resto de la
+importación sigue. La barra `/` es válida en un concepto (`Agua/Luz`); no lo es en el RBD (ID de
+documento) de una fila de Excel, que también se valida.
 
 Cada RBD muestra quién hizo la última edición y cuándo ("Última edición en este RBD: ..."), y la
 barra bajo el título muestra el estado general de sincronización. El botón "⬇ Descargar carga
@@ -513,7 +538,7 @@ en una colección propia y separada (`sep_carga_rbd`) que no comparte datos con 
   con la lista compartida de conceptos de gasto (`items_22`, `items_29`).
 - **Reglas de seguridad**: ver [`firestore.rules`](./firestore.rules) — debe pegarse
   manualmente en Firebase Console → Firestore Database → Reglas → Publicar (esto no se puede
-  automatizar desde el repositorio). Solo los 9 correos de la whitelist pueden leer/escribir, y
+  automatizar desde el repositorio). Solo los correos de la whitelist (la lista de `isAllowed()`, igual a `ALLOWED_EMAILS`) pueden leer/escribir, y
   ningún RBD puede borrarse desde el cliente.
 - **Migración inicial (una sola vez)**: la primera vez que alguien entra al panel con la
   colección `sep_carga_rbd` vacía, el propio `index.html` sube automáticamente los datos que hoy
@@ -527,6 +552,35 @@ en una colección propia y separada (`sep_carga_rbd`) que no comparte datos con 
   vacíos (`{}`): con `merge:true` el SDK los usaría para reemplazar lo que ya existe en el servidor.
   Un RBD que falta se crea solo con `{rbd, nombre, lastModifiedBy, lastModifiedAt}`, y únicamente
   con un snapshot de servidor.
+
+### Estado de sincronización y fallos de escritura
+
+El indicador bajo el título (y, cuando hay un problema, una réplica dentro del modal abierto, que es
+donde se edita) refleja la verdad, usando `snapshot.metadata.hasPendingWrites` / `fromCache`
+(el listener usa `includeMetadataChanges`) y el resultado de cada guardado:
+
+| Color | Texto | Cuándo |
+|---|---|---|
+| Verde | `Sincronizado · última edición por …` | el servidor confirmó todo y hay conexión |
+| Amarillo | `Guardando…` | hay escrituras sin confirmar, o se está reintentando tras un error transitorio |
+| Amarillo | `Sin conexión: los cambios se guardan en este navegador y se enviarán al reconectar` | el snapshot viene del caché (`fromCache`) o el navegador no tiene red; lo editado se envía al reconectar |
+| Rojo (persistente) | `N cambios sin guardar — <motivo>` + **Reintentar** | error **permanente** del servidor |
+
+- **Errores transitorios** (`unavailable`, `deadline-exceeded`, `resource-exhausted`, `aborted`): se
+  reintenta solo con espera creciente (2, 4, 8, 16 y 30 s como tope) y el estado queda amarillo.
+- **Errores permanentes** (`permission-denied`, `unauthenticated`, `invalid-argument`,
+  `failed-precondition` y cualquier error desconocido): **no** se reintenta en bucle. El indicador queda
+  rojo con un mensaje claro (p. ej. "No tienes permiso para guardar estos cambios…"), el cambio se
+  conserva en memoria y **se sigue viendo en pantalla**, y el botón *Reintentar* lo reenvía (también lo
+  reenvía cualquier edición posterior del mismo RBD).
+- Un evento del listener que solo cambia metadatos (p. ej. `fromCache` pasa a `false`) actualiza el
+  indicador **sin repintar** y, si el servidor ya confirmó, crea los RBD que falten (antes eso solo
+  ocurría si llegaba otro snapshot con cambios de documentos).
+- **Aviso al cerrar o recargar** (`beforeunload`): solo si hay cambios que no están a salvo (sin
+  enviar, a la espera de un reintento o rechazados por el servidor). Lo enviado y pendiente de
+  confirmar sin conexión vive en la cola persistente de IndexedDB y no dispara el aviso (salvo que el
+  navegador no haya podido activar esa persistencia). "Cerrar sesión" con cambios sin guardar también
+  pide confirmación y, si se acepta, los descarta para que nunca se reenvíen bajo otra sesión.
 
 ### Robustez ante datos dañados y cierre de la pestaña
 

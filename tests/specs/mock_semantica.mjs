@@ -46,6 +46,13 @@ await correrSpec('mock_semantica', async (t) => {
     check('setDoc sin merge reemplaza el documento completo', JSON.stringify(s) === '{"solo":1}', s);
     check('deleteField() fuera de merge/update lanza invalid-argument', (await lanza(() => fs.setDoc(d1, { a: fs.deleteField() })))?.code === 'invalid-argument');
     check('valor undefined lanza invalid-argument', (await lanza(() => fs.setDoc(d1, { a: undefined }, { merge: true })))?.code === 'invalid-argument');
+    // nombres de campo que Firestore rechaza (un solo concepto así hace fallar el write ENTERO del RBD)
+    const campoMalo = async (data, merge = true) => (await lanza(() => fs.setDoc(d1, data, { merge })))?.code === 'invalid-argument';
+    check('un nombre de campo "__x__" (anidado) lanza invalid-argument', await campoMalo({ otras: { bys: { '__x__': { meses: {} } } } }));
+    check('un nombre de campo vacío lanza invalid-argument', await campoMalo({ bys: { '': 1 } }));
+    check('un nombre de campo de más de 1500 bytes (UTF-8) lanza invalid-argument', await campoMalo({ ['ñ'.repeat(751)]: 1 }) && await campoMalo({ ['a'.repeat(1501)]: 1 }));
+    check('nombres válidos al borde: "__", "__a", "a__", "a/b" y 1500 bytes', !(await campoMalo({ '__': 1, '__a': 1, 'a__': 1, 'a/b': 1, ['ñ'.repeat(750)]: 1 })));
+    check('un write con un nombre inválido no cambia el documento (se rechaza entero)', !('otras' in store()[`${C}/1`]) && !('bys' in store()[`${C}/1`]), store()[`${C}/1`]);
     check('setDoc con merge sobre doc inexistente lo crea', await (async () => { await fs.setDoc(fs.doc(db, C, 'nuevo'), { x: { y: 1 } }, { merge: true }); return store()[`${C}/nuevo`].x.y === 1; })());
     check('increment / arrayUnion / arrayRemove', await (async () => {
       const r = fs.doc(db, C, 'f'); await fs.setDoc(r, { n: 1, arr: [1, 2] });

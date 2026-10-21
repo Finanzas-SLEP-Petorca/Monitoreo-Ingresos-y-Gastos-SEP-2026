@@ -42,9 +42,14 @@ node tests/run.mjs                             # tu versión modificada contra e
 > y en los specs nuevos (`seguridad_xss`, `formulas_csv_excel`, `csv_supereduc_formato`, `semilla_cache`, `semilla_offline`,
 > `documento_corrupto`, `pagehide_flush`, `login_url`): es la prueba de que esos specs detectan los defectos originales.
 
+> **Desde la PR B (F-01 / F-03 / F-12)** `APP_HTML=@069f9dd` (el `index.html` justo previo a esa PR) FALLA a propósito en `escritura_modal_tecleo`
+> (ahora `enforced`), `sync_estado`, `modal_fuentes_remoto` y `claves_invalidas` (y en `persistencia` y `semilla_cache`, cuyas expectativas
+> cambiaron con F-03: el rojo persistente con reintento manual y la siembra al confirmar el servidor): son la prueba de que detectan los defectos originales
+> (montos alterados al teclear, indicador verde con `permission-denied` y reintentos infinitos, modal de fuentes obsoleto, conceptos `__x__`).
+
 ### Flujo recomendado para un cambio grande en `index.html`
 
-1. `APP_HTML=@baseline node tests/run.mjs` → confirma que el arnés está sano (todo PASS, 2 KNOWN_BUG).
+1. `node tests/run.mjs` en el árbol limpio → confirma que el arnés está sano (todo PASS).
 2. Edita `index.html`.
 3. `node tests/run.mjs` → el golden master muestra, vista por vista, qué cifras/textos/exportaciones cambiaron.
 4. Si un cambio es **intencional**, revísalo y recién entonces regenera el baseline (ver abajo).
@@ -97,6 +102,8 @@ y deja `window.__mockfb`. Los tres módulos son envoltorios que reexportan su AP
   (sí con `includeMetadataChanges`).
 - Sin conexión: los writes quedan en cola (sus promesas **no** resuelven) y los listeners reciben la vista del caché con `fromCache:true`
   (**vacía** si el cliente nunca recibió datos). Al reconectar se confirman en orden.
+- **Nombres de campo inválidos** (clave de mapa vacía, `__algo__` o de más de 1500 bytes UTF-8): `setDoc` / `batch.set` lanzan `invalid-argument` y el write
+  **entero** se rechaza, como pasa en producción cuando un solo concepto tiene una clave inválida.
 - Auth: usuario ya autenticado (por defecto `wilson.rojas@sleppetorca.gob.cl`, que está en `ALLOWED_EMAILS` y `ADMIN_EMAILS`), usuario **no** autorizado
   (`user:'unauthorized'`), sin sesión (`user:'none'`) y el flujo de enlace de correo (`sendSignInLinkToEmail`, `isSignInWithEmailLink`,
   `signInWithEmailLink`, `signOut`, `onAuthStateChanged`). Un enlace es válido si trae `?mode=signIn&oobCode=<algo>`; `oobCode=expired|invalid` falla.
@@ -105,7 +112,9 @@ y deja `window.__mockfb`. Los tres módulos son envoltorios que reexportan su AP
   Si el panel empieza a usar una API nueva de Firebase: impleméntala en `core.js` y expórtala en el módulo correspondiente.
 - El "servidor" sobrevive a `page.reload()` (se guarda en `sessionStorage`), así que se puede probar "editar → recargar → sigue ahí".
 
-**`window.__mockfb`** (úsalo con `page.evaluate`, o con `h.mock(nombre, ...args)` / `h.writes()` / `h.store()`):
+**`window.__mockfb`** (úsalo con `page.evaluate`, o con `h.mock(nombre, ...args)` / `h.writes()` / `h.store()`; para simular
+**"otra persona guardó algo en ese RBD"** usa `h.remoto(rbd, "d.rem.meses.ENERO = 5")`: aplica ese código al documento confirmado `d` y lo siembra como cambio remoto
+en un solo turno de la página, sin pisar un write propio que se confirme en medio):
 
 | Miembro | Qué hace |
 |---|---|
@@ -170,15 +179,20 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `formulas_csv_excel` | apóstrofo solo en texto libre (descripción, proveedor, concepto) de CSV/Excel; nunca en montos, fechas, códigos, RUT ni N° de documento; exportar → reimportar no altera datos |
 | `csv_supereduc_formato` | CSV de compras (SEP y fuentes) con tipo por código, fechas dd-mm-aaaa, descripción ≤ 100, RUT con guion, Documento Original solo en NC/ND; aviso con conteo antes de descargar y cancelar no descarga; Firestore, pantalla y Excel de respaldo no cambian |
 | `login_url` | el enlace del correo vuelve a origen + ruta (http/https) o a la URL de producción (`file://`); se limpia la URL al completar el enlace |
-| `escritura_modal_tecleo` | **BUG CONOCIDO**: teclear `1500000` con pausas de 450 ms en el modal SEP deja `51` |
+| `escritura_modal_tecleo` | F-01, modo `enforced`: teclear `1500000` con pausas de 100/300/450/600 ms, `1`,`2`,pausa,`3`, otra persona guardando otra celda del mismo RBD, el cursor en medio de un número, y el modal sin nodos reemplazados; formulario de compra a medias y modo edición ("💾 Guardar cambios") intactos tras snapshots ajenos (sin compras duplicadas); montos pegados (`1.500.000`, `1,5`, `1.234,5`, `$ 1.500.000`…) y texto no numérico rechazado; y el modal de fuentes sigue estable al teclear |
+| `sync_estado` | F-03: el indicador (verde / "Guardando…" / "Sin conexión…" / rojo "N cambios sin guardar" + Reintentar, también dentro del modal abierto) con `setLatency`, `setOffline` y `failNextWrite`; errores permanentes (sin bucle, el cambio se conserva en pantalla, el reintento manual lo guarda) y transitorios (backoff 2 s → 4 s); `beforeunload` y "Cerrar sesión" solo avisan con pendientes; arranque con caché y creación del RBD faltante al confirmar el servidor (evento solo de metadatos) |
+| `modal_fuentes_remoto` | F-12: el modal de una entidad de una fuente refleja cambios, altas y borrados remotos (celdas, compras, conceptos, corte "Real hasta"), un ítem borrado no "resucita", y la celda con foco, el formulario de compra y el campo de concepto en curso quedan intactos |
+| `modal_equivalencia` | el reconciliador de los modales deja exactamente lo mismo que reconstruirlos desde cero: tras 24 cambios remotos aleatorios (semilla fija) en SEP, General y FAEP —compras, ítems, conceptos, montos, corte— el modal reconciliado y el reabierto tienen la misma estructura, textos, atributos y valores |
+| `claves_invalidas` | F-03 (c): un concepto `__x__` / vacío / de más de 1500 bytes se rechaza con mensaje claro (modal y Excel de fuentes y de SEP: ítem, ID de compra, RBD), la barra `/` y los bordes válidos se aceptan, y el resto del RBD sigue guardándose sin escrituras rechazadas |
 | `auth_flujo` | lista de correos autorizados, "Acceso denegado", enlace de correo (válido, vencido, con prompt), cerrar sesión, administrador |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Bugs conocidos: `known-bug` vs `enforced`
 
-`escritura_modal_tecleo.mjs` empieza con `const MODO_BUG = 'known-bug';` (`semilla_offline.mjs` ya está en `'enforced'`: su bug se corrigió)
+Hoy ningún spec está en `'known-bug'`: `semilla_offline.mjs` (PR A) y `escritura_modal_tecleo.mjs` (F-01) ya están en `'enforced'` porque sus bugs se corrigieron.
+La constante `MODO_BUG` de un spec nuevo que documente un defecto aún no corregido empieza en `'known-bug'`:
 
-- `known-bug` (hoy): si el bug está presente imprime `BUG CONOCIDO presente (esperado)` y la suite **no falla** (estado `KNOWN_BUG`).
+- `known-bug`: si el bug está presente imprime `BUG CONOCIDO presente (esperado)` y la suite **no falla** (estado `KNOWN_BUG`).
   Si el bug ya no se reproduce avisa en la tabla que hay que pasar a `enforced`.
 - `enforced`: el bug presente **hace fallar** el spec. Quien corrija el bug debe cambiar la constante a `'enforced'` para que no reaparezca.
 - También se puede forzar desde fuera: `KNOWN_BUG_EXPECTED=1` / `0` o `--expect-known-bugs` / `--enforce-bugs` (p. ej. `node tests/run.mjs --enforce-bugs`).
@@ -208,6 +222,21 @@ await correrSpec('mi_prueba', async (t) => {
 Para una vista nueva en el golden master, agrega `R.vista('nombre', '#selector')` / `R.descarga(...)` / `R.imprimir(...)` en la sección que corresponda de
 `tests/golden/capture.mjs` y regenera el baseline (revisando el diff).
 Si un error de consola es esperado: `h.expectErrors(/texto/)`. Los `alert/confirm/prompt` se aceptan solos y quedan en `h.dialogs`.
+
+## Verificación contra el SDK real (`tests/e2e-real/`, opcional)
+
+El mock de arriba es rápido y determinista, pero lo escribimos nosotros: no demuestra cómo se comporta Firestore de verdad.
+`tests/e2e-real/` corre el panel contra el **SDK real de Firestore 10.12.0 y el emulador oficial** (necesita Java y red para el
+`setup.sh`; las dependencias, unos 280 MB, se instalan fuera del repositorio en `E2E_HOME`, por defecto `/home/user/.e2e-real`).
+
+```bash
+bash tests/e2e-real/setup.sh && node tests/e2e-real/run.mjs        # los 9 specs contra el árbol, ≈ 6 min
+node tests/e2e-real/run.mjs --matriz                                # además contra @069f9dd y @baseline, ≈ 15 min
+```
+
+Conviene correrlo antes de mergear cambios que toquen `onSnapshot`, el guardado (`flushRbdSave`), el indicador de sincronización o la
+siembra. Detalle y lista de lo que el mock modela mal (orden de snapshots, límite de 1500 bytes de la ruta completa, errores
+transitorios que el SDK nunca entrega a `setDoc`, tiempos de detección de red) en `tests/e2e-real/README.md`.
 
 ## Limitaciones
 

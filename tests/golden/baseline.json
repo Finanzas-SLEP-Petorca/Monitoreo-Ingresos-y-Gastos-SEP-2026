@@ -3,7 +3,7 @@
   "esquema": 1,
   "baseline_ref": "0f16ace",
   "html_bajo_prueba": "árbol de trabajo (index.html)",
-  "html_sha1": "0e7913d9e4103797aecdf9f819396b7ded4e9646",
+  "html_sha1": "4beb01efefc7f8abd0f31edb264f1f15a8e2675a",
   "fixture_sha1": "c5f4627fb5c44c5ba028c42539c639f2745c1358",
   "fixture": {
    "generado_por": "tests/fixtures/generate.mjs",
@@ -27,7 +27,7 @@
     "❓ Cómo usar",
     "Cerrar sesión"
    ],
-   "htmlHash": "0edab8d5695086"
+   "htmlHash": "19c8206905878d"
   },
   "dashboard.total": {
    "text": [
@@ -1177,7 +1177,7 @@
     "input [rbd=5401006,fuente=junji,modo=of_bys_item,concepto=Seguros & garantías,mes=NOVIEMBRE] = 393857",
     "input [rbd=5401006,fuente=junji,modo=of_bys_item,concepto=Seguros & garantías,mes=DICIEMBRE] = 393857"
    ],
-   "htmlHash": "08b9151d9b4aa7"
+   "htmlHash": "076c52f54f764d"
   },
   "sep.default": {
    "text": [
@@ -2234,7 +2234,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "1602195d220deb"
+   "htmlHash": "133a324c00c953"
   },
   "modal.sep.1120": {
    "text": [
@@ -2407,7 +2407,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "0a3be7100f8255"
+   "htmlHash": "0d83c0c5125f4f"
   },
   "modal.sep.1128": {
    "text": [
@@ -2629,7 +2629,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "06afe5d8f78c46"
+   "htmlHash": "034e7662efafa5"
   },
   "modal.sep.1123": {
    "text": [
@@ -2854,7 +2854,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "122f824adf8126"
+   "htmlHash": "163257a706ed05"
   },
   "modal.sep.1125": {
    "text": [
@@ -3059,7 +3059,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "08c1b6db3e297e"
+   "htmlHash": "19f5d86601e917"
   },
   "of.general.total": {
    "text": [
@@ -4792,7 +4792,7 @@
     "input [rbd=1121,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=NOVIEMBRE] = 317000",
     "input [rbd=1121,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=DICIEMBRE] = 317000"
    ],
-   "htmlHash": "17c3ec62b105ba"
+   "htmlHash": "140a7cefc2dd83"
   },
   "modal.of.general.AC": {
    "text": [
@@ -4945,7 +4945,7 @@
     "input [rbd=AC,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "16a1438ecc2f75"
+   "htmlHash": "128ecbbe0fed00"
   },
   "modal.of.pie.1121": {
    "text": [
@@ -5089,7 +5089,7 @@
     "input [rbd=1121,fuente=pie,modo=of_bys_proy_item,concepto=Material didáctico,mes=NOVIEMBRE] = 505000",
     "input [rbd=1121,fuente=pie,modo=of_bys_proy_item,concepto=Material didáctico,mes=DICIEMBRE] = 505000"
    ],
-   "htmlHash": "0ea3febc098246"
+   "htmlHash": "145cc9ae5aa29a"
   },
   "modal.of.mantenimiento.1121": {
    "text": [
@@ -5224,7 +5224,7 @@
     "input [rbd=1121,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 522000",
     "input [rbd=1121,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=DICIEMBRE] = 522000"
    ],
-   "htmlHash": "0adb6cd440c6dc"
+   "htmlHash": "0c8575df5b0dbc"
   },
   "modal.of.mantenimiento.AC": {
    "text": [
@@ -5365,7 +5365,7 @@
     "input [rbd=AC,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "0f62c446550925"
+   "htmlHash": "1d4e20a70d8519"
   },
   "modal.of.prorretencion.AC": {
    "text": [
@@ -5518,7 +5518,7 @@
     "input [rbd=AC,fuente=prorretencion,modo=of_bys_proy_item,concepto=Mantención menor,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=prorretencion,modo=of_bys_proy_item,concepto=Mantención menor,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "0cba085ef3b53e"
+   "htmlHash": "13f7b34b40e56b"
   },
   "modal.of.junji.5402002": {
    "text": [
@@ -5738,7 +5738,7 @@
     "input [rbd=5402002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 508143",
     "input [rbd=5402002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 508143"
    ],
-   "htmlHash": "0e4d93600dfb97"
+   "htmlHash": "1cfb484b055499"
   },
   "modal.of.junji.5404002": {
    "text": [
@@ -5958,7 +5958,7 @@
     "input [rbd=5404002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 584286",
     "input [rbd=5404002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 584286"
    ],
-   "htmlHash": "1cad8d2b77de8b"
+   "htmlHash": "0ff325f289b901"
   },
   "modal.of.faep.1121": {
    "text": [
@@ -6102,7 +6102,7 @@
     "input [rbd=1121,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 1232714",
     "input [rbd=1121,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=DICIEMBRE] = 1232714"
    ],
-   "htmlHash": "04fb6d5b09b100"
+   "htmlHash": "184f32b688db92"
   },
   "modal.of.faep.AC": {
    "text": [
@@ -6246,7 +6246,7 @@
     "input [rbd=AC,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 4928000",
     "input [rbd=AC,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=DICIEMBRE] = 4928000"
    ],
-   "htmlHash": "0fa722ecd605ee"
+   "htmlHash": "1599361665402c"
   },
   "modal.of.figa.AC": {
    "text": [
@@ -6390,7 +6390,7 @@
     "input [rbd=AC,fuente=figa,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 4700000",
     "input [rbd=AC,fuente=figa,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 4700000"
    ],
-   "htmlHash": "0d682465de4a90"
+   "htmlHash": "153d7a2235a384"
   },
   "modal.of.aporte_educ.1121": {
    "text": [
@@ -6534,7 +6534,7 @@
     "input [rbd=1121,fuente=aporte_educ,modo=of_bys_item,concepto=Transporte escolar,mes=NOVIEMBRE] = 1019286",
     "input [rbd=1121,fuente=aporte_educ,modo=of_bys_item,concepto=Transporte escolar,mes=DICIEMBRE] = 1019286"
    ],
-   "htmlHash": "0b928434ab5174"
+   "htmlHash": "0d313a02e4e9ab"
   },
   "modal.of.aporte_junji.5402002": {
    "text": [
@@ -6665,7 +6665,7 @@
     "input [rbd=5402002,fuente=aporte_junji,modo=of_bys_item,concepto=Alimentación,mes=NOVIEMBRE] = 124143",
     "input [rbd=5402002,fuente=aporte_junji,modo=of_bys_item,concepto=Alimentación,mes=DICIEMBRE] = 124143"
    ],
-   "htmlHash": "13530cfbf4cf49"
+   "htmlHash": "10a1177c35814a"
   },
   "ejec.sep.agregado": {
    "text": [

@@ -1,0 +1,17 @@
+diff --git a/index.html b/index.html
+index 9533e8a..64ce735 100644
+--- a/index.html
++++ b/index.html
+@@ -6635,10 +6635,10 @@ function ejecucionChartSVG(serie, showRem, showBys, opts) {
+   const values = [];
+   serie.forEach(m => { if (showRem) values.push(m.pctRemAcum); if (showBys) values.push(m.pctBysAcum); if (opts.showTotal) values.push(m.pctTotalAcum); });
+   const maxVal = values.length ? Math.max(...values, 0) : 0;
+-  const yMax = Math.max(100, Math.ceil((maxVal + 5) / 25) * 25);
++  const yMax = Math.min(1000, Math.max(100, Math.ceil((maxVal + 5) / 25) * 25));   // tope: un monto absurdo no puede volver interminable el bucle de marcas
+ 
+   const x = i => margin.left + (n > 1 ? (i / (n - 1)) * plotW : 0);
+-  const y = v => margin.top + plotH - (v / yMax) * plotH;
++  const y = v => margin.top + plotH - (Math.min(v, yMax) / yMax) * plotH;
+ 
+   const yTicks = [];
+   for (let v = 0; v <= yMax; v += 25) yTicks.push(v);

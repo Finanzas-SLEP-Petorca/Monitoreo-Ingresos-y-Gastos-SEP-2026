@@ -1,0 +1,20 @@
+diff --git a/index.html b/index.html
+index 9533e8a..488777f 100644
+--- a/index.html
++++ b/index.html
+@@ -1699,11 +1699,14 @@ const MONTO_AYUDA_INVALIDO = 'Monto no válido: usa solo números, por ejemplo 1
+ // Firestore rechaza el write ENTERO si una sola clave es "__algo__", está vacía o pesa > 1500 bytes UTF-8, y entonces
+ // fallan todos los guardados de ese RBD. Se valida en el origen (al crear y al importar) con un mensaje claro.
+ // (La barra "/" sí es válida en una clave de mapa; solo es inválida en un ID de documento: ver validarIdDocumento.)
++// Firestore limita a 1500 bytes la RUTA completa de la propiedad (p. ej. otras_fuentes.prorretencion.bys_proy_items.<clave>.meses.SEPTIEMBRE suma ≈55 bytes
++// más que la clave): con 1400 sobra margen para cualquier ruta que arma el panel.
++const MAX_BYTES_CLAVE_MAPA = 1400;
+ function validarClaveMapa(clave, etiqueta = 'El nombre') {
+   if (typeof clave !== 'string' || clave.trim() === '') return `${etiqueta} no puede estar vacío.`;
+   if (/^__.*__$/.test(clave)) return `${etiqueta} "${clave}" no es válido: no puede empezar y terminar con "__" (Firestore lo rechaza).`;
+   const bytes = new TextEncoder().encode(clave).length;
+-  if (bytes > 1500) return `${etiqueta} es demasiado largo (${bytes} bytes; el máximo es 1500). Acórtalo.`;
++  if (bytes > MAX_BYTES_CLAVE_MAPA) return `${etiqueta} es demasiado largo (${bytes} bytes; el máximo es ${MAX_BYTES_CLAVE_MAPA}). Acórtalo.`;
+   return null;
+ }
+ // ID de documento (el RBD o código de entidad que viene de un Excel): además de lo anterior no puede llevar "/" ni ser "." o "..".

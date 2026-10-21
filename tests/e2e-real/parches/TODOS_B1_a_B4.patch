@@ -1,0 +1,106 @@
+diff --git a/index.html b/index.html
+index 9533e8a..5ef1a1c 100644
+--- a/index.html
++++ b/index.html
+@@ -1699,11 +1699,14 @@ const MONTO_AYUDA_INVALIDO = 'Monto no válido: usa solo números, por ejemplo 1
+ // Firestore rechaza el write ENTERO si una sola clave es "__algo__", está vacía o pesa > 1500 bytes UTF-8, y entonces
+ // fallan todos los guardados de ese RBD. Se valida en el origen (al crear y al importar) con un mensaje claro.
+ // (La barra "/" sí es válida en una clave de mapa; solo es inválida en un ID de documento: ver validarIdDocumento.)
++// Firestore limita a 1500 bytes la RUTA completa de la propiedad (p. ej. otras_fuentes.prorretencion.bys_proy_items.<clave>.meses.SEPTIEMBRE suma ≈55 bytes
++// más que la clave): con 1400 sobra margen para cualquier ruta que arma el panel.
++const MAX_BYTES_CLAVE_MAPA = 1400;
+ function validarClaveMapa(clave, etiqueta = 'El nombre') {
+   if (typeof clave !== 'string' || clave.trim() === '') return `${etiqueta} no puede estar vacío.`;
+   if (/^__.*__$/.test(clave)) return `${etiqueta} "${clave}" no es válido: no puede empezar y terminar con "__" (Firestore lo rechaza).`;
+   const bytes = new TextEncoder().encode(clave).length;
+-  if (bytes > 1500) return `${etiqueta} es demasiado largo (${bytes} bytes; el máximo es 1500). Acórtalo.`;
++  if (bytes > MAX_BYTES_CLAVE_MAPA) return `${etiqueta} es demasiado largo (${bytes} bytes; el máximo es ${MAX_BYTES_CLAVE_MAPA}). Acórtalo.`;
+   return null;
+ }
+ // ID de documento (el RBD o código de entidad que viene de un Excel): además de lo anterior no puede llevar "/" ni ser "." o "..".
+@@ -6635,10 +6638,10 @@ function ejecucionChartSVG(serie, showRem, showBys, opts) {
+   const values = [];
+   serie.forEach(m => { if (showRem) values.push(m.pctRemAcum); if (showBys) values.push(m.pctBysAcum); if (opts.showTotal) values.push(m.pctTotalAcum); });
+   const maxVal = values.length ? Math.max(...values, 0) : 0;
+-  const yMax = Math.max(100, Math.ceil((maxVal + 5) / 25) * 25);
++  const yMax = Math.min(1000, Math.max(100, Math.ceil((maxVal + 5) / 25) * 25));   // tope: un monto absurdo no puede volver interminable el bucle de marcas
+ 
+   const x = i => margin.left + (n > 1 ? (i / (n - 1)) * plotW : 0);
+-  const y = v => margin.top + plotH - (v / yMax) * plotH;
++  const y = v => margin.top + plotH - (Math.min(v, yMax) / yMax) * plotH;
+ 
+   const yTicks = [];
+   for (let v = 0; v <= yMax; v += 25) yTicks.push(v);
+@@ -7763,7 +7766,7 @@ function ensureRbdsFaltantesEnFirestore(presentIds) {
+ // estado reconstruido antes de pintar, así lo que la persona tecleó nunca retrocede (ni por un snapshot de otro RBD, ni
+ // por el eco de su propio guardado, ni por la reversión local que hace el SDK cuando un write es rechazado).
+ function superponerEdicionesSinConfirmar(rbd, data) {
+-  [escrituraRetenida[rbd], pendingWrites[rbd]].forEach(p => { if (p) deepMergeInto(data, p); });
++  [...(enVuelo[rbd] || []), escrituraRetenida[rbd], pendingWrites[rbd]].forEach(p => { if (p) deepMergeInto(data, p); });
+   return data;
+ }
+ let ultimoSnapshotAplicado = null;
+@@ -8089,22 +8092,29 @@ function scheduleRbdSave(rbd, partial) {
+ //   escrituraRetenida  lo que el servidor rechazó de forma PERMANENTE: se conserva en memoria (y en pantalla) hasta Reintentar
+ //   reintentosEscritura  nº de reintentos automáticos consecutivos por RBD (espera 2, 4, 8, 16, 30, 30… s)
+ const escrituraRetenida = {};
++const enVuelo = {};            // rbd -> [cambios ya enviados con setDoc que el SDK puede no haber reflejado todavía en sus snapshots]
++const errorRetenido = {};      // rbd -> código del último error permanente de ese RBD
+ const reintentosEscritura = {};
+ let escriturasEnVuelo = 0;
+ let ultimoErrorPermanente = '';
+ const sinAuditoria = (payload) => { const o = { ...payload }; delete o.lastModifiedBy; delete o.lastModifiedAt; return o; };
+ 
+-async function flushRbdSave(rbd) {
++async function flushRbdSave(rbd, { manual = false } = {}) {
+   clearTimeout(pendingTimers[rbd]);
+   delete pendingTimers[rbd];
+   let payload = pendingWrites[rbd];
+   delete pendingWrites[rbd];
+   if (!currentUser) return;
+   // Lo que el servidor rechazó antes viaja junto con lo nuevo: el reintento manual y cualquier edición posterior lo reenvían.
+-  if (escrituraRetenida[rbd]) { payload = deepMergeInto(escrituraRetenida[rbd], payload || {}); delete escrituraRetenida[rbd]; }
++  // Un error de DATO (invalid-argument / failed-precondition) no se arregla reenviando: si viajara con cada edición nueva, un solo dato inválido
++  // bloquearía TODAS las ediciones de ese RBD. Solo el botón Reintentar lo reenvía (manual); permisos/sesión sí viajan con lo nuevo.
++  const porDato = /^(invalid-argument|failed-precondition)$/.test(errorRetenido[rbd] || '');
++  if (escrituraRetenida[rbd] && (manual || !porDato)) { payload = deepMergeInto(escrituraRetenida[rbd], payload || {}); delete escrituraRetenida[rbd]; delete errorRetenido[rbd]; }
+   if (!payload) return;
+   payload.lastModifiedBy = currentUser.email;
+   payload.lastModifiedAt = serverTimestamp();
++  const copiaEnVuelo = JSON.parse(JSON.stringify(sinAuditoria(payload)));   // lo que viaja, para superponerlo mientras el SDK no lo refleje
++  (enVuelo[rbd] = enVuelo[rbd] || []).push(copiaEnVuelo);
+   escriturasEnVuelo++;
+   actualizarIndicadorSync();
+   try {
+@@ -8124,11 +8134,14 @@ async function flushRbdSave(rbd) {
+       // conserva y el indicador queda en rojo hasta que la persona reintente o se resuelva la causa.
+       escrituraRetenida[rbd] = deepMergeInto(cambio, escrituraRetenida[rbd] || {});
+       ultimoErrorPermanente = codigoDeError(err);
++      errorRetenido[rbd] = ultimoErrorPermanente;
+       delete reintentosEscritura[rbd];
+     }
+     // El SDK ya revirtió la escritura local y repintó con el valor anterior: se vuelve a superponer lo sin guardar.
+     reaplicarUltimoSnapshot();
+   } finally {
++    enVuelo[rbd] = (enVuelo[rbd] || []).filter(x => x !== copiaEnVuelo);
++    if (!enVuelo[rbd].length) delete enVuelo[rbd];
+     escriturasEnVuelo--;
+     actualizarIndicadorSync();
+   }
+@@ -8137,14 +8150,14 @@ async function flushRbdSave(rbd) {
+ // Al cerrar sesión (confirmado): lo que no se guardó se descarta de la memoria para que no se reenvíe con otra sesión.
+ function descartarCambiosSinGuardar() {
+   Object.keys(pendingTimers).forEach(rbd => { clearTimeout(pendingTimers[rbd]); delete pendingTimers[rbd]; });
+-  [pendingWrites, escrituraRetenida, reintentosEscritura].forEach(o => Object.keys(o).forEach(k => { delete o[k]; }));
++  [pendingWrites, escrituraRetenida, reintentosEscritura, enVuelo, errorRetenido].forEach(o => Object.keys(o).forEach(k => { delete o[k]; }));
+   ultimoErrorPermanente = '';
+   actualizarIndicadorSync();
+ }
+ 
+ // Botón "Reintentar" del indicador rojo: reenvía lo que el servidor rechazó (junto con lo que se haya escrito después).
+ function reintentarGuardado() {
+-  Object.keys(escrituraRetenida).forEach(rbd => { flushRbdSave(rbd); });
++  Object.keys(escrituraRetenida).forEach(rbd => { flushRbdSave(rbd, { manual: true }); });
+ }
+ document.getElementById('sync-retry').addEventListener('click', reintentarGuardado);
+ document.querySelectorAll('.modal-sync-retry').forEach(b => b.addEventListener('click', reintentarGuardado));

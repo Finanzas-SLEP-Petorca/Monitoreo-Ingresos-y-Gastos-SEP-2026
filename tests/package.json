@@ -1,0 +1,12 @@
+{
+  "name": "monitoreo-sep-tests",
+  "private": true,
+  "type": "module",
+  "description": "Arnés de pruebas (Playwright + mock local de Firebase) del panel Monitoreo Ingresos y Gastos SEP 2026. No tiene dependencias propias: usa el Playwright global.",
+  "scripts": {
+    "test": "node run.mjs",
+    "golden": "node run.mjs golden",
+    "golden:update": "node run.mjs golden --update",
+    "fixture": "node fixtures/generate.mjs"
+  }
+}

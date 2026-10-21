@@ -534,6 +534,62 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .report-filter-grid { grid-template-columns:1fr; }
   }
 
+  /* ---- REPORTES · VISUALIZADOR (estilo SUPEREDUC) ---- */
+  .rep-vista-row { margin-bottom:12px; }
+  .vz-fila { display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-bottom:10px; }
+  .vz-label { font-size:12.5px; font-weight:600; color:var(--text-secondary); }
+  .vz-chips { flex-wrap:wrap; }
+  .vz-chip { padding:5px 12px; border:none; background:none; font-size:12.5px; font-weight:600; color:var(--text-secondary); border-radius:6px; cursor:pointer; }
+  .vz-chip:hover { color:var(--text-primary); background:var(--surface-1); }
+  .vz-chip.active { color:var(--series-1); background:var(--tone-blue-bg); }
+  .vz-btn-sec { padding:5px 12px; border:1px solid var(--baseline); background:var(--surface-1); color:var(--text-secondary); font-size:12.5px; font-weight:600; border-radius:6px; cursor:pointer; }
+  .vz-btn-sec:hover { color:var(--text-primary); background:var(--page-plane); }
+  .vz-det { width:100%; border:1px solid var(--border); border-radius:8px; padding:6px 10px; background:var(--surface-1); }
+  .vz-det summary { cursor:pointer; font-size:12.5px; font-weight:600; color:var(--text-secondary); }
+  .vz-ent-body { margin-top:8px; }
+  .vz-ent-list { max-height:260px; }
+  .vz-ent-titulo { font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.03em; margin:8px 0 2px; }
+  .vz-h { margin:0; font-size:15px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .vz-saldo-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin:8px 0 6px; }
+  .vz-seccion-head { display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin:10px 0 8px; }
+  .vz-btnrow { display:inline-flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .vz-table td.vz-name { white-space:normal; }
+  .vz-table .vz-th-act { width:44px; }
+  .vz-caret { border:none; background:none; color:var(--series-1); cursor:pointer; width:22px; font-size:12px; padding:0; }
+  .vz-caret-sp { display:inline-block; width:22px; }
+  .vz-row.vz-d0 td { font-weight:700; background:var(--page-plane); }
+  .vz-row.vz-d1 td { font-weight:600; }
+  .vz-row td.vz-act { text-align:center; }
+  .vz-mes-btn { border:none; background:none; cursor:pointer; font-size:14px; padding:2px 4px; border-radius:4px; opacity:.75; }
+  .vz-mes-btn:hover, .vz-mes-btn.active { opacity:1; background:var(--tone-blue-bg); }
+  .vz-total-row td { font-weight:700; background:var(--page-plane); border-top:2px solid var(--baseline); }
+  .vz-mes-wrap { padding:8px 10px; background:#fff; border:1px dashed var(--baseline); border-radius:8px; overflow-x:auto; }
+  .vz-mes-table { border-collapse:collapse; font-size:11.5px; min-width:640px; width:100%; }
+  .vz-mes-table th, .vz-mes-table td { padding:3px 6px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--gridline); }
+  .vz-mes-table th:first-child, .vz-mes-table td:first-child { text-align:left; font-weight:600; color:var(--text-secondary); }
+  .vz-mes-table td.mes-real { background:rgba(12,163,92,0.10); }
+  .vz-mes-table td.mes-proy { background:rgba(224,138,0,0.10); }
+  .vz-mes-table td.mes-mixto { background:linear-gradient(90deg, rgba(12,163,92,0.10) 50%, rgba(224,138,0,0.10) 50%); }
+  .vz-bars { display:grid; grid-template-columns:repeat(12, minmax(0, 1fr)); gap:6px; align-items:end; height:72px; margin-top:8px; min-width:640px; }
+  .vz-bar { height:100%; display:flex; flex-direction:column-reverse; justify-content:flex-start; }
+  .vz-bar-real { display:block; background:var(--series-1); border-radius:0 0 2px 2px; }
+  .vz-bar-proy { display:block; background:var(--series-1); opacity:.35; border-radius:2px 2px 0 0; }
+  .vz-bar-lbls { display:grid; grid-template-columns:repeat(12, minmax(0, 1fr)); gap:6px; font-size:10px; color:var(--text-muted); text-align:center; min-width:640px; }
+  .vz-leyenda { font-size:11px; color:var(--text-muted); margin-top:6px; }
+  .vz-vacio td { text-align:center; color:var(--text-muted); font-size:12.5px; padding:18px !important; }
+  .vz-table th.num, .vz-table td.num { text-align:right; width:140px; }
+  /* Reportes (como % Ejecución y las pestañas de fuente): con el layout de pantalla fija las secciones
+     no deben encogerse por debajo de su contenido (si no, se dibujan unas encima de otras); scrollea la página. */
+  @media screen and (min-width:641px) {
+    #tab-reportes > section, #tab-reportes > #reporteVista-visualizador, #tab-reportes > #reporteVista-personalizado { flex:0 0 auto; min-height:min-content; }
+    #tab-reportes > section > .panel { flex:0 0 auto; min-height:min-content; }
+  }
+  @media (max-width:700px) { .vz-saldo-grid { grid-template-columns:1fr; } }
+  @media print {
+    .rep-vista-row, .vz-filtros, .vz-actions, .vz-btnrow, .vz-caret, .vz-mes-btn, .vz-th-act, .vz-row td.vz-act { display:none !important; }
+    .vz-saldo-grid, .vz-table tr { break-inside:avoid; }
+  }
+
   /* ---- % EJECUCIÓN: filtros, tarjetas y gráfico ---- */
   #ejecRbdSelect { padding:7px 10px; border-radius:6px; border:1px solid var(--baseline); font-size:13px; background:var(--surface-1); color:var(--text-primary); min-width:260px; }
   .ejec-toggle-group { display:flex; align-items:center; gap:4px 16px; flex-wrap:wrap; }
@@ -812,6 +868,103 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <div id="tab-reportes" class="tab-content hidden">
     <section>
+      <h2>Reportes</h2>
+      <div class="vz-fila rep-vista-row">
+        <span class="of-chips vz-chips" id="reporteVistaChips" role="group" aria-label="Vista de Reportes">
+          <button type="button" class="vz-chip active" data-reporte-vista="visualizador">📊 Visualizador</button>
+          <button type="button" class="vz-chip" data-reporte-vista="personalizado">🧮 Reporte personalizado</button>
+        </span>
+        <span class="dash-sub" id="reporteVistaNota">Consolidado por fuente de financiamiento y entidad, al estilo del Visualizador de la plataforma de Rendición de Cuentas de SUPEREDUC.</span>
+      </div>
+    </section>
+
+    <div id="reporteVista-visualizador">
+      <section>
+        <div class="panel">
+          <div class="vz-filtros">
+            <div class="vz-fila">
+              <span class="vz-label">Fuentes:</span>
+              <span class="of-chips vz-chips vz-chips-wrap" id="vzFuenteChips" role="group" aria-label="Fuentes de financiamiento"></span>
+              <span class="report-filter-actions">
+                <button type="button" class="link-btn" id="vzFuentesTodas">Todas</button>
+                <button type="button" class="link-btn" id="vzFuentesNinguna">Ninguna</button>
+              </span>
+            </div>
+            <div class="vz-fila">
+              <details class="vz-det" id="vzEntidadesDet">
+                <summary id="vzEntidadesResumen">Entidades</summary>
+                <div class="vz-ent-body">
+                  <div class="report-filter-head">
+                    <strong>Establecimientos, Administración Central y GESPARVU</strong>
+                    <span class="report-filter-actions">
+                      <button type="button" class="link-btn" id="vzEntTodos">Todos</button>
+                      <button type="button" class="link-btn" id="vzEntNinguno">Ninguno</button>
+                    </span>
+                  </div>
+                  <input type="text" id="vzEntSearch" placeholder="Buscar RBD, GESPARVU o nombre…" class="report-search">
+                  <div class="report-checklist vz-ent-list" id="vzEntList"></div>
+                </div>
+              </details>
+            </div>
+            <div class="vz-fila">
+              <span class="vz-label">Agrupar por:</span>
+              <span class="of-chips vz-chips" id="vzAgruparChips" role="group" aria-label="Agrupar por">
+                <button type="button" class="vz-chip active" data-vz-agrupar="fuente">Por fuente</button>
+                <button type="button" class="vz-chip" data-vz-agrupar="codigo">Por código / concepto (consolidado)</button>
+              </span>
+              <button type="button" id="vzLimpiarBtn" class="vz-btn-sec">Limpiar</button>
+            </div>
+          </div>
+          <div class="table-controls vz-actions">
+            <button id="vzCsvBtn" type="button">⬇ CSV</button>
+            <button id="vzPdfBtn" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
+          </div>
+          <div class="corte-legend" id="vzNota" style="margin-top:8px;"></div>
+        </div>
+      </section>
+
+      <section>
+        <h3 class="vz-h">Saldo disponible <span class="dash-sub">Ingresos − Gastos de la selección</span></h3>
+        <div class="vz-saldo-grid" id="vzSaldo"></div>
+      </section>
+
+      <section>
+        <div class="vz-seccion-head">
+          <h3 class="vz-h">Ingresos</h3>
+          <span class="vz-btnrow">
+            <button type="button" class="vz-btn-sec" id="vzExpIng">Expandir todo</button>
+            <button type="button" class="vz-btn-sec" id="vzContIng">Contraer todo</button>
+            <button type="button" id="vzExcelIng" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel Ingresos</button>
+          </span>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table vz-table" id="vzTablaIng">
+            <thead><tr><th>Concepto</th><th class="num">Real</th><th class="num">Proyectado</th><th class="num">Total</th><th class="vz-th-act"></th></tr></thead>
+            <tbody id="vzBodyIng"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div class="vz-seccion-head">
+          <h3 class="vz-h">Gastos</h3>
+          <span class="vz-btnrow">
+            <button type="button" class="vz-btn-sec" id="vzExpGas">Expandir todo</button>
+            <button type="button" class="vz-btn-sec" id="vzContGas">Contraer todo</button>
+            <button type="button" id="vzExcelGas" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel Gastos</button>
+          </span>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table vz-table" id="vzTablaGas">
+            <thead><tr><th>Concepto</th><th class="num">Real</th><th class="num">Proyectado</th><th class="num">Total</th><th class="vz-th-act"></th></tr></thead>
+            <tbody id="vzBodyGas"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <div id="reporteVista-personalizado" class="hidden">
+    <section>
       <h2>Reporte personalizado <span class="count-chip" id="reporteCountChip"></span></h2>
       <div class="panel">
         <div class="report-controls">
@@ -864,6 +1017,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         </div>
       </div>
     </section>
+    </div>
   </div>
   <!-- /#tab-reportes -->
 
@@ -1362,9 +1516,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         100% o más es Déficit, 90% o más es Riesgo, el resto es Superávit.</p>
 
         <h4>8. Pestaña "Reportes"</h4>
-        <p>Arma una tabla a medida eligiendo establecimientos, conceptos (Ingreso, Remuneraciones, cualquier ítem de
-        compras o de su proyección — se puede buscar por nombre o por código SUPEREDUC) y meses. Cada celda se
-        colorea real/proyectada igual que en el detalle de cada RBD. Se puede descargar en CSV, Excel o PDF.</p>
+        <p>Tiene dos vistas. El <strong>Visualizador</strong> (la que se abre por defecto) consolida todas las fuentes
+        de financiamiento, al estilo del Visualizador de la plataforma de Rendición de Cuentas de SUPEREDUC: se eligen
+        fuentes (botones) y entidades, y muestra el Saldo disponible (Ingresos − Gastos) y los Ingresos y Gastos en un
+        árbol que se expande, con columnas Real, Proyectado y Total; cada fila tiene un detalle mensual (📅). Se puede
+        agrupar por fuente o por código/concepto consolidado, y descargar Excel de Ingresos y de Gastos por separado,
+        CSV o PDF. El <strong>Reporte personalizado</strong> arma una tabla a medida eligiendo establecimientos,
+        conceptos (Ingreso, Remuneraciones, cualquier ítem de compras o de su proyección — se puede buscar por nombre
+        o por código SUPEREDUC) y meses; cada celda se colorea real/proyectada igual que en el detalle de cada RBD.</p>
 
         <h4>9. Pestaña "% Ejecución"</h4>
         <p>Muestra, mes a mes, cómo va el ritmo de gasto de Remuneraciones y Bienes y Servicios, para una entidad o
@@ -4501,6 +4660,513 @@ window.addEventListener('resize', () => {
   }, 150);
 });
 
+// ============================================================================
+// ============== REPORTES · VISUALIZADOR multi-fuente (estilo SUPEREDUC) ==============
+// Vista consolidada por fuente de financiamiento y entidad, al estilo del módulo "Visualizador" de
+// la plataforma de Rendición de Cuentas de SUPEREDUC (Manual de Usuario, Capítulo VII): filtros,
+// Saldo disponible (Ingresos − Gastos), y Ingresos / Gastos en un árbol expandible con detalle
+// mensual. Todo se arma a partir de "líneas" (reporteLineasPorFuente): una línea = un concepto de una
+// fuente, sumado sobre las entidades seleccionadas, con sus 12 meses separados en Real y Proyectado
+// según las MISMAS reglas que usa cada pestaña (corte "Real hasta" de cada entidad en las fuentes;
+// en SEP: ingreso real hasta DATA.n_meses, remuneraciones según rem.real_hasta_mes de cada RBD,
+// compras siempre reales y proyección de B&S siempre proyectada). SEP se muestra con el año completo:
+// no depende del selector "Ver resumen hasta el mes" de su pestaña (con el corte por defecto —
+// diciembre— las cifras coinciden exactamente con las del dashboard y las tarjetas KPI).
+// ============================================================================
+const VZ_FUENTES = [{ key: 'sep', label: 'SEP', corto: 'SEP', icono: '🎓' }].concat(
+  FUENTES_OTRAS.map(f => ({ key: f.key, label: f.label, corto: DASH_META[f.key].corto, icono: DASH_META[f.key].icono }))
+);
+const VZ_FUENTE_BY_KEY = {};
+VZ_FUENTES.forEach(f => { VZ_FUENTE_BY_KEY[f.key] = f; });
+const VZ_ENTIDADES = [
+  ...DATA.registros.map(r => ({ id: r.rbd, nombre: r.nombre, tipo: 'rbd' })),
+  { id: AC_PSEUDO_RBD.rbd, nombre: AC_PSEUDO_RBD.nombre, tipo: 'ac' },
+  ...GESPARVU_REGISTROS.map(g => ({ id: g.rbd, nombre: g.nombre, tipo: 'gesparvu' })),
+];
+const vzState = {
+  vista: 'visualizador',
+  fuentes: new Set(VZ_FUENTES.map(f => f.key)),
+  entidades: new Set(VZ_ENTIDADES.map(e => e.id)),
+  agrupar: 'fuente',          // 'fuente' | 'codigo'
+  exp: new Set(),             // ids de nodos expandidos (hijos visibles)
+  mes: new Set(),             // ids de nodos con el detalle mensual abierto
+  expInit: new Set(),         // "tipo|agrupar" cuyos nodos expandidos por defecto ya se aplicaron
+  print: false,               // true mientras se imprime: árbol completo expandido y sin detalle mensual
+};
+
+function vzSum(arr) { let s = 0; for (let i = 0; i < arr.length; i++) s += arr[i]; return s; }
+function vzSumArr(dst, src) { for (let i = 0; i < 12; i++) dst[i] += src[i]; }
+
+// Suma `meses` ({MES: monto}) en la línea (fuente, tipo, grupo, subt, código, concepto) del mapa.
+// modo: número = corte (meses ≤ corte son Real, el resto Proyectado) | 'real' | 'proy'.
+function vzSumar(mapa, meta, meses, modo) {
+  const key = [meta.fuenteKey, meta.tipo, meta.grupo, meta.subt || '', meta.codigo || '', meta.concepto].join('|');
+  let l = mapa.get(key);
+  if (!l) { l = { subt: '', codigo: '', ...meta, real: z12(), proy: z12() }; mapa.set(key, l); }
+  MESES_CARGA.forEach((m, i) => {
+    const v = Number(meses && meses[m]) || 0;
+    if (!v) return;
+    const k = modo === 'real' ? 'real' : modo === 'proy' ? 'proy' : (i + 1 <= modo ? 'real' : 'proy');
+    l[k][i] += v;
+  });
+}
+
+function reporteLineasSep(sel) {
+  const mapa = new Map();
+  DATA.registros.forEach(r => {
+    if (!sel.has(r.rbd)) return;
+    const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
+    const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
+    const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
+    const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
+    ITEMS_INGRESO.forEach(nombre => {
+      const it = ing ? ing.items.find(x => x.item === nombre) : null;
+      if (it) vzSumar(mapa, { fuenteKey: 'sep', tipo: 'ingreso', grupo: 'ingreso', concepto: nombre }, it.meses, DATA.n_meses);
+    });
+    if (rem) vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'rem', concepto: 'Remuneraciones' }, rem.meses, rem.real_hasta_mes || DATA.n_meses);
+    if (ag) ag.items.forEach(it => vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'bys', subt: it.subtitulo, codigo: it.codigo, concepto: it.item }, it.meses, 'real'));
+    if (bp) bp.items.forEach(it => {
+      const cat = CUENTAS_SEP_BY_CODIGO[it.codigo];
+      vzSumar(mapa, {
+        fuenteKey: 'sep', tipo: 'gasto', grupo: 'bys_proy', subt: cat ? cat.subt : '',
+        codigo: it.codigo === '_LEGACY_' ? '' : it.codigo,
+        concepto: cat ? cat.nombre : 'Proyección general (dato anterior sin ítem asignado)',
+      }, it.meses, 'proy');
+    });
+  });
+  return Array.from(mapa.values());
+}
+
+function reporteLineasOtraFuente(fuenteKey, sel) {
+  const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const mapa = new Map();
+  filasOtrasFuentes(fuenteKey).forEach(r => {
+    if (!sel.has(r.rbd)) return;
+    const of = recomputeOtraFuente(r.rbd, fuenteKey);
+    const corte = realHastaMesOtraFuente(of);
+    const lineasIng = f.incomeShape === 'junji3'
+      ? [['Ingreso Operación', of.ingreso_operacion], ['Ingreso Homologación', of.ingreso_homologacion], ['Ingreso Carrera Docente', of.ingreso_carrera_docente]]
+      : [['Ingreso', of.ingreso]];
+    lineasIng.forEach(([nombre, l]) => vzSumar(mapa, { fuenteKey, tipo: 'ingreso', grupo: 'ingreso', concepto: nombre }, l && l.meses, corte));
+    vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'rem', concepto: 'Remuneraciones' }, of.gasto_rem && of.gasto_rem.meses, corte);
+    if (f.bysMode === 'compras') {
+      (of.bys_items || []).forEach(it => vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'bys', subt: it.subtitulo, codigo: it.codigo, concepto: it.item }, it.meses, 'real'));
+      (of.bys_proy_items || []).forEach(it => vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'bys_proy', concepto: it.concepto }, it.meses, 'proy'));
+    } else {
+      (of.bys_items || []).forEach(it => vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'bys_concepto', concepto: it.concepto }, it.meses, corte));
+    }
+  });
+  return Array.from(mapa.values());
+}
+
+// Líneas { fuenteKey, tipo:'ingreso'|'gasto', grupo:'ingreso'|'rem'|'bys'|'bys_concepto'|'bys_proy',
+// subt, codigo, concepto, real:[12], proy:[12] } de UNA fuente, sumadas sobre las entidades
+// seleccionadas (`entidadesSet` = ids de RBD / "AC" / GESPARVU). Se descartan las líneas en cero.
+function reporteLineasPorFuente(fuenteKey, entidadesSet) {
+  const arr = fuenteKey === 'sep' ? reporteLineasSep(entidadesSet) : reporteLineasOtraFuente(fuenteKey, entidadesSet);
+  return arr.filter(l => l.real.some(v => v) || l.proy.some(v => v));
+}
+function reporteLineasSeleccion(fuentesSet, entidadesSet) {
+  const out = [];
+  VZ_FUENTES.forEach(f => { if (fuentesSet.has(f.key)) out.push(...reporteLineasPorFuente(f.key, entidadesSet)); });
+  return out;
+}
+
+function vzSubcat(l) {
+  if (l.tipo === 'ingreso') return 'Ingresos';
+  if (l.grupo === 'rem') return 'Remuneraciones';
+  if (l.grupo === 'bys') return `Bienes y Servicios — Subt. ${l.subt}`;
+  if (l.grupo === 'bys_concepto') return 'Bienes y Servicios — por concepto (sin código)';
+  return 'Bienes y Servicios — Proyección';
+}
+function vzEtiquetaLinea(l) {
+  if ((l.grupo === 'bys' || l.grupo === 'bys_proy') && l.codigo) return `${l.codigo} · ${l.concepto}`;
+  return l.concepto;
+}
+function vzCmpLinea(a, b) {
+  return String(a.codigo || '').localeCompare(String(b.codigo || ''), 'es', { numeric: true })
+    || String(a.concepto).localeCompare(String(b.concepto), 'es');
+}
+
+// --- Árbol (nodos con real/proy mensuales sumados; `csv` marca los nodos que salen en el CSV) ---
+function vzNodo(id, label, extra) { return { id, label, icono: '', real: z12(), proy: z12(), children: [], csv: null, ...extra }; }
+function vzHoja(id, label, l, extra) { const n = vzNodo(id, label, extra); vzSumArr(n.real, l.real); vzSumArr(n.proy, l.proy); return n; }
+function vzPadre(n, hijos) { n.children = hijos; hijos.forEach(h => { vzSumArr(n.real, h.real); vzSumArr(n.proy, h.proy); }); return n; }
+function vzCsvInfo(l, fuenteLabel) { return { fuente: fuenteLabel, subcat: vzSubcat(l), codigo: l.codigo || '', concepto: l.concepto }; }
+function vzIdLinea(l) { return [l.grupo, l.codigo || '', l.concepto].join('|'); }
+
+function vzArbolPorFuente(tipo, lineas) {
+  const roots = [];
+  VZ_FUENTES.forEach(f => {
+    if (!vzState.fuentes.has(f.key)) return;
+    const ls = lineas.filter(l => l.fuenteKey === f.key && l.tipo === tipo);
+    const id = `${tipo}|f:${f.key}`;
+    const nodo = vzNodo(id, f.label, { icono: f.icono, fuenteKey: f.key });
+    const hoja = l => vzHoja(`${id}|${vzIdLinea(l)}`, vzEtiquetaLinea(l), l, { csv: vzCsvInfo(l, f.label) });
+    const hijos = [];
+    if (tipo === 'ingreso') {
+      ls.forEach(l => hijos.push(hoja(l)));
+    } else {
+      ls.filter(l => l.grupo === 'rem').forEach(l => hijos.push(hoja(l)));
+      const sub = (clave, etiqueta, filtro) => {
+        const grupo = ls.filter(filtro).sort(vzCmpLinea);
+        if (grupo.length) hijos.push(vzPadre(vzNodo(`${id}|s:${clave}`, etiqueta), grupo.map(hoja)));
+      };
+      sub('bys', 'Bienes y Servicios', l => l.grupo === 'bys' || l.grupo === 'bys_concepto');
+      sub('proy', 'Bienes y Servicios — Proyección', l => l.grupo === 'bys_proy');
+    }
+    roots.push(vzPadre(nodo, hijos));
+  });
+  return roots;
+}
+
+function vzArbolPorCodigo(tipo, lineas) {
+  const ls = lineas.filter(l => l.tipo === tipo);
+  const orden = f => VZ_FUENTES.findIndex(x => x.key === f);
+  // Nodo consolidado de un conjunto de líneas (mismo código/concepto) con un hijo por fuente.
+  const consolidado = (id, label, grupoLineas) => {
+    const porFuente = grupoLineas.slice().sort((a, b) => orden(a.fuenteKey) - orden(b.fuenteKey));
+    const n = vzNodo(id, label, { csv: { fuente: 'CONSOLIDADO', subcat: vzSubcat(grupoLineas[0]), codigo: grupoLineas[0].codigo || '', concepto: grupoLineas[0].concepto } });
+    const hijos = porFuente.map(l => {
+      const f = VZ_FUENTE_BY_KEY[l.fuenteKey];
+      return vzHoja(`${id}|f:${l.fuenteKey}`, `${f.icono} ${f.label}`, l, { csv: vzCsvInfo(l, f.label), esFuente: true });
+    });
+    return vzPadre(n, hijos);
+  };
+  const agrupar = (lineasSub, claveFn, etiquetaFn, prefijo) => {
+    const m = new Map();
+    lineasSub.forEach(l => { const k = claveFn(l); if (!m.has(k)) m.set(k, []); m.get(k).push(l); });
+    return Array.from(m.entries())
+      .sort((a, b) => vzCmpLinea(a[1][0], b[1][0]))
+      .map(([k, g]) => consolidado(`${prefijo}|c:${k}`, etiquetaFn(g[0]), g));
+  };
+  const roots = [];
+  if (tipo === 'ingreso') {
+    return agrupar(ls, l => l.concepto, l => l.concepto, tipo);
+  }
+  const rem = ls.filter(l => l.grupo === 'rem');
+  if (rem.length) roots.push(consolidado('gasto|c:rem', 'Remuneraciones', rem));
+  const subcat = (clave, etiqueta, filtro, claveFn) => {
+    const grupo = ls.filter(filtro);
+    if (!grupo.length) return;
+    const hijos = agrupar(grupo, claveFn, vzEtiquetaLinea, `gasto|s:${clave}`);
+    roots.push(vzPadre(vzNodo(`gasto|s:${clave}`, etiqueta), hijos));
+  };
+  subcat('bys22', 'Bienes y Servicios — Subt. 22', l => l.grupo === 'bys' && l.subt === '22', l => l.codigo);
+  subcat('bys29', 'Bienes y Servicios — Subt. 29', l => l.grupo === 'bys' && l.subt === '29', l => l.codigo);
+  subcat('byscon', 'Bienes y Servicios — por concepto (sin código)', l => l.grupo === 'bys_concepto', l => l.concepto.trim().toLowerCase());
+  subcat('proy', 'Bienes y Servicios — Proyección', l => l.grupo === 'bys_proy', l => l.codigo || l.concepto.trim().toLowerCase());
+  return roots;
+}
+
+function vzArbol(tipo, lineas) {
+  return vzState.agrupar === 'codigo' ? vzArbolPorCodigo(tipo, lineas) : vzArbolPorFuente(tipo, lineas);
+}
+function vzIdsConHijos(roots, out) {
+  roots.forEach(n => { if (n.children.length) { out.push(n.id); vzIdsConHijos(n.children, out); } });
+  return out;
+}
+
+// --- Detalle mensual de un nodo: tabla Real / Proyectado / Total (la fila Total marca cada mes como
+// real, proyectado o mixto) + mini gráfico de barras (Real sólido, Proyectado atenuado). ---
+function vzClaseMes(real, proy) {
+  if (!real && !proy) return '';
+  if (!proy) return 'mes-real';
+  if (!real) return 'mes-proy';
+  return 'mes-mixto';
+}
+function vzMesDetalleHTML(n) {
+  const tot = n.real.map((v, i) => v + n.proy[i]);
+  const max = Math.max(1, ...tot.map(v => Math.abs(v)));
+  const ths = MESES_CARGA_ABREV.map(m => `<th>${m}</th>`).join('');
+  const fila = (titulo, arr, clase) => `<tr><td>${titulo}</td>${arr.map((v, i) => {
+    const cls = clase ? clase(i) : '';
+    const tip = `Real ${fmtCLP(Math.round(n.real[i]))} · Proyectado ${fmtCLP(Math.round(n.proy[i]))}`;
+    return `<td class="${cls}" data-mes-i="${i}" title="${tip}">${fmtCLP(Math.round(v))}</td>`;
+  }).join('')}<td><strong>${fmtCLP(Math.round(vzSum(arr)))}</strong></td></tr>`;
+  const barras = tot.map((v, i) => {
+    const hr = Math.abs(n.real[i]) / max * 100, hp = Math.abs(n.proy[i]) / max * 100;
+    const tip = `${MESES_CARGA_TITLE[i]}: Real ${fmtCLP(Math.round(n.real[i]))} · Proyectado ${fmtCLP(Math.round(n.proy[i]))}`;
+    return `<div class="vz-bar" title="${tip}"><span class="vz-bar-proy" style="height:${hp.toFixed(1)}%"></span><span class="vz-bar-real" style="height:${hr.toFixed(1)}%"></span></div>`;
+  }).join('');
+  return `<div class="vz-mes-wrap" data-vz-mes-detalle="${escHtmlOF(n.id)}">
+    <table class="vz-mes-table"><thead><tr><th>Mes</th>${ths}<th>Total</th></tr></thead><tbody>
+      ${fila('Real', n.real, i => n.real[i] ? 'mes-real' : '')}
+      ${fila('Proyectado', n.proy, i => n.proy[i] ? 'mes-proy' : '')}
+      ${fila('Total', tot, i => vzClaseMes(n.real[i], n.proy[i]))}
+    </tbody></table>
+    <div class="vz-bars" aria-hidden="true">${barras}</div>
+    <div class="vz-bar-lbls" aria-hidden="true">${MESES_CARGA_ABREV.map(m => `<span>${m}</span>`).join('')}</div>
+    <div class="vz-leyenda"><span style="background:rgba(12,163,92,0.15);padding:0 5px;border-radius:3px;">real</span> · <span style="background:rgba(224,138,0,0.15);padding:0 5px;border-radius:3px;">proyectado</span> · mixto = el mes mezcla entidades con corte distinto.</div>
+  </div>`;
+}
+
+function vzFilasHTML(roots, tipo) {
+  const filas = [];
+  const rec = (n, depth) => {
+    const tieneHijos = n.children.length > 0;
+    const abierto = vzState.print || vzState.exp.has(n.id);
+    const mesAbierto = !vzState.print && vzState.mes.has(n.id);
+    const real = Math.round(vzSum(n.real)), proy = Math.round(vzSum(n.proy));
+    const id = escHtmlOF(n.id);
+    const caret = tieneHijos
+      ? `<button type="button" class="vz-caret" data-vz-toggle="${id}" aria-expanded="${abierto}" title="${abierto ? 'Contraer' : 'Expandir'}">${abierto ? '▾' : '▸'}</button>`
+      : '<span class="vz-caret-sp"></span>';
+    filas.push(`<tr class="vz-row vz-d${Math.min(depth, 3)} ${tieneHijos ? 'vz-parent' : 'vz-leaf'}" data-vz-id="${id}" data-vz-tipo="${tipo}">
+      <td class="vz-name" style="padding-left:${8 + depth * 18}px">${caret}${n.icono ? n.icono + ' ' : ''}${escHtmlOF(n.label)}</td>
+      <td class="num vz-real">${fmtCLP(real)}</td><td class="num vz-proy">${fmtCLP(proy)}</td><td class="num vz-total">${fmtCLP(real + proy)}</td>
+      <td class="vz-act"><button type="button" class="vz-mes-btn${mesAbierto ? ' active' : ''}" data-vz-mes="${id}" aria-pressed="${mesAbierto}" title="Detalle mensual">📅</button></td>
+    </tr>`);
+    if (mesAbierto) filas.push(`<tr class="vz-mes-row"><td colspan="5">${vzMesDetalleHTML(n)}</td></tr>`);
+    if (tieneHijos && abierto) n.children.forEach(c => rec(c, depth + 1));
+  };
+  roots.forEach(r => rec(r, 0));
+  return filas.join('');
+}
+
+function vzBloque(lineas, tipo) {
+  const real = new Array(12).fill(0), proy = new Array(12).fill(0);
+  lineas.filter(l => l.tipo === tipo).forEach(l => { vzSumArr(real, l.real); vzSumArr(proy, l.proy); });
+  const r = Math.round(vzSum(real)), p = Math.round(vzSum(proy));
+  return { real: r, proy: p, total: r + p };
+}
+
+function renderVisualizador() {
+  if (!document.getElementById('vzBodyIng')) return;
+  // Estado visual de los controles
+  document.querySelectorAll('#vzFuenteChips .vz-chip').forEach(b => {
+    const on = vzState.fuentes.has(b.dataset.vzFuente);
+    b.classList.toggle('active', on); b.setAttribute('aria-pressed', on);
+  });
+  document.querySelectorAll('#vzAgruparChips .vz-chip').forEach(b => b.classList.toggle('active', b.dataset.vzAgrupar === vzState.agrupar));
+  document.getElementById('vzEntidadesResumen').textContent = `Entidades (${vzState.entidades.size} de ${VZ_ENTIDADES.length} seleccionadas)`;
+  document.getElementById('vzNota').innerHTML =
+    `Cada mes se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span>, ` +
+    `<span style="background:#fdf1de; color:#a3630a; padding:1px 5px; border-radius:3px;">proyectado</span> o mixto según el "Real hasta" de cada entidad ` +
+    `(SEP: ingreso real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}, remuneraciones según el corte de cada RBD; compras siempre reales; proyecciones siempre proyectadas). ` +
+    `SEP se muestra con el año completo, sin depender del selector "Ver resumen hasta el mes".`;
+
+  const sinSeleccion = !vzState.fuentes.size || !vzState.entidades.size;
+  const lineas = sinSeleccion ? [] : reporteLineasSeleccion(vzState.fuentes, vzState.entidades);
+  const ing = vzBloque(lineas, 'ingreso'), gas = vzBloque(lineas, 'gasto');
+  const saldo = { real: ing.real - gas.real, proy: ing.proy - gas.proy, total: ing.total - gas.total };
+  document.getElementById('vzSaldo').innerHTML = [
+    ['Saldo Real', 'real'], ['Saldo Proyectado', 'proy'], ['Saldo Total (Real+Proy)', 'total'],
+  ].map(([titulo, k]) => dashTile(titulo, fmtCLP(saldo[k]), `Ingresos ${fmtCLP(ing[k])} · Gastos ${fmtCLP(gas[k])}`, saldo[k] < 0 ? 'red' : 'green')).join('');
+
+  [['ingreso', 'Ing', ing], ['gasto', 'Gas', gas]].forEach(([tipo, suf, bloque]) => {
+    const roots = sinSeleccion ? [] : vzArbol(tipo, lineas);
+    const claveInit = `${tipo}|${vzState.agrupar}`;
+    if (!vzState.expInit.has(claveInit)) {
+      vzState.expInit.add(claveInit);
+      if (tipo === 'gasto' && vzState.agrupar === 'codigo') roots.forEach(r => { if (r.children.length) vzState.exp.add(r.id); });
+    }
+    let html = lineas.some(l => l.tipo === tipo) ? vzFilasHTML(roots, tipo) : '';
+    if (!html) {
+      html = `<tr class="vz-vacio"><td colspan="5">${sinSeleccion ? 'Selecciona al menos una fuente y una entidad.' : 'Sin datos cargados para la selección.'}</td></tr>`;
+    }
+    html += `<tr class="vz-total-row"><td>Total ${tipo === 'ingreso' ? 'Ingresos' : 'Gastos'}</td><td class="num">${fmtCLP(bloque.real)}</td><td class="num">${fmtCLP(bloque.proy)}</td><td class="num">${fmtCLP(bloque.total)}</td><td></td></tr>`;
+    document.getElementById('vzBody' + suf).innerHTML = html;
+  });
+}
+
+// --- Descargas ---
+function vzFechaHoy() { return new Date().toISOString().slice(0, 10); }
+function vzDescargarBlob(blob, nombre) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nombre;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+// Filas planas del árbol (respeta "agrupar por"): por fuente = una fila por línea de cada fuente;
+// por código = una fila CONSOLIDADO por código/concepto seguida de una fila por fuente.
+function vzFilasPlanas(tipo, lineas) {
+  const out = [];
+  const rec = nodos => nodos.forEach(n => {
+    if (n.csv) out.push({ n, csv: n.csv });
+    rec(n.children);
+  });
+  rec(vzArbol(tipo, lineas));
+  return out;
+}
+function vzCsvLineas() {
+  const lineas = reporteLineasSeleccion(vzState.fuentes, vzState.entidades);
+  const porCodigo = vzState.agrupar === 'codigo';
+  const header = porCodigo
+    ? ['Tipo', 'Subcategoria', 'Codigo', 'Concepto', 'Fuente', 'Real', 'Proyectado', 'Total']
+    : ['Tipo', 'Fuente', 'Subcategoria', 'Codigo', 'Concepto', 'Real', 'Proyectado', 'Total'];
+  const out = [header.map(csvEscape).join(';')];
+  ['ingreso', 'gasto'].forEach(tipo => {
+    vzFilasPlanas(tipo, lineas).forEach(({ n, csv }) => {
+      const real = Math.round(vzSum(n.real)), proy = Math.round(vzSum(n.proy));
+      const base = tipo === 'ingreso' ? 'Ingreso' : 'Gasto';
+      const fila = porCodigo
+        ? [base, csv.subcat, csv.codigo, csv.concepto, csv.fuente, real, proy, real + proy]
+        : [base, csv.fuente, csv.subcat, csv.codigo, csv.concepto, real, proy, real + proy];
+      out.push(fila.map(csvEscape).join(';'));
+    });
+  });
+  return out;
+}
+function vzDescargarCsv() {
+  if (!vzState.fuentes.size || !vzState.entidades.size) { alert('Selecciona al menos una fuente y una entidad.'); return; }
+  const lineas = vzCsvLineas();
+  if (lineas.length === 1) { alert('No hay datos cargados para la selección.'); return; }
+  vzDescargarBlob(new Blob(['\uFEFF' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8;' }), `visualizador_${vzState.agrupar}_${vzFechaHoy()}.csv`);
+}
+
+function vzBuildExcel(tipo) {
+  const lineas = reporteLineasSeleccion(vzState.fuentes, vzState.entidades).filter(l => l.tipo === tipo);
+  const orden = f => VZ_FUENTES.findIndex(x => x.key === f);
+  const ls = lineas.slice().sort((a, b) => orden(a.fuenteKey) - orden(b.fuenteKey) || vzSubcat(a).localeCompare(vzSubcat(b), 'es') || vzCmpLinea(a, b));
+  const fl = l => [VZ_FUENTE_BY_KEY[l.fuenteKey].label, vzSubcat(l), l.codigo || '', l.concepto];
+  const wb = XLSX.utils.book_new();
+  const totR = Math.round(vzSum(ls.reduce((a, l) => { vzSumArr(a, l.real); return a; }, z12())));
+  const totP = Math.round(vzSum(ls.reduce((a, l) => { vzSumArr(a, l.proy); return a; }, z12())));
+  const detalle = [['Fuente', 'Subcategoría', 'Código', 'Concepto', 'Real', 'Proyectado', 'Total']];
+  ls.forEach(l => { const r = Math.round(vzSum(l.real)), p = Math.round(vzSum(l.proy)); detalle.push([...fl(l), r, p, r + p]); });
+  detalle.push(['', '', '', 'TOTAL', totR, totP, totR + totP]);
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(detalle), 'Detalle');
+  const mensual = (titulo, pick) => {
+    const rows = [['Fuente', 'Subcategoría', 'Código', 'Concepto', ...MESES_CARGA_TITLE, 'Total']];
+    const acc = z12();
+    ls.forEach(l => {
+      const vals = l.real.map((v, i) => Math.round(pick(l, i)));
+      vals.forEach((v, i) => { acc[i] += v; });
+      rows.push([...fl(l), ...vals, vals.reduce((a, b) => a + b, 0)]);
+    });
+    rows.push(['', '', '', 'TOTAL', ...acc, acc.reduce((a, b) => a + b, 0)]);
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), titulo);
+  };
+  mensual('Mensual Real', (l, i) => l.real[i]);
+  mensual('Mensual Proyectado', (l, i) => l.proy[i]);
+  mensual('Mensual Total', (l, i) => l.real[i] + l.proy[i]);
+  if (vzState.agrupar === 'codigo') {
+    const cons = [['Subcategoría', 'Código', 'Concepto', 'Real', 'Proyectado', 'Total', 'Fuentes']];
+    const todas = reporteLineasSeleccion(vzState.fuentes, vzState.entidades);
+    vzFilasPlanas(tipo, todas).filter(x => x.csv.fuente === 'CONSOLIDADO').forEach(({ n, csv }) => {
+      const r = Math.round(vzSum(n.real)), p = Math.round(vzSum(n.proy));
+      cons.push([csv.subcat, csv.codigo, csv.concepto, r, p, r + p, n.children.map(c => c.csv ? c.csv.fuente : '').filter(Boolean).join(' + ')]);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(cons), 'Consolidado');
+  }
+  const ahora = new Date();
+  const entTxt = vzState.entidades.size === VZ_ENTIDADES.length ? 'TODAS' : VZ_ENTIDADES.filter(e => vzState.entidades.has(e.id)).map(e => e.id).join(', ');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+    ['Reporte', tipo === 'ingreso' ? 'Ingresos' : 'Gastos'],
+    ['FECHA DE CONSULTA', ahora.toLocaleDateString('es-CL') + ' ' + ahora.toLocaleTimeString('es-CL')],
+    ['FUENTE(S)', VZ_FUENTES.filter(f => vzState.fuentes.has(f.key)).map(f => f.label).join(', ')],
+    ['ENTIDAD(ES)', entTxt],
+    ['AGRUPAR POR', vzState.agrupar === 'codigo' ? 'Código / concepto (consolidado)' : 'Fuente'],
+    ['Nota', 'Real/Proyectado según el "Real hasta" de cada entidad; SEP con el año completo.'],
+  ]), 'Filtros');
+  return wb;
+}
+function vzDescargarExcel(tipo) {
+  if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); return; }
+  if (!vzState.fuentes.size || !vzState.entidades.size) { alert('Selecciona al menos una fuente y una entidad.'); return; }
+  XLSX.writeFile(vzBuildExcel(tipo), `Visualizador_${tipo === 'ingreso' ? 'Ingresos' : 'Gastos'}_${vzFechaHoy()}.xlsx`);
+}
+function exportVisualizadorPdf() {
+  vzState.print = true;
+  renderVisualizador();
+  document.body.classList.remove('print-single-rbd');
+  window.print();
+  setTimeout(() => { vzState.print = false; renderVisualizador(); }, 300);
+}
+
+// --- Controles ---
+function vzMostrarVista(vista) {
+  vzState.vista = vista;
+  document.querySelectorAll('#reporteVistaChips .vz-chip').forEach(b => b.classList.toggle('active', b.dataset.reporteVista === vista));
+  document.getElementById('reporteVista-visualizador').classList.toggle('hidden', vista !== 'visualizador');
+  document.getElementById('reporteVista-personalizado').classList.toggle('hidden', vista !== 'personalizado');
+  document.getElementById('reporteVistaNota').style.display = vista === 'visualizador' ? '' : 'none';
+  if (vista === 'visualizador') renderVisualizador();
+}
+function vzSincronizarChecks() {
+  document.querySelectorAll('#vzEntList input[data-vz-ent]').forEach(cb => { cb.checked = vzState.entidades.has(cb.dataset.vzEnt); });
+}
+function vzConstruirControles() {
+  document.getElementById('vzFuenteChips').innerHTML = VZ_FUENTES.map(f =>
+    `<button type="button" class="vz-chip active" data-vz-fuente="${f.key}" aria-pressed="true" title="${escHtmlOF(f.label)}">${f.icono} ${escHtmlOF(f.corto)}</button>`).join('');
+  const grupos = [['rbd', 'Establecimientos (RBD)'], ['ac', 'Administración Central'], ['gesparvu', 'GESPARVU (JUNJI)']];
+  document.getElementById('vzEntList').innerHTML = grupos.map(([t, titulo]) =>
+    `<div class="vz-ent-titulo">${titulo}</div>` + VZ_ENTIDADES.filter(e => e.tipo === t).map(e =>
+      `<label class="check-row" data-vz-q="${escHtmlOF((e.id + ' ' + e.nombre).toLowerCase())}"><input type="checkbox" data-vz-ent="${escHtmlOF(e.id)}" checked> ${escHtmlOF(e.id)} — ${escHtmlOF(e.nombre)}</label>`
+    ).join('')).join('');
+}
+function vzLimpiar() {
+  vzState.fuentes = new Set(VZ_FUENTES.map(f => f.key));
+  vzState.entidades = new Set(VZ_ENTIDADES.map(e => e.id));
+  vzState.agrupar = 'fuente';
+  vzState.exp.clear(); vzState.mes.clear(); vzState.expInit.clear();
+  document.getElementById('vzEntSearch').value = '';
+  document.querySelectorAll('#vzEntList label').forEach(l => { l.style.display = ''; });
+  vzSincronizarChecks();
+  renderVisualizador();
+}
+vzConstruirControles();
+document.getElementById('reporteVistaChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-reporte-vista]');
+  if (b) vzMostrarVista(b.dataset.reporteVista);
+});
+document.getElementById('vzFuenteChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-vz-fuente]');
+  if (!b) return;
+  const k = b.dataset.vzFuente;
+  if (vzState.fuentes.has(k)) vzState.fuentes.delete(k); else vzState.fuentes.add(k);
+  renderVisualizador();
+});
+document.getElementById('vzFuentesTodas').addEventListener('click', () => { vzState.fuentes = new Set(VZ_FUENTES.map(f => f.key)); renderVisualizador(); });
+document.getElementById('vzFuentesNinguna').addEventListener('click', () => { vzState.fuentes = new Set(); renderVisualizador(); });
+document.getElementById('vzAgruparChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-vz-agrupar]');
+  if (!b) return;
+  vzState.agrupar = b.dataset.vzAgrupar;
+  renderVisualizador();
+});
+document.getElementById('vzEntList').addEventListener('change', e => {
+  const cb = e.target.closest('input[data-vz-ent]');
+  if (!cb) return;
+  if (cb.checked) vzState.entidades.add(cb.dataset.vzEnt); else vzState.entidades.delete(cb.dataset.vzEnt);
+  renderVisualizador();
+});
+function vzEntMasivo(valor) {
+  document.querySelectorAll('#vzEntList label').forEach(l => {
+    if (l.style.display === 'none') return;
+    const cb = l.querySelector('input[data-vz-ent]');
+    cb.checked = valor;
+    if (valor) vzState.entidades.add(cb.dataset.vzEnt); else vzState.entidades.delete(cb.dataset.vzEnt);
+  });
+  renderVisualizador();
+}
+document.getElementById('vzEntTodos').addEventListener('click', () => vzEntMasivo(true));
+document.getElementById('vzEntNinguno').addEventListener('click', () => vzEntMasivo(false));
+document.getElementById('vzEntSearch').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('#vzEntList label').forEach(l => { l.style.display = !q || l.dataset.vzQ.includes(q) ? '' : 'none'; });
+});
+document.getElementById('vzLimpiarBtn').addEventListener('click', vzLimpiar);
+document.getElementById('vzCsvBtn').addEventListener('click', vzDescargarCsv);
+document.getElementById('vzPdfBtn').addEventListener('click', exportVisualizadorPdf);
+document.getElementById('vzExcelIng').addEventListener('click', () => vzDescargarExcel('ingreso'));
+document.getElementById('vzExcelGas').addEventListener('click', () => vzDescargarExcel('gasto'));
+['Ing', 'Gas'].forEach(suf => {
+  const tipo = suf === 'Ing' ? 'ingreso' : 'gasto';
+  const idsDe = () => vzIdsConHijos(vzArbol(tipo, reporteLineasSeleccion(vzState.fuentes, vzState.entidades)), []);
+  document.getElementById('vzExp' + suf).addEventListener('click', () => { idsDe().forEach(id => vzState.exp.add(id)); renderVisualizador(); });
+  document.getElementById('vzCont' + suf).addEventListener('click', () => { idsDe().forEach(id => vzState.exp.delete(id)); renderVisualizador(); });
+  document.getElementById('vzBody' + suf).addEventListener('click', e => {
+    const t = e.target.closest('[data-vz-toggle]');
+    if (t) { const id = t.dataset.vzToggle; if (vzState.exp.has(id)) vzState.exp.delete(id); else vzState.exp.add(id); renderVisualizador(); return; }
+    const m = e.target.closest('[data-vz-mes]');
+    if (m) { const id = m.dataset.vzMes; if (vzState.mes.has(id)) vzState.mes.delete(id); else vzState.mes.add(id); renderVisualizador(); }
+  });
+});
+
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
@@ -4515,6 +5181,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
     if (tab === 'ejecucion') renderEjecucion();
     if (tab === 'dashboard') renderDashboard();
+    if (tab === 'reportes') renderVisualizador();
     // Las 5 pestañas de fuentes se repintan siempre al activarse (no solo la primera vez), por si
     // llegó un cambio de otro usuario mientras esta pestaña estaba oculta.
     const fuenteDelTab = FUENTES_OTRAS.find(f => 'of-' + f.key === tab);
@@ -6065,6 +6732,7 @@ function aplicarSnapshot(snapshot) {
   renderTable();
   renderOtrasFuentesTable();
   renderDashboard();
+  if (!document.getElementById('tab-reportes').classList.contains('hidden')) renderVisualizador();
 
   const syncMsg = latestEmail && latestAt
     ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatFechaHoraChile(latestAt)}`

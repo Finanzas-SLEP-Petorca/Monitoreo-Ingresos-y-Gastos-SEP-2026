@@ -98,6 +98,15 @@ enlace quedas autenticado en el panel. Solo los correos de la whitelist (constan
 correo no está autorizado verás "Acceso denegado" y deberás pedirle a Wilson Rojas que lo agregue
 en ambos lugares.
 
+**A dónde vuelve el enlace del correo.** El enlace lleva de regreso a la URL **real de la página**
+(origen + ruta, sin `?query` ni `#hash`) cuando el panel se sirve por `http`/`https` — en producción
+`https://finanzas-slep-petorca.github.io/Monitoreo-Ingresos-y-Gastos-SLEP-Petorca-2026/` (GitHub
+Pages). Si el panel se abre desde un archivo local (`file://`), el enlace usa esa URL de producción
+como respaldo (constante `URL_PRODUCCION` en `index.html`). Así un cambio de nombre del repositorio
+ya no deja el enlace apuntando a una página que da 404; si algún día cambia el dominio, además hay
+que agregarlo en Firebase Console → Authentication → Settings → *Authorized domains*. Al completar el
+acceso, el panel borra de la barra de direcciones los parámetros del enlace (`apiKey`, `oobCode`…).
+
 ### Edición colaborativa en tiempo real
 
 Las tablas de Ingreso SEP y Remuneraciones son editables directo en el navegador, mes a mes. Bienes
@@ -108,10 +117,24 @@ original) — el ítem y el mes se calculan solos a partir de esas compras, agru
 cuenta y por el mes de la Fecha Documento. Cada compra ya cargada se puede editar (✏️, corrige sus
 datos sin duplicarla), duplicar (⧉, precarga el formulario con los mismos datos para una compra
 parecida) o eliminar (🗑). El botón "⬇ Compras SUPEREDUC (CSV)" descarga todas las
-compras de todos los RBD ya en el formato exacto de la plantilla de SUPEREDUC; en la columna
+compras de todos los RBD con las columnas de la plantilla de SUPEREDUC; en la columna
 "Acciones" de cada fila, el botón "⬇ CSV SEP" descarga ese mismo formato pero solo con las compras
 de ese RBD — útil para cargar los gastos de un establecimiento a la vez en la plataforma de
-SUPEREDUC, que exige subir por RBD.
+SUPEREDUC, que exige subir por RBD (por eso el archivo con todos los RBD no se puede subir tal cual).
+
+**Cómo se arma el CSV de SUPEREDUC.** Sigue el Manual de Usuario de Rendición de Cuentas 2026
+(Cap. III, columnas A–M y Tabla 02), sin cambiar lo que el panel guarda ni lo que muestra:
+el *Tipo de documento* sale como **código** (`FACEL`, `BOL`, `NOTACRE`…; las boletas de honorarios,
+`BOLH`/`BHE`/`BOLHE`/`BPST`/`BPSTE`, según la Sección 12 del Manual de Cuentas); las fechas salen
+**dd-mm-aaaa**; la descripción se recorta a **100** caracteres; el RUT sale **sin puntos y con
+guion** (`76123456-7`); y *Documento Original* va **vacío** salvo en notas de crédito/débito, donde
+debe ser `número-TIPO` (p. ej. `123-FAC`). Una misma función (`normalizaFilaCompraSupereduc`)
+sirve a SEP y a las fuentes. Antes de descargar, el panel **avisa cuántas compras** traen datos que
+la plataforma rechazaría y por qué (tipo sin código oficial, fecha inválida, fecha de pago anterior
+a la del documento o fuera de 2026, monto gasto mayor que el del documento, descripción de más de
+100 caracteres, nota de crédito/débito sin `número-TIPO`; y un aviso informativo para los documentos
+de honorarios, que SUPEREDUC recibe en su Libro de Honorarios, Cap. IV); si cancelas el aviso no se
+descarga nada. El archivo, si se confirma, se descarga igual con los datos tal como están en el panel.
 
 A diferencia de una planilla o de una sesión de navegador aislada, cada cambio (edición de celda,
 compra agregada o eliminada) se guarda solo (con un pequeño retraso de ~400ms tras dejar de
@@ -332,9 +355,10 @@ con el mismo criterio que las remuneraciones de SEP:
 criterio que la pestaña SEP pero leyendo/escribiendo `otras_fuentes` en vez de los datos de SEP:
 
 - **⬇ Compras SUPEREDUC (CSV)** — solo en las 4 fuentes `bysMode:'compras'` (no en JUNJI/FAEP/
-  FIGA, que no son parte de ese sistema de rendición): mismo formato de 13 columnas que el de
-  SEP, con el código de Subvención oficial de cada una en la columna "Subvencion" (`GENERAL`,
-  `PIE`, `MANTENIMIENTO`, `PRORETENCION`).
+  FIGA, que no son parte de ese sistema de rendición): mismas 13 columnas y misma normalización
+  (tipo por código, fechas dd-mm-aaaa, descripción ≤ 100, RUT con guion, Documento Original solo en
+  NC/ND, aviso previo de filas que se rechazarían) que el de SEP, con el código de Subvención
+  oficial de cada una en la columna "Subvencion" (`GENERAL`, `PIE`, `MANTENIMIENTO`, `PRORETENCION`).
 - **⬇ Excel / ⬆ Importar Excel** — carga completa de la fuente en hojas (Ingreso, Remuneraciones,
   Compras + `BYS_PROY_ITEMS` para las `bysMode:'compras'`; hojas de Ingreso + Remuneraciones +
   `BYS_ITEMS` por concepto para las `bysMode:'concepto'`) y una hoja `META` con el corte "Real hasta
@@ -351,8 +375,8 @@ general:
 - **⬇ XLS** — Excel solo de esa entidad, con el mismo formato que el "⬇ Excel" de la pestaña (hojas
   de ingreso, remuneraciones, compras o ítems de B&S, proyección y `META` con el corte), así que se
   puede volver a cargar con "⬆ Importar Excel" de la misma pestaña sin tocar a las demás entidades.
-- **⬇ CSV SUPEREDUC** (General, PIE, Mantención, Pro-Retención) — las compras de esa entidad en el
-  formato de 13 columnas de SUPEREDUC. En las fuentes que no son parte de ese sistema (JUNJI,
+- **⬇ CSV SUPEREDUC** (General, PIE, Mantención, Pro-Retención) — las compras de esa entidad en la
+  plantilla de 13 columnas de SUPEREDUC (con la misma normalización y el mismo aviso previo). En las fuentes que no son parte de ese sistema (JUNJI,
   FAEP, FIGA y los dos Aportes Fiscales) el botón es **⬇ CSV** y baja el **detalle mensual** de la
   entidad: una fila por línea (ingresos, remuneraciones, ítems de B&S) con su tipo
   (Real / Proyectado / Mixto), seguida de los totales Real, Proyectado y Total, el Estado y el mes
@@ -467,6 +491,8 @@ scripts/              Pipeline en Python usado para armar los datos que alimenta
                        extract_plan_cuentas.py (matriz del Plan de Cuentas 2026 desde el PDF).
 data/                 plan_cuentas_2026.json (matriz de cuentas por subvención, dato normativo
                        sin cifras) y plan_cuentas_2026_verificacion.md (cómo se verificó).
+tests/                Arnés de pruebas (Playwright + mock local de Firebase): specs, golden master
+                       y fixture sintético. Ver tests/README.md. Se corre con `node tests/run.mjs`.
 ```
 
 Los scripts de `scripts/` esperan los Excel de origen en una carpeta `CARGA/` local (no
@@ -494,8 +520,43 @@ en una colección propia y separada (`sep_carga_rbd`) que no comparte datos con 
   vienen embebidos en el archivo (marco SEP por RBD, ítems de gasto, ingreso real
   Preferente/Prioritario) — un `setDoc` por RBD. Esa migración está en una función claramente
   marcada como "EJECUTAR UNA SOLA VEZ" dentro de `index.html`; una vez confirmada la carga de
-  los 52 RBD en Firebase Console, ese bloque puede eliminarse del código con seguridad (aunque,
-  al estar protegido por el chequeo de colección vacía, no vuelve a dispararse aunque se deje).
+  los 52 RBD en Firebase Console, ese bloque puede eliminarse del código con seguridad. Está
+  protegido para no pisar datos: **solo se dispara con un snapshot vacío confirmado por el
+  servidor** (`fromCache = false`); un snapshot vacío que viene del caché local (navegador sin caché
+  o sin conexión) **no escribe nada**. Ni la siembra ni la creación de RBD que faltan envían mapas
+  vacíos (`{}`): con `merge:true` el SDK los usaría para reemplazar lo que ya existe en el servidor.
+  Un RBD que falta se crea solo con `{rbd, nombre, lastModifiedBy, lastModifiedAt}`, y únicamente
+  con un snapshot de servidor.
+
+### Robustez ante datos dañados y cierre de la pestaña
+
+- **Documentos "envenenados".** Firestore no valida tipos: un valor nulo, de otro tipo o no numérico
+  en un documento (editado a mano en la consola, un script, otro panel del mismo proyecto) no puede
+  romper a los demás. Los montos se leen con una conversión tolerante (`num()`: números y textos
+  numéricos valen su valor; `null`, `NaN`, `true`, `"abc"` valen 0), cada documento se procesa dentro
+  de su propio `try/catch`, y si uno no se puede leer se omite, el indicador de sincronización queda
+  en **rojo** nombrando el RBD, y nunca se recrea ni se pisa ese documento.
+- **Ediciones pendientes al cerrar.** El guardado sigue siendo con ~400 ms de retraso tras dejar de
+  escribir, pero al ocultarse o cerrarse la pestaña (`visibilitychange` oculto, `pagehide`) se envía
+  de inmediato todo lo pendiente, para no perder la última edición al cerrar o recargar.
+
+## Seguridad del texto libre y de los archivos exportados
+
+- **Escape de HTML.** Todo texto que escribe una persona, que llega de Firestore o que viene de un
+  Excel importado (descripción, nombre y RUT del proveedor, N° de documento, documento original,
+  conceptos de B&S y de proyección, correo de quien editó…) se inserta con un único helper
+  (`escHtml`, que escapa `&`, `<`, `>`, las comillas dobles y simples y el acento grave) en tablas, modales, Reportes, % Ejecución e impresión/PDF.
+  Un `&` o un `<` se ven tal cual, una sola vez escapados, y nada se interpreta como HTML (se cierra
+  el XSS almacenado). Los `id`/`data-*` construidos con texto libre usan un identificador seguro
+  (`idSeguro`) y los selectores no concatenan texto.
+- **Inyección de fórmulas en CSV/Excel.** En las columnas de **texto libre** (descripción, proveedor,
+  concepto) un texto que empieza con `=`, `+`, `-`, `@` (o tabulador/CR) se exporta con un
+  apóstrofo (`'`) delante para que Excel no lo evalúe como fórmula. Nunca se toca un monto, una fecha,
+  un código, un RUT ni un N° de documento, y tampoco un texto que ya es un número (`-1500`). Al
+  **importar** un Excel se quita ese único apóstrofo inicial, así que exportar y reimportar no altera
+  los datos. Nota: en el CSV de SUPEREDUC ese apóstrofo solo aparecería en Descripción o Nombre del
+  proveedor de una compra cuyo texto empieza con uno de esos caracteres (caso excepcional); está
+  pendiente confirmar con SUPEREDUC que su plataforma lo acepta.
 
 ## Precisión de los datos
 

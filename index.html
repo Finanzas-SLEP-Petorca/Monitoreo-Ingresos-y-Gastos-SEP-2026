@@ -836,7 +836,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <input type="file" id="importExcelInput" accept=".xlsx" style="display:none;">
         <button id="exportPdfBtn" type="button" style="background:#374151; border-color:#374151;" title="PDF general (solo el resumen, sin detalle por RBD)">🖨 Exportar PDF (general)</button>
         <button id="downloadResumenExcelBtn" type="button" style="background:#0e7490; border-color:#0e7490;" title="Excel del resumen general (mismas columnas que la tabla y el PDF general) — respeta el filtro/búsqueda actual, sin detalle por RBD">⬇ Excel (resumen general)</button>
-        <button id="downloadComprasSepBtn" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras (Subt.22/29) de todos los RBD, en el formato exacto que pide SUPEREDUC al cargar los gastos">⬇ Compras SUPEREDUC (CSV)</button>
+        <button id="downloadComprasSepBtn" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras (Subt.22/29) de todos los RBD con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD; para eso usa ⬇ CSV SEP de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
         <button id="downloadCargaBtn" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
         <button id="limpiarDuplicadosBtn" type="button" class="hidden" style="background:#b45309; border-color:#b45309;" title="Revisa si quedaron compras duplicadas con ID &quot;0&quot; — un rastro del bug de carga masiva ya corregido — y permite eliminarlas (solo la copia duplicada, nunca la compra correcta)">🧹 Revisar duplicados (ID &quot;0&quot;)</button>
       </div>
@@ -1104,7 +1104,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
-          <button id="downloadComprasOFBtn-general" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Subv. General, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadComprasOFBtn-general" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Subv. General con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
           <button id="downloadExcelOFBtn-general" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-general" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-general" accept=".xlsx" style="display:none;">
@@ -1143,7 +1143,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
-          <button id="downloadComprasOFBtn-pie" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de PIE, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadComprasOFBtn-pie" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de PIE con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
           <button id="downloadExcelOFBtn-pie" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-pie" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-pie" accept=".xlsx" style="display:none;">
@@ -1182,7 +1182,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
-          <button id="downloadComprasOFBtn-mantenimiento" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Mantención, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadComprasOFBtn-mantenimiento" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Mantención con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
           <button id="downloadExcelOFBtn-mantenimiento" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-mantenimiento" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-mantenimiento" accept=".xlsx" style="display:none;">
@@ -1221,7 +1221,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
-          <button id="downloadComprasOFBtn-prorretencion" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Pro-Retención, en el formato exacto que pide SUPEREDUC">⬇ Compras SUPEREDUC (CSV)</button>
+          <button id="downloadComprasOFBtn-prorretencion" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Pro-Retención con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
           <button id="downloadExcelOFBtn-prorretencion" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-prorretencion" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-prorretencion" accept=".xlsx" style="display:none;">
@@ -1599,6 +1599,59 @@ import {
   deleteField,
   enableIndexedDbPersistence
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ============================================================================
+// ============== UTILIDADES DE SEGURIDAD (escape de HTML, IDs, fórmulas) ==============
+// Todo texto que escribe un usuario, que llega de Firestore o que viene de un Excel importado
+// (descripción, proveedor, N° de documento, concepto, correo…) se inserta SIEMPRE con escHtml()
+// cuando va dentro de innerHTML o de un atributo (title, data-*, value, id). Una sola pasada:
+// el texto se ve tal cual en pantalla (un "&" o un "<" no se muestran dobles ni se pierden) y
+// nunca se interpreta como HTML. Lo que es constante del código (etiquetas, catálogos) no se escapa.
+// ============================================================================
+const _ESC_HTML = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;' };
+function escHtml(v) {
+  return String(v == null ? '' : v).replace(/[&<>"'`]/g, c => _ESC_HTML[c]);
+}
+// Identificador seguro para un id="" a partir de texto libre (concepto de B&S, código de una clave
+// de Firestore…): si ya son solo letras/dígitos/_/- se deja igual; si no, "~" + el UTF-8 en hex
+// (inyectivo: dos textos distintos nunca dan el mismo id). Se busca siempre con getElementById.
+function idSeguro(t) {
+  const s = String(t == null ? '' : t);
+  if (/^[A-Za-z0-9_-]+$/.test(s)) return s;
+  return '~' + Array.from(new TextEncoder().encode(s), b => b.toString(16).padStart(2, '0')).join('');
+}
+// Inyección de fórmulas en CSV/Excel: una celda de TEXTO LIBRE (descripción, proveedor, concepto)
+// que empieza con = + - @ (o tabulador/CR) se evalúa como fórmula al abrirla en Excel. Se le
+// antepone un apóstrofo. Se aplica SOLO a columnas de texto libre — nunca a montos, fechas,
+// códigos, RUT ni N° de documento — y no a textos que son un número ("-1500", "-5%"). Al importar
+// un Excel se quita ese único apóstrofo inicial (quitaApostrofoFormula) para que el ciclo
+// exportar → reimportar no altere los datos.
+const RE_INICIO_FORMULA = /^[=+\-@\t\r]/;
+const RE_TEXTO_NUMERICO = /^[+-]?\d+([.,]\d+)?%?$/;
+function neutralizaFormula(v) {
+  if (typeof v !== 'string') return v;
+  return (RE_INICIO_FORMULA.test(v) && !RE_TEXTO_NUMERICO.test(v)) ? "'" + v : v;
+}
+function quitaApostrofoFormula(v) {
+  return (typeof v === 'string' && /^'[=+\-@\t\r]/.test(v)) ? v.slice(1) : v;
+}
+// Celda CSV de una columna de texto libre: neutraliza la fórmula y luego cita/escapa.
+function csvTexto(v) { return csvEscape(neutralizaFormula(v)); }
+// Número tolerante para datos que llegan de Firestore (que no valida tipos): un número finito se
+// deja igual, un texto numérico ("1000") se convierte, y todo lo demás (null, NaN, true, {}, "abc")
+// vale 0. Así un documento dañado no puede producir totales basura ("0"+"5" = "05") ni romper gráficos.
+function num(v) {
+  const n = (typeof v === 'number') ? v : ((typeof v === 'string' && v.trim() !== '') ? Number(v) : NaN);
+  return Number.isFinite(n) ? n : 0;
+}
+// Objeto "plano" (ni null, ni array, ni texto, ni número): si no lo es, {} — para leer mapas de Firestore sin romper.
+function objetoPlano(v) {
+  return (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+}
+// Texto seguro (null/objetos → ''), para campos de texto libre que llegan de Firestore.
+function textoSeguro(v) {
+  return (typeof v === 'string') ? v : ((typeof v === 'number' && Number.isFinite(v)) ? String(v) : '');
+}
 
 const DATA = {"meses": ["202601", "202602", "202603", "202604", "202605", "202606", "202607"], "n_meses": 7, "ultimo_mes": "202607", "registros": [{"rbd": "1121", "nombre": "LICEO PULMAHUE DE LA LIGUA", "marco_anual_proy": 270239850, "gasto_rem_ytd": 86672138, "gasto_rem_anual_proy": 148580808, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 189167895, "meta_bys_30": 81071955, "saldo_rem": 40587087, "saldo_bys": 81071955, "saldo_total": 121659042, "pct_ejec_rem": 55.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 55.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1122", "nombre": "ESCUELA REPUBLICA DE VENEZUELA", "marco_anual_proy": 212215845, "gasto_rem_ytd": 75940645, "gasto_rem_anual_proy": 130183965, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 148551092, "meta_bys_30": 63664754, "saldo_rem": 18367126, "saldo_bys": 63664754, "saldo_total": 82031880, "pct_ejec_rem": 61.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 61.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1123", "nombre": "ESCUELA GABRIELA MISTRAL", "marco_anual_proy": 394028109, "gasto_rem_ytd": 211133787, "gasto_rem_anual_proy": 361943637, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 275819676, "meta_bys_30": 118208433, "saldo_rem": -86123961, "saldo_bys": 118208433, "saldo_total": 32084472, "pct_ejec_rem": 91.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 91.9, "anomalia": false, "estado": "riesgo"}, {"rbd": "1125", "nombre": "ESCUELA DIEGO PORTALES", "marco_anual_proy": 104816547, "gasto_rem_ytd": 63018834, "gasto_rem_anual_proy": 108032289, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 73371583, "meta_bys_30": 31444964, "saldo_rem": -34660706, "saldo_bys": 31444964, "saldo_total": -3215742, "pct_ejec_rem": 103.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 103.1, "anomalia": false, "estado": "deficit"}, {"rbd": "1128", "nombre": "ESCUELA COMUNIDADES DE VALLE HERMOSO", "marco_anual_proy": 217566609, "gasto_rem_ytd": 59149842, "gasto_rem_anual_proy": 101399727, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 152296626, "meta_bys_30": 65269983, "saldo_rem": 50896899, "saldo_bys": 65269983, "saldo_total": 116166882, "pct_ejec_rem": 46.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 46.6, "anomalia": false, "estado": "superavit"}, {"rbd": "1129", "nombre": "ESCUELA ANGEL MENAY", "marco_anual_proy": 13154286, "gasto_rem_ytd": 88804, "gasto_rem_anual_proy": 152234, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 9208000, "meta_bys_30": 3946286, "saldo_rem": 9055766, "saldo_bys": 3946286, "saldo_total": 13002052, "pct_ejec_rem": 1.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 1.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1130", "nombre": "ESC. BASICA LOS HORNOS DE HUAQUEN", "marco_anual_proy": 23345142, "gasto_rem_ytd": 4914027, "gasto_rem_anual_proy": 8424047, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 16341599, "meta_bys_30": 7003543, "saldo_rem": 7917552, "saldo_bys": 7003543, "saldo_total": 14921095, "pct_ejec_rem": 36.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 36.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1131", "nombre": "ESC. BASICA CASAS VIEJAS DE LONGOTOMA", "marco_anual_proy": 25972071, "gasto_rem_ytd": 1225978, "gasto_rem_anual_proy": 2101678, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 18180450, "meta_bys_30": 7791621, "saldo_rem": 16078772, "saldo_bys": 7791621, "saldo_total": 23870393, "pct_ejec_rem": 8.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 8.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1132", "nombre": "ESCUELA BASICA POZA VERDE", "marco_anual_proy": 119382231, "gasto_rem_ytd": 42648373, "gasto_rem_anual_proy": 73111498, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 83567562, "meta_bys_30": 35814669, "saldo_rem": 10456064, "saldo_bys": 35814669, "saldo_total": 46270733, "pct_ejec_rem": 61.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 61.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1133", "nombre": "ESC.BASICA LAS CASAS DE HUAQUEN", "marco_anual_proy": 56299875, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 39409912, "meta_bys_30": 16889962, "saldo_rem": 39409912, "saldo_bys": 16889962, "saldo_total": 56299875, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1134", "nombre": "CARMEN SANCHEZ ARAYA", "marco_anual_proy": 13242879, "gasto_rem_ytd": 1255469, "gasto_rem_anual_proy": 2152234, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 9270015, "meta_bys_30": 3972864, "saldo_rem": 7117781, "saldo_bys": 3972864, "saldo_total": 11090645, "pct_ejec_rem": 16.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 16.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1135", "nombre": "ESCUELA BASICA LOS MOLLES", "marco_anual_proy": 36892992, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 25825094, "meta_bys_30": 11067898, "saldo_rem": 25825094, "saldo_bys": 11067898, "saldo_total": 36892992, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1136", "nombre": "ESCUELA BASICA PUYANCON", "marco_anual_proy": 52685169, "gasto_rem_ytd": 16441350, "gasto_rem_anual_proy": 28185170, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 36879618, "meta_bys_30": 15805551, "saldo_rem": 8694448, "saldo_bys": 15805551, "saldo_total": 24499999, "pct_ejec_rem": 53.5, "pct_ejec_bys": 0.0, "pct_ejec_total": 53.5, "anomalia": false, "estado": "superavit"}, {"rbd": "1137", "nombre": "ESCUELA BASICA HORTENCIA POWELL S.", "marco_anual_proy": 15156849, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 10609794, "meta_bys_30": 4547055, "saldo_rem": 10609794, "saldo_bys": 4547055, "saldo_total": 15156849, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1139", "nombre": "ESCUELA MINISTRO GOMEZ MILLAS", "marco_anual_proy": 25154754, "gasto_rem_ytd": 7309329, "gasto_rem_anual_proy": 12530279, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 17608328, "meta_bys_30": 7546426, "saldo_rem": 5078049, "saldo_bys": 7546426, "saldo_total": 12624475, "pct_ejec_rem": 49.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 49.8, "anomalia": false, "estado": "superavit"}, {"rbd": "1140", "nombre": "ESCUELA BASICA CARLOS ARIZTIA RUIZ", "marco_anual_proy": 31981968, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 22387378, "meta_bys_30": 9594590, "saldo_rem": 22387378, "saldo_bys": 9594590, "saldo_total": 31981968, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1142", "nombre": "ESCUELA LA CANELA", "marco_anual_proy": 45674784, "gasto_rem_ytd": 11231690, "gasto_rem_anual_proy": 19254325, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 31972349, "meta_bys_30": 13702435, "saldo_rem": 12718024, "saldo_bys": 13702435, "saldo_total": 26420459, "pct_ejec_rem": 42.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 42.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1143", "nombre": "ESCUELA BASICA QUEBRADILLA", "marco_anual_proy": 20092098, "gasto_rem_ytd": 5264804, "gasto_rem_anual_proy": 9025379, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 14064469, "meta_bys_30": 6027629, "saldo_rem": 5039090, "saldo_bys": 6027629, "saldo_total": 11066719, "pct_ejec_rem": 44.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 44.9, "anomalia": false, "estado": "superavit"}, {"rbd": "1144", "nombre": "ESCUELA BASICA PICHICUY", "marco_anual_proy": 28797930, "gasto_rem_ytd": 12958897, "gasto_rem_anual_proy": 22215252, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 20158551, "meta_bys_30": 8639379, "saldo_rem": -2056701, "saldo_bys": 8639379, "saldo_total": 6582678, "pct_ejec_rem": 77.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 77.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1145", "nombre": "ESCUELA ENRIQUE DOLL ROJAS", "marco_anual_proy": 38794485, "gasto_rem_ytd": 30943154, "gasto_rem_anual_proy": 53045409, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 27156140, "meta_bys_30": 11638346, "saldo_rem": -25889270, "saldo_bys": 11638346, "saldo_total": -14250924, "pct_ejec_rem": 136.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 136.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1147", "nombre": "ESCUELA FERNANDO GARCIA OLDINI", "marco_anual_proy": 65926875, "gasto_rem_ytd": 45975426, "gasto_rem_anual_proy": 78815016, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 46148812, "meta_bys_30": 19778062, "saldo_rem": -32666204, "saldo_bys": 19778062, "saldo_total": -12888141, "pct_ejec_rem": 119.5, "pct_ejec_bys": 0.0, "pct_ejec_total": 119.5, "anomalia": false, "estado": "deficit"}, {"rbd": "1148", "nombre": "LICEO JOSE MANUEL BORGONO NUNEZ", "marco_anual_proy": 244341870, "gasto_rem_ytd": 167119000, "gasto_rem_anual_proy": 286489715, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 171039309, "meta_bys_30": 73302561, "saldo_rem": -115450406, "saldo_bys": 73302561, "saldo_total": -42147845, "pct_ejec_rem": 117.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 117.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1149", "nombre": "LICEO CORDILLERA", "marco_anual_proy": 91364085, "gasto_rem_ytd": 65934178, "gasto_rem_anual_proy": 113030018, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 63954859, "meta_bys_30": 27409226, "saldo_rem": -49075159, "saldo_bys": 27409226, "saldo_total": -21665933, "pct_ejec_rem": 123.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 123.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1150", "nombre": "ESCUELA BASICA NEFTALI REYES B.", "marco_anual_proy": 5465478, "gasto_rem_ytd": 2156107, "gasto_rem_anual_proy": 3696182, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3825835, "meta_bys_30": 1639643, "saldo_rem": 129653, "saldo_bys": 1639643, "saldo_total": 1769296, "pct_ejec_rem": 67.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 67.6, "anomalia": false, "estado": "superavit"}, {"rbd": "1151", "nombre": "ESCUELA BASICA VILLA SANTA ANA", "marco_anual_proy": 5659560, "gasto_rem_ytd": 3394488, "gasto_rem_anual_proy": 5819123, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3961692, "meta_bys_30": 1697868, "saldo_rem": -1857431, "saldo_bys": 1697868, "saldo_total": -159563, "pct_ejec_rem": 102.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 102.8, "anomalia": false, "estado": "deficit"}, {"rbd": "1152", "nombre": "ESCUELA EDUARDO FREI MONTALVA", "marco_anual_proy": 64225842, "gasto_rem_ytd": 47825199, "gasto_rem_anual_proy": 81986054, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 44958089, "meta_bys_30": 19267753, "saldo_rem": -37027965, "saldo_bys": 19267753, "saldo_total": -17760212, "pct_ejec_rem": 127.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 127.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1153", "nombre": "ESCUELA BASICA EL CRUCERO", "marco_anual_proy": 2217225, "gasto_rem_ytd": 4198632, "gasto_rem_anual_proy": 7197657, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 1552058, "meta_bys_30": 665168, "saldo_rem": -5645600, "saldo_bys": 665168, "saldo_total": -4980432, "pct_ejec_rem": 324.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 324.6, "anomalia": false, "estado": "deficit"}, {"rbd": "1156", "nombre": "ESCUELA BASICA G-24", "marco_anual_proy": 32441541, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 22709079, "meta_bys_30": 9732462, "saldo_rem": 22709079, "saldo_bys": 9732462, "saldo_total": 32441541, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1157", "nombre": "ESCUELA BASICA LOS ALAMOS EL SOBRANTE", "marco_anual_proy": 27211641, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 19048149, "meta_bys_30": 8163492, "saldo_rem": 19048149, "saldo_bys": 8163492, "saldo_total": 27211641, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1158", "nombre": "ESCUELA BASICA BENANCIO PEREZ", "marco_anual_proy": 4329315, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3030520, "meta_bys_30": 1298794, "saldo_rem": 3030520, "saldo_bys": 1298794, "saldo_total": 4329315, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1160", "nombre": "ESCUELA HOGAR FRONTERIZA DE CHALACO", "marco_anual_proy": 9598803, "gasto_rem_ytd": 6896859, "gasto_rem_anual_proy": 11823189, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 6719162, "meta_bys_30": 2879641, "saldo_rem": -5104027, "saldo_bys": 2879641, "saldo_total": -2224386, "pct_ejec_rem": 123.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 123.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1161", "nombre": "ESCUELA BASICA PEDEGUA", "marco_anual_proy": 117441813, "gasto_rem_ytd": 65069793, "gasto_rem_anual_proy": 111548218, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 82209269, "meta_bys_30": 35232544, "saldo_rem": -29338949, "saldo_bys": 35232544, "saldo_total": 5893595, "pct_ejec_rem": 95.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 95.0, "anomalia": false, "estado": "riesgo"}, {"rbd": "1167", "nombre": "LICEO Y ESCUELA MUNICIPAL", "marco_anual_proy": 263010747, "gasto_rem_ytd": 126102032, "gasto_rem_anual_proy": 216174912, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 184107523, "meta_bys_30": 78903224, "saldo_rem": -32067389, "saldo_bys": 78903224, "saldo_total": 46835835, "pct_ejec_rem": 82.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 82.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1168", "nombre": "ESCUELA HANS WENKE MENGERS", "marco_anual_proy": 225940344, "gasto_rem_ytd": 168576701, "gasto_rem_anual_proy": 288988631, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 158158241, "meta_bys_30": 67782103, "saldo_rem": -130830390, "saldo_bys": 67782103, "saldo_total": -63048287, "pct_ejec_rem": 127.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 127.9, "anomalia": false, "estado": "deficit"}, {"rbd": "1170", "nombre": "ESCUELA BASICA VALLE DE ARTIFICIO", "marco_anual_proy": 103718850, "gasto_rem_ytd": 61866791, "gasto_rem_anual_proy": 106057356, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 72603195, "meta_bys_30": 31115655, "saldo_rem": -33454161, "saldo_bys": 31115655, "saldo_total": -2338506, "pct_ejec_rem": 102.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 102.3, "anomalia": false, "estado": "deficit"}, {"rbd": "1171", "nombre": "ESCUELA BASICA LA FRONTERA DE ALICAHUE", "marco_anual_proy": 12236412, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 8565488, "meta_bys_30": 3670924, "saldo_rem": 8565488, "saldo_bys": 3670924, "saldo_total": 12236412, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1173", "nombre": "ESCUELA ESTER SILVA SOMARRIVA BARTOLILLO", "marco_anual_proy": 96988563, "gasto_rem_ytd": 38295537, "gasto_rem_anual_proy": 65649492, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 67891994, "meta_bys_30": 29096569, "saldo_rem": 2242502, "saldo_bys": 29096569, "saldo_total": 31339071, "pct_ejec_rem": 67.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 67.7, "anomalia": false, "estado": "superavit"}, {"rbd": "1174", "nombre": "ESCUELA BASICA SAN LORENZO", "marco_anual_proy": 66121950, "gasto_rem_ytd": 41219138, "gasto_rem_anual_proy": 70661378, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 46285365, "meta_bys_30": 19836585, "saldo_rem": -24376013, "saldo_bys": 19836585, "saldo_total": -4539428, "pct_ejec_rem": 106.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 106.9, "anomalia": false, "estado": "deficit"}, {"rbd": "1176", "nombre": "ESCUELA PABLO NERUDA", "marco_anual_proy": 27015630, "gasto_rem_ytd": 25256264, "gasto_rem_anual_proy": 43296454, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 18910941, "meta_bys_30": 8104689, "saldo_rem": -24385513, "saldo_bys": 8104689, "saldo_total": -16280824, "pct_ejec_rem": 160.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 160.3, "anomalia": false, "estado": "deficit"}, {"rbd": "1178", "nombre": "ESCUELA BASICA LA VINA", "marco_anual_proy": 113782905, "gasto_rem_ytd": 54683674, "gasto_rem_anual_proy": 93743439, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 79648034, "meta_bys_30": 34134872, "saldo_rem": -14095406, "saldo_bys": 34134872, "saldo_total": 20039466, "pct_ejec_rem": 82.4, "pct_ejec_bys": 0.0, "pct_ejec_total": 82.4, "anomalia": false, "estado": "superavit"}, {"rbd": "1180", "nombre": "ESCUELA BASICA G-45", "marco_anual_proy": 158356164, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 110849315, "meta_bys_30": 47506849, "saldo_rem": 110849315, "saldo_bys": 47506849, "saldo_total": 158356164, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1181", "nombre": "ESCUELA BASICA LOS ANGELES", "marco_anual_proy": 8112729, "gasto_rem_ytd": 1941030, "gasto_rem_anual_proy": 3327480, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5678910, "meta_bys_30": 2433819, "saldo_rem": 2351430, "saldo_bys": 2433819, "saldo_total": 4785249, "pct_ejec_rem": 41.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 41.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1182", "nombre": "ESCUELA BASICA G-47", "marco_anual_proy": 6524547, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 4567183, "meta_bys_30": 1957364, "saldo_rem": 4567183, "saldo_bys": 1957364, "saldo_total": 6524547, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1191", "nombre": "ESCUELA PAPUDO", "marco_anual_proy": 205102704, "gasto_rem_ytd": 51823168, "gasto_rem_anual_proy": 88839718, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 143571893, "meta_bys_30": 61530811, "saldo_rem": 54732175, "saldo_bys": 61530811, "saldo_total": 116262986, "pct_ejec_rem": 43.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 43.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1192", "nombre": "ESCUELA RURAL PULLALLY", "marco_anual_proy": 232070370, "gasto_rem_ytd": 22607560, "gasto_rem_anual_proy": 38755815, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 162449259, "meta_bys_30": 69621111, "saldo_rem": 123693444, "saldo_bys": 69621111, "saldo_total": 193314555, "pct_ejec_rem": 16.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 16.7, "anomalia": false, "estado": "superavit"}, {"rbd": "11199", "nombre": "COLEGIO LUIS CRUZ MARTINEZ", "marco_anual_proy": 398901426, "gasto_rem_ytd": 126212294, "gasto_rem_anual_proy": 216363934, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 279230998, "meta_bys_30": 119670428, "saldo_rem": 62867064, "saldo_bys": 119670428, "saldo_total": 182537492, "pct_ejec_rem": 54.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 54.2, "anomalia": false, "estado": "superavit"}, {"rbd": "11206", "nombre": "ESCUELA MUNICIPAL LAS PUERTAS", "marco_anual_proy": 7372701, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5160891, "meta_bys_30": 2211810, "saldo_rem": 5160891, "saldo_bys": 2211810, "saldo_total": 7372701, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "12299", "nombre": "ESCUELA BASICA ANEXO PICHILEMU", "marco_anual_proy": 7292493, "gasto_rem_ytd": 268838, "gasto_rem_anual_proy": 460863, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5104745, "meta_bys_30": 2187748, "saldo_rem": 4643882, "saldo_bys": 2187748, "saldo_total": 6831630, "pct_ejec_rem": 6.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 6.3, "anomalia": false, "estado": "superavit"}, {"rbd": "12336", "nombre": "LICEO BICENTENARIO TECNICO PROFESIONAL DE MINERIA", "marco_anual_proy": 252228210, "gasto_rem_ytd": 127752393, "gasto_rem_anual_proy": 219004103, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 176559747, "meta_bys_30": 75668463, "saldo_rem": -42444356, "saldo_bys": 75668463, "saldo_total": 33224107, "pct_ejec_rem": 86.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 86.8, "anomalia": false, "estado": "superavit"}, {"rbd": "14479", "nombre": "ESCUELA BASICA MUNICIPAL ARAUCARIA", "marco_anual_proy": 239756457, "gasto_rem_ytd": 167482869, "gasto_rem_anual_proy": 287113489, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 167829520, "meta_bys_30": 71926937, "saldo_rem": -119283969, "saldo_bys": 71926937, "saldo_total": -47357032, "pct_ejec_rem": 119.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 119.8, "anomalia": false, "estado": "deficit"}, {"rbd": "40099", "nombre": "LICEO TECNICO PROFESIONAL PAPUDO", "marco_anual_proy": 102243084, "gasto_rem_ytd": 24938072, "gasto_rem_anual_proy": 42750982, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 71570159, "meta_bys_30": 30672925, "saldo_rem": 28819177, "saldo_bys": 30672925, "saldo_total": 59492102, "pct_ejec_rem": 41.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 41.8, "anomalia": false, "estado": "superavit"}, {"rbd": "40242", "nombre": "COLEGIO BICENTENARIO", "marco_anual_proy": 145323090, "gasto_rem_ytd": 85771435, "gasto_rem_anual_proy": 147036745, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 101726163, "meta_bys_30": 43596927, "saldo_rem": -45310582, "saldo_bys": 43596927, "saldo_total": -1713655, "pct_ejec_rem": 101.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 101.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1120", "nombre": "CENTRO DE EDUCACION DE ADULTOS LA LIGUA", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}, {"rbd": "11196", "nombre": "CTRO.REC.ATENC.DIVERS.CRAD PAUL PERCY HARRIS", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}, {"rbd": "1126", "nombre": "ESCUELA ESPECIAL SOL NACIENTE", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}], "totales": {"marco_anual_proy": 5087817897, "gasto_rem_anual_proy": 3708967894, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "saldo_total": 1378850003, "n_deficit": 15, "n_riesgo": 2, "n_superavit": 35, "n_anomalias": 0}, "fuente_marco": {"tipo": "Estado_RBD_2026.xlsx (columna TOTAL SEP, monto anual directo); reemplazado por la hoja INGRESO de la carga manual si el RBD tiene override", "incluye_carrera_docente": false}, "fuente_carga_manual": {"archivo": "carga_manual/CARGA_MANUAL_SEP.xlsx", "fecha_carga": "2026-08-19 16:51", "n_rbd_ingreso_override": 52, "n_rbd_rem_override": 52}};
 
@@ -2110,6 +2163,158 @@ const TIPOS_DOCUMENTO_SEP = [
   "Factura", "Factura exenta", "Factura electrónica", "Factura exenta electrónica",
   "Otro documento exento", "Finiquito", "Documento extranjero", "Nota de crédito", "Nota de débito",
 ];
+
+// ============================================================================
+// CSV "Compras SUPEREDUC": normalización de cada fila a la plantilla oficial.
+// Manual de Usuario Rendición de Cuentas 2026, Cap. III (Columnas A–M y Tabla 02): el tipo de
+// documento va por CÓDIGO (FACEL, NOTACRE…), las fechas en dd-mm-aaaa, la descripción ≤ 100
+// caracteres, el RUT sin puntos y con guion, y "Documento Original" solo en NOTACRE/NOTADEB
+// (formato número-TIPO, p. ej. 123-FAC). El panel guarda otra cosa (nombre del tipo, fecha
+// aaaa-mm-dd, referencia libre): eso NO cambia — solo se traduce al exportar el CSV oficial.
+// ============================================================================
+const TIPOS_DOCUMENTO_CODIGO = [
+  ['Boleta', 'BOL'], ['Boleta exenta', 'BOLE'], ['Factura', 'FAC'], ['Factura exenta', 'FACE'],
+  ['Otro documento exento', 'ODE'], ['Boleta electrónica', 'BOLEC'], ['Boleta exenta electrónica', 'BOLEX'],
+  ['Factura electrónica', 'FACEL'], ['Factura exenta electrónica', 'FACEX'], ['Finiquito', 'FIN'],
+  ['Documento extranjero', 'DOCEX'], ['Nota de crédito', 'NOTACRE'], ['Nota de débito', 'NOTADEB'],
+  ['Planilla de saneamiento previsional', 'PLANILLA'],
+  // Honorarios: Sección 12 del Manual de Cuentas / Cap. IV (Libro de Honorarios).
+  ['Boleta de honorarios manual', 'BOLH'], ['Boleta de honorarios exenta', 'BHE'], ['Boleta de honorarios electrónica', 'BOLHE'],
+  ['Boleta honorarios prestación de servicios a terceros', 'BPST'], ['Boleta honorarios prestación de servicios a terceros electrónica', 'BPSTE'],
+];
+const CODIGOS_TIPO_HONORARIOS = new Set(['BOLH', 'BHE', 'BOLHE', 'BPST', 'BPSTE']);
+function claveTipoDocumento(t) {
+  return String(t == null ? '' : t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+const CODIGO_POR_NOMBRE_TIPO = new Map(TIPOS_DOCUMENTO_CODIGO.map(([nombre, codigo]) => [claveTipoDocumento(nombre), codigo]));
+const CODIGOS_TIPO_OFICIALES = new Set(TIPOS_DOCUMENTO_CODIGO.map(([, codigo]) => codigo));
+// Nombre del panel ("Factura electrónica") o código ya escrito ("FACEL") → código oficial; '' si no existe.
+function codigoTipoDocumentoSupereduc(tipo) {
+  const t = String(tipo == null ? '' : tipo).trim();
+  if (!t) return '';
+  const mayus = t.toUpperCase();
+  if (CODIGOS_TIPO_OFICIALES.has(mayus)) return mayus;
+  return CODIGO_POR_NOMBRE_TIPO.get(claveTipoDocumento(t)) || '';
+}
+// 'aaaa-mm-dd' (como guarda el panel) o 'dd-mm-aaaa' → { texto: 'dd-mm-aaaa', valida, anio, orden }.
+// Una fecha que no existe (31-02) o con otro formato queda tal cual y valida:false.
+function fechaSupereduc(valor) {
+  const s = String(valor == null ? '' : valor).trim();
+  let y, mo, d;
+  let m = /^(\d{4})-(\d{2})-(\d{2})(?:$|[T ])/.exec(s);
+  if (m) { y = +m[1]; mo = +m[2]; d = +m[3]; }
+  else if ((m = /^(\d{2})[-\/](\d{2})[-\/](\d{4})$/.exec(s))) { d = +m[1]; mo = +m[2]; y = +m[3]; }
+  if (y !== undefined) {
+    const dt = new Date(Date.UTC(y, mo - 1, d));
+    if (dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d) {
+      const dd = String(d).padStart(2, '0'), mm = String(mo).padStart(2, '0');
+      return { texto: `${dd}-${mm}-${y}`, valida: true, anio: y, orden: y * 10000 + mo * 100 + d };
+    }
+  }
+  return { texto: s, valida: false, anio: null, orden: null };
+}
+// RUT sin puntos y con guion y dígito verificador ("11.111.111-1" y "111111111" → "11111111-1").
+function rutSupereduc(rut) {
+  const original = String(rut == null ? '' : rut).trim();
+  const t = original.replace(/[.\s]/g, '').toUpperCase();
+  if (/^\d{7,8}-[\dK]$/.test(t)) return t;
+  const m = /^(\d{7,8})([\dK])$/.exec(t);
+  return m ? `${m[1]}-${m[2]}` : original; // si no parece un RUT se deja tal cual (no se inventa nada)
+}
+// "Documento Original": vacío salvo en NOTACRE/NOTADEB, donde debe ser número-TIPO (123-FAC) y el tipo
+// original una factura (FAC, FACE, FACEL, FACEX). Acepta "123-FAC", "123 - Factura electrónica" o "FAC-123".
+function documentoOriginalSupereduc(compra, codigoTipo) {
+  if (codigoTipo !== 'NOTACRE' && codigoTipo !== 'NOTADEB') return { texto: '', ok: true };
+  const t = textoSeguro(compra.documentoOriginal).trim();
+  const FACTURAS = ['FAC', 'FACE', 'FACEL', 'FACEX'];
+  let m = /^([^\s-]+)\s*-\s*(.+)$/.exec(t);
+  if (m) {
+    const cod = codigoTipoDocumentoSupereduc(m[2]);
+    if (FACTURAS.includes(cod)) return { texto: `${m[1]}-${cod}`, ok: true };
+    const cod1 = codigoTipoDocumentoSupereduc(m[1]);
+    if (FACTURAS.includes(cod1) && /^[^\s-]+$/.test(m[2].trim())) return { texto: `${m[2].trim()}-${cod1}`, ok: true };
+  }
+  m = /^([A-Za-z]+)\s+(\d+)$/.exec(t);
+  if (m && FACTURAS.includes(codigoTipoDocumentoSupereduc(m[1]))) return { texto: `${m[2]}-${codigoTipoDocumentoSupereduc(m[1])}`, ok: true };
+  return { texto: t, ok: false };
+}
+// Motivos por los que la plataforma rechazaría (o recortaría) una fila — se muestran antes de descargar.
+const MOTIVOS_ADVERTENCIA_SUPEREDUC = {
+  tipo: 'tipo de documento sin código oficial (Tabla 02 del manual)',
+  fechaDoc: 'fecha de documento inválida (debe existir y salir como dd-mm-aaaa)',
+  fechaPago: 'fecha de pago vacía o inválida',
+  pagoFuera: 'fecha de pago fuera de 2026 (debe estar entre 01-01-2026 y 31-12-2026)',
+  pagoAntes: 'fecha de pago anterior a la fecha del documento',
+  gastoMayor: 'monto gasto mayor que el monto del documento',
+  descLarga: 'descripción de más de 100 caracteres (en el CSV se recorta a 100)',
+  docOrig: 'nota de crédito/débito sin "Documento Original" con formato número-TIPO (p. ej. 123-FAC)',
+  honorarios: 'documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): SUPEREDUC los recibe en el Libro de Honorarios (Cap. IV), no en el de Compras',
+};
+// Función ÚNICA de normalización de una compra a los campos de la plantilla oficial; la usan los dos
+// exportadores (SEP y fuentes). `problemas` son claves de MOTIVOS_ADVERTENCIA_SUPEREDUC.
+function normalizaFilaCompraSupereduc(c) {
+  c = c || {};
+  const codigoTipo = codigoTipoDocumentoSupereduc(c.tipoDocumento);
+  const fDoc = fechaSupereduc(c.fechaDocumento);
+  const fPago = fechaSupereduc(c.fechaPago);
+  const descripcionCompleta = textoSeguro(c.descripcion).replace(/\s+/g, ' ').trim();
+  const docOrig = documentoOriginalSupereduc(c, codigoTipo);
+  const problemas = [];
+  if (!codigoTipo) problemas.push('tipo');
+  if (!fDoc.valida) problemas.push('fechaDoc');
+  if (!fPago.valida) problemas.push('fechaPago');
+  else {
+    if (fPago.anio !== 2026) problemas.push('pagoFuera');
+    if (fDoc.valida && fPago.orden < fDoc.orden) problemas.push('pagoAntes');
+  }
+  // En valor absoluto: una nota de crédito se guarda en negativo (-200.000 contra -238.000 del documento)
+  // y no debe marcarse como "gasto mayor que el documento".
+  if (Math.abs(num(c.montoGasto)) > Math.abs(num(c.montoDocumento))) problemas.push('gastoMayor');
+  if (descripcionCompleta.length > 100) problemas.push('descLarga');
+  if (!docOrig.ok) problemas.push('docOrig');
+  if (CODIGOS_TIPO_HONORARIOS.has(codigoTipo)) problemas.push('honorarios');
+  return {
+    tipo: codigoTipo || textoSeguro(c.tipoDocumento).trim(),
+    fechaDocumento: fDoc.texto,
+    fechaPago: fPago.texto,
+    descripcion: descripcionCompleta.slice(0, 100).trim(),
+    rut: rutSupereduc(c.rutProveedor),
+    documentoOriginal: docOrig.texto,
+    problemas,
+  };
+}
+const ENCABEZADO_COMPRAS_SUPEREDUC = ['RBD', 'Subvencion', 'Codigo Cuenta', 'Tipo de Documento', 'Nro Documento', 'Fecha Documento', 'Fecha Pago', 'Descripcion Gasto', 'Rut Proveedor', 'Nombre Proveedor', 'Monto Gasto', 'Monto Documento', 'Documento Original'];
+// Arma el CSV oficial (columnas A–M) a partir de [{ rbd, subvencion, compra }] y cuenta, por motivo,
+// las filas que la plataforma rechazaría. Solo Descripción y Nombre Proveedor son texto libre
+// (neutralizan fórmulas); el resto de las columnas va tal cual.
+function construirCsvComprasSupereduc(entradas) {
+  const lines = [ENCABEZADO_COMPRAS_SUPEREDUC.map(csvEscape).join(';')];
+  const diag = { filas: 0, filasConProblema: 0, porMotivo: {} };
+  entradas.forEach(({ rbd, subvencion, compra }) => {
+    const n = normalizaFilaCompraSupereduc(compra);
+    lines.push([
+      csvEscape(rbd), csvEscape(subvencion), csvEscape(compra.codigo), csvEscape(n.tipo), csvEscape(compra.nroDocumento),
+      csvEscape(n.fechaDocumento), csvEscape(n.fechaPago), csvTexto(n.descripcion), csvEscape(n.rut), csvTexto(compra.nombreProveedor),
+      csvEscape(compra.montoGasto), csvEscape(compra.montoDocumento), csvEscape(n.documentoOriginal),
+    ].join(';'));
+    diag.filas++;
+    if (n.problemas.length) {
+      diag.filasConProblema++;
+      n.problemas.forEach(k => { diag.porMotivo[k] = (diag.porMotivo[k] || 0) + 1; });
+    }
+  });
+  return { lines, diag };
+}
+// Antes de descargar: si hay filas que la plataforma rechazaría, se avisa cuántas y por qué.
+function confirmarDescargaComprasSupereduc(diag) {
+  if (!diag.filasConProblema) return true;
+  const detalle = Object.entries(diag.porMotivo)
+    .map(([k, n]) => `  • ${n} fila${n === 1 ? '' : 's'}: ${MOTIVOS_ADVERTENCIA_SUPEREDUC[k]}`).join('\n');
+  return confirm(
+    `Atención: en ${diag.filasConProblema} de ${diag.filas} compras hay datos que la plataforma de SUPEREDUC rechazaría (o que se recortan):\n\n${detalle}\n\n` +
+    `El archivo se descarga igual, con esos datos tal como están en el panel. Conviene corregirlos antes de subirlo.\n\n¿Descargar de todos modos?`
+  );
+}
 const MESES_CARGA = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
 const MESES_CARGA_ABREV = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 const MESES_CARGA_TITLE = MESES_CARGA.map(m => m.charAt(0) + m.slice(1).toLowerCase());
@@ -2220,6 +2425,7 @@ function mesFromFechaISO(fecha) {
 function itemsFromCompras(comprasMap, catalogo = CUENTAS_SEP_BY_CODIGO) {
   const buckets = {};
   Object.values(comprasMap || {}).forEach(c => {
+    if (!c || typeof c !== 'object') return;
     const cat = catalogo[c.codigo];
     const mes = mesFromFechaISO(c.fechaDocumento);
     if (!cat || !mes) return;
@@ -2228,7 +2434,7 @@ function itemsFromCompras(comprasMap, catalogo = CUENTAS_SEP_BY_CODIGO) {
       MESES_CARGA.forEach(m => meses[m] = 0);
       buckets[c.codigo] = { subtitulo: cat.subt, item: cat.nombre, codigo: c.codigo, meses, total: 0 };
     }
-    buckets[c.codigo].meses[mes] += Number(c.montoGasto) || 0;
+    buckets[c.codigo].meses[mes] += num(c.montoGasto);
   });
   const items = Object.values(buckets);
   items.forEach(it => { it.total = MESES_CARGA.reduce((s, m) => s + it.meses[m], 0); });
@@ -2798,7 +3004,7 @@ function updateRowDOM(rbd) {
   if (!r) return;
   const row = document.querySelector(`tr.rbd-row[data-rbd="${rbd}"]`);
   if (!row) return;
-  row.querySelector('[data-field="nombre"]').innerHTML = `<span class="nombre-txt" title="${r.nombre}">${r.nombre}</span>${nombreTagsHTML(r)}`;
+  row.querySelector('[data-field="nombre"]').innerHTML = `<span class="nombre-txt" title="${escHtml(r.nombre)}">${escHtml(r.nombre)}</span>${nombreTagsHTML(r)}`;
   row.querySelector('[data-field="marco_anual_proy"]').textContent = fmtCLP(r.marco_anual_proy);
   row.querySelector('[data-field="gasto_rem_anual_proy"]').textContent = fmtCLP(r.gasto_rem_anual_proy);
   row.querySelector('[data-field="gasto_bys"]').textContent = fmtCLP(r.gasto_bys);
@@ -2839,7 +3045,7 @@ function onCeldaInput(input) {
     it.meses[mes] = val;
     it.total = MESES_CARGA.reduce((s, m) => s + (it.meses[m] || 0), 0);
     recomputeBysProyeccionAgregado(bp);
-    totalCell = document.getElementById(`bysproyitemtotal-${rbd}-${codigo}`);
+    totalCell = document.getElementById(`bysproyitemtotal-${rbd}-${idSeguro(codigo)}`);
     if (totalCell) totalCell.textContent = fmtCLP(it.total);
     const totalGeneralCell = document.getElementById(`bysproytotal-${rbd}`);
     if (totalGeneralCell) totalGeneralCell.textContent = fmtCLP(bp.total);
@@ -2951,9 +3157,9 @@ function buildDetalleHTML(rbd, printMode) {
     const itemsList = bp ? bp.items : [];
     const total = bp ? bp.total : 0;
     const filas = itemsList.map(it => {
-      const cells = MESES_CARGA.map(m => celdaInputHTML(rbd, 'bys_proy', m, it.meses[m] || 0, `data-codigo="${it.codigo}"`, printMode)).join('');
-      const delCell = printMode ? '' : `<td class="compra-acciones-cell" style="width:32px;"><button type="button" class="bysproy-del-btn" data-rbd="${rbd}" data-codigo="${it.codigo}" title="Quitar ítem de la proyección">🗑</button></td>`;
-      return `<tr><td class="item-label">${nombreItemBysProyeccion(it.codigo)}</td>${cells}<td class="num item-total" id="bysproyitemtotal-${rbd}-${it.codigo}">${fmtCLP(it.total)}</td>${delCell}</tr>`;
+      const cells = MESES_CARGA.map(m => celdaInputHTML(rbd, 'bys_proy', m, it.meses[m] || 0, `data-codigo="${escHtml(it.codigo)}"`, printMode)).join('');
+      const delCell = printMode ? '' : `<td class="compra-acciones-cell" style="width:32px;"><button type="button" class="bysproy-del-btn" data-rbd="${rbd}" data-codigo="${escHtml(it.codigo)}" title="Quitar ítem de la proyección">🗑</button></td>`;
+      return `<tr><td class="item-label">${escHtml(nombreItemBysProyeccion(it.codigo))}</td>${cells}<td class="num item-total" id="bysproyitemtotal-${rbd}-${idSeguro(it.codigo)}">${fmtCLP(it.total)}</td>${delCell}</tr>`;
     }).join('');
     const filasHTML = filas || `<tr><td colspan="${printMode ? 14 : 15}" class="detalle-sin-compras">Sin ítems de proyección todavía${printMode ? '' : ' — elige uno de la lista de abajo y agrégalo'}.</td></tr>`;
     const totalRow = itemsList.length
@@ -2983,7 +3189,7 @@ function buildDetalleHTML(rbd, printMode) {
       const total = it ? it.total : 0;
       const cells = MESES_CARGA.map(m => {
         const v = it ? (it.meses[m] || 0) : 0;
-        return celdaInputHTML(rbd, 'ingreso_item', m, v, `data-item="${itemName.replace(/"/g,'&quot;')}"`, printMode);
+        return celdaInputHTML(rbd, 'ingreso_item', m, v, `data-item="${escHtml(itemName)}"`, printMode);
       }).join('');
       return `<tr><td class="item-label">${itemName}</td>${cells}<td class="num item-total" id="ingresoitemtotal-${rbd}-${idx}">${fmtCLP(total)}</td></tr>`;
     }).join('');
@@ -3004,22 +3210,23 @@ function buildDetalleHTML(rbd, printMode) {
   }
   function filaCompra(id, c) {
     const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
-    return `<tr data-compra-id="${id}">
-      <td>${c.codigo}${cat ? ` · ${cat.nombre}` : ''}</td>
-      <td>${c.tipoDocumento || ''}</td>
-      <td>${c.nroDocumento || ''}</td>
-      <td>${c.fechaDocumento || ''}</td>
-      <td>${c.fechaPago || ''}</td>
-      <td>${c.descripcion || ''}</td>
-      <td>${c.rutProveedor || ''}</td>
-      <td>${c.nombreProveedor || ''}</td>
+    const idAttr = escHtml(id);
+    return `<tr data-compra-id="${idAttr}">
+      <td>${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}</td>
+      <td>${escHtml(c.tipoDocumento || '')}</td>
+      <td>${escHtml(c.nroDocumento || '')}</td>
+      <td>${escHtml(c.fechaDocumento || '')}</td>
+      <td>${escHtml(c.fechaPago || '')}</td>
+      <td>${escHtml(c.descripcion || '')}</td>
+      <td>${escHtml(c.rutProveedor || '')}</td>
+      <td>${escHtml(c.nombreProveedor || '')}</td>
       <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
       <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
-      <td>${c.documentoOriginal || ''}</td>
+      <td>${escHtml(c.documentoOriginal || '')}</td>
       ${printMode ? '' : `<td class="compra-acciones-cell">
-        <button type="button" class="compra-edit-btn" data-rbd="${rbd}" data-compra-id="${id}" title="Editar compra">✏️</button>
-        <button type="button" class="compra-dup-btn" data-rbd="${rbd}" data-compra-id="${id}" title="Duplicar compra">⧉</button>
-        <button type="button" class="compra-del-btn" data-rbd="${rbd}" data-compra-id="${id}" title="Eliminar compra">🗑</button>
+        <button type="button" class="compra-edit-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Editar compra">✏️</button>
+        <button type="button" class="compra-dup-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Duplicar compra">⧉</button>
+        <button type="button" class="compra-del-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Eliminar compra">🗑</button>
       </td>`}
     </tr>`;
   }
@@ -3105,10 +3312,10 @@ function renderTable() {
     tbody.innerHTML = `<tr class="table-empty-row"><td colspan="15">Ningún establecimiento coincide con el filtro/búsqueda actual.</td></tr>`;
   } else {
     tbody.innerHTML = rows.map(r => `
-    <tr class="rbd-row${r.alerta_sep_sin_marco ? ' alerta-critica' : ''}" data-rbd="${r.rbd}">
-      <td class="expand-cell"><button class="expand-btn" data-abrir-rbd="${r.rbd}" aria-label="Ver detalle de ${r.nombre}">▸</button></td>
-      <td class="rbd-clickable" data-abrir-rbd="${r.rbd}">${r.rbd}</td>
-      <td data-field="nombre" class="rbd-clickable" data-abrir-rbd="${r.rbd}"><span class="nombre-txt" title="${r.nombre}">${r.nombre}</span>${nombreTagsHTML(r)}</td>
+    <tr class="rbd-row${r.alerta_sep_sin_marco ? ' alerta-critica' : ''}" data-rbd="${escHtml(r.rbd)}">
+      <td class="expand-cell"><button class="expand-btn" data-abrir-rbd="${escHtml(r.rbd)}" aria-label="Ver detalle de ${escHtml(r.nombre)}">▸</button></td>
+      <td class="rbd-clickable" data-abrir-rbd="${escHtml(r.rbd)}">${escHtml(r.rbd)}</td>
+      <td data-field="nombre" class="rbd-clickable" data-abrir-rbd="${escHtml(r.rbd)}"><span class="nombre-txt" title="${escHtml(r.nombre)}">${escHtml(r.nombre)}</span>${nombreTagsHTML(r)}</td>
       <td class="num" data-field="marco_anual_proy">${fmtCLP(r.marco_anual_proy)}</td>
       <td class="num" data-field="gasto_rem_anual_proy">${fmtCLP(r.gasto_rem_anual_proy)}</td>
       <td class="num" data-field="pct_ejec_rem">${pctBarHTML(r.pct_ejec_rem)}</td>
@@ -3420,7 +3627,7 @@ function renderModalContenido() {
   if (enfocado) {
     let match = null;
     if (enfocado.id) {
-      match = modalBodyEl.querySelector(`#${enfocado.id}`);
+      match = modalBodyEl.querySelector('#' + CSS.escape(enfocado.id));
     } else {
       const keys = Object.keys(enfocado.dataset);
       if (keys.length) {
@@ -3595,9 +3802,9 @@ function renderOtrasFuentesTable(fuenteKey) {
     const of = recomputeOtraFuente(r.rbd, key);
     const b = of.rp[vista];
     const corteTxt = MESES_CARGA_ABREV[realHastaMesOtraFuente(of) - 1];
-    return `<tr class="otras-fuentes-row" data-rbd="${r.rbd}">
-      <td class="rbd-clickable" data-abrir-otra-fuente="${r.rbd}">${r.rbd}</td>
-      <td class="rbd-clickable" data-abrir-otra-fuente="${r.rbd}"><span class="nombre-txt" title="${r.nombre}">${r.nombre}</span></td>
+    return `<tr class="otras-fuentes-row" data-rbd="${escHtml(r.rbd)}">
+      <td class="rbd-clickable" data-abrir-otra-fuente="${escHtml(r.rbd)}">${escHtml(r.rbd)}</td>
+      <td class="rbd-clickable" data-abrir-otra-fuente="${escHtml(r.rbd)}"><span class="nombre-txt" title="${escHtml(r.nombre)}">${escHtml(r.nombre)}</span></td>
       <td class="of-real-hasta">${corteTxt}</td>
       <td class="num">${fmtCLP(b.ingreso)}</td>
       <td class="num">${fmtCLP(b.rem)}</td>
@@ -3700,20 +3907,20 @@ function avisoCodigoNoHabilitado(fuenteKey, rbd, codigo) {
 function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
   const cat = CUENTAS_COMPRAS_BY_CODIGO[c.codigo];
   const aviso = avisoCodigoNoHabilitado(fuenteKey, rbd, c.codigo);
-  return `<tr data-compra-id="${id}"${aviso ? ' class="compra-no-habilitada"' : ''}>
-    <td>${aviso ? `<span class="compra-aviso" title="${aviso}">⚠</span> ` : ''}${c.codigo}${cat ? ` · ${cat.nombre}` : ''}</td>
-    <td>${c.tipoDocumento || ''}</td>
-    <td>${c.nroDocumento || ''}</td>
-    <td>${c.fechaDocumento || ''}</td>
-    <td>${c.fechaPago || ''}</td>
-    <td>${c.descripcion || ''}</td>
-    <td>${c.rutProveedor || ''}</td>
-    <td>${c.nombreProveedor || ''}</td>
+  return `<tr data-compra-id="${escHtml(id)}"${aviso ? ' class="compra-no-habilitada"' : ''}>
+    <td>${aviso ? `<span class="compra-aviso" title="${escHtml(aviso)}">⚠</span> ` : ''}${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}</td>
+    <td>${escHtml(c.tipoDocumento || '')}</td>
+    <td>${escHtml(c.nroDocumento || '')}</td>
+    <td>${escHtml(c.fechaDocumento || '')}</td>
+    <td>${escHtml(c.fechaPago || '')}</td>
+    <td>${escHtml(c.descripcion || '')}</td>
+    <td>${escHtml(c.rutProveedor || '')}</td>
+    <td>${escHtml(c.nombreProveedor || '')}</td>
     <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
     <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
-    <td>${c.documentoOriginal || ''}</td>
+    <td>${escHtml(c.documentoOriginal || '')}</td>
     <td class="compra-acciones-cell">
-      <button type="button" class="compra-del-btn of-compra-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-compra-id="${id}" title="Eliminar compra">🗑</button>
+      <button type="button" class="compra-del-btn of-compra-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-compra-id="${escHtml(id)}" title="Eliminar compra">🗑</button>
     </td>
   </tr>`;
 }
@@ -3767,7 +3974,7 @@ function notaPlanCuentasOtraFuenteHTML(rbd, fuenteKey, of) {
   let html = `<div class="plan-nota">Plan de Cuentas SUPEREDUC 2026 · <strong>${quien}</strong>: ${hab.length} cuentas habilitadas para el registro de compras de ${CUENTAS_COMPRAS.length}${conPert ? ` (● = ${conPert} sujetas a exigencias de pertinencia, secciones 9 y 10 del manual)` : ''}.${planAdmitePersonal(col) ? '' : ` Esta subvención <strong>no admite</strong> remuneraciones ni otros gastos en personal (cuentas 4101xx-4104xx).`}</div>`;
   const malas = Object.values(of.compras || {}).filter(c => nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 0);
   if (malas.length) {
-    const codigos = [...new Set(malas.map(c => c.codigo))].sort().join(', ');
+    const codigos = escHtml([...new Set(malas.map(c => c.codigo))].sort().join(', '));
     html += `<div class="plan-nota plan-nota-aviso">⚠ ${malas.length} compra${malas.length === 1 ? '' : 's'} con una cuenta no habilitada para esta subvención (${codigos}): SUPEREDUC ${malas.length === 1 ? 'la rechazaría' : 'las rechazaría'}. Reclasifica la cuenta o elimina la compra.</div>`;
   }
   const rem = of.gasto_rem && of.gasto_rem.total;
@@ -3822,12 +4029,13 @@ function bysItemFilaHTML(rbd, fuenteKey, concepto, it, modo = 'of_bys_item') {
   const lista = forzarProy ? 'bys_proy_items' : 'bys_items';
   const prefijoId = forzarProy ? 'ofbysproyitem' : 'ofbysitem';
   const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
+  const conceptoHTML = escHtml(concepto);
   const cells = MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, forzarProy)}"><input type="number" step="1" class="celda-input" value="${(it.meses[m] || 0) === 0 ? '' : it.meses[m]}" placeholder="0"
-    data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-concepto="${concepto.replace(/"/g, '&quot;')}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
+    data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-concepto="${conceptoHTML}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
   return `<tr>
-    <td class="item-label">${concepto} <button type="button" class="bysproy-del-btn of-bysitem-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${lista}" data-concepto="${concepto.replace(/"/g, '&quot;')}" title="Quitar ítem">🗑</button></td>
+    <td class="item-label">${conceptoHTML} <button type="button" class="bysproy-del-btn of-bysitem-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${lista}" data-concepto="${conceptoHTML}" title="Quitar ítem">🗑</button></td>
     ${cells}
-    <td class="num item-total" id="${prefijoId}-${rbd}-${fuenteKey}-${concepto}">${fmtCLP(it.total)}</td>
+    <td class="num item-total" id="${prefijoId}-${rbd}-${fuenteKey}-${idSeguro(concepto)}">${fmtCLP(it.total)}</td>
   </tr>`;
 }
 function bysConceptoSectionHTML(rbd, fuenteKey, of, mostrarSaldoOperacion, opts) {
@@ -3966,7 +4174,7 @@ function onOtraFuenteCeldaInput(input) {
     it.meses[mes] = val;
     it.total = MESES_CARGA.reduce((s, m) => s + (it.meses[m] || 0), 0);
     recomputeOtraFuenteBysItemsAgregado(of);
-    const itemTotalCell = document.getElementById(`${prefijoId}-${rbd}-${fuenteKey}-${concepto}`);
+    const itemTotalCell = document.getElementById(`${prefijoId}-${rbd}-${fuenteKey}-${idSeguro(concepto)}`);
     if (itemTotalCell) itemTotalCell.textContent = fmtCLP(it.total);
     const saldoOpCell = document.getElementById(`ofsaldoopbys-${rbd}-${fuenteKey}`);
     recomputeOtraFuente(rbd, fuenteKey);
@@ -4153,23 +4361,24 @@ function filasOtraFuenteExport(fuenteKey, onlyRbd) {
   return onlyRbd ? filas.filter(r => r.rbd === onlyRbd) : filas;
 }
 
-function comprasOtraFuenteCsvLines(fuenteKey, onlyRbd) {
+// CSV oficial de compras de una fuente (misma plantilla y misma normalización que SEP: ver
+// normalizaFilaCompraSupereduc). comprasOtraFuenteCsv devuelve además el diagnóstico de filas que
+// la plataforma rechazaría; comprasOtraFuenteCsvLines solo las líneas.
+function comprasOtraFuenteCsv(fuenteKey, onlyRbd) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
-  const headers = ['RBD', 'Subvencion', 'Codigo Cuenta', 'Tipo de Documento', 'Nro Documento', 'Fecha Documento', 'Fecha Pago', 'Descripcion Gasto', 'Rut Proveedor', 'Nombre Proveedor', 'Monto Gasto', 'Monto Documento', 'Documento Original'];
-  const lines = [headers.map(csvEscape).join(';')];
+  const entradas = [];
   filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const compras = (of && of.compras) || {};
     Object.values(compras)
+      .filter(c => c && typeof c === 'object')
       .sort((a, b) => (a.fechaDocumento || '').localeCompare(b.fechaDocumento || ''))
-      .forEach(c => {
-        lines.push([
-          r.rbd, fuente.codigoSupereduc, c.codigo, c.tipoDocumento, c.nroDocumento, c.fechaDocumento, c.fechaPago,
-          c.descripcion, c.rutProveedor, c.nombreProveedor, c.montoGasto, c.montoDocumento, c.documentoOriginal,
-        ].map(csvEscape).join(';'));
-      });
+      .forEach(c => entradas.push({ rbd: r.rbd, subvencion: fuente.codigoSupereduc, compra: c }));
   });
-  return lines;
+  return construirCsvComprasSupereduc(entradas);
+}
+function comprasOtraFuenteCsvLines(fuenteKey, onlyRbd) {
+  return comprasOtraFuenteCsv(fuenteKey, onlyRbd).lines;
 }
 // Descarga un CSV (BOM UTF-8 + CRLF, igual que los demás CSV del archivo) a partir de sus líneas.
 function descargarCsvLineasOtraFuente(lines, nombreArchivo) {
@@ -4182,8 +4391,9 @@ function descargarCsvLineasOtraFuente(lines, nombreArchivo) {
   URL.revokeObjectURL(url);
 }
 function downloadComprasOtraFuente(fuenteKey) {
-  const lines = comprasOtraFuenteCsvLines(fuenteKey);
+  const { lines, diag } = comprasOtraFuenteCsv(fuenteKey);
   if (lines.length === 1) { alert('Todavía no hay compras registradas en ' + FUENTES_OTRAS_BY_KEY[fuenteKey].label + '.'); return; }
+  if (!confirmarDescargaComprasSupereduc(diag)) return;
   descargarCsvLineasOtraFuente(lines, `compras_${fuenteKey}_${new Date().toISOString().slice(0,10)}.csv`);
 }
 
@@ -4229,7 +4439,7 @@ function sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd) {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const compras = (of && of.compras) || {};
     Object.entries(compras).forEach(([id, c]) => {
-      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', c.descripcion || '', c.rutProveedor || '', c.nombreProveedor || '', Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
+      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
     });
   });
   return rows;
@@ -4241,7 +4451,7 @@ function sheetBysItemsAOA(fuenteKey, lista = 'bys_items', onlyRbd) {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     (of ? (of[lista] || []) : []).forEach(it => {
       const vals = MESES_CARGA.map(m => Math.round(it.meses[m] || 0));
-      rows.push([rbdCellValue(r.rbd), r.nombre, it.concepto, ...vals, Math.round(it.total)]);
+      rows.push([rbdCellValue(r.rbd), r.nombre, neutralizaFormula(it.concepto), ...vals, Math.round(it.total)]);
     });
   });
   return rows;
@@ -4490,8 +4700,9 @@ function descargarCsvOtraFuenteEntidad(fuenteKey, rbd) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
   const fecha = new Date().toISOString().slice(0, 10);
   if (fuente.codigoSupereduc) {
-    const lines = comprasOtraFuenteCsvLines(fuenteKey, rbd);
+    const { lines, diag } = comprasOtraFuenteCsv(fuenteKey, rbd);
     if (lines.length === 1) { alert('Esta entidad todavía no tiene compras registradas en ' + fuente.label + '.'); return; }
+    if (!confirmarDescargaComprasSupereduc(diag)) return;
     descargarCsvLineasOtraFuente(lines, `compras_${fuenteKey}_${rbd}_${fecha}.csv`);
   } else {
     descargarCsvLineasOtraFuente(csvDetalleMensualOtraFuenteLines(fuenteKey, rbd), `detalle_${fuenteKey}_${rbd}_${fecha}.csv`);
@@ -4500,22 +4711,19 @@ function descargarCsvOtraFuenteEntidad(fuenteKey, rbd) {
 
 // PDF individual: arma en #printSingleWrap un resumen de solo lectura (sin <input>) y lo imprime
 // con el mismo mecanismo que exportRbdPdf de SEP (body.print-single-rbd oculta todo .wrap).
-function escHtmlOF(v) {
-  return String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-}
 function filaMesesEstaticaHTML(label, obj, corte, forzarProy) {
   const celdas = MESES_CARGA.map((m, i) => {
     const v = Number(obj.meses && obj.meses[m]) || 0;
     return `<td class="num ${claseMesOtraFuente(i, corte, forzarProy)}">${v ? fmtCLP(v) : ''}</td>`;
   }).join('');
-  return `<tr><td class="item-label">${escHtmlOF(label)}</td>${celdas}<td class="num item-total">${fmtCLP(obj.total || 0)}</td></tr>`;
+  return `<tr><td class="item-label">${escHtml(label)}</td>${celdas}<td class="num item-total">${fmtCLP(obj.total || 0)}</td></tr>`;
 }
 function tablaMesesEstaticaHTML(titulo, filas, corte, forzarProy) {
   const cuerpo = filas.length
     ? filas.map(f => filaMesesEstaticaHTML(f.label, f.obj, corte, forzarProy)).join('')
     : `<tr><td colspan="14" class="detalle-sin-compras">Sin datos.</td></tr>`;
   return `<table class="detalle-table" style="margin-top:8px;">${DETALLE_COLGROUP}
-      <thead><tr><th>${escHtmlOF(titulo)}</th>${mesHeaderCellsCorteHTML(corte, forzarProy)}<th class="num">Total</th></tr></thead>
+      <thead><tr><th>${escHtml(titulo)}</th>${mesHeaderCellsCorteHTML(corte, forzarProy)}<th class="num">Total</th></tr></thead>
       <tbody>${cuerpo}</tbody></table>`;
 }
 function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
@@ -4539,7 +4747,7 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
     const filasCompras = compras.map(c => {
       const cat = CUENTAS_COMPRAS_BY_CODIGO[c.codigo];
       const marca = nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 0 ? '⚠ ' : '';
-      return `<tr><td>${marca}${escHtmlOF(c.codigo)}${cat ? ' · ' + escHtmlOF(cat.nombre) : ''}</td><td>${escHtmlOF(c.tipoDocumento)}</td><td>${escHtmlOF(c.nroDocumento)}</td><td>${escHtmlOF(c.fechaDocumento)}</td><td>${escHtmlOF(c.fechaPago)}</td><td>${escHtmlOF(c.descripcion)}</td><td>${escHtmlOF(c.rutProveedor)}</td><td>${escHtmlOF(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td>${escHtmlOF(c.documentoOriginal)}</td></tr>`;
+      return `<tr><td>${marca}${escHtml(c.codigo)}${cat ? ' · ' + escHtml(cat.nombre) : ''}</td><td>${escHtml(c.tipoDocumento)}</td><td>${escHtml(c.nroDocumento)}</td><td>${escHtml(c.fechaDocumento)}</td><td>${escHtml(c.fechaPago)}</td><td>${escHtml(c.descripcion)}</td><td>${escHtml(c.rutProveedor)}</td><td>${escHtml(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td>${escHtml(c.documentoOriginal)}</td></tr>`;
     }).join('') || `<tr><td colspan="11" class="detalle-sin-compras">Sin compras registradas.</td></tr>`;
     bysHTML = `
       ${tablaMesesEstaticaHTML('Bienes y Servicios — compras (Real)', (of.bys_items || []).map(it => ({ label: `${it.codigo} · ${it.item}`, obj: it })), 12, false)}
@@ -4551,7 +4759,7 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
   }
   return `
     <div class="detalle-header" style="margin-bottom:14px;">
-      <strong style="font-size:16px;">${escHtmlOF(fuente.label)} — ${escHtmlOF(otrasFuentesTituloEntidad(r, fuenteKey))} · ${escHtmlOF(r.nombre)}</strong><br>
+      <strong style="font-size:16px;">${escHtml(fuente.label)} — ${escHtml(otrasFuentesTituloEntidad(r, fuenteKey))} · ${escHtml(r.nombre)}</strong><br>
       <span class="detalle-sub">Real hasta ${MESES_CARGA_TITLE[corte - 1]} · Estado (sobre el Total): ${otrasFuentesEstadoTagHTML(of)} — SLEP Petorca</span>
     </div>
     <div class="kpi-section-label">Real (ejecutado)</div>
@@ -5305,7 +5513,7 @@ function vzMesDetalleHTML(n) {
     const tip = `${MESES_CARGA_TITLE[i]}: Real ${fmtCLP(Math.round(n.real[i]))} · Proyectado ${fmtCLP(Math.round(n.proy[i]))}`;
     return `<div class="vz-bar" title="${tip}"><span class="vz-bar-proy" style="height:${hp.toFixed(1)}%"></span><span class="vz-bar-real" style="height:${hr.toFixed(1)}%"></span></div>`;
   }).join('');
-  return `<div class="vz-mes-wrap" data-vz-mes-detalle="${escHtmlOF(n.id)}">
+  return `<div class="vz-mes-wrap" data-vz-mes-detalle="${escHtml(n.id)}">
     <table class="vz-mes-table"><thead><tr><th>Mes</th>${ths}<th>Total</th></tr></thead><tbody>
       ${fila('Real', n.real, i => n.real[i] ? 'mes-real' : '')}
       ${fila('Proyectado', n.proy, i => n.proy[i] ? 'mes-proy' : '')}
@@ -5324,12 +5532,12 @@ function vzFilasHTML(roots, tipo) {
     const abierto = vzState.print || vzState.exp.has(n.id);
     const mesAbierto = !vzState.print && vzState.mes.has(n.id);
     const real = Math.round(vzSum(n.real)), proy = Math.round(vzSum(n.proy));
-    const id = escHtmlOF(n.id);
+    const id = escHtml(n.id);
     const caret = tieneHijos
       ? `<button type="button" class="vz-caret" data-vz-toggle="${id}" aria-expanded="${abierto}" title="${abierto ? 'Contraer' : 'Expandir'}">${abierto ? '▾' : '▸'}</button>`
       : '<span class="vz-caret-sp"></span>';
     filas.push(`<tr class="vz-row vz-d${Math.min(depth, 3)} ${tieneHijos ? 'vz-parent' : 'vz-leaf'}" data-vz-id="${id}" data-vz-tipo="${tipo}">
-      <td class="vz-name" style="padding-left:${8 + depth * 18}px">${caret}${n.icono ? n.icono + ' ' : ''}${escHtmlOF(n.label)}</td>
+      <td class="vz-name" style="padding-left:${8 + depth * 18}px">${caret}${n.icono ? n.icono + ' ' : ''}${escHtml(n.label)}</td>
       <td class="num vz-real">${fmtCLP(real)}</td><td class="num vz-proy">${fmtCLP(proy)}</td><td class="num vz-total">${fmtCLP(real + proy)}</td>
       <td class="vz-act"><button type="button" class="vz-mes-btn${mesAbierto ? ' active' : ''}" data-vz-mes="${id}" aria-pressed="${mesAbierto}" title="Detalle mensual">📅</button></td>
     </tr>`);
@@ -5420,7 +5628,8 @@ function vzCsvLineas() {
       const fila = porCodigo
         ? [base, csv.subcat, csv.codigo, csv.concepto, csv.fuente, real, proy, real + proy]
         : [base, csv.fuente, csv.subcat, csv.codigo, csv.concepto, real, proy, real + proy];
-      out.push(fila.map(csvEscape).join(';'));
+      // `concepto` es texto libre (puede venir de un Excel importado): se neutraliza si empieza como fórmula.
+      out.push(fila.map((v, i) => (i === (porCodigo ? 3 : 4) ? csvTexto(v) : csvEscape(v))).join(';'));
     });
   });
   return out;
@@ -5436,7 +5645,7 @@ function vzBuildExcel(tipo) {
   const lineas = reporteLineasSeleccion(vzState.fuentes, vzState.entidades).filter(l => l.tipo === tipo);
   const orden = f => VZ_FUENTES.findIndex(x => x.key === f);
   const ls = lineas.slice().sort((a, b) => orden(a.fuenteKey) - orden(b.fuenteKey) || vzSubcat(a).localeCompare(vzSubcat(b), 'es') || vzCmpLinea(a, b));
-  const fl = l => [VZ_FUENTE_BY_KEY[l.fuenteKey].label, vzSubcat(l), l.codigo || '', l.concepto];
+  const fl = l => [VZ_FUENTE_BY_KEY[l.fuenteKey].label, vzSubcat(l), l.codigo || '', neutralizaFormula(l.concepto)];
   const wb = XLSX.utils.book_new();
   const totR = Math.round(vzSum(ls.reduce((a, l) => { vzSumArr(a, l.real); return a; }, z12())));
   const totP = Math.round(vzSum(ls.reduce((a, l) => { vzSumArr(a, l.proy); return a; }, z12())));
@@ -5463,7 +5672,7 @@ function vzBuildExcel(tipo) {
     const todas = reporteLineasSeleccion(vzState.fuentes, vzState.entidades);
     vzFilasPlanas(tipo, todas).filter(x => x.csv.fuente === 'CONSOLIDADO').forEach(({ n, csv }) => {
       const r = Math.round(vzSum(n.real)), p = Math.round(vzSum(n.proy));
-      cons.push([csv.subcat, csv.codigo, csv.concepto, r, p, r + p, n.children.map(c => c.csv ? c.csv.fuente : '').filter(Boolean).join(' + ')]);
+      cons.push([csv.subcat, csv.codigo, neutralizaFormula(csv.concepto), r, p, r + p, n.children.map(c => c.csv ? c.csv.fuente : '').filter(Boolean).join(' + ')]);
     });
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(cons), 'Consolidado');
   }
@@ -5506,11 +5715,11 @@ function vzSincronizarChecks() {
 }
 function vzConstruirControles() {
   document.getElementById('vzFuenteChips').innerHTML = VZ_FUENTES.map(f =>
-    `<button type="button" class="vz-chip active" data-vz-fuente="${f.key}" aria-pressed="true" title="${escHtmlOF(f.label)}">${f.icono} ${escHtmlOF(f.corto)}</button>`).join('');
+    `<button type="button" class="vz-chip active" data-vz-fuente="${f.key}" aria-pressed="true" title="${escHtml(f.label)}">${f.icono} ${escHtml(f.corto)}</button>`).join('');
   const grupos = [['rbd', 'Establecimientos (RBD)'], ['ac', 'Administración Central'], ['gesparvu', 'GESPARVU (JUNJI)']];
   document.getElementById('vzEntList').innerHTML = grupos.map(([t, titulo]) =>
     `<div class="vz-ent-titulo">${titulo}</div>` + VZ_ENTIDADES.filter(e => e.tipo === t).map(e =>
-      `<label class="check-row" data-vz-q="${escHtmlOF((e.id + ' ' + e.nombre).toLowerCase())}"><input type="checkbox" data-vz-ent="${escHtmlOF(e.id)}" checked> ${escHtmlOF(e.id)} — ${escHtmlOF(e.nombre)}</label>`
+      `<label class="check-row" data-vz-q="${escHtml((e.id + ' ' + e.nombre).toLowerCase())}"><input type="checkbox" data-vz-ent="${escHtml(e.id)}" checked> ${escHtml(e.id)} — ${escHtml(e.nombre)}</label>`
     ).join('')).join('');
 }
 function vzLimpiar() {
@@ -5822,7 +6031,7 @@ function renderReportFilters() {
   rbdListEl.innerHTML = entFiltradas.length ? gruposEnt.map(([t, titulo]) => {
     const es = entFiltradas.filter(e => e.tipo === t);
     return es.length ? `<div class="vz-ent-titulo">${titulo}</div>` + es.map(e => `
-    <label class="check-row"><input type="checkbox" data-rbd-check="${e.id}" ${reporteState.rbds.has(e.id) ? 'checked' : ''}> ${e.id} — ${e.nombre}</label>
+    <label class="check-row"><input type="checkbox" data-rbd-check="${escHtml(e.id)}" ${reporteState.rbds.has(e.id) ? 'checked' : ''}> ${escHtml(e.id)} — ${escHtml(e.nombre)}</label>
   `).join('') : '';
   }).join('') : reporteSinResultados();
 
@@ -5842,7 +6051,7 @@ function renderReportFilters() {
     const abierto = conceptoSearch || reporteState.fuenteVista !== 'todas' || reporteState.gruposAbiertos.has(f.key);
     return `<details class="report-grupo" data-grupo-fuente="${f.key}" ${abierto ? 'open' : ''}>
       <summary>${f.icono} ${f.corto} <span class="report-grupo-n">(${cs.length})</span></summary>
-      ${cs.map(c => `<label class="check-row"><input type="checkbox" data-concepto-check="${escHtmlOF(c.key)}" ${reporteState.conceptos.has(c.key) ? 'checked' : ''}> ${escHtmlOF(c.label)}</label>`).join('')}
+      ${cs.map(c => `<label class="check-row"><input type="checkbox" data-concepto-check="${escHtml(c.key)}" ${reporteState.conceptos.has(c.key) ? 'checked' : ''}> ${escHtml(c.label)}</label>`).join('')}
     </details>`;
   }).join('') : reporteSinResultados();
 
@@ -5973,9 +6182,9 @@ function renderReporte() {
 
   tbody.innerHTML = rows.map(row => `
     <tr class="${row.esSubtotal ? 'report-subtotal-row' : ''}">
-      <td>${row.rbd}</td>
-      <td>${row.nombre}</td>
-      <td>${row.concepto}</td>
+      <td>${escHtml(row.rbd)}</td>
+      <td>${escHtml(row.nombre)}</td>
+      <td>${escHtml(row.concepto)}</td>
       ${row.valores.map((v, i) => {
         const flag = row.realFlags[i];
         const cls = flag === true ? 'mes-real' : flag === false ? 'mes-proy' : '';
@@ -5996,7 +6205,7 @@ document.getElementById('reporteCsvBtn').addEventListener('click', () => {
   const headers = ['RBD', 'Establecimiento', 'Concepto', ...mesesSel.map(m => MESES_CARGA_TITLE[MESES_CARGA.indexOf(m)]), 'Total selección'];
   const lines = [headers.map(csvEscape).join(';')];
   currentReporteRows.forEach(row => {
-    lines.push([row.rbd, row.nombre, row.concepto, ...row.valores, row.total].map(csvEscape).join(';'));
+    lines.push([csvEscape(row.rbd), csvEscape(row.nombre), csvTexto(row.concepto), ...[...row.valores, row.total].map(csvEscape)].join(';'));
   });
   const csvContent = '﻿' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -6012,7 +6221,7 @@ document.getElementById('reporteExcelBtn').addEventListener('click', () => {
   if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería de Excel (sin conexión a internet). Intenta de nuevo más tarde.'); return; }
   const mesesSel = currentReporteRows[0].meses;
   const headers = ['RBD', 'Establecimiento', 'Concepto', ...mesesSel.map(m => MESES_CARGA_TITLE[MESES_CARGA.indexOf(m)]), 'Total selección'];
-  const aoa = [headers, ...currentReporteRows.map(row => [row.rbd, row.nombre, row.concepto, ...row.valores, row.total])];
+  const aoa = [headers, ...currentReporteRows.map(row => [row.rbd, row.nombre, neutralizaFormula(row.concepto), ...row.valores, row.total])];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'REPORTE');
   XLSX.writeFile(wb, `reporte_personalizado_${new Date().toISOString().slice(0,10)}.xlsx`);
@@ -6165,12 +6374,12 @@ function renderEjecucionFiltros() {
   if (sel.dataset.built === key) return; // la lista de entidades solo se reconstruye al cambiar de fuente
   if (key === 'sep') {
     sel.innerHTML = `<option value="">Todos los RBD (agregado)</option>` +
-      DATA.registros.map(r => `<option value="${r.rbd}">${r.rbd} — ${r.nombre}</option>`).join('');
+      DATA.registros.map(r => `<option value="${escHtml(r.rbd)}">${escHtml(r.rbd)} — ${escHtml(r.nombre)}</option>`).join('');
   } else if (key === 'consolidado') {
     sel.innerHTML = `<option value="">Todas las entidades (agregado)</option>`;
   } else {
     sel.innerHTML = `<option value="">Todas las entidades (agregado)</option>` +
-      filasOtrasFuentes(key).map(r => `<option value="${r.rbd}">${r.rbd} — ${r.nombre}</option>`).join('');
+      filasOtrasFuentes(key).map(r => `<option value="${escHtml(r.rbd)}">${escHtml(r.rbd)} — ${escHtml(r.nombre)}</option>`).join('');
   }
   sel.disabled = key === 'consolidado';
   sel.dataset.built = key;
@@ -6400,7 +6609,7 @@ document.getElementById('ejecShowTotal').addEventListener('change', renderEjecuc
 
 function csvEscape(val) {
   const s = (val === null || val === undefined) ? '' : String(val);
-  if (/[",;\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  if (/[",;\r\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
   return s;
 }
 // Resumen general (misma tabla que se ve en pantalla, respetando el filtro/búsqueda actual):
@@ -6469,33 +6678,33 @@ document.getElementById('downloadCargaBtn').addEventListener('click', () => {
   alert('Descargado. Esto es solo un respaldo manual — los cambios ya quedaron guardados automáticamente en tiempo real para todo el equipo.');
 });
 
-// --- Descargar compras en el formato exacto que exige SUPEREDUC al cargar los gastos
-// (Plantilla_Compras): RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;
+// --- Descargar compras con las columnas de la plantilla de SUPEREDUC (Plantilla_Compras, Cap. III):
+// RBD;Subvencion;Codigo Cuenta;Tipo de Documento;Nro Documento;
 // Fecha Documento;Fecha Pago;Descripcion Gasto;Rut Proveedor;Nombre Proveedor;Monto Gasto;
-// Monto Documento;Documento Original — una fila por compra. onlyRbd filtra a un solo RBD (botón
+// Monto Documento;Documento Original — una fila por compra, con tipo de documento por código,
+// fechas dd-mm-aaaa y Documento Original solo en NC/ND (ver normalizaFilaCompraSupereduc). onlyRbd filtra a un solo RBD (botón
 // "⬇ CSV SEP" de la fila); sin onlyRbd trae todos los RBD (botón general de arriba). ---
-function comprasSepCsvLines(onlyRbd) {
-  const headers = ['RBD', 'Subvencion', 'Codigo Cuenta', 'Tipo de Documento', 'Nro Documento', 'Fecha Documento', 'Fecha Pago', 'Descripcion Gasto', 'Rut Proveedor', 'Nombre Proveedor', 'Monto Gasto', 'Monto Documento', 'Documento Original'];
-  const lines = [headers.map(csvEscape).join(';')];
+function comprasSepCsv(onlyRbd) {
+  const entradas = [];
   registrosPara(onlyRbd).forEach(r => {
     const compras = (CARGA_MANUAL.compras_por_rbd || {})[r.rbd] || {};
     Object.values(compras)
+      .filter(c => c && typeof c === 'object')
       .sort((a, b) => (a.fechaDocumento || '').localeCompare(b.fechaDocumento || ''))
-      .forEach(c => {
-        lines.push([
-          r.rbd, 'SEP', c.codigo, c.tipoDocumento, c.nroDocumento, c.fechaDocumento, c.fechaPago,
-          c.descripcion, c.rutProveedor, c.nombreProveedor, c.montoGasto, c.montoDocumento, c.documentoOriginal,
-        ].map(csvEscape).join(';'));
-      });
+      .forEach(c => entradas.push({ rbd: r.rbd, subvencion: 'SEP', compra: c }));
   });
-  return lines;
+  return construirCsvComprasSupereduc(entradas);
+}
+function comprasSepCsvLines(onlyRbd) {
+  return comprasSepCsv(onlyRbd).lines;
 }
 function downloadComprasSep(onlyRbd) {
-  const lines = comprasSepCsvLines(onlyRbd);
+  const { lines, diag } = comprasSepCsv(onlyRbd);
   if (lines.length === 1) {
     alert(onlyRbd ? `El RBD ${onlyRbd} todavía no tiene compras registradas.` : 'Todavía no hay compras registradas en ningún RBD.');
     return;
   }
+  if (!confirmarDescargaComprasSupereduc(diag)) return;
   const csvContent = '﻿' + lines.join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -6582,7 +6791,7 @@ function sheetComprasAOA(onlyRbd) {
   registrosPara(onlyRbd).forEach(r => {
     const compras = (CARGA_MANUAL.compras_por_rbd || {})[r.rbd] || {};
     Object.entries(compras).forEach(([id, c]) => {
-      rows.push([id, Number(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', c.descripcion || '', c.rutProveedor || '', c.nombreProveedor || '', Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
+      rows.push([id, Number(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
     });
   });
   return rows;
@@ -6613,8 +6822,8 @@ function buildSingleRbdPrintHTML(rbd) {
   const rp = computeRealProyParaRbd(r);
   return `
     <div class="detalle-header" style="margin-bottom:14px;">
-      <strong style="font-size:16px;">Monitor SEP 70/30 — Análisis individual RBD ${r.rbd}</strong><br>
-      <span>${r.nombre}</span><br>
+      <strong style="font-size:16px;">Monitor SEP 70/30 — Análisis individual RBD ${escHtml(r.rbd)}</strong><br>
+      <span>${escHtml(r.nombre)}</span><br>
       <span class="detalle-sub">Regla 70% remuneraciones / 30% bienes y servicios sobre el Ingreso SEP anual — SLEP Petorca</span>
     </div>
     <div class="kpi-section-label">Real (ejecutado)</div>
@@ -6677,15 +6886,15 @@ function buildEjecucionPrintHTML() {
   const esSep = ejecFuenteSel === 'sep';
   const showTotal = !esSep && document.getElementById('ejecShowTotal').checked;
   const legendHtml = `<div class="ejec-print-legend">
-    ${showRem ? `<span><span class="swatch" style="background:var(--series-1)"></span>${document.getElementById('ejecLblRem').textContent}</span>` : ''}
-    ${showBys ? `<span><span class="swatch" style="background:var(--series-2)"></span>${document.getElementById('ejecLblBys').textContent}</span>` : ''}
+    ${showRem ? `<span><span class="swatch" style="background:var(--series-1)"></span>${escHtml(document.getElementById('ejecLblRem').textContent)}</span>` : ''}
+    ${showBys ? `<span><span class="swatch" style="background:var(--series-2)"></span>${escHtml(document.getElementById('ejecLblBys').textContent)}</span>` : ''}
     ${showTotal ? `<span><span class="swatch" style="background:var(--series-3)"></span>Total (Rem. + B&amp;S)</span>` : ''}
   </div>`;
   return `
     <div class="detalle-header" style="margin-bottom:14px;">
-      <strong style="font-size:16px;">${esSep ? 'Monitor SEP 70/30' : 'Monitor ' + ejecTituloFuente(ejecFuenteSel)} — % Ejecución</strong><br>
-      <span>${rbdLabel}</span><br>
-      <span class="detalle-sub">${document.getElementById('ejecCorteNota').textContent}</span>
+      <strong style="font-size:16px;">${esSep ? 'Monitor SEP 70/30' : 'Monitor ' + escHtml(ejecTituloFuente(ejecFuenteSel))} — % Ejecución</strong><br>
+      <span>${escHtml(rbdLabel)}</span><br>
+      <span class="detalle-sub">${escHtml(document.getElementById('ejecCorteNota').textContent)}</span>
     </div>
     <div class="kpi-row" style="margin-bottom:14px;">${kpiHtml}</div>
     <div class="ejec-chart-card" style="margin-bottom:14px;">${legendHtml}<div class="ejec-chart-wrap">${chartHtml}</div></div>
@@ -6710,7 +6919,9 @@ document.getElementById('downloadExcelBtn').addEventListener('click', () => {
 });
 
 function rowsFromSheet(ws) {
-  return XLSX.utils.sheet_to_json(ws, { header: 1, defval: 0, blankrows: false });
+  // Quita el apóstrofo que antepone la exportación a los textos libres que empiezan con = + - @
+  // (ver neutralizaFormula): así exportar y reimportar no altera los datos.
+  return XLSX.utils.sheet_to_json(ws, { header: 1, defval: 0, blankrows: false }).map(fila => fila.map(quitaApostrofoFormula));
 }
 
 function importSimpleSheet(ws, bucket) {
@@ -7038,7 +7249,7 @@ function setSyncStatus(status, text) {
 function ultimaEdicionRbdHTML(rbd) {
   const info = rbdLastModified[rbd];
   if (!info || !info.by) return '';
-  return `Última edición en este RBD: <strong>${getNameFromEmail(info.by)}</strong> · ${formatFechaHoraChile(info.at)}`;
+  return `Última edición en este RBD: <strong>${escHtml(getNameFromEmail(info.by))}</strong> · ${formatFechaHoraChile(info.at)}`;
 }
 
 // ============== AUTH: acceso por correo institucional + enlace mágico ==============
@@ -7073,6 +7284,17 @@ function hideLoginError() {
   document.getElementById('login-error').classList.add('hidden');
 }
 
+// URL de producción (GitHub Pages) — solo se usa como respaldo cuando la página se abre desde
+// file:// (o cualquier origen que no sea http/https). Si el repositorio se vuelve a renombrar,
+// basta con cambiar esta constante: en uso normal el enlace usa la URL real de la página.
+const URL_PRODUCCION = 'https://finanzas-slep-petorca.github.io/Monitoreo-Ingresos-y-Gastos-SLEP-Petorca-2026/';
+// Adonde debe volver el enlace del correo: la URL real de esta página (origen + ruta, sin query ni
+// hash) cuando se sirve por http/https; si no, la de producción.
+function urlEnlaceInicioSesion() {
+  const { protocol, origin, pathname } = window.location;
+  return (protocol === 'http:' || protocol === 'https:') ? origin + pathname : URL_PRODUCCION;
+}
+
 document.getElementById('login-btn').addEventListener('click', async () => {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   hideLoginError();
@@ -7092,7 +7314,7 @@ document.getElementById('login-btn').addEventListener('click', async () => {
 
   try {
     const actionCodeSettings = {
-      url: 'https://finanzas-slep-petorca.github.io/Monitoreo-Ingresos-y-Gastos-SEP-2026/',
+      url: urlEnlaceInicioSesion(),
       handleCodeInApp: true,
     };
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
@@ -7117,12 +7339,16 @@ document.getElementById('login-back-btn').addEventListener('click', () => {
 async function handleEmailLink() {
   if (!isSignInWithEmailLink(auth, window.location.href)) return false;
   showLoginLoading(true);
-  let email = localStorage.getItem('emailForSignIn');
+  let email = null;
+  try { email = localStorage.getItem('emailForSignIn'); } catch (err) { /* sin localStorage: se pide el correo */ }
   if (!email) email = window.prompt('Por favor ingresa tu correo para confirmar el acceso:');
+  if (email) email = email.trim().toLowerCase();
   try {
     await signInWithEmailLink(auth, email, window.location.href);
-    history.replaceState(null, '', window.location.pathname);
-    localStorage.removeItem('emailForSignIn');
+    // El enlace trae apiKey/oobCode en la URL: se quitan (query y hash) apenas se completa el
+    // acceso, para que no queden en el historial ni se reutilicen al recargar.
+    try { history.replaceState(null, '', window.location.pathname); } catch (err) { /* algunos entornos (file://) no lo permiten */ }
+    try { localStorage.removeItem('emailForSignIn'); } catch (err) { /* idem */ }
     return true;
   } catch (err) {
     showLoginLoading(false);
@@ -7139,7 +7365,7 @@ onAuthStateChanged(auth, async (user) => {
         <div class="login-card login-denied">
           <div class="icon-x">✕</div>
           <h1>Acceso denegado</h1>
-          <p class="login-sub">El correo <strong>${user.email}</strong> no está autorizado.</p>
+          <p class="login-sub">El correo <strong>${escHtml(user.email)}</strong> no está autorizado.</p>
           <p class="login-hint">Contacta a Wilson Rojas (wilson.rojas@sleppetorca.gob.cl) para solicitar acceso.</p>
         </div>`;
       showLoginScreen();
@@ -7176,6 +7402,12 @@ document.getElementById('signout-btn').addEventListener('click', async () => {
 // migración inicial, la colección ya no está vacía y ese RBD nunca se siembra solo. Esta
 // función detecta cualquier RBD de DATA.registros que no tenga todavía documento en
 // Firestore y lo crea en $0, para que aparezca de inmediato para todo el equipo.
+//
+// SOLO escribe escalares ({rbd, nombre, lastModifiedBy/At}): nunca mapas vacíos ({}), porque con
+// merge:true el SDK incluye cada mapa vacío en el updateMask y el servidor lo reemplaza por {} —
+// borraría compras, remuneraciones o ingresos de un documento que sí existe en el servidor pero no
+// en el caché local de este navegador. Y solo se llama con un snapshot que NO viene del caché
+// (ver aplicarSnapshot): hasta que el servidor no confirme que el doc no existe, no se crea nada.
 function ensureRbdsFaltantesEnFirestore(presentIds) {
   if (!currentUser) return;
   const faltantes = DATA.registros.filter(r => !presentIds.has(r.rbd) && !rbdFaltanteEnCreacion.has(r.rbd));
@@ -7186,11 +7418,6 @@ function ensureRbdsFaltantesEnFirestore(presentIds) {
     batch.set(doc(db, CARGA_COLLECTION, r.rbd), {
       rbd: r.rbd,
       nombre: r.nombre,
-      ingreso_items: {},
-      rem: { meses: {}, total: 0, real_hasta_mes: DATA.n_meses },
-      bys_proyeccion: { items: {} },
-      compras: {},
-      otras_fuentes: {},
       lastModifiedBy: currentUser.email,
       lastModifiedAt: serverTimestamp(),
     }, { merge: true });
@@ -7205,105 +7432,121 @@ function aplicarSnapshot(snapshot) {
   const nuevoAgregado = {}, nuevoIngreso = {}, nuevoRem = {}, nuevoCompras = {}, nuevoBysProyeccion = {};
   const nuevoOtrasFuentes = {};
   const presentIds = new Set();
+  const docsInvalidos = [];
   let latestAt = null, latestEmail = null;
 
   snapshot.docs.forEach(d => {
-    const data = d.data();
+    // El id se registra ANTES de leer el contenido: un documento dañado igual "existe", y nunca
+    // debe tratarse como faltante (ensureRbdsFaltantes) ni recrearse encima.
     presentIds.add(d.id);
-
     if (d.id === META_DOC_ID) return;
 
     const rbd = d.id;
-    const nombre = data.nombre || rbd;
+    // Firestore no valida tipos: un documento con un valor nulo, de otro tipo o no numérico (editado
+    // a mano en la consola, un script, otro panel del mismo proyecto) no puede romper al resto.
+    // Cada documento se lee dentro de su propio try/catch; si aun así falla, se omite y se avisa.
+    try {
+      const data = objetoPlano(d.data());
+      const nombre = textoSeguro(data.nombre) || rbd;
 
-    const comprasRaw = data.compras || {};
-    nuevoCompras[rbd] = comprasRaw;
-    const items = itemsFromCompras(comprasRaw);
-    const ag = { rbd, nombre, gasto_subt22: 0, gasto_subt29: 0, gasto_bys: 0, items };
-    recomputeAgregado(ag);
-    nuevoAgregado[rbd] = ag;
+      // Compras: solo entradas que son objetos; textos como texto y montos como número.
+      const comprasRaw = {};
+      Object.entries(objetoPlano(data.compras)).forEach(([id, c]) => { if (c && typeof c === 'object' && !Array.isArray(c)) comprasRaw[id] = sanitizaCompra(c); });
+      nuevoCompras[rbd] = comprasRaw;
+      const items = itemsFromCompras(comprasRaw);
+      const ag = { rbd, nombre, gasto_subt22: 0, gasto_subt29: 0, gasto_bys: 0, items };
+      recomputeAgregado(ag);
+      nuevoAgregado[rbd] = ag;
 
-    const ingItems = Object.values(data.ingreso_items || {}).map(it => {
-      const meses = {};
-      MESES_CARGA.forEach(m => meses[m] = (it.meses && it.meses[m]) || 0);
-      const total = MESES_CARGA.reduce((s, m) => s + meses[m], 0);
-      return { item: it.item, meses, total };
-    });
-    nuevoIngreso[rbd] = { rbd, nombre, items: ingItems };
-
-    const remMeses = {};
-    MESES_CARGA.forEach(m => remMeses[m] = (data.rem?.meses && data.rem.meses[m]) || 0);
-    const remTotal = MESES_CARGA.reduce((s, m) => s + remMeses[m], 0);
-    nuevoRem[rbd] = { rbd, nombre, meses: remMeses, total: remTotal, real_hasta_mes: data.rem?.real_hasta_mes || DATA.n_meses };
-
-    const bysProyRaw = data.bys_proyeccion || {};
-    let bysProyItems = Object.keys(bysProyRaw.items || {}).map(codigo => {
-      const itRaw = bysProyRaw.items[codigo] || {};
-      const meses = {};
-      MESES_CARGA.forEach(m => meses[m] = (itRaw.meses && itRaw.meses[m]) || 0);
-      const total = MESES_CARGA.reduce((s, m) => s + meses[m], 0);
-      return { codigo, meses, total };
-    });
-    // Migración: documentos guardados antes de dividir la proyección por ítem traían un solo
-    // monto mensual en bys_proyeccion.meses/total (sin "items") — se conserva como un ítem
-    // "genérico" en vez de perderlo, para que el usuario lo reclasifique cuando quiera.
-    if (!bysProyItems.length && bysProyRaw.meses) {
-      const legacyMeses = {};
-      MESES_CARGA.forEach(m => legacyMeses[m] = bysProyRaw.meses[m] || 0);
-      const legacyTotal = MESES_CARGA.reduce((s, m) => s + legacyMeses[m], 0);
-      if (legacyTotal) bysProyItems = [{ codigo: '_LEGACY_', meses: legacyMeses, total: legacyTotal }];
-    }
-    const bp = { rbd, nombre, items: bysProyItems, meses: {}, total: 0 };
-    recomputeBysProyeccionAgregado(bp);
-    nuevoBysProyeccion[rbd] = bp;
-
-    // Otras Fuentes: "AC" y los GESPARVU de JUNJI pasan por este mismo parseo aunque no estén en
-    // DATA.registros — no tienen ingreso_items/rem/bys_proyeccion/compras de SEP (quedan en
-    // blanco arriba, sin romper nada), pero sí pueden traer otras_fuentes igual que cualquier RBD.
-    const ofRaw = data.otras_fuentes || {};
-    const of = {};
-    const mesesDesde = (obj, campo) => {
-      const m = {};
-      MESES_CARGA.forEach(k => m[k] = (obj && obj[campo] && obj[campo].meses && obj[campo].meses[k]) || 0);
-      return m;
-    };
-    const totalDeMeses = (m) => MESES_CARGA.reduce((s, k) => s + m[k], 0);
-    FUENTES_OTRAS.forEach(f => {
-      const raw = ofRaw[f.key] || {};
-      const entry = { bys_items: [], gasto_bys_total: 0, gasto_bys_real: 0, gasto_bys_proy: 0, ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit', real_hasta_mes: normalizarRealHastaMes(raw.real_hasta_mes) };
-      if (f.incomeShape === 'junji3') {
-        const mOperacion = mesesDesde(raw, 'ingreso_operacion');
-        const mHomologacion = mesesDesde(raw, 'ingreso_homologacion');
-        const mCarreraDocente = mesesDesde(raw, 'ingreso_carrera_docente');
-        entry.ingreso_operacion = { meses: mOperacion, total: totalDeMeses(mOperacion) };
-        entry.ingreso_homologacion = { meses: mHomologacion, total: totalDeMeses(mHomologacion) };
-        entry.ingreso_carrera_docente = { meses: mCarreraDocente, total: totalDeMeses(mCarreraDocente) };
-        entry.saldo_operacion_bys = 0;
-      } else {
-        const mIngreso = mesesDesde(raw, 'ingreso');
-        entry.ingreso = { meses: mIngreso, total: totalDeMeses(mIngreso) };
-      }
-      const mRem = mesesDesde(raw, 'gasto_rem');
-      entry.gasto_rem = { meses: mRem, total: totalDeMeses(mRem) };
-      const parseItemsConcepto = (rawItems) => Object.values(rawItems || {}).map(it => {
-        const meses = {};
-        MESES_CARGA.forEach(k => meses[k] = (it.meses && it.meses[k]) || 0);
-        return { concepto: it.concepto || '', meses, total: totalDeMeses(meses) };
+      const mesesNum = (obj) => {
+        const o = objetoPlano(obj), m = {};
+        MESES_CARGA.forEach(k => m[k] = num(o[k]));
+        return m;
+      };
+      const ingItems = Object.values(objetoPlano(data.ingreso_items)).filter(it => it && typeof it === 'object').map(it => {
+        const meses = mesesNum(it.meses);
+        const total = MESES_CARGA.reduce((s, m) => s + meses[m], 0);
+        return { item: textoSeguro(it.item), meses, total };
       });
-      if (f.bysMode === 'compras') {
-        entry.compras = raw.compras || {};
-        entry.bys_proy_items = parseItemsConcepto(raw.bys_proy_items);
-      } else {
-        entry.bys_items = parseItemsConcepto(raw.bys_items);
-      }
-      of[f.key] = entry;
-    });
-    nuevoOtrasFuentes[rbd] = of;
+      nuevoIngreso[rbd] = { rbd, nombre, items: ingItems };
 
-    if (data.lastModifiedAt) {
-      const t = data.lastModifiedAt.toDate ? data.lastModifiedAt.toDate() : new Date(data.lastModifiedAt);
-      rbdLastModified[rbd] = { by: data.lastModifiedBy || '', at: t };
-      if (!latestAt || t > latestAt) { latestAt = t; latestEmail = data.lastModifiedBy; }
+      const remRaw = objetoPlano(data.rem);
+      const remMeses = mesesNum(remRaw.meses);
+      const remTotal = MESES_CARGA.reduce((s, m) => s + remMeses[m], 0);
+      nuevoRem[rbd] = { rbd, nombre, meses: remMeses, total: remTotal, real_hasta_mes: num(remRaw.real_hasta_mes) || DATA.n_meses };
+
+      const bysProyRaw = objetoPlano(data.bys_proyeccion);
+      const bysProyItemsRaw = objetoPlano(bysProyRaw.items);
+      let bysProyItems = Object.keys(bysProyItemsRaw).map(codigo => {
+        const itRaw = objetoPlano(bysProyItemsRaw[codigo]);
+        const meses = mesesNum(itRaw.meses);
+        const total = MESES_CARGA.reduce((s, m) => s + meses[m], 0);
+        return { codigo, meses, total };
+      });
+      // Migración: documentos guardados antes de dividir la proyección por ítem traían un solo
+      // monto mensual en bys_proyeccion.meses/total (sin "items") — se conserva como un ítem
+      // "genérico" en vez de perderlo, para que el usuario lo reclasifique cuando quiera.
+      if (!bysProyItems.length && bysProyRaw.meses) {
+        const legacyMeses = mesesNum(bysProyRaw.meses);
+        const legacyTotal = MESES_CARGA.reduce((s, m) => s + legacyMeses[m], 0);
+        if (legacyTotal) bysProyItems = [{ codigo: '_LEGACY_', meses: legacyMeses, total: legacyTotal }];
+      }
+      const bp = { rbd, nombre, items: bysProyItems, meses: {}, total: 0 };
+      recomputeBysProyeccionAgregado(bp);
+      nuevoBysProyeccion[rbd] = bp;
+
+      // Otras Fuentes: "AC" y los GESPARVU de JUNJI pasan por este mismo parseo aunque no estén en
+      // DATA.registros — no tienen ingreso_items/rem/bys_proyeccion/compras de SEP (quedan en
+      // blanco arriba, sin romper nada), pero sí pueden traer otras_fuentes igual que cualquier RBD.
+      const ofRaw = objetoPlano(data.otras_fuentes);
+      const of = {};
+      const mesesDesde = (obj, campo) => mesesNum(objetoPlano(objetoPlano(obj)[campo]).meses);
+      const totalDeMeses = (m) => MESES_CARGA.reduce((s, k) => s + m[k], 0);
+      FUENTES_OTRAS.forEach(f => {
+        const raw = objetoPlano(ofRaw[f.key]);
+        const entry = { bys_items: [], gasto_bys_total: 0, gasto_bys_real: 0, gasto_bys_proy: 0, ingreso_total: 0, gasto_total: 0, saldo: 0, estado: 'superavit', real_hasta_mes: normalizarRealHastaMes(raw.real_hasta_mes) };
+        if (f.incomeShape === 'junji3') {
+          const mOperacion = mesesDesde(raw, 'ingreso_operacion');
+          const mHomologacion = mesesDesde(raw, 'ingreso_homologacion');
+          const mCarreraDocente = mesesDesde(raw, 'ingreso_carrera_docente');
+          entry.ingreso_operacion = { meses: mOperacion, total: totalDeMeses(mOperacion) };
+          entry.ingreso_homologacion = { meses: mHomologacion, total: totalDeMeses(mHomologacion) };
+          entry.ingreso_carrera_docente = { meses: mCarreraDocente, total: totalDeMeses(mCarreraDocente) };
+          entry.saldo_operacion_bys = 0;
+        } else {
+          const mIngreso = mesesDesde(raw, 'ingreso');
+          entry.ingreso = { meses: mIngreso, total: totalDeMeses(mIngreso) };
+        }
+        const mRem = mesesDesde(raw, 'gasto_rem');
+        entry.gasto_rem = { meses: mRem, total: totalDeMeses(mRem) };
+        const parseItemsConcepto = (rawItems) => Object.values(objetoPlano(rawItems)).filter(it => it && typeof it === 'object').map(it => {
+          const meses = mesesNum(it.meses);
+          return { concepto: textoSeguro(it.concepto), meses, total: totalDeMeses(meses) };
+        });
+        if (f.bysMode === 'compras') {
+          const comprasOF = {};
+          Object.entries(objetoPlano(raw.compras)).forEach(([id, c]) => { if (c && typeof c === 'object' && !Array.isArray(c)) comprasOF[id] = sanitizaCompra(c); });
+          entry.compras = comprasOF;
+          entry.bys_proy_items = parseItemsConcepto(raw.bys_proy_items);
+        } else {
+          entry.bys_items = parseItemsConcepto(raw.bys_items);
+        }
+        of[f.key] = entry;
+      });
+      nuevoOtrasFuentes[rbd] = of;
+
+      if (data.lastModifiedAt) {
+        const t = data.lastModifiedAt.toDate ? data.lastModifiedAt.toDate() : new Date(data.lastModifiedAt);
+        if (!isNaN(t.getTime())) {
+          rbdLastModified[rbd] = { by: textoSeguro(data.lastModifiedBy), at: t };
+          if (!latestAt || t > latestAt) { latestAt = t; latestEmail = textoSeguro(data.lastModifiedBy); }
+        }
+      }
+    } catch (err) {
+      console.error('Documento con datos inválidos en Firestore, se omite:', rbd, err);
+      docsInvalidos.push(rbd);
+      // Descarta lo que alcanzó a armarse de este documento (nada a medias).
+      [nuevoAgregado, nuevoIngreso, nuevoRem, nuevoCompras, nuevoBysProyeccion, nuevoOtrasFuentes].forEach(o => { delete o[rbd]; });
     }
   });
 
@@ -7326,12 +7569,43 @@ function aplicarSnapshot(snapshot) {
   renderDashboard();
   if (!document.getElementById('tab-reportes').classList.contains('hidden')) renderVisualizador();
 
-  const syncMsg = latestEmail && latestAt
-    ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatFechaHoraChile(latestAt)}`
-    : 'Sincronizado';
-  setSyncStatus('green', syncMsg);
+  if (docsInvalidos.length) {
+    setSyncStatus('red', `🔴 ${docsInvalidos.length === 1 ? 'Documento' : 'Documentos'} con datos inválidos (${docsInvalidos.join(', ')}) — se omiten; avisa a quien administra el panel`);
+  } else {
+    const syncMsg = latestEmail && latestAt
+      ? `Sincronizado · última edición por ${getNameFromEmail(latestEmail)} ${formatFechaHoraChile(latestAt)}`
+      : 'Sincronizado';
+    setSyncStatus('green', syncMsg);
+  }
 
-  ensureRbdsFaltantesEnFirestore(presentIds);
+  // Crear los RBD que faltan solo con un snapshot confirmado por el servidor: el caché local puede
+  // estar desactualizado y no contener un RBD que sí existe (y ya tiene datos) en el servidor.
+  if (!snapshotDesdeCache(snapshot)) ensureRbdsFaltantesEnFirestore(presentIds);
+}
+
+// Copia una compra leída de Firestore con los tipos que el panel espera (textos como texto, montos
+// como número finito); conserva cualquier otro campo.
+function sanitizaCompra(c) {
+  return {
+    ...c,
+    codigo: textoSeguro(c.codigo),
+    tipoDocumento: textoSeguro(c.tipoDocumento),
+    nroDocumento: textoSeguro(c.nroDocumento),
+    fechaDocumento: textoSeguro(c.fechaDocumento),
+    fechaPago: textoSeguro(c.fechaPago),
+    descripcion: textoSeguro(c.descripcion),
+    rutProveedor: textoSeguro(c.rutProveedor),
+    nombreProveedor: textoSeguro(c.nombreProveedor),
+    documentoOriginal: textoSeguro(c.documentoOriginal),
+    montoGasto: num(c.montoGasto),
+    montoDocumento: num(c.montoDocumento),
+  };
+}
+
+// ¿El snapshot viene del caché local y no del servidor? Un snapshot sin `metadata` (como los que
+// alimentan las pruebas) se trata como snapshot de servidor.
+function snapshotDesdeCache(snapshot) {
+  return !!(snapshot && snapshot.metadata && snapshot.metadata.fromCache);
 }
 
 function startFirestoreSync() {
@@ -7342,6 +7616,14 @@ function startFirestoreSync() {
     collection(db, CARGA_COLLECTION),
     (snapshot) => {
       if (snapshot.empty) {
+        // OJO: un snapshot vacío que viene del CACHÉ (navegador sin caché, o sin conexión) NO
+        // significa que la colección esté vacía en el servidor. Sembrar en ese caso escribiría los
+        // 55 RBD con remuneraciones en $0 encima de los datos reales apenas vuelva la red. Solo se
+        // siembra con un snapshot vacío confirmado por el servidor (fromCache = false).
+        if (snapshotDesdeCache(snapshot)) {
+          setSyncStatus('yellow', 'Sin conexión con el servidor — esperando datos (no se escribió nada)');
+          return;
+        }
         seedFirestoreConDatosIniciales().catch(err => {
           console.error('Error en la migración inicial:', err);
           setSyncStatus('red', '🔴 Error en la carga inicial — revisa la consola');
@@ -7359,7 +7641,8 @@ function startFirestoreSync() {
 
 // ============================================================================
 // ============== MIGRACIÓN INICIAL — EJECUTAR UNA SOLA VEZ ==================
-// Se dispara sola la primera vez que la colección "sep_carga_rbd" está vacía: sube a
+// Se dispara sola la primera vez que el SERVIDOR confirma que la colección "sep_carga_rbd" está
+// vacía (nunca por un snapshot vacío del caché local; ver startFirestoreSync): sube a
 // Firestore los datos que hoy viven embebidos en este HTML (DATA, ITEMS_22/29 e
 // ING_PREFERENTE_REAL/ING_PRIORITARIO_REAL vía seedIngresoItems()), un setDoc por RBD.
 // Una vez hecha esta primera carga la colección deja de estar vacía y este bloque nunca
@@ -7379,16 +7662,17 @@ async function seedFirestoreConDatosIniciales() {
     const ingreso_items = {};
     (ing?.items || []).forEach(it => { ingreso_items[it.item] = { item: it.item, meses: it.meses, total: it.total }; });
 
-    batch.set(doc(db, CARGA_COLLECTION, r.rbd), {
+    // Sin mapas vacíos ({}): con merge:true reemplazarían lo que ya exista en el servidor.
+    const docSemilla = {
       rbd: r.rbd,
       nombre: r.nombre,
-      ingreso_items,
-      rem: { meses: rem ? rem.meses : {}, total: rem ? rem.total : 0, real_hasta_mes: DATA.n_meses },
-      bys_proyeccion: { items: {} },
-      compras: {},
+      rem: { real_hasta_mes: DATA.n_meses },
       lastModifiedBy: currentUser.email,
       lastModifiedAt: serverTimestamp(),
-    }, { merge: true });
+    };
+    if (Object.keys(ingreso_items).length) docSemilla.ingreso_items = ingreso_items;
+    if (rem && rem.meses && Object.keys(rem.meses).length) { docSemilla.rem.meses = rem.meses; docSemilla.rem.total = rem.total || 0; }
+    batch.set(doc(db, CARGA_COLLECTION, r.rbd), docSemilla, { merge: true });
   });
 
   await batch.commit();
@@ -7445,6 +7729,18 @@ async function flushRbdSave(rbd) {
 function flushRbdSaveNow(rbd) {
   if (pendingTimers[rbd]) flushRbdSave(rbd);
 }
+
+// Si la persona cierra la pestaña, recarga o cambia de app justo después de teclear, el debounce de
+// 400 ms nunca llegaría a ejecutarse y la edición se perdería. Al ocultarse/cerrarse la página se
+// envía YA todo lo pendiente (el SDK lo deja en su cola persistente y lo termina de subir). El
+// debounce normal no cambia.
+function flushTodasEdicionesPendientes() {
+  Object.keys(pendingWrites).forEach(rbd => { flushRbdSave(rbd); });
+}
+window.addEventListener('pagehide', flushTodasEdicionesPendientes);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushTodasEdicionesPendientes();
+});
 
 </script>
 </body>

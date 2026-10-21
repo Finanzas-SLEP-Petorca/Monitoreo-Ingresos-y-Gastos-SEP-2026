@@ -17,3 +17,11 @@ carga_manual/
 .DS_Store
 __pycache__/
 *.pyc
+
+# Arnés de pruebas (tests/): fixtures, línea base del golden master y package.json SÍ se versionan
+# (son datos sintéticos generados por script, sin cifras reales). Lo regenerable queda fuera.
+!tests/package.json
+!tests/**/*.json
+tests/.cache/
+tests/.tmp/
+tests/out/

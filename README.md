@@ -213,15 +213,37 @@ expandibles, **Ingresos** y **Gastos**, con columnas **Real / Proyectado / Total
   mes" de la pestaña SEP); con ese selector en Diciembre (el valor por defecto) los totales por
   fuente coinciden con las tarjetas del Panel principal y de cada pestaña.
 
-**Reporte personalizado.** Es la vista original de esta pestaña, sin cambios: permite cruzar
-establecimiento × concepto × mes(es) para cualquier serie ya cargada (los 3
-ingresos SEP, Remuneraciones, cada ítem de compras Subt.22/29, el total de Bienes y Servicios
-(Proyección) y cada ítem de esa misma proyección por separado — se puede buscar, por ejemplo,
-"arriendo" y encontrar tanto la compra real como su proyección, cada una con su propio total).
-Cada celda del mes se colorea verde (real) o naranja (proyectada) según la misma regla que el
-detalle de cada RBD — Remuneraciones según el corte propio de cada establecimiento, así que al
-combinar varios RBD con cortes distintos en un mismo reporte, la fila "Subtotal" no se colorea
-(mezclaría criterios distintos). Este coloreado es independiente del selector "Ver resumen
+**Reporte personalizado.** Cruce **entidad × concepto × mes(es)** con coloreo real/proyectado por
+celda, ahora para **SEP y las 9 fuentes de financiamiento**:
+
+- **Entidades**: los 55 RBD + "AC — Administración Central" + los 13 GESPARVU, en la misma lista
+  (agrupada con encabezados, con buscador y Todos/Ninguno; todas marcadas por defecto). Un par
+  entidad × concepto que no corresponde (un GESPARVU con un concepto de SEP, un RBD con un concepto
+  de JUNJI) simplemente no genera fila: RBD → SEP y las fuentes por RBD; AC → las fuentes por RBD;
+  GESPARVU → JUNJI y Aporte Fiscal JUNJI.
+- **Conceptos agrupados por fuente** (un grupo plegable por fuente; SEP abierto por defecto) con
+  chips de fuente encima del buscador (solo filtran qué grupos se ven, no lo seleccionado). Los de
+  SEP conservan sus keys y etiquetas de siempre (3 ingresos SEP, Remuneraciones, cada ítem de
+  compras Subt.22/29, la proyección de B&S total y por ítem). Los de las fuentes llevan prefijo
+  `[Fuente]`: Ingreso (o las 3 líneas de JUNJI), Remuneraciones, Bienes y Servicios total
+  (Real+Proy) y, en las fuentes con compras, Proyección de B&S total; además, **dinámicos** (solo si
+  hay datos): B&S por código de cuenta (compras), B&S por concepto libre y proyección de B&S por
+  concepto. Un mismo código en dos fuentes es un concepto distinto por fuente.
+- **Real / proyectado por celda**: en SEP, las mismas reglas de siempre (Remuneraciones según el
+  corte propio de cada RBD, compras siempre reales, proyección siempre proyectada). En las fuentes,
+  Ingreso / Remuneraciones / B&S por concepto: real hasta el "Real hasta" de ESA entidad en ESA
+  fuente (por defecto el mismo corte de SEP, editable en cada pestaña); B&S por código (compras):
+  siempre real; proyección de B&S: siempre proyectada. "B&S total" suma ambos tipos: si en un mes
+  hay monto real y proyectado, la celda es **mixta** y queda sin color (si el mes está en $0 rige
+  el corte).
+- **Subtotales**: en SEP, la fila "Subtotal" de Remuneraciones nunca se colorea (mezclaría cortes
+  distintos). En las fuentes se colorea solo si **todas** las entidades del subtotal coinciden en
+  real/proyectado ese mes; si no, queda sin color. Los conceptos dinámicos se reconstruyen al volver
+  a la pestaña Reportes.
+- CSV, Excel y PDF incluyen las filas de las fuentes (columna RBD con el código de la entidad: AC o
+  el código del GESPARVU); archivos `reporte_personalizado_AAAA-MM-DD.*`.
+
+Este coloreado es independiente del selector "Ver resumen
 acumulado hasta el mes" de la pestaña SEP, que solo afecta a las tarjetas KPI.
 
 ### Pestaña "Otras Fuentes"
@@ -345,9 +367,7 @@ como aproximación temporal. El Manual de Cuentas SUPEREDUC 2026 confirma que ca
 tiene su propio subconjunto de cuentas habilitadas (p. ej. Mantención casi no admite
 remuneraciones, solo cuentas de infraestructura) — acotar el selector por fuente requiere
 transcribir con cuidado esa tabla completa (~130 cuentas × 9 columnas) antes de aplicarla, dado
-el riesgo de error en datos financieros. El "Reporte personalizado" (cruce entidad × concepto × mes)
-sigue siendo solo de SEP; sumarle la dimensión Fuente queda para una PR siguiente (el Visualizador
-ya cubre la vista consolidada multi-fuente).
+el riesgo de error en datos financieros.
 
 ## Fuentes de datos
 

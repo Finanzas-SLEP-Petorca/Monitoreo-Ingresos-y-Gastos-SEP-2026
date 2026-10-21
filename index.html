@@ -549,6 +549,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .vz-ent-body { margin-top:8px; }
   .vz-ent-list { max-height:260px; }
   .vz-ent-titulo { font-size:11.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.03em; margin:8px 0 2px; }
+  /* Reporte personalizado multi-fuente: chips de grupo arriba de los conceptos y grupos <details> por fuente */
+  .report-fuente-chips { margin-bottom:6px; gap:2px; }
+  .report-fuente-chips .vz-chip { padding:3px 8px; font-size:11.5px; }
+  .report-grupo > summary { cursor:pointer; font-size:11.5px; font-weight:700; color:var(--text-secondary); padding:5px 2px; list-style-position:inside; }
+  .report-grupo > summary:hover { color:var(--text-primary); }
+  .report-grupo-n { font-weight:500; color:var(--text-muted); }
   .vz-h { margin:0; font-size:15px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
   .vz-saldo-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin:8px 0 6px; }
   .vz-seccion-head { display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin:10px 0 8px; }
@@ -971,13 +977,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <div class="report-filter-grid">
             <div class="report-filter-col">
               <div class="report-filter-head">
-                <strong>Establecimientos</strong>
+                <strong>Entidades</strong>
                 <span class="report-filter-actions">
                   <button type="button" class="link-btn" id="reporteRbdTodos">Todos</button>
                   <button type="button" class="link-btn" id="reporteRbdNinguno">Ninguno</button>
                 </span>
               </div>
-              <input type="text" id="reporteRbdSearch" placeholder="Buscar RBD o nombre…" class="report-search">
+              <input type="text" id="reporteRbdSearch" placeholder="Buscar RBD, código o nombre…" class="report-search">
               <div class="report-checklist" id="reporteRbdList"></div>
             </div>
             <div class="report-filter-col">
@@ -988,6 +994,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                   <button type="button" class="link-btn" id="reporteConceptoNinguno">Ninguno</button>
                 </span>
               </div>
+              <div class="vz-chips report-fuente-chips" id="reporteFuenteChips" title="Filtra qué grupos de conceptos se muestran (no cambia lo seleccionado)"></div>
               <input type="text" id="reporteConceptoSearch" placeholder="Buscar concepto…" class="report-search">
               <div class="report-checklist" id="reporteConceptoList"></div>
             </div>
@@ -1521,9 +1528,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         fuentes (botones) y entidades, y muestra el Saldo disponible (Ingresos − Gastos) y los Ingresos y Gastos en un
         árbol que se expande, con columnas Real, Proyectado y Total; cada fila tiene un detalle mensual (📅). Se puede
         agrupar por fuente o por código/concepto consolidado, y descargar Excel de Ingresos y de Gastos por separado,
-        CSV o PDF. El <strong>Reporte personalizado</strong> arma una tabla a medida eligiendo establecimientos,
-        conceptos (Ingreso, Remuneraciones, cualquier ítem de compras o de su proyección — se puede buscar por nombre
-        o por código SUPEREDUC) y meses; cada celda se colorea real/proyectada igual que en el detalle de cada RBD.</p>
+        CSV o PDF. El <strong>Reporte personalizado</strong> arma una tabla a medida eligiendo entidades (RBD, AC o GESPARVU),
+        conceptos de SEP y de cualquier fuente de financiamiento (agrupados por fuente: Ingreso, Remuneraciones,
+        Bienes y Servicios por código o concepto, proyección — se puede buscar por nombre o por código SUPEREDUC) y meses;
+        cada celda se colorea real/proyectada según el corte de cada entidad.</p>
 
         <h4>9. Pestaña "% Ejecución"</h4>
         <p>Muestra, mes a mes, cómo va el ritmo de gasto de Remuneraciones y Bienes y Servicios, para una entidad o
@@ -5181,7 +5189,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
     if (tab === 'ejecucion') renderEjecucion();
     if (tab === 'dashboard') renderDashboard();
-    if (tab === 'reportes') renderVisualizador();
+    if (tab === 'reportes') {
+      renderVisualizador();
+      // Los conceptos dinámicos del reporte personalizado (B&S por código/concepto de las fuentes)
+      // dependen de los datos: al volver a Reportes se reconstruyen por si cambiaron en otra pestaña.
+      renderReportFilters();
+      renderReporte();
+    }
     // Las 5 pestañas de fuentes se repintan siempre al activarse (no solo la primera vez), por si
     // llegó un cambio de otro usuario mientras esta pestaña estaba oculta.
     const fuenteDelTab = FUENTES_OTRAS.find(f => 'of-' + f.key === tab);
@@ -5214,7 +5228,124 @@ function buildConceptoCatalog() {
   CUENTAS_SEP_29.forEach(c => list.push({ key: `29|${c.nombre}`, label: `${c.codigo} · ${c.nombre} (Subt.29)` }));
   CUENTAS_SEP_22.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.codigo} · ${c.nombre} (Proyección Subt.22)` }));
   CUENTAS_SEP_29.forEach(c => list.push({ key: `bys_proy_item|${c.codigo}`, label: `${c.codigo} · ${c.nombre} (Proyección Subt.29)` }));
+  // Los conceptos de SEP conservan sus keys y etiquetas de siempre (estado guardado y tests); la
+  // dimensión Fuente se agrega aparte: `fuente:'sep'` aquí, y keys `of|{fuenteKey}|...` para las 9
+  // fuentes de financiamiento (ver reporteConceptosFuente).
+  list.forEach(c => { c.fuente = 'sep'; });
+  FUENTES_OTRAS.forEach(f => list.push(...reporteConceptosFuente(f)));
   return list;
+}
+
+// --- Conceptos del reporte personalizado para una fuente de financiamiento (no SEP) ---
+// Fijos: ingreso(s), remuneraciones, B&S total y (fuentes con compras) proyección total.
+// Dinámicos (solo si hay datos en alguna entidad de esa fuente): B&S por código (compras),
+// B&S por concepto libre y proyección de B&S por concepto. Key: `of|{fuente}|{tipo}[|{arg}]`
+// (el arg —código o concepto libre— puede traer "|", por eso se parsea con parseConceptoOF).
+function reporteConceptosDinamicos(f) {
+  const codigos = new Map(), conceptos = new Set(), proy = new Set();
+  const conDatos = it => Object.values(it.meses || {}).some(v => Number(v));
+  filasOtrasFuentes(f.key).forEach(r => {
+    const of = ((CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd] || {})[f.key];
+    if (!of) return;
+    (of.bys_items || []).forEach(it => {
+      if (!conDatos(it)) return;
+      if (f.bysMode === 'compras') { if (it.codigo) codigos.set(it.codigo, { codigo: it.codigo, nombre: it.item, subt: it.subtitulo }); }
+      else if (it.concepto) conceptos.add(it.concepto);
+    });
+    (of.bys_proy_items || []).forEach(it => { if (it.concepto && conDatos(it)) proy.add(it.concepto); });
+  });
+  return {
+    codigos: Array.from(codigos.values()).sort((a, b) => String(a.codigo).localeCompare(String(b.codigo), 'es', { numeric: true })),
+    conceptos: Array.from(conceptos).sort((a, b) => a.localeCompare(b, 'es')),
+    proy: Array.from(proy).sort((a, b) => a.localeCompare(b, 'es')),
+  };
+}
+function reporteConceptosFuente(f) {
+  const k = f.key, pre = `[${VZ_FUENTE_BY_KEY[k].corto}]`;
+  const out = [];
+  const add = (sufijo, label) => out.push({ key: `of|${k}|${sufijo}`, label: `${pre} ${label}`, fuente: k });
+  if (f.incomeShape === 'junji3') {
+    add('ingreso_operacion', 'Ingreso Operación');
+    add('ingreso_homologacion', 'Ingreso Homologación');
+    add('ingreso_carrera_docente', 'Ingreso Carrera Docente');
+  } else add('ingreso', 'Ingreso');
+  add('rem', 'Remuneraciones');
+  add('bys_total', 'Bienes y Servicios — total (Real+Proy)');
+  if (f.bysMode === 'compras') add('bys_proy', 'Bienes y Servicios Proyección — total');
+  const din = reporteConceptosDinamicos(f);
+  din.codigos.forEach(c => add(`bys_codigo|${c.codigo}`, `${c.codigo} · ${c.nombre} (Subt.${c.subt})`));
+  din.conceptos.forEach(n => add(`bys_concepto|${n}`, `B&S — ${n}`));
+  din.proy.forEach(n => add(`bys_proy_item|${n}`, `B&S Proyección — ${n}`));
+  return out;
+}
+function parseConceptoOF(key) {
+  const p = key.split('|');
+  return { fuenteKey: p[1], tipo: p[2], arg: p.slice(3).join('|') };
+}
+function ofDeEntidad(rbd, fuenteKey) {
+  return ((CARGA_MANUAL.otras_fuentes_por_rbd || {})[rbd] || {})[fuenteKey] || null;
+}
+function sumaItemsMeses(items) {
+  const m = {};
+  MESES_CARGA.forEach(x => { m[x] = 0; });
+  items.forEach(it => MESES_CARGA.forEach(x => { m[x] += (it.meses && it.meses[x]) || 0; }));
+  return m;
+}
+function serieConceptoOF(rbd, key) {
+  const { fuenteKey, tipo, arg } = parseConceptoOF(key);
+  const of = ofDeEntidad(rbd, fuenteKey);
+  if (!of) return {};
+  const items = of.bys_items || [], proy = of.bys_proy_items || [];
+  switch (tipo) {
+    case 'ingreso': return of.ingreso ? of.ingreso.meses : {};
+    case 'ingreso_operacion': return of.ingreso_operacion ? of.ingreso_operacion.meses : {};
+    case 'ingreso_homologacion': return of.ingreso_homologacion ? of.ingreso_homologacion.meses : {};
+    case 'ingreso_carrera_docente': return of.ingreso_carrera_docente ? of.ingreso_carrera_docente.meses : {};
+    case 'rem': return of.gasto_rem ? of.gasto_rem.meses : {};
+    case 'bys_total': return sumaItemsMeses([...items, ...proy]);
+    case 'bys_proy': return sumaItemsMeses(proy);
+    case 'bys_codigo': { const it = items.find(x => x.codigo === arg); return it ? it.meses : {}; }
+    case 'bys_concepto': { const it = items.find(x => x.concepto === arg); return it ? it.meses : {}; }
+    case 'bys_proy_item': { const it = proy.find(x => x.concepto === arg); return it ? it.meses : {}; }
+  }
+  return {};
+}
+
+// Real/proyectado de UNA celda (entidad × concepto × mes). Los conceptos de SEP delegan en
+// esRealParaModo sin cambios. Para las fuentes: ingreso / remuneraciones / B&S por concepto →
+// real hasta el "Real hasta" de ESA entidad en ESA fuente (por defecto DATA.n_meses); B&S por
+// código (compras) → siempre real; proyección de B&S → siempre proyectada. "B&S total" suma
+// partes de ambos tipos: si en un mes hay monto real Y proyectado la celda es mixta (null, sin
+// color); si solo hay uno, ese; y si el mes está en $0, se rige por el corte.
+function esRealParaConcepto(rbd, key, idx1based) {
+  if (!key.startsWith('of|')) return esRealParaModo(modoParaConcepto(key), rbd, idx1based);
+  const { fuenteKey, tipo, arg } = parseConceptoOF(key);
+  const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const of = ofDeEntidad(rbd, fuenteKey);
+  const corte = realHastaMesOtraFuente(of);
+  if (tipo === 'bys_codigo') return true;
+  if (tipo === 'bys_proy' || tipo === 'bys_proy_item') return false;
+  if (tipo === 'bys_total' && of) {
+    const mes = MESES_CARGA[idx1based - 1];
+    let real = 0, proy = 0;
+    (of.bys_items || []).forEach(it => {
+      const v = (it.meses && it.meses[mes]) || 0;
+      if (f.bysMode === 'compras' || idx1based <= corte) real += v; else proy += v;
+    });
+    (of.bys_proy_items || []).forEach(it => { proy += (it.meses && it.meses[mes]) || 0; });
+    if (real && proy) return null;
+    if (real) return true;
+    if (proy) return false;
+  }
+  return idx1based <= corte;
+}
+
+// ¿Esta entidad (RBD / AC / GESPARVU) participa del concepto? Un par no aplicable (p.ej. un
+// GESPARVU con un concepto de SEP) no genera fila.
+function entidadAplicaConcepto(ent, concepto) {
+  if (concepto.fuente === 'sep') return ent.tipo === 'rbd';
+  const f = FUENTES_OTRAS_BY_KEY[concepto.fuente];
+  return f.universo === 'gesparvu' ? ent.tipo === 'gesparvu' : (ent.tipo === 'rbd' || ent.tipo === 'ac');
 }
 
 // A qué regla real/proyectado (ver esRealParaModo) corresponde cada tipo de concepto del
@@ -5222,6 +5353,7 @@ function buildConceptoCatalog() {
 // proyectado para ESE RBD y ESE concepto en particular (Remuneraciones varía por RBD, el resto
 // es igual para todos).
 function modoParaConcepto(key) {
+  if (key.startsWith('of|')) return 'of'; // las fuentes usan esRealParaConcepto (corte por entidad), no esRealParaModo
   if (key === 'rem') return 'rem';
   if (key === 'bys_proy' || key.startsWith('bys_proy_item|')) return 'bys_proy';
   if (key.startsWith('ingreso|')) return 'ingreso_item';
@@ -5229,6 +5361,7 @@ function modoParaConcepto(key) {
 }
 
 function getConceptoSeries(rbd, key) {
+  if (key.startsWith('of|')) return serieConceptoOF(rbd, key);
   if (key === 'rem') {
     const s = CARGA_MANUAL.rem_por_rbd[rbd];
     return s ? s.meses : {};
@@ -5258,27 +5391,52 @@ function getConceptoSeries(rbd, key) {
 
 // Estado de los filtros: por defecto, todos los RBD, Remuneraciones, y todos los meses — así
 // el reporte muestra algo útil de inmediato y el usuario va acotando desde ahí.
+// Entidades: RBD + "AC" + los 13 GESPARVU (VZ_ENTIDADES), todas marcadas por defecto. El grupo de
+// SEP queda abierto en la lista de conceptos (es lo que ya se veía); los de las fuentes parten
+// cerrados y el usuario los abre (o filtra con los chips / el buscador).
 const reporteState = {
-  rbds: new Set(DATA.registros.map(r => r.rbd)),
+  rbds: new Set(VZ_ENTIDADES.map(e => e.id)),
   conceptos: new Set(['rem']),
   meses: new Set(MESES_CARGA),
+  fuenteVista: 'todas',               // chip de grupo: 'todas' | key de fuente (solo filtra qué se muestra)
+  gruposAbiertos: new Set(['sep']),   // grupos <details> de conceptos abiertos
 };
+
+function reporteSinResultados() { return '<div style="padding:10px; color:var(--text-muted); font-size:12px;">Sin resultados.</div>'; }
 
 function renderReportFilters() {
   const rbdSearch = (document.getElementById('reporteRbdSearch').value || '').toLowerCase();
   const rbdListEl = document.getElementById('reporteRbdList');
-  const rbdRows = DATA.registros.filter(r =>
-    !rbdSearch || r.rbd.toLowerCase().includes(rbdSearch) || r.nombre.toLowerCase().includes(rbdSearch)
+  const entFiltradas = VZ_ENTIDADES.filter(e =>
+    !rbdSearch || e.id.toLowerCase().includes(rbdSearch) || e.nombre.toLowerCase().includes(rbdSearch)
   );
-  rbdListEl.innerHTML = rbdRows.length ? rbdRows.map(r => `
-    <label class="check-row"><input type="checkbox" data-rbd-check="${r.rbd}" ${reporteState.rbds.has(r.rbd) ? 'checked' : ''}> ${r.rbd} — ${r.nombre}</label>
-  `).join('') : '<div style="padding:10px; color:var(--text-muted); font-size:12px;">Sin resultados.</div>';
+  const gruposEnt = [['rbd', 'Establecimientos (RBD)'], ['ac', 'Administración Central'], ['gesparvu', 'GESPARVU (JUNJI)']];
+  rbdListEl.innerHTML = entFiltradas.length ? gruposEnt.map(([t, titulo]) => {
+    const es = entFiltradas.filter(e => e.tipo === t);
+    return es.length ? `<div class="vz-ent-titulo">${titulo}</div>` + es.map(e => `
+    <label class="check-row"><input type="checkbox" data-rbd-check="${e.id}" ${reporteState.rbds.has(e.id) ? 'checked' : ''}> ${e.id} — ${e.nombre}</label>
+  `).join('') : '';
+  }).join('') : reporteSinResultados();
+
+  document.getElementById('reporteFuenteChips').innerHTML =
+    [{ key: 'todas', corto: 'Todas', icono: '' }, ...VZ_FUENTES].map(f =>
+      `<button type="button" class="vz-chip${reporteState.fuenteVista === f.key ? ' active' : ''}" data-reporte-fuente="${f.key}" aria-pressed="${reporteState.fuenteVista === f.key}">${f.icono ? f.icono + ' ' : ''}${f.corto}</button>`).join('');
 
   const conceptoSearch = (document.getElementById('reporteConceptoSearch').value || '').toLowerCase();
-  const catalog = buildConceptoCatalog().filter(c => !conceptoSearch || c.label.toLowerCase().includes(conceptoSearch));
-  document.getElementById('reporteConceptoList').innerHTML = catalog.length ? catalog.map(c => `
-    <label class="check-row"><input type="checkbox" data-concepto-check="${c.key}" ${reporteState.conceptos.has(c.key) ? 'checked' : ''}> ${c.label}</label>
-  `).join('') : '<div style="padding:10px; color:var(--text-muted); font-size:12px;">Sin resultados.</div>';
+  const catalog = buildConceptoCatalog().filter(c =>
+    (reporteState.fuenteVista === 'todas' || c.fuente === reporteState.fuenteVista) &&
+    (!conceptoSearch || c.label.toLowerCase().includes(conceptoSearch)));
+  // Un grupo <details> por fuente (el de SEP primero); con búsqueda activa se abren los grupos con
+  // coincidencias para que se vean, sin tocar el estado de abierto/cerrado guardado.
+  document.getElementById('reporteConceptoList').innerHTML = catalog.length ? VZ_FUENTES.map(f => {
+    const cs = catalog.filter(c => c.fuente === f.key);
+    if (!cs.length) return '';
+    const abierto = conceptoSearch || reporteState.fuenteVista !== 'todas' || reporteState.gruposAbiertos.has(f.key);
+    return `<details class="report-grupo" data-grupo-fuente="${f.key}" ${abierto ? 'open' : ''}>
+      <summary>${f.icono} ${f.corto} <span class="report-grupo-n">(${cs.length})</span></summary>
+      ${cs.map(c => `<label class="check-row"><input type="checkbox" data-concepto-check="${escHtmlOF(c.key)}" ${reporteState.conceptos.has(c.key) ? 'checked' : ''}> ${escHtmlOF(c.label)}</label>`).join('')}
+    </details>`;
+  }).join('') : reporteSinResultados();
 
   document.getElementById('reporteMesList').innerHTML = MESES_CARGA.map((m, i) => `
     <label class="check-row"><input type="checkbox" data-mes-check="${m}" ${reporteState.meses.has(m) ? 'checked' : ''}> ${MESES_CARGA_ABREV[i]}</label>
@@ -5307,9 +5465,24 @@ document.getElementById('reporteMesList').addEventListener('change', (e) => {
 document.getElementById('reporteRbdSearch').addEventListener('input', renderReportFilters);
 document.getElementById('reporteConceptoSearch').addEventListener('input', renderReportFilters);
 document.getElementById('reporteRbdTodos').addEventListener('click', () => {
-  DATA.registros.forEach(r => reporteState.rbds.add(r.rbd));
+  VZ_ENTIDADES.forEach(e => reporteState.rbds.add(e.id));
   renderReportFilters(); renderReporte();
 });
+document.getElementById('reporteFuenteChips').addEventListener('click', (e) => {
+  const chip = e.target.closest('[data-reporte-fuente]');
+  if (!chip) return;
+  reporteState.fuenteVista = chip.getAttribute('data-reporte-fuente');
+  renderReportFilters();
+});
+// `toggle` no burbujea: se escucha en captura para recordar qué grupos de fuente quedaron abiertos
+// (la lista se reconstruye con cada búsqueda / cambio de datos).
+document.getElementById('reporteConceptoList').addEventListener('toggle', (e) => {
+  const d = e.target;
+  if (!d.matches || !d.matches('details[data-grupo-fuente]')) return;
+  if (document.getElementById('reporteConceptoSearch').value || reporteState.fuenteVista !== 'todas') return;
+  const k = d.getAttribute('data-grupo-fuente');
+  if (d.open) reporteState.gruposAbiertos.add(k); else reporteState.gruposAbiertos.delete(k);
+}, true);
 document.getElementById('reporteRbdNinguno').addEventListener('click', () => {
   reporteState.rbds.clear();
   renderReportFilters(); renderReporte();
@@ -5335,7 +5508,7 @@ let currentReporteRows = []; // filas mostradas actualmente (para exportar CSV)
 
 function renderReporte() {
   const mesesSel = MESES_CARGA.filter(m => reporteState.meses.has(m));
-  const rbdsSel = DATA.registros.filter(r => reporteState.rbds.has(r.rbd));
+  const entidadesSel = VZ_ENTIDADES.filter(e => reporteState.rbds.has(e.id));
   const conceptosSel = buildConceptoCatalog().filter(c => reporteState.conceptos.has(c.key));
 
   const colspan = 3 + mesesSel.length + 1;
@@ -5345,12 +5518,14 @@ function renderReporte() {
   document.getElementById('reporteCorteNota').innerHTML =
     `Cada celda se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span> o ` +
     `<span style="background:#fdf1de; color:#a3630a; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
-    `(Ingreso: real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}; Remuneraciones: el corte propio de cada RBD; compras Subt.22/29: siempre reales; Bienes y Servicios Proyección: siempre proyectada) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI.`;
+    `(<b>SEP</b> — Ingreso: real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}; Remuneraciones: el corte propio de cada RBD; compras Subt.22/29: siempre reales; Bienes y Servicios Proyección: siempre proyectada) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
+    `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (por defecto ${MESES_CARGA_TITLE[DATA.n_meses - 1]}); B&S por código (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
+    `Los subtotales de una fuente se colorean solo si todas las entidades coinciden. Un concepto solo genera filas para las entidades que le corresponden (RBD → SEP y fuentes por RBD; AC → fuentes por RBD; GESPARVU → JUNJI y Aporte Fiscal JUNJI).`;
 
   const tbody = document.getElementById('reporteTbody');
 
-  if (!rbdsSel.length || !conceptosSel.length || !mesesSel.length) {
-    tbody.innerHTML = `<tr class="report-empty-row"><td colspan="${colspan}">Selecciona al menos un establecimiento, un concepto y un mes para ver el reporte.</td></tr>`;
+  if (!entidadesSel.length || !conceptosSel.length || !mesesSel.length) {
+    tbody.innerHTML = `<tr class="report-empty-row"><td colspan="${colspan}">Selecciona al menos una entidad, un concepto y un mes para ver el reporte.</td></tr>`;
     currentReporteRows = [];
     document.getElementById('reporteCountChip').textContent = '';
     return;
@@ -5358,23 +5533,32 @@ function renderReporte() {
 
   const rows = [];
   conceptosSel.forEach(c => {
+    const esSep = c.fuente === 'sep';
     const modo = modoParaConcepto(c.key);
     const subtotales = mesesSel.map(() => 0);
-    rbdsSel.forEach(r => {
-      const meses = getConceptoSeries(r.rbd, c.key);
+    // Solo las entidades a las que el concepto les corresponde generan fila (ver entidadAplicaConcepto).
+    const ents = entidadesSel.filter(e => entidadAplicaConcepto(e, c));
+    const filasConcepto = [];
+    ents.forEach(e => {
+      const meses = getConceptoSeries(e.id, c.key);
       const valores = mesesSel.map(m => meses[m] || 0);
-      const realFlags = mesesSel.map(m => esRealParaModo(modo, r.rbd, MESES_CARGA.indexOf(m) + 1));
+      const realFlags = mesesSel.map(m => esRealParaConcepto(e.id, c.key, MESES_CARGA.indexOf(m) + 1));
       valores.forEach((v, i) => { subtotales[i] += v; });
-      rows.push({ rbd: r.rbd, nombre: r.nombre, concepto: c.label, valores, realFlags, total: valores.reduce((s, v) => s + v, 0) });
+      filasConcepto.push({ rbd: e.id, nombre: e.nombre, concepto: c.label, valores, realFlags, total: valores.reduce((s, v) => s + v, 0) });
     });
-    if (rbdsSel.length > 1) {
-      // 'rem' varía por RBD (cada uno tiene su propio corte "reales hasta") — un subtotal mezcla
-      // RBD con cortes distintos, así que no se puede afirmar real/proyectado para ese mes sin
-      // elegir uno arbitrariamente. Los demás modos (ingreso, item, bys_proy) son iguales para
-      // todos los RBD, así que el subtotal sí se puede colorear con cualquiera de referencia.
-      const realFlagsSubtotal = (modo === 'rem')
-        ? mesesSel.map(() => null)
-        : mesesSel.map(m => esRealParaModo(modo, rbdsSel[0].rbd, MESES_CARGA.indexOf(m) + 1));
+    rows.push(...filasConcepto);
+    if (ents.length > 1) {
+      // SEP — 'rem' varía por RBD (cada uno tiene su propio corte "reales hasta"), así que un
+      // subtotal mezcla RBD con cortes distintos y no se colorea; los demás modos de SEP (ingreso,
+      // item, bys_proy) son iguales para todos los RBD y se colorean con uno de referencia.
+      // Fuentes — el subtotal se colorea solo si TODAS las entidades coinciden en ese mes
+      // (mismo real/proyectado, sin celdas mixtas); si no, queda sin color.
+      const realFlagsSubtotal = esSep
+        ? (modo === 'rem' ? mesesSel.map(() => null) : mesesSel.map(m => esRealParaModo(modo, ents[0].id, MESES_CARGA.indexOf(m) + 1)))
+        : mesesSel.map((m, i) => {
+            const f0 = filasConcepto[0].realFlags[i];
+            return (f0 !== null && filasConcepto.every(r => r.realFlags[i] === f0)) ? f0 : null;
+          });
       rows.push({ rbd: '', nombre: '', concepto: `Subtotal — ${c.label}`, valores: subtotales, realFlags: realFlagsSubtotal, total: subtotales.reduce((s, v) => s + v, 0), esSubtotal: true });
     }
   });
@@ -5395,7 +5579,7 @@ function renderReporte() {
 
   currentReporteRows = rows.map(row => ({ ...row, meses: mesesSel }));
   document.getElementById('reporteCountChip').textContent =
-    `${rbdsSel.length} establecimiento${rbdsSel.length !== 1 ? 's' : ''} · ${conceptosSel.length} concepto${conceptosSel.length !== 1 ? 's' : ''} · ${mesesSel.length} mes${mesesSel.length !== 1 ? 'es' : ''}`;
+    `${entidadesSel.length} entidad${entidadesSel.length !== 1 ? 'es' : ''} · ${conceptosSel.length} concepto${conceptosSel.length !== 1 ? 's' : ''} · ${mesesSel.length} mes${mesesSel.length !== 1 ? 'es' : ''}`;
 }
 
 document.getElementById('reporteCsvBtn').addEventListener('click', () => {
@@ -5410,7 +5594,7 @@ document.getElementById('reporteCsvBtn').addEventListener('click', () => {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `reporte_sep_${new Date().toISOString().slice(0,10)}.csv`;
+  a.href = url; a.download = `reporte_personalizado_${new Date().toISOString().slice(0,10)}.csv`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
@@ -5423,7 +5607,7 @@ document.getElementById('reporteExcelBtn').addEventListener('click', () => {
   const aoa = [headers, ...currentReporteRows.map(row => [row.rbd, row.nombre, row.concepto, ...row.valores, row.total])];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'REPORTE');
-  XLSX.writeFile(wb, `reporte_sep_${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.writeFile(wb, `reporte_personalizado_${new Date().toISOString().slice(0,10)}.xlsx`);
 });
 
 document.getElementById('reportePdfBtn').addEventListener('click', () => {

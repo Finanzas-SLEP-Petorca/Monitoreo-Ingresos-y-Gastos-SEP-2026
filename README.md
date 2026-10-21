@@ -21,12 +21,32 @@ La barra de pestañas va en tres grupos, siempre en este orden:
 
 1. **Inicio**: 🏠 **Panel principal** (dashboard, la pestaña que se abre al entrar) y 🎓 **SEP** (lo que antes
    se llamaba "Panel principal": la tabla "Estado por RBD" con la regla 70/30; conserva todo su contenido).
-2. **Fuentes de financiamiento** (una pestaña por fuente, sin selector): Subv. General, PIE, Mantención,
-   Pro-Retención, JUNJI, FAEP, FIGA, Aporte Fiscal Educ. y Aporte Fiscal JUNJI.
+2. **Fuentes de financiamiento** (una pestaña por fuente, sin selector): General, PIE, Mantención,
+   Pro-Retención, JUNJI, FAEP, FIGA, Aporte Educ. y Aporte JUNJI.
 3. **Análisis**: 📉 % Ejecución y 📈 Reportes (siempre al final).
 
-En pantallas angostas la barra se vuelve una sola fila con scroll horizontal; en pantallas anchas envuelve
-por grupos.
+Los rótulos de las fuentes son cortos para que las 13 pestañas quepan en **una sola fila** desde ~1360 px de
+ancho (General, PIE, Mantención, Pro-Retención, JUNJI, FAEP, FIGA, Aporte Educ. y Aporte JUNJI; el nombre
+completo está en el `title` de cada botón y en el título de su pestaña). En pantallas más angostas la barra
+envuelve por grupos y, desde 760 px o menos, pasa a una sola fila con scroll horizontal.
+
+#### % Ejecución por fuente
+
+La pestaña **% Ejecución** tiene una fila de botones para elegir la fuente: **SEP** (comportamiento de
+siempre, contra la meta 70/30), las 9 fuentes y **Consolidado** (SEP + las 9). Para las fuentes que no son
+SEP no hay meta ni techo, así que el % de ejecución se define **sobre el Ingreso anual Total (Real+Proy)** de
+la selección (suma de sus líneas de ingreso, 3 en JUNJI):
+
+- % Ejec. Remuneraciones acumulado = Σ gasto en Remuneraciones hasta el mes / Ingreso anual Total.
+- % Ejec. B&S acumulado = Σ gasto en Bienes y Servicios hasta el mes / Ingreso anual Total.
+- % Ejec. Total acumulado = (Remuneraciones + B&S) acumulado / Ingreso anual Total.
+- Las tarjetas muestran cada % en **Real** (solo lo ejecutado) y **Real+Proy a diciembre**; el denominador
+  es siempre el Ingreso anual Total, así que el % Real nunca supera al de diciembre.
+- La tabla mensual marca cada mes **Real / Proy. / Mixto** según el "Real hasta" de cada entidad (Mixto =
+  la selección agregada tiene entidades con cortes distintos ese mes); en el gráfico la línea sólida llega
+  hasta el menor corte y el resto va punteado. Sin ingreso cargado se muestra "—" y un aviso, nunca NaN.
+- Las partes mensuales (`partesMensualesOtraFuente` / `partesMensualesSep`) son las mismas que usa el
+  dashboard, así que "Consolidado" cuadra con el panel principal.
 
 El **Panel principal** resume SEP + las 9 fuentes de un vistazo (todo en tiempo real, sin cargar nada aparte):
 

@@ -48,6 +48,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     --border:         rgba(17,24,39,0.09);
     --series-1: #2563eb;
     --series-2: #eb6834;
+    --series-3: #475569;
     --status-good: #15803d;
     --status-warning: #b45309;
     --status-serious: #ec835a;
@@ -76,8 +77,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
      concepto cae siempre en la misma columna de arriba a abajo, y las 3 tarjetas propias de Total
      (sin Real/Proyectado) simplemente pasan a una segunda línea de esa misma grilla. */
   .kpi-row { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:8px; margin-bottom:14px; }
+  /* % Ejecución de las fuentes distintas de SEP: 6 tarjetas (Rem/B&S/Total × Real y a diciembre) en 3 columnas. */
+  .kpi-row.kpi-row-3 { grid-template-columns:repeat(3, minmax(0,1fr)); }
   @media (max-width:900px) {
-    .kpi-row { grid-template-columns:repeat(2, minmax(0,1fr)); }
+    .kpi-row, .kpi-row.kpi-row-3 { grid-template-columns:repeat(2, minmax(0,1fr)); }
   }
   .kpi-row.kpi-row-collapsed { display:none; }
   .kpi-section-label { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary); margin:0 0 6px 2px; background:none; border:none; padding:2px; cursor:pointer; font-family:inherit; }
@@ -270,6 +273,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     /* Pestañas de fuente con las 3 filas KPI abiertas: el panel no debe encogerse por debajo de su
        contenido fijo (si no, la tabla se dibuja fuera del borde del panel) — mejor que scrollee la página. */
     .tab-content[id^="tab-of-"] > section, .tab-content[id^="tab-of-"] > section > .panel { min-height:min-content; }
+    /* % Ejecución: con la fila de chips y las 6 tarjetas el contenido fijo supera una pantalla normal;
+       el panel debe envolverlo completo (y scrollea la página) en vez de dibujar la tabla fuera de su borde. */
+    #tab-ejecucion > section, #tab-ejecucion > section > .panel { min-height:min-content; }
   }
 
   @media print {
@@ -379,7 +385,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   /* ---- BARRA DE PESTAÑAS agrupada: inicio (Panel principal/SEP) | fuentes | análisis ---- */
   .tab-bar { display:flex; gap:8px; margin-bottom:16px; padding:0; background:none; border:none; box-shadow:none; width:auto; max-width:100%; flex-wrap:wrap; align-items:stretch; }
   .tab-group { display:flex; gap:2px; padding:4px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; box-shadow:0 1px 3px rgba(17,24,39,0.05); flex-wrap:nowrap; }
-  .tab-btn { padding:8px 11px; border:none; background:none; font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:7px; white-space:nowrap; }
+  .tab-btn { padding:8px 9px; border:none; background:none; font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:7px; white-space:nowrap; }
   .tab-btn:hover { color:var(--text-primary); background:var(--page-plane); }
   .tab-btn.active { color:var(--series-1); background:var(--tone-blue-bg); }
   @media (max-width:560px) { .user-box { flex-wrap:wrap; white-space:normal; } .header-right { align-items:flex-start; } }
@@ -555,6 +561,13 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .ejec-delta-flat { color:var(--text-muted); }
   #ejecTable td.mes-real { background:rgba(12,163,92,0.06); }
   #ejecTable td.mes-proy { background:rgba(224,138,0,0.06); }
+  #ejecTable td.mes-mixto { background:rgba(100,116,139,0.12); }
+  .ejec-toggle[hidden] { display:none; }
+  .ejec-toggle input[type="checkbox"] { flex:none; min-width:0; padding:0; margin:0; }
+  .ejec-fuente-row { margin-bottom:10px; align-items:center; }
+  .ejec-fuente-label { font-size:12.5px; font-weight:600; color:var(--text-secondary); }
+  .of-chips.ejec-chips { flex-wrap:wrap; }
+  .ejec-nota-fuente { margin-top:8px; }
 
   /* ---- Fila: RBD/Establecimiento clickeables (abren el modal de detalle) ---- */
   .rbd-clickable { cursor:pointer; }
@@ -641,15 +654,15 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <button class="tab-btn" data-tab="panel" type="button">🎓 SEP</button>
     </div>
     <div class="tab-group" aria-label="Fuentes de financiamiento">
-      <button class="tab-btn" data-tab="of-general" type="button">💰 Subv. General</button>
+      <button class="tab-btn" data-tab="of-general" type="button" title="Subvención General">💰 General</button>
       <button class="tab-btn" data-tab="of-pie" type="button">🧩 PIE</button>
       <button class="tab-btn" data-tab="of-mantenimiento" type="button">🔧 Mantención</button>
       <button class="tab-btn" data-tab="of-prorretencion" type="button">📌 Pro-Retención</button>
       <button class="tab-btn" data-tab="of-junji" type="button">🧸 JUNJI</button>
       <button class="tab-btn" data-tab="of-faep" type="button">🏗️ FAEP</button>
       <button class="tab-btn" data-tab="of-figa" type="button">🌐 FIGA</button>
-      <button class="tab-btn" data-tab="of-aporte_educ" type="button">🏛️ Aporte Fiscal Educ.</button>
-      <button class="tab-btn" data-tab="of-aporte_junji" type="button">🍼 Aporte Fiscal JUNJI</button>
+      <button class="tab-btn" data-tab="of-aporte_educ" type="button" title="Aporte Fiscal Extraordinario Educación">🏛️ Aporte Educ.</button>
+      <button class="tab-btn" data-tab="of-aporte_junji" type="button" title="Aporte Fiscal Extraordinario JUNJI">🍼 Aporte JUNJI</button>
     </div>
     <div class="tab-group" aria-label="Análisis">
       <button class="tab-btn" data-tab="ejecucion" type="button">📉 % Ejecución</button>
@@ -856,13 +869,18 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <div id="tab-ejecucion" class="tab-content hidden">
     <section>
-      <h2>% Ejecución SEP</h2>
+      <h2 id="ejecTitulo">% Ejecución — SEP</h2>
       <div class="panel">
+        <div class="table-controls ejec-fuente-row">
+          <span class="ejec-fuente-label">Fuente:</span>
+          <span class="of-chips ejec-chips" id="ejecFuenteChips" role="group" aria-label="Fuente de financiamiento"></span>
+        </div>
         <div class="table-controls">
           <select id="ejecRbdSelect"></select>
           <div class="ejec-toggle-group">
-            <label class="ejec-toggle"><input type="checkbox" id="ejecShowRem" checked><span class="ejec-legend-dot" style="background:var(--series-1)"></span>Remuneraciones (Subt. 21)</label>
-            <label class="ejec-toggle"><input type="checkbox" id="ejecShowBys" checked><span class="ejec-legend-dot" style="background:var(--series-2)"></span>Bienes y Servicios (22+29)</label>
+            <label class="ejec-toggle"><input type="checkbox" id="ejecShowRem" checked><span class="ejec-legend-dot" style="background:var(--series-1)"></span><span id="ejecLblRem">Remuneraciones (Subt. 21)</span></label>
+            <label class="ejec-toggle"><input type="checkbox" id="ejecShowBys" checked><span class="ejec-legend-dot" style="background:var(--series-2)"></span><span id="ejecLblBys">Bienes y Servicios (22+29)</span></label>
+            <label class="ejec-toggle" id="ejecToggleTotalWrap" hidden><input type="checkbox" id="ejecShowTotal" checked><span class="ejec-legend-dot" style="background:var(--series-3)"></span>Total (Rem. + B&amp;S)</label>
           </div>
           <button id="ejecPdfBtn" type="button" style="background:#374151; border-color:#374151;" title="PDF con el filtro, las tarjetas % y el gráfico actuales">🖨 Exportar PDF</button>
         </div>
@@ -1349,8 +1367,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         colorea real/proyectada igual que en el detalle de cada RBD. Se puede descargar en CSV, Excel o PDF.</p>
 
         <h4>9. Pestaña "% Ejecución"</h4>
-        <p>Muestra, mes a mes, cómo va el ritmo de gasto de Remuneraciones y Bienes y Servicios contra la meta anual
-        (70%/30%), para un establecimiento o para todos juntos.</p>
+        <p>Muestra, mes a mes, cómo va el ritmo de gasto de Remuneraciones y Bienes y Servicios, para una entidad o
+        para todas juntas. Arriba se elige la fuente con los botones (SEP, General, PIE, etc. y "Consolidado"): en
+        SEP se mide contra la meta anual 70%/30%; en las demás fuentes, que no tienen meta, se mide contra el
+        Ingreso anual Total (Real+Proyectado) de lo que estés viendo.</p>
 
         <h4>10. Exportar e imprimir</h4>
         <p>Cada fila tiene botones para descargar el Excel o el CSV SUPEREDUC solo de ese establecimiento, y un
@@ -4265,11 +4285,22 @@ function renderDashComposicion(fuentes) {
 // proyección de B&S siempre proyectada). Es la serie enero–diciembre completa: no depende del
 // selector "Ver resumen hasta el mes" de SEP. ---
 function serieMensualVacia() { return { ing: new Array(12).fill(0), gas: new Array(12).fill(0) }; }
-function serieMensualOtraFuente(fuenteKey, out) {
+// Partes mensuales (ingreso / remuneraciones / B&S, cada una separada en real y proyectado) de una
+// fuente — base común del dashboard (serieMensualOtraFuente/serieMensualSep) y de % Ejecución
+// (computeEjecucionSerieFuente), para que ambos cuadren siempre. `entidadFiltro` (opcional) limita
+// a una sola entidad. Devuelven los cortes "real hasta" de las entidades consideradas.
+function z12() { return new Array(12).fill(0); }
+function partesVacias() {
+  return { real: { ing: z12(), rem: z12(), bys: z12() }, proy: { ing: z12(), rem: z12(), bys: z12() } };
+}
+function partesMensualesOtraFuente(fuenteKey, out, entidadFiltro) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const cortes = [];
   filasOtrasFuentes(fuenteKey).forEach(r => {
+    if (entidadFiltro && r.rbd !== entidadFiltro) return;
     const of = recomputeOtraFuente(r.rbd, fuenteKey);
     const corte = realHastaMesOtraFuente(of);
+    cortes.push(corte);
     const sumar = (meses, tipo, siempre) => MESES_CARGA.forEach((m, i) => {
       const v = Number(meses && meses[m]) || 0;
       const k = siempre || (i + 1 <= corte ? 'real' : 'proy');
@@ -4277,26 +4308,45 @@ function serieMensualOtraFuente(fuenteKey, out) {
     });
     const lineasIng = fuente.incomeShape === 'junji3' ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente] : [of.ingreso];
     lineasIng.forEach(l => sumar(l && l.meses, 'ing'));
-    sumar(of.gasto_rem && of.gasto_rem.meses, 'gas');
+    sumar(of.gasto_rem && of.gasto_rem.meses, 'rem');
     if (fuente.bysMode === 'compras') {
-      (of.bys_items || []).forEach(it => sumar(it.meses, 'gas', 'real'));
-      (of.bys_proy_items || []).forEach(it => sumar(it.meses, 'gas', 'proy'));
+      (of.bys_items || []).forEach(it => sumar(it.meses, 'bys', 'real'));
+      (of.bys_proy_items || []).forEach(it => sumar(it.meses, 'bys', 'proy'));
     } else {
-      (of.bys_items || []).forEach(it => sumar(it.meses, 'gas'));
+      (of.bys_items || []).forEach(it => sumar(it.meses, 'bys'));
     }
   });
+  return cortes;
 }
-function serieMensualSep(out) {
+function partesMensualesSep(out) {
+  const cortes = [DATA.n_meses];
   DATA.registros.forEach(r => {
     const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
     const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
     const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
     const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
     if (ing) ing.items.forEach(it => MESES_CARGA.forEach((m, i) => { out[i + 1 <= DATA.n_meses ? 'real' : 'proy'].ing[i] += Number(it.meses[m]) || 0; }));
-    if (rem) { const hasta = rem.real_hasta_mes || DATA.n_meses; MESES_CARGA.forEach((m, i) => { out[i + 1 <= hasta ? 'real' : 'proy'].gas[i] += Number(rem.meses[m]) || 0; }); }
-    if (ag) ag.items.forEach(it => MESES_CARGA.forEach((m, i) => { out.real.gas[i] += Number(it.meses[m]) || 0; }));
-    if (bp) MESES_CARGA.forEach((m, i) => { out.proy.gas[i] += Number(bp.meses[m]) || 0; });
+    if (rem) { const hasta = rem.real_hasta_mes || DATA.n_meses; cortes.push(hasta); MESES_CARGA.forEach((m, i) => { out[i + 1 <= hasta ? 'real' : 'proy'].rem[i] += Number(rem.meses[m]) || 0; }); }
+    if (ag) ag.items.forEach(it => MESES_CARGA.forEach((m, i) => { out.real.bys[i] += Number(it.meses[m]) || 0; }));
+    if (bp) MESES_CARGA.forEach((m, i) => { out.proy.bys[i] += Number(bp.meses[m]) || 0; });
   });
+  return cortes;
+}
+function sumarPartesASerie(p, out) {
+  ['real', 'proy'].forEach(k => MESES_CARGA.forEach((_, i) => {
+    out[k].ing[i] += p[k].ing[i];
+    out[k].gas[i] += p[k].rem[i] + p[k].bys[i];
+  }));
+}
+function serieMensualOtraFuente(fuenteKey, out) {
+  const p = partesVacias();
+  partesMensualesOtraFuente(fuenteKey, p);
+  sumarPartesASerie(p, out);
+}
+function serieMensualSep(out) {
+  const p = partesVacias();
+  partesMensualesSep(p);
+  sumarPartesASerie(p, out);
 }
 function computeSerieMensualDashboard() {
   const out = { real: serieMensualVacia(), proy: serieMensualVacia() };
@@ -4752,12 +4802,119 @@ function computeEjecucionSerie(rbdFiltro) {
   return { serie, metaRemAnual, metaBysAnual };
 }
 
+// ---- % Ejecución por fuente de financiamiento --------------------------------------------------
+// Un chip por fuente (más "Consolidado"). SEP sigue exactamente como siempre (meta 70/30). Las
+// demás fuentes NO tienen techo/meta: su % de ejecución se mide contra el Ingreso anual Total
+// (Real+Proy) de la selección — % Rem. acum. = Σ gasto Rem. hasta el mes / Ingreso anual Total, y
+// lo mismo para B&S y para el Total (Rem.+B&S). Los meses se clasifican Real/Proy/Mixto según el
+// "Real hasta" de cada entidad (Mixto = la selección agregada tiene entidades con cortes
+// distintos ese mes). Las partes mensuales salen de las mismas funciones que usa el dashboard.
+const EJEC_FUENTES = [
+  { key: 'sep', label: 'SEP', titulo: 'SEP' },
+  { key: 'general', label: 'General' },
+  { key: 'pie', label: 'PIE' },
+  { key: 'mantenimiento', label: 'Mantención' },
+  { key: 'prorretencion', label: 'Pro-Retención' },
+  { key: 'junji', label: 'JUNJI' },
+  { key: 'faep', label: 'FAEP' },
+  { key: 'figa', label: 'FIGA' },
+  { key: 'aporte_educ', label: 'Aporte Educ.' },
+  { key: 'aporte_junji', label: 'Aporte JUNJI' },
+  { key: 'consolidado', label: 'Consolidado', titulo: 'Consolidado (SEP + todas las fuentes)' },
+];
+let ejecFuenteSel = 'sep';
+function ejecTituloFuente(key) {
+  const f = EJEC_FUENTES.find(x => x.key === key);
+  if (f && f.titulo) return f.titulo;
+  const fo = FUENTES_OTRAS_BY_KEY[key];
+  return fo ? fo.label : key;
+}
+const EJEC_THEAD_SEP = document.querySelector('#ejecTable thead').innerHTML;
+const EJEC_THEAD_FUENTE = `<tr>
+  <th>Mes</th><th>Tipo</th>
+  <th class="num">Ingreso (mes)</th>
+  <th class="num">Gasto Rem. (mes)</th><th class="num">Δ vs mes ant.</th><th class="num">% Ejec. Rem. acum.</th>
+  <th class="num">Gasto B&amp;S (mes)</th><th class="num">Δ vs mes ant.</th><th class="num">% Ejec. B&amp;S acum.</th>
+  <th class="num">% Ejec. Total acum.</th>
+</tr>`;
+
+function computeEjecucionSerieFuente(fuenteKey, entidadFiltro) {
+  const p = partesVacias();
+  let cortes;
+  if (fuenteKey === 'consolidado') {
+    cortes = partesMensualesSep(p);
+    FUENTES_OTRAS.forEach(f => { cortes = cortes.concat(partesMensualesOtraFuente(f.key, p)); });
+  } else {
+    cortes = partesMensualesOtraFuente(fuenteKey, p, entidadFiltro || null);
+  }
+  const sum = a => a.reduce((t, v) => t + v, 0);
+  const corteMin = cortes.length ? Math.min(...cortes) : DATA.n_meses;
+  const corteMax = cortes.length ? Math.max(...cortes) : DATA.n_meses;
+  const ingresoAnual = sum(p.real.ing) + sum(p.proy.ing);
+  const pct = v => (ingresoAnual > 0 ? (v / ingresoAnual) * 100 : null);
+  let cumRem = 0, cumBys = 0;
+  const serie = MESES_CARGA.map((mes, i) => {
+    const idx = i + 1;
+    const ingresoMes = p.real.ing[i] + p.proy.ing[i];
+    const gastoRemMes = p.real.rem[i] + p.proy.rem[i];
+    const gastoBysMes = p.real.bys[i] + p.proy.bys[i];
+    cumRem += gastoRemMes; cumBys += gastoBysMes;
+    const tipo = idx <= corteMin ? 'real' : (idx > corteMax ? 'proy' : 'mixto');
+    return {
+      mes, idx, tipo, esReal: tipo === 'real', ingresoMes, gastoRemMes, gastoBysMes,
+      pctRemAcum: pct(cumRem), pctBysAcum: pct(cumBys), pctTotalAcum: pct(cumRem + cumBys),
+    };
+  });
+  const realRem = sum(p.real.rem), realBys = sum(p.real.bys);
+  const totRem = realRem + sum(p.proy.rem), totBys = realBys + sum(p.proy.bys);
+  return {
+    serie, ingresoAnual, corteMin, corteMax, nEntidades: cortes.length,
+    real: { rem: realRem, bys: realBys, total: realRem + realBys, pctRem: pct(realRem), pctBys: pct(realBys), pctTotal: pct(realRem + realBys) },
+    anual: { rem: totRem, bys: totBys, total: totRem + totBys, pctRem: pct(totRem), pctBys: pct(totBys), pctTotal: pct(totRem + totBys) },
+  };
+}
+
+function ejecSyncControles() {
+  const key = ejecFuenteSel, esSep = key === 'sep';
+  document.getElementById('ejecTitulo').textContent = '% Ejecución — ' + ejecTituloFuente(key);
+  document.querySelectorAll('#ejecFuenteChips .of-chip').forEach(b => {
+    const on = b.dataset.ejecFuente === key;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  document.getElementById('ejecLblRem').textContent = esSep ? 'Remuneraciones (Subt. 21)' : 'Remuneraciones';
+  document.getElementById('ejecLblBys').textContent = esSep ? 'Bienes y Servicios (22+29)' : 'Bienes y Servicios';
+  document.getElementById('ejecToggleTotalWrap').hidden = esSep;
+  document.getElementById('ejecKpiRow').classList.toggle('kpi-row-3', !esSep);
+  const thead = document.querySelector('#ejecTable thead');
+  const modo = esSep ? 'sep' : 'fuente';
+  if (thead.dataset.modo !== modo) { thead.innerHTML = esSep ? EJEC_THEAD_SEP : EJEC_THEAD_FUENTE; thead.dataset.modo = modo; }
+}
+
+document.getElementById('ejecFuenteChips').innerHTML = EJEC_FUENTES.map(f =>
+  `<button type="button" class="of-chip" data-ejec-fuente="${f.key}" title="${ejecTituloFuente(f.key)}">${f.label}</button>`).join('');
+document.getElementById('ejecFuenteChips').addEventListener('click', (e) => {
+  const b = e.target.closest('.of-chip');
+  if (!b || b.dataset.ejecFuente === ejecFuenteSel) return;
+  ejecFuenteSel = b.dataset.ejecFuente;
+  renderEjecucion();
+});
+
 function renderEjecucionFiltros() {
   const sel = document.getElementById('ejecRbdSelect');
-  if (sel.dataset.built) return; // la lista de RBD es estática — se construye una sola vez
-  sel.innerHTML = `<option value="">Todos los RBD (agregado)</option>` +
-    DATA.registros.map(r => `<option value="${r.rbd}">${r.rbd} — ${r.nombre}</option>`).join('');
-  sel.dataset.built = '1';
+  const key = ejecFuenteSel;
+  if (sel.dataset.built === key) return; // la lista de entidades solo se reconstruye al cambiar de fuente
+  if (key === 'sep') {
+    sel.innerHTML = `<option value="">Todos los RBD (agregado)</option>` +
+      DATA.registros.map(r => `<option value="${r.rbd}">${r.rbd} — ${r.nombre}</option>`).join('');
+  } else if (key === 'consolidado') {
+    sel.innerHTML = `<option value="">Todas las entidades (agregado)</option>`;
+  } else {
+    sel.innerHTML = `<option value="">Todas las entidades (agregado)</option>` +
+      filasOtrasFuentes(key).map(r => `<option value="${r.rbd}">${r.rbd} — ${r.nombre}</option>`).join('');
+  }
+  sel.disabled = key === 'consolidado';
+  sel.dataset.built = key;
 }
 
 function deltaHTML(actual, anterior) {
@@ -4771,15 +4928,18 @@ function deltaHTML(actual, anterior) {
 
 // Construye el SVG del gráfico (sin dependencias externas) y devuelve además x(i) y el layout,
 // para que renderEjecucion() pueda posicionar el crosshair/tooltip sobre las mismas coordenadas.
-function ejecucionChartSVG(serie, showRem, showBys) {
+// `opts` (solo para las fuentes distintas de SEP): { corteIdx, showTotal, metaLabel, marginRight }.
+// Sin opts el SVG es exactamente el de SEP de siempre.
+function ejecucionChartSVG(serie, showRem, showBys, opts) {
+  opts = opts || {};
   const W = 900, H = 320;
-  const margin = { left: 44, right: 54, top: 16, bottom: 30 };
+  const margin = { left: 44, right: opts.marginRight || 54, top: 16, bottom: 30 };
   const plotW = W - margin.left - margin.right;
   const plotH = H - margin.top - margin.bottom;
   const n = serie.length;
 
   const values = [];
-  serie.forEach(m => { if (showRem) values.push(m.pctRemAcum); if (showBys) values.push(m.pctBysAcum); });
+  serie.forEach(m => { if (showRem) values.push(m.pctRemAcum); if (showBys) values.push(m.pctBysAcum); if (opts.showTotal) values.push(m.pctTotalAcum); });
   const maxVal = values.length ? Math.max(...values, 0) : 0;
   const yMax = Math.max(100, Math.ceil((maxVal + 5) / 25) * 25);
 
@@ -4796,10 +4956,10 @@ function ejecucionChartSVG(serie, showRem, showBys) {
   const meta100Y = y(100);
   const metaLine = `
     <line class="ejec-meta-line" x1="${margin.left}" x2="${W - margin.right}" y1="${meta100Y}" y2="${meta100Y}"></line>
-    <text class="ejec-axis-label" x="${W - margin.right + 6}" y="${meta100Y + 3}">100% meta</text>
+    <text class="ejec-axis-label" x="${W - margin.right + 6}" y="${meta100Y + 3}">${opts.metaLabel || '100% meta'}</text>
   `;
 
-  const corteIdx = Math.max(1, Math.min(n, corteMesIdx));
+  const corteIdx = Math.max(1, Math.min(n, opts.corteIdx || corteMesIdx));
   const corteX = x(corteIdx - 1);
   const corteLine = corteIdx < n ? `
     <line class="ejec-corte-line" x1="${corteX}" x2="${corteX}" y1="${margin.top}" y2="${margin.top + plotH}"></line>
@@ -4823,6 +4983,7 @@ function ejecucionChartSVG(serie, showRem, showBys) {
 
   const remPath = showRem ? seriePath('pctRemAcum', 'var(--series-1)') : '';
   const bysPath = showBys ? seriePath('pctBysAcum', 'var(--series-2)') : '';
+  const totPath = opts.showTotal ? seriePath('pctTotalAcum', 'var(--series-3)') : '';
 
   const colW = n > 1 ? plotW / (n - 1) : plotW;
   const hitCols = serie.map((m, i) => {
@@ -4831,7 +4992,7 @@ function ejecucionChartSVG(serie, showRem, showBys) {
   }).join('');
 
   const svg = `<svg viewBox="0 0 ${W} ${H}">
-    ${gridlines}${metaLine}${corteLine}${remPath}${bysPath}${monthLabels}
+    ${gridlines}${metaLine}${corteLine}${remPath}${bysPath}${totPath}${monthLabels}
     <line class="ejec-crosshair" id="ejecCrosshair" x1="0" x2="0" y1="${margin.top}" y2="${margin.top + plotH}"></line>
     ${hitCols}
   </svg>`;
@@ -4839,8 +5000,97 @@ function ejecucionChartSVG(serie, showRem, showBys) {
   return { svg, x };
 }
 
+// Crosshair + tooltip sobre las columnas del gráfico (común a SEP y a las demás fuentes).
+function ejecWireTooltip(wrap, chart, serie, htmlFor) {
+  const crosshair = wrap.querySelector('#ejecCrosshair');
+  const tooltip = wrap.querySelector('#ejecTooltip');
+  wrap.querySelectorAll('.ejec-hit-col').forEach(col => {
+    const idx = Number(col.getAttribute('data-idx'));
+    const mostrar = () => {
+      crosshair.style.opacity = '1';
+      crosshair.setAttribute('x1', chart.x(idx));
+      crosshair.setAttribute('x2', chart.x(idx));
+      const wrapRect = wrap.getBoundingClientRect();
+      const colRect = col.getBoundingClientRect();
+      tooltip.style.left = `${colRect.left - wrapRect.left + colRect.width / 2}px`;
+      tooltip.style.top = `${colRect.top - wrapRect.top + 4}px`;
+      tooltip.innerHTML = htmlFor(serie[idx], idx);
+      tooltip.style.opacity = '1';
+    };
+    col.addEventListener('pointerenter', mostrar);
+    col.addEventListener('pointermove', mostrar);
+    col.addEventListener('pointerleave', () => { crosshair.style.opacity = '0'; tooltip.style.opacity = '0'; });
+  });
+}
+
+function ejecPctTxt(v) { return v === null || v === undefined ? '—' : v.toFixed(1) + '%'; }
+const EJEC_TIPO_TXT = { real: 'Real', proy: 'Proy.', mixto: 'Mixto' };
+
+function renderEjecucionFuente() {
+  const key = ejecFuenteSel;
+  const entidad = key === 'consolidado' ? null : (document.getElementById('ejecRbdSelect').value || null);
+  const showRem = document.getElementById('ejecShowRem').checked;
+  const showBys = document.getElementById('ejecShowBys').checked;
+  const showTotal = document.getElementById('ejecShowTotal').checked;
+  const r = computeEjecucionSerieFuente(key, entidad);
+  const { serie } = r;
+  const sinIngreso = r.ingresoAnual <= 0;
+
+  const mesNom = i => MESES_CARGA_TITLE[i - 1];
+  const corteTxt = r.corteMin === r.corteMax ? `hasta ${mesNom(r.corteMin)}` : `entre ${mesNom(r.corteMin)} y ${mesNom(r.corteMax)} (cortes distintos entre entidades)`;
+  const baseTxt = key === 'consolidado'
+    ? `Consolidado: suma SEP y las 9 fuentes (en SEP el ingreso es real hasta ${mesNom(DATA.n_meses)} y las remuneraciones hasta el corte de cada RBD). `
+    : '';
+  document.getElementById('ejecCorteNota').textContent = sinIngreso
+    ? `${baseTxt}Sin ingreso cargado para esta selección: el % de ejecución se calcula contra el Ingreso anual Total (Real+Proy) y no se puede calcular todavía.`
+    : `${baseTxt}Sin meta: el % se calcula contra el Ingreso anual Total (Real+Proy) de la selección (${fmtCLP(r.ingresoAnual)}). Corte real/proyectado: "Real hasta" de cada entidad — ${corteTxt}.`;
+
+  const mk = (label, v, full) => ({ label, value: ejecPctTxt(v), full, critical: v !== null && v >= 100 });
+  const base = sinIngreso ? 'Sin ingreso cargado' : null;
+  document.getElementById('ejecKpiRow').innerHTML = [
+    mk('% Ejec. Remuneraciones — Real', r.real.pctRem, base || `Solo lo ejecutado (${fmtCLP(r.real.rem)}) sobre el Ingreso anual Total`),
+    mk('% Ejec. B&S — Real', r.real.pctBys, base || `Solo lo ejecutado (${fmtCLP(r.real.bys)}) sobre el Ingreso anual Total`),
+    mk('% Ejec. Total — Real', r.real.pctTotal, base || `Rem. + B&S ejecutados (${fmtCLP(r.real.total)}) sobre el Ingreso anual Total`),
+    mk('% Ejec. Remuneraciones — Real+Proy a diciembre', r.anual.pctRem, base || `Acumulado a diciembre incluyendo lo proyectado (${fmtCLP(r.anual.rem)})`),
+    mk('% Ejec. B&S — Real+Proy a diciembre', r.anual.pctBys, base || `Acumulado a diciembre incluyendo lo proyectado (${fmtCLP(r.anual.bys)})`),
+    mk('% Ejec. Total — Real+Proy a diciembre', r.anual.pctTotal, base || `Rem. + B&S a diciembre (${fmtCLP(r.anual.total)}) sobre el Ingreso anual Total`),
+  ].map(k => `<div class="kpi-card${k.critical ? ' critical' : ''}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div></div>`).join('');
+
+  const wrap = document.getElementById('ejecChartWrap');
+  if (sinIngreso) {
+    wrap.innerHTML = '<div class="detalle-empty">Sin ingreso cargado para esta selección — el gráfico aparece cuando hay Ingreso anual Total para medir el % de ejecución.</div>';
+  } else {
+    const chart = ejecucionChartSVG(serie, showRem, showBys, { corteIdx: r.corteMin, showTotal, metaLabel: '100% del ingreso', marginRight: 92 });
+    wrap.innerHTML = chart.svg + '<div class="ejec-tooltip" id="ejecTooltip"></div>';
+    ejecWireTooltip(wrap, chart, serie, (m, idx) =>
+      `<div class="tt-title">${MESES_CARGA_TITLE[idx]} · ${m.tipo === 'real' ? 'Real' : m.tipo === 'proy' ? 'Proyectado' : 'Mixto'}</div>` +
+      `<div class="tt-row">Ingreso del mes: <strong>${fmtCLP(m.ingresoMes)}</strong></div>` +
+      (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Remuneraciones: <strong>${ejecPctTxt(m.pctRemAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes)} ese mes)</div>` : '') +
+      (showBys ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-2)"></span>Bienes y Servicios: <strong>${ejecPctTxt(m.pctBysAcum)}</strong> acum. (${fmtCLP(m.gastoBysMes)} ese mes)</div>` : '') +
+      (showTotal ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-3)"></span>Total: <strong>${ejecPctTxt(m.pctTotalAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes + m.gastoBysMes)} ese mes)</div>` : ''));
+  }
+
+  document.getElementById('ejecTbody').innerHTML = serie.map((m, i) => {
+    const prev = i > 0 ? serie[i - 1] : null;
+    return `<tr>
+      <td>${MESES_CARGA_TITLE[i]}</td>
+      <td class="mes-${m.tipo}">${EJEC_TIPO_TXT[m.tipo]}</td>
+      <td class="num">${fmtCLP(m.ingresoMes)}</td>
+      <td class="num">${fmtCLP(m.gastoRemMes)}</td>
+      <td class="num">${deltaHTML(m.gastoRemMes, prev ? prev.gastoRemMes : undefined)}</td>
+      <td class="num">${ejecPctTxt(m.pctRemAcum)}</td>
+      <td class="num">${fmtCLP(m.gastoBysMes)}</td>
+      <td class="num">${deltaHTML(m.gastoBysMes, prev ? prev.gastoBysMes : undefined)}</td>
+      <td class="num">${ejecPctTxt(m.pctBysAcum)}</td>
+      <td class="num">${ejecPctTxt(m.pctTotalAcum)}</td>
+    </tr>`;
+  }).join('');
+}
+
 function renderEjecucion() {
+  ejecSyncControles();
   renderEjecucionFiltros();
+  if (ejecFuenteSel !== 'sep') { renderEjecucionFuente(); return; }
   const rbdFiltro = document.getElementById('ejecRbdSelect').value || null;
   const showRem = document.getElementById('ejecShowRem').checked;
   const showBys = document.getElementById('ejecShowBys').checked;
@@ -4864,28 +5114,10 @@ function renderEjecucion() {
   const wrap = document.getElementById('ejecChartWrap');
   wrap.innerHTML = chart.svg + '<div class="ejec-tooltip" id="ejecTooltip"></div>';
 
-  const crosshair = wrap.querySelector('#ejecCrosshair');
-  const tooltip = wrap.querySelector('#ejecTooltip');
-  wrap.querySelectorAll('.ejec-hit-col').forEach(col => {
-    const idx = Number(col.getAttribute('data-idx'));
-    const mostrar = () => {
-      const m = serie[idx];
-      crosshair.style.opacity = '1';
-      crosshair.setAttribute('x1', chart.x(idx));
-      crosshair.setAttribute('x2', chart.x(idx));
-      const wrapRect = wrap.getBoundingClientRect();
-      const colRect = col.getBoundingClientRect();
-      tooltip.style.left = `${colRect.left - wrapRect.left + colRect.width / 2}px`;
-      tooltip.style.top = `${colRect.top - wrapRect.top + 4}px`;
-      tooltip.innerHTML = `<div class="tt-title">${MESES_CARGA_TITLE[idx]} · ${m.esReal ? 'Real' : 'Proyectado'}</div>` +
-        (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Remuneraciones: <strong>${m.pctRemAcum.toFixed(1)}%</strong> acum. (${fmtCLP(m.gastoRemMes)} ese mes)</div>` : '') +
-        (showBys ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-2)"></span>Bienes y Servicios: <strong>${m.pctBysAcum.toFixed(1)}%</strong> acum. (${fmtCLP(m.gastoBysMes)} ese mes)</div>` : '');
-      tooltip.style.opacity = '1';
-    };
-    col.addEventListener('pointerenter', mostrar);
-    col.addEventListener('pointermove', mostrar);
-    col.addEventListener('pointerleave', () => { crosshair.style.opacity = '0'; tooltip.style.opacity = '0'; });
-  });
+  ejecWireTooltip(wrap, chart, serie, (m, idx) =>
+    `<div class="tt-title">${MESES_CARGA_TITLE[idx]} · ${m.esReal ? 'Real' : 'Proyectado'}</div>` +
+    (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Remuneraciones: <strong>${m.pctRemAcum.toFixed(1)}%</strong> acum. (${fmtCLP(m.gastoRemMes)} ese mes)</div>` : '') +
+    (showBys ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-2)"></span>Bienes y Servicios: <strong>${m.pctBysAcum.toFixed(1)}%</strong> acum. (${fmtCLP(m.gastoBysMes)} ese mes)</div>` : ''));
 
   document.getElementById('ejecTbody').innerHTML = serie.map((m, i) => {
     const prev = i > 0 ? serie[i - 1] : null;
@@ -4905,6 +5137,7 @@ function renderEjecucion() {
 document.getElementById('ejecRbdSelect').addEventListener('change', renderEjecucion);
 document.getElementById('ejecShowRem').addEventListener('change', renderEjecucion);
 document.getElementById('ejecShowBys').addEventListener('change', renderEjecucion);
+document.getElementById('ejecShowTotal').addEventListener('change', renderEjecucion);
 
 function csvEscape(val) {
   const s = (val === null || val === undefined) ? '' : String(val);
@@ -5182,13 +5415,16 @@ function buildEjecucionPrintHTML() {
   // Las casillas Remuneraciones/B&S de arriba del gráfico también sirven de leyenda de color en
   // pantalla, pero no se imprimen (van dentro de .table-controls) — se repite esa leyenda aquí
   // como texto simple para que el color de cada línea se siga entendiendo en el PDF.
+  const esSep = ejecFuenteSel === 'sep';
+  const showTotal = !esSep && document.getElementById('ejecShowTotal').checked;
   const legendHtml = `<div class="ejec-print-legend">
-    ${showRem ? `<span><span class="swatch" style="background:var(--series-1)"></span>Remuneraciones (Subt. 21)</span>` : ''}
-    ${showBys ? `<span><span class="swatch" style="background:var(--series-2)"></span>Bienes y Servicios (22+29)</span>` : ''}
+    ${showRem ? `<span><span class="swatch" style="background:var(--series-1)"></span>${document.getElementById('ejecLblRem').textContent}</span>` : ''}
+    ${showBys ? `<span><span class="swatch" style="background:var(--series-2)"></span>${document.getElementById('ejecLblBys').textContent}</span>` : ''}
+    ${showTotal ? `<span><span class="swatch" style="background:var(--series-3)"></span>Total (Rem. + B&amp;S)</span>` : ''}
   </div>`;
   return `
     <div class="detalle-header" style="margin-bottom:14px;">
-      <strong style="font-size:16px;">Monitor SEP 70/30 — % Ejecución</strong><br>
+      <strong style="font-size:16px;">${esSep ? 'Monitor SEP 70/30' : 'Monitor ' + ejecTituloFuente(ejecFuenteSel)} — % Ejecución</strong><br>
       <span>${rbdLabel}</span><br>
       <span class="detalle-sub">${document.getElementById('ejecCorteNota').textContent}</span>
     </div>

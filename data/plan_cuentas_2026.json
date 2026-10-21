@@ -1,0 +1,7157 @@
+{
+ "fuente": "Manual de Cuentas para la Rendición de Recursos Destinados a Educación 2026 (SUPEREDUC), sección 11, págs. 112-119",
+ "columnas": [
+  "general",
+  "adm_central_general",
+  "sep",
+  "adm_central_sep",
+  "pie",
+  "mantenimiento",
+  "proretencion",
+  "internado",
+  "refuerzo"
+ ],
+ "leyenda": {
+  "subvenciones": "✓ cuenta habilitada para esa subvención/columna",
+  "pertinencia": "● (punto rojo) habilitación sujeta a exigencias de pertinencia y consideraciones señaladas en la descripción de cada cuenta (secciones 9 y 10 del manual)"
+ },
+ "titulos": [
+  {
+   "codigo": "300000",
+   "nombre": "INGRESOS",
+   "pagina": 112
+  },
+  {
+   "codigo": "400000",
+   "nombre": "GASTOS",
+   "pagina": 116
+  }
+ ],
+ "categorias": [
+  {
+   "codigo": "310100",
+   "nombre": "INGRESOS POR SUBVENCIONES",
+   "pagina": 112
+  },
+  {
+   "codigo": "310200",
+   "nombre": "BONIFICACIONES E INCREMENTOS REMUNERACIONALES",
+   "pagina": 112
+  },
+  {
+   "codigo": "310300",
+   "nombre": "SUBVENCIONES ESPECIALES",
+   "pagina": 112
+  },
+  {
+   "codigo": "310400",
+   "nombre": "RELIQUIDACIONES, DEVOLUCIONES Y PAGOS MANUALES",
+   "pagina": 113
+  },
+  {
+   "codigo": "310500",
+   "nombre": "DESCUENTOS Y MULTAS",
+   "pagina": 113
+  },
+  {
+   "codigo": "310600",
+   "nombre": "BONOS Y AGUINALDOS LEY DE REAJUSTE SECTOR PÚBLICO",
+   "pagina": 113
+  },
+  {
+   "codigo": "310700",
+   "nombre": "OTROS INGRESOS FISCALES",
+   "pagina": 113
+  },
+  {
+   "codigo": "310800",
+   "nombre": "INGRESOS PRIVADOS ESTABLECIMIENTO",
+   "pagina": 114
+  },
+  {
+   "codigo": "310900",
+   "nombre": "DONACIONES Y OTROS APORTES",
+   "pagina": 114
+  },
+  {
+   "codigo": "311100",
+   "nombre": "OTROS INGRESOS",
+   "pagina": 114
+  },
+  {
+   "codigo": "900000",
+   "nombre": "INGRESOS POR GASTOS NO ACEPTADOS",
+   "pagina": 114
+  },
+  {
+   "codigo": "901000",
+   "nombre": "AJUSTES POR VALIDACIÓN DE DATOS RC",
+   "pagina": 114
+  },
+  {
+   "codigo": "905000",
+   "nombre": "REINTEGROS AL MINISTERIO DE EDUCACIÓN POR DETERMINACIÓN DE SALDOS FINALES",
+   "pagina": 114
+  },
+  {
+   "codigo": "910000",
+   "nombre": "AJUSTES POR RECTIFICACIÓN",
+   "pagina": 115
+  },
+  {
+   "codigo": "910100",
+   "nombre": "AJUSTES POR RECTIFICACIÓN - REGULARIZACIONES BASE DE DATOS",
+   "pagina": 115
+  },
+  {
+   "codigo": "910200",
+   "nombre": "AJUSTES POR RECTIFICACIÓN - CGR",
+   "pagina": 115
+  },
+  {
+   "codigo": "910900",
+   "nombre": "OTROS AJUSTES POR RECTIFICACIÓN",
+   "pagina": 115
+  },
+  {
+   "codigo": "920000",
+   "nombre": "INGRESOS POR OTROS AJUSTES",
+   "pagina": 115
+  },
+  {
+   "codigo": "800000",
+   "nombre": "INGRESOS POR RECURSOS CENTRALIZADOS",
+   "pagina": 115
+  },
+  {
+   "codigo": "410100",
+   "nombre": "GASTOS REMUNERACIONALES",
+   "pagina": 116
+  },
+  {
+   "codigo": "410200",
+   "nombre": "GASTOS POR BONOS Y AGUINALDOS LEY DE REAJUSTE SECTOR PÚBLICO",
+   "pagina": 117
+  },
+  {
+   "codigo": "410300",
+   "nombre": "OTROS GASTOS EN PERSONAL",
+   "pagina": 117
+  },
+  {
+   "codigo": "410400",
+   "nombre": "APORTES PREVISIONALES",
+   "pagina": 117
+  },
+  {
+   "codigo": "410500",
+   "nombre": "ASESORIA TÉCNICA Y ACTIVIDADES DE INFORMACIÓN, Y ORIENTACIÓN",
+   "pagina": 117
+  },
+  {
+   "codigo": "410600",
+   "nombre": "GASTOS EN RECURSOS DE APRENDIZAJE",
+   "pagina": 117
+  },
+  {
+   "codigo": "410700",
+   "nombre": "GASTOS EN EQUIPAMIENTO DE APOYO PEDAGÓGICO",
+   "pagina": 117
+  },
+  {
+   "codigo": "410800",
+   "nombre": "GASTOS EN ALUMNOS",
+   "pagina": 118
+  },
+  {
+   "codigo": "410900",
+   "nombre": "GASTOS DE OPERACIÓN",
+   "pagina": 118
+  },
+  {
+   "codigo": "411000",
+   "nombre": "SERVICIOS BÁSICOS",
+   "pagina": 118
+  },
+  {
+   "codigo": "411100",
+   "nombre": "SERVICIOS GENERALES",
+   "pagina": 118
+  },
+  {
+   "codigo": "411200",
+   "nombre": "MULTAS E INTERESES",
+   "pagina": 118
+  },
+  {
+   "codigo": "411400",
+   "nombre": "ARRIENDOS DE INMUEBLES",
+   "pagina": 119
+  },
+  {
+   "codigo": "411500",
+   "nombre": "ARRIENDOS DE BIENES MUEBLES",
+   "pagina": 119
+  },
+  {
+   "codigo": "411600",
+   "nombre": "GASTOS EN CONSTRUCCIÓN Y MANTENCIÓN DE INFRAESTRUCTURA",
+   "pagina": 119
+  },
+  {
+   "codigo": "411700",
+   "nombre": "GASTOS MANTENCIÓN Y REPARACIÓN DE BIENES MUEBLES",
+   "pagina": 119
+  },
+  {
+   "codigo": "411800",
+   "nombre": "ADQUISICIÓN DE BIENES MUEBLES E INMUEBLES",
+   "pagina": 119
+  },
+  {
+   "codigo": "700000",
+   "nombre": "EGRESOS POR RECURSOS CENTRALIZADOS",
+   "pagina": 119
+  }
+ ],
+ "cuentas": [
+  {
+   "codigo": "310101",
+   "nombre": "SUBVENCIÓN BASE ART. 9° DFL N° 2/98 + LEY N° 19.933",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310102",
+   "nombre": "INCREMENTO SUBVENCIÓN PIE ART. 9° DFL N° 2/98, + LEY N° 19.933",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310103",
+   "nombre": "INCREMENTO DE ZONA",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310104",
+   "nombre": "INCREMENTO DE RURALIDAD + PISO RURAL",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310106",
+   "nombre": "LEY N° 19.410",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310107",
+   "nombre": "LEY N° 19.464 Y N° 21.109",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310108",
+   "nombre": "APORTE POR FONDOS DE BECAS",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310109",
+   "nombre": "APORTE POR GRATUIDAD",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310110",
+   "nombre": "DIFERENCIA SUBVENCIÓN MÍNIMA",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310111",
+   "nombre": "APORTE REFORMA DE PENSIONES LEY N°21.735",
+   "categoria": "310100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112,
+   "nombre_ocr": true
+  },
+  {
+   "codigo": "310201",
+   "nombre": "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES DOCENTES",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310202",
+   "nombre": "BONIFICACIÓN COMPENSATORIA, ART.3°, LEY N° 19.200",
+   "categoria": "310200",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310203",
+   "nombre": "UMP COMPLEMENTARIA INCISO 2° ART.10° LEY N° 19.278",
+   "categoria": "310200",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310204",
+   "nombre": "SNED DOCENTES ART. 40° DFL N° 2/98 ED",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310205",
+   "nombre": "SNED ASISTENTES EDUCACIÓN LEY N° 20.244 Y ART. 45 LEY N° 21.109",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310206",
+   "nombre": "BONIFICACIÓN DE PROFESORES ENCARGADOS, LEY N° 19.715, ART.13°",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310207",
+   "nombre": "BRP TÍTULO Y MENCIÓN LEY N° 20.158",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310208",
+   "nombre": "ASIGNACIÓN DE EXCELENCIA PEDAGÓGICA (AEP) LEY N° 19.715",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310209",
+   "nombre": "ASIGNACIÓN VARIABLE DE DESEMPEÑO INDIVIDUAL ART.17, LEY N° 19.933",
+   "categoria": "310200",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310210",
+   "nombre": "ASIGNACIÓN POR DESEMPEÑO COLECTIVO, ART.18, LEY N°19.933",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310211",
+   "nombre": "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES DE LOS ASISTENTES DE LA EDUCACIÓN",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310212",
+   "nombre": "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP DOCENTES",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112,
+   "nombre_ocr": true
+  },
+  {
+   "codigo": "310213",
+   "nombre": "ASIGNACIÓN POR TRAMO DE DESARROLLO PROFESIONAL",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310214",
+   "nombre": "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP ASISTENTES DE LA EDUCACIÓN",
+   "categoria": "310200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112,
+   "nombre_ocr": true
+  },
+  {
+   "codigo": "310215",
+   "nombre": "BONO RENTAS MENORES ASISTENTES DE LA EDUCACIÓN",
+   "categoria": "310200",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310301",
+   "nombre": "SUBVENCIÓN ESCOLAR PREFERENCIAL, LEY N° 20.248",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310302",
+   "nombre": "SUBVENCIÓN POR CONCENTRACIÓN, ART. 16 DE LA LEY N° 20.248",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310303",
+   "nombre": "APORTE ADICIONAL SEP",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310304",
+   "nombre": "APORTE EXTRAORDINARIO SEP",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310305",
+   "nombre": "SUBVENCIÓN ANUAL DE APOYO AL MANTENIMIENTO, ART. 37°, DFL(ED) N° 2, DE 1998",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310306",
+   "nombre": "SUBVENCIÓN EDUCACIONAL PRORETENCIÓN",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310307",
+   "nombre": "SUBVENCIÓN DE INTERNADO",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310308",
+   "nombre": "SUBVENCIÓN DE REFUERZO EDUCATIVO, ART. 39, D.F.L. (ED) N° 2, DE 1998",
+   "categoria": "310300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 112
+  },
+  {
+   "codigo": "310401",
+   "nombre": "RELIQUIDACIONES",
+   "categoria": "310400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310402",
+   "nombre": "RELIQUIDACIONES FINANCIAMIENTO COMPARTIDO",
+   "categoria": "310400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310403",
+   "nombre": "PAGOS MANUALES",
+   "categoria": "310400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310404",
+   "nombre": "DEVOLUCIONES",
+   "categoria": "310400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310406",
+   "nombre": "AJUSTES POR PAGO REZAGADO SEP",
+   "categoria": "310400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310501",
+   "nombre": "REINTEGROS",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310502",
+   "nombre": "MULTAS",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310503",
+   "nombre": "DESCUENTOS POR DISCREPANCIAS",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310504",
+   "nombre": "DESCUENTOS POR DERECHOS DE ESCOLARIDAD",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310505",
+   "nombre": "DESCUENTOS POR FINANCIAMIENTO COMPARTIDO",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310506",
+   "nombre": "DESCUENTO POR ANTICIPO SUBVENCIÓN LEY N°20.822",
+   "categoria": "310500",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310507",
+   "nombre": "OTROS DESCUENTOS",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310508",
+   "nombre": "GARANTÍA FONDO INFRAESTRUCTURA ESCOLAR (GIE)",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310509",
+   "nombre": "RETENCIONES JUDICIALES",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310510",
+   "nombre": "RETENCIONES PREVISIONALES",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310511",
+   "nombre": "OTRAS RETENCIONES",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310512",
+   "nombre": "PRIVACIONES",
+   "categoria": "310500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310601",
+   "nombre": "BONO DE ESCOLARIDAD Y BONO ADICIONAL",
+   "categoria": "310600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310602",
+   "nombre": "AGUINALDO DE NAVIDAD",
+   "categoria": "310600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310603",
+   "nombre": "AGUINALDO DE FIESTAS PATRIAS",
+   "categoria": "310600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310604",
+   "nombre": "BONO ESPECIAL",
+   "categoria": "310600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310605",
+   "nombre": "BONO VACACIONES",
+   "categoria": "310600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310606",
+   "nombre": "BONO DESEMPEÑO LABORAL",
+   "categoria": "310600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310607",
+   "nombre": "OTROS BONOS FISCALES",
+   "categoria": "310600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310701",
+   "nombre": "FRANQUICIA D.L. Nº 889",
+   "categoria": "310700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310702",
+   "nombre": "OTROS INGRESOS FISCALES",
+   "categoria": "310700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310704",
+   "nombre": "BONIFICACIÓN ADICIONAL POR ANTIGÜEDAD ART. N° 6 LEY N° 20.652",
+   "categoria": "310700",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310705",
+   "nombre": "APORTE FISCAL EXTRAORDINARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA EDUCACIÓN",
+   "categoria": "310700",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310706",
+   "nombre": "APORTE COMPLEMENTARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA EDUCACIÓN",
+   "categoria": "310700",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310708",
+   "nombre": "BONIFICACIÓN ADICIONAL, LEY N° 20.964 DE RETIRO VOLUNTARIO DE ASISTENTES",
+   "categoria": "310700",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310709",
+   "nombre": "APOYO AL SISTEMA DE TRANSPORTE ESCOLAR RURAL (DECRETO SUPREMO N°118)",
+   "categoria": "310700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310710",
+   "nombre": "ANTICIPO POR SUBVENCIÓN",
+   "categoria": "310700",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310711",
+   "nombre": "INGRESOS POR CONVENIO A LICEOS BICENTENARIO",
+   "categoria": "310700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310712",
+   "nombre": "INGRESOS POR PLANES DE SUPERACIÓN PROFESIONAL (PSP)",
+   "categoria": "310700",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 113
+  },
+  {
+   "codigo": "310801",
+   "nombre": "MATRÍCULAS",
+   "categoria": "310800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310806",
+   "nombre": "ARRIENDO DE INSTALACIONES",
+   "categoria": "310800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310807",
+   "nombre": "OTROS INGRESOS DE LA OPERACIÓN",
+   "categoria": "310800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310808",
+   "nombre": "INGRESO FINANCIAMIENTO COMPARTIDO (FICOM)",
+   "categoria": "310800",
+   "dependencia": "M-CM-PS",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310809",
+   "nombre": "INGRESO POR RECUPERACIÓN JUDICIAL DE FINANCIAMIENTO COMPARTIDO (FICOM)",
+   "categoria": "310800",
+   "dependencia": "M-CM-PS",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310901",
+   "nombre": "CENTROS DE PADRES Y APODERADOS",
+   "categoria": "310900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310902",
+   "nombre": "INSTITUCIONES Y EMPRESAS",
+   "categoria": "310900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310903",
+   "nombre": "PERSONAS NATURALES",
+   "categoria": "310900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "310904",
+   "nombre": "OTRAS DONACIONES",
+   "categoria": "310900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "311101",
+   "nombre": "INTERESES Y REAJUSTES DEL MERCADO DE CAPITALES",
+   "categoria": "311100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "311102",
+   "nombre": "OTROS INGRESOS FINANCIEROS",
+   "categoria": "311100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "311103",
+   "nombre": "OTROS INGRESOS",
+   "categoria": "311100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "311104",
+   "nombre": "INGRESOS APOYO INICIO ACTIVIDAD",
+   "categoria": "311100",
+   "dependencia": "PS",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "311105",
+   "nombre": "REINTEGRO LICENCIAS MÉDICAS",
+   "categoria": "311100",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "311106",
+   "nombre": "APORTE MUNICIPAL",
+   "categoria": "311100",
+   "dependencia": "M-CM",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "900001",
+   "nombre": "INGRESOS POR GASTOS NO ACEPTADOS",
+   "categoria": "900000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "901001",
+   "nombre": "AJUSTES POR VALIDACIÓN DE DATOS RC",
+   "categoria": "901000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "905001",
+   "nombre": "REINTEGROS AL MINISTERIO DE EDUCACIÓN POR DETERMINACIÓN DE SALDOS",
+   "categoria": "905000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 114
+  },
+  {
+   "codigo": "910001",
+   "nombre": "AJUSTES POR RECTIFICACIÓN - AGREGAR",
+   "categoria": "910000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910002",
+   "nombre": "AJUSTES POR RECTIFICACIÓN - REIMPUTAR",
+   "categoria": "910000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910003",
+   "nombre": "AJUSTES POR RECTIFICACIÓN - MODIFICAR",
+   "categoria": "910000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910004",
+   "nombre": "AJUSTES POR RECTIFICACIÓN - INGRESOS",
+   "categoria": "910000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910101",
+   "nombre": "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN – AGREGAR",
+   "categoria": "910100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910102",
+   "nombre": "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - REIMPUTAR",
+   "categoria": "910100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910103",
+   "nombre": "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - MODIFICAR",
+   "categoria": "910100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910104",
+   "nombre": "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - INGRESOS",
+   "categoria": "910100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910105",
+   "nombre": "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - OTROS",
+   "categoria": "910100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910201",
+   "nombre": "AJUSTES POR RECTIFICACIÓN CGR – AGREGAR",
+   "categoria": "910200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910202",
+   "nombre": "AJUSTES POR RECTIFICACIÓN CGR - REIMPUTAR",
+   "categoria": "910200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910203",
+   "nombre": "AJUSTES POR RECTIFICACIÓN CGR - MODIFICAR",
+   "categoria": "910200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910204",
+   "nombre": "AJUSTES POR RECTIFICACIÓN CGR - INGRESOS",
+   "categoria": "910200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910205",
+   "nombre": "AJUSTES POR RECTIFICACIÓN CGR - OTROS",
+   "categoria": "910200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910901",
+   "nombre": "OTROS AJUSTES POR RECTIFICACIÓN - AGREGAR",
+   "categoria": "910900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910902",
+   "nombre": "OTROS AJUSTES POR RECTIFICACIÓN - REIMPUTAR",
+   "categoria": "910900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910903",
+   "nombre": "OTROS AJUSTES POR RECTIFICACIÓN - MODIFICAR",
+   "categoria": "910900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910904",
+   "nombre": "OTROS AJUSTES POR RECTIFICACIÓN - INGRESOS",
+   "categoria": "910900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "910905",
+   "nombre": "OTROS AJUSTES POR RECTIFICACIÓN",
+   "categoria": "910900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "920001",
+   "nombre": "OTROS AJUSTES",
+   "categoria": "920000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "800001",
+   "nombre": "INGRESOS POR RECURSOS CENTRALIZADOS",
+   "categoria": "800000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 115
+  },
+  {
+   "codigo": "410101",
+   "nombre": "SUELDO BASE",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410102",
+   "nombre": "HORAS EXTRAS",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410103",
+   "nombre": "LEY N° 19.933",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410104",
+   "nombre": "INCREMENTO % ZONA",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410105",
+   "nombre": "BRP TÍTULO Y MENCIÓN LEY N° 20.158",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410106",
+   "nombre": "LEY N° 19.464 ASISTENTES (INCLUYE INTERNADOS) (ART.5° TRANS.DFL N°",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410107",
+   "nombre": "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES DOCENTES",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410108",
+   "nombre": "BONIFICACIÓN COMPENSATORIA ART 3°, LEY N° 19.200",
+   "categoria": "410100",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410109",
+   "nombre": "SNED DOCENTES ART.40 DFL N° 2/98 ED",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410110",
+   "nombre": "SNED ASISTENTES EDUCACIÓN LEY N° 20.244 Y ART. 45 LEY N°21.109",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410111",
+   "nombre": "UMP COMPLEMENTARIA INCISO 2° ART. 10°, LEY N° 19.278",
+   "categoria": "410100",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410112",
+   "nombre": "BONIFICACIÓN DE PROFESORES ENCARGADOS, LEY N° 19.715, ART. 13",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410113",
+   "nombre": "ASIGNACIÓN DE EXCELENCIA PEDAGÓGICA (AEP) LEY N° 19.715",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410114",
+   "nombre": "ASIGNACIÓN VARIABLE DE DESEMPEÑO INDIVIDUAL ART.17 Y 17 BIS DE LA LEY N° 19.933",
+   "categoria": "410100",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410115",
+   "nombre": "ASIGNACIÓN POR DESEMPEÑO COLECTIVO, ART.18, LEY N° 19.933",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410116",
+   "nombre": "ASIGNACIONES",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410117",
+   "nombre": "PAGO OTROS BONOS DOCENTES FISCALES",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410118",
+   "nombre": "PAGO OTROS BONOS ASISTENTES DE LA EDUCACIÓN FISCALES",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410119",
+   "nombre": "COLACIÓN Y MOVILIZACIÓN",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410120",
+   "nombre": "DEVOLUCIÓN BONOS REMUNERACIONALES FISCALES",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410121",
+   "nombre": "BONOS ACORDADOS CON LA ENTIDAD SOSTENEDORA",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410123",
+   "nombre": "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES ASISTENTES DE LA EDUCACIÓN",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410124",
+   "nombre": "BONO INCENTIVO AL DESEMPEÑO LEY N° 20.248, ART. 8° N° 4",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410125",
+   "nombre": "PLANILLA COMPLEMENTARIA",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410126",
+   "nombre": "BONO EXTRAORDINARIO (SAE)",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410127",
+   "nombre": "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP DOCENTES",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116,
+   "nombre_ocr": true
+  },
+  {
+   "codigo": "410128",
+   "nombre": "ASIGNACIÓN POR TRAMO DE DESARROLLO PROFESIONAL",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410129",
+   "nombre": "PLANILLA SUPLEMENTARIA, ARTÍCULOS 19° Y 33° TRANSITORIOS DE LA LEY N° 20.903",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410130",
+   "nombre": "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP ASISTENTES DE LA EDUCACIÓN",
+   "categoria": "410100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116,
+   "nombre_ocr": true
+  },
+  {
+   "codigo": "410131",
+   "nombre": "BONO RENTAS MENORES ASISTENTES DE LA EDUCACIÓN",
+   "categoria": "410100",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 116
+  },
+  {
+   "codigo": "410201",
+   "nombre": "PAGO BONO DE ESCOLARIDAD Y ADICIONAL",
+   "categoria": "410200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117,
+   "nombre_ocr": true
+  },
+  {
+   "codigo": "410202",
+   "nombre": "PAGO AGUINALDO NAVIDAD",
+   "categoria": "410200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410203",
+   "nombre": "PAGO AGUINALDO DE FIESTAS PATRIAS",
+   "categoria": "410200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410204",
+   "nombre": "PAGO BONO ESPECIAL",
+   "categoria": "410200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410205",
+   "nombre": "PAGO BONO VACACIONES",
+   "categoria": "410200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410206",
+   "nombre": "PAGO BONO DESEMPEÑO LABORAL",
+   "categoria": "410200",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410207",
+   "nombre": "OTROS BONOS NO IMPONIBLES LEY DE REAJUSTE",
+   "categoria": "410200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410208",
+   "nombre": "DEVOLUCIÓN BONOS LEY DE REAJUSTE",
+   "categoria": "410200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410301",
+   "nombre": "INDEMNIZACIONES Y/O FERIADO PROPORCIONAL",
+   "categoria": "410300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410302",
+   "nombre": "VIÁTICOS",
+   "categoria": "410300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410303",
+   "nombre": "BONO RETIRO ASISTENTES EDUCACIÓN",
+   "categoria": "410300",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410304",
+   "nombre": "OTROS GASTOS EN PERSONAL",
+   "categoria": "410300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410306",
+   "nombre": "BONIFICACIÓN ADICIONAL POR ANTIGÜEDAD",
+   "categoria": "410300",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410307",
+   "nombre": "APORTE FISCAL EXTRAORDINARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA EDUCACIÓN",
+   "categoria": "410300",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410308",
+   "nombre": "APORTE COMPLEMENTARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA",
+   "categoria": "410300",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410309",
+   "nombre": "SALA CUNA",
+   "categoria": "410300",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410312",
+   "nombre": "BONIFICACIÓN POR RETIRO VOLUNTARIO AL PERSONAL ASISTENTE DE LA",
+   "categoria": "410300",
+   "dependencia": "M-CM-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410401",
+   "nombre": "SEGURO DE ACCIDENTE DEL TRABAJO",
+   "categoria": "410400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410402",
+   "nombre": "SEGURO DE CESANTÍA",
+   "categoria": "410400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410403",
+   "nombre": "SEGURO DE INVALIDEZ Y SOBREVIVENCIA (SIS)",
+   "categoria": "410400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410404",
+   "nombre": "OTROS APORTES PREVISIONALES DE LA ENTIDAD SOSTENEDORA",
+   "categoria": "410400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410405",
+   "nombre": "APORTE REFORMA DE PENSIONES LEY N°21.735",
+   "categoria": "410400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410501",
+   "nombre": "ASISTENCIA TÉCNICO PEDAGÓGICA EDUCATIVA (REGISTRO ATE)",
+   "categoria": "410500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410502",
+   "nombre": "ACCIONES FORMATIVAS Y PERFECCIONAMIENTO DE RR.HH",
+   "categoria": "410500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410503",
+   "nombre": "ACTIVIDADES PARA EL FORTALECIMIENTO DE LOS OBJETIVOS DE MEJORAMIENTO DE LA CALIDAD EDUCATIVA",
+   "categoria": "410500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410601",
+   "nombre": "IMPLEMENTOS DE LABORATORIO",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410602",
+   "nombre": "IMPLEMENTOS DEPORTIVOS",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410603",
+   "nombre": "INSTRUMENTOS MUSICALES Y ARTÍSTICOS",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410604",
+   "nombre": "RECURSOS AUDIOVISUALES Y SOFTWARE EDUCATIVO",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410605",
+   "nombre": "MATERIAL Y RECURSOS DIDÁCTICOS",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410606",
+   "nombre": "BIBLIOTECAS, LIBROS Y REVISTAS",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410607",
+   "nombre": "EVENTOS EDUCATIVOS Y CULTURALES",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410608",
+   "nombre": "EVALUACIÓN DIAGNÓSTICA",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410609",
+   "nombre": "OTROS GASTOS EN RECURSOS DE APRENDIZAJE",
+   "categoria": "410600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410701",
+   "nombre": "EQUIPOS DE FOTOGRAFÍA Y FILMACIÓN",
+   "categoria": "410700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410702",
+   "nombre": "PIZARRAS INTERACTIVAS",
+   "categoria": "410700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410703",
+   "nombre": "EQUIPOS INFORMÁTICOS Y LICENCIAS",
+   "categoria": "410700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410704",
+   "nombre": "EQUIPOS REPRODUCTORES DE IMAGEN",
+   "categoria": "410700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410705",
+   "nombre": "EQUIPOS MULTICOPIADORES",
+   "categoria": "410700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410706",
+   "nombre": "EQUIPOS DE AMPLIFICACIÓN Y SONIDO",
+   "categoria": "410700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410707",
+   "nombre": "OTROS GASTOS EN EQUIPAMIENTO DE APOYO PEDAGÓGICO",
+   "categoria": "410700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 117
+  },
+  {
+   "codigo": "410801",
+   "nombre": "UNIFORMES Y VESTUARIO",
+   "categoria": "410800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410802",
+   "nombre": "OTROS GASTOS ALUMNOS",
+   "categoria": "410800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410803",
+   "nombre": "TALLERES EXTRAPROGRAMÁTICOS",
+   "categoria": "410800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410804",
+   "nombre": "CONTRATACIÓN DE APOYO DE ESPECIALISTAS",
+   "categoria": "410800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410805",
+   "nombre": "APOYO AL ESTUDIANTE",
+   "categoria": "410800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410806",
+   "nombre": "ÚTILES ESCOLARES",
+   "categoria": "410800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410901",
+   "nombre": "TRANSPORTE ESCOLAR",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410902",
+   "nombre": "MATERIALES DE OFICINA",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410903",
+   "nombre": "REPRODUCCIÓN DE DOCUMENTOS",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410904",
+   "nombre": "ALIMENTACIÓN",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410905",
+   "nombre": "INSUMOS COMPUTACIONALES",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410906",
+   "nombre": "COMBUSTIBLE Y PEAJES",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410907",
+   "nombre": "MATERIALES Y ÚTILES DE ASEO",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410908",
+   "nombre": "PUBLICIDAD",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410909",
+   "nombre": "PASAJES",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410910",
+   "nombre": "OTROS GASTOS DE OPERACIÓN",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410911",
+   "nombre": "GASTOS MUNICIPALES E IMPUESTOS",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118,
+   "nombre_ocr": true
+  },
+  {
+   "codigo": "410912",
+   "nombre": "CRÉDITOS FINANCIEROS",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410913",
+   "nombre": "GASTOS BANCARIOS",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410914",
+   "nombre": "DEVOLUCIÓN APOYO INICIO ACTIVIDAD",
+   "categoria": "410900",
+   "dependencia": "PS",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410916",
+   "nombre": "CONTRATACIÓN DE SEGUROS",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410917",
+   "nombre": "DEVOLUCIONES DE FONDOS PÚBLICOS",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "410918",
+   "nombre": "TRASLADO DE ESTUDIANTES POR ACTIVIDAD ESCOLAR",
+   "categoria": "410900",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411001",
+   "nombre": "INTERNET",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411002",
+   "nombre": "AGUA",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411003",
+   "nombre": "GAS",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411004",
+   "nombre": "ELECTRICIDAD",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411005",
+   "nombre": "SERVICIO DE CORRESPONDENCIA (CORREOS)",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411006",
+   "nombre": "TELEFONÍA (MÓVIL Y FIJA)",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411007",
+   "nombre": "COMBUSTIBLE O FUENTE DE ENERGÍA PARA CALEFACCIÓN",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411008",
+   "nombre": "OTROS GASTOS SERVICIOS BÁSICOS",
+   "categoria": "411000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411101",
+   "nombre": "CONTRATACIÓN SERVICIOS DE ASEO Y JARDINERÍA",
+   "categoria": "411100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411102",
+   "nombre": "CONTRATACIÓN SERVICIOS DE SEGURIDAD",
+   "categoria": "411100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411103",
+   "nombre": "CONTRATACIÓN OTROS SERVICIOS EXTERNOS",
+   "categoria": "411100",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411201",
+   "nombre": "MULTAS E INTERESES FISCALES Y PREVISIONALES",
+   "categoria": "411200",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 118
+  },
+  {
+   "codigo": "411401",
+   "nombre": "ARRIENDO DE LOCAL ESCOLAR",
+   "categoria": "411400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411402",
+   "nombre": "ARRIENDO DE OFICINAS Y/O DEPENDENCIAS DE ADMINISTRACIÓN",
+   "categoria": "411400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": false,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411403",
+   "nombre": "ARRIENDO DE OTROS BIENES INMUEBLES",
+   "categoria": "411400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": true,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411404",
+   "nombre": "MEJORAS ÚTILES Y NECESARIAS EN LOCAL ESCOLAR ARRENDADO",
+   "categoria": "411400",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411501",
+   "nombre": "ARRIENDO DE EQUIPOS INFORMÁTICOS",
+   "categoria": "411500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": true
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411502",
+   "nombre": "ARRIENDO DE MAQUINARIAS Y EQUIPOS",
+   "categoria": "411500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411503",
+   "nombre": "ARRIENDO DE MOBILIARIO",
+   "categoria": "411500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411504",
+   "nombre": "ARRIENDO DE OTROS BIENES MUEBLES",
+   "categoria": "411500",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": true,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411601",
+   "nombre": "MANTENIMIENTO Y REPARACIÓN DE INFRAESTRUCTURA",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411602",
+   "nombre": "CONSTRUCCIÓN DE INFRAESTRUCTURA (OBRA GRUESA)",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411603",
+   "nombre": "TERMINACIONES DE INFRAESTRUCTURA",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411604",
+   "nombre": "INSTALACIONES ELÉCTRICAS, ILUMINACIÓN Y SISTEMAS DE CALEFACCIÓN",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411605",
+   "nombre": "INSTALACIONES DE GAS",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411606",
+   "nombre": "INSTALACIONES DE AGUA",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411607",
+   "nombre": "ALCANTARILLADOS O POZOS SÉPTICOS",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411608",
+   "nombre": "CIERRES PERIMETRALES Y OBRAS COMPLEMENTARIAS",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411609",
+   "nombre": "SERVICIOS HIGIÉNICOS",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411610",
+   "nombre": "ELIMINACIÓN DE BARRERAS ARQUITÉCTONICAS DE MENOR ENVERGADURA",
+   "categoria": "411600",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": true,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411701",
+   "nombre": "MANTENCIÓN  Y REPARACIÓN DE BIENES MUEBLES",
+   "categoria": "411700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411702",
+   "nombre": "REPUESTOS, MANTENIMIENTO Y REPARACIÓN DE VEHÍCULOS",
+   "categoria": "411700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411703",
+   "nombre": "MANTENCIÓN Y REPARACIÓN DE EQUIPOS COMPUTACIONALES",
+   "categoria": "411700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411704",
+   "nombre": "MANTENCIÓN Y REPARACIÓN DE MOBILIARIO ESCOLAR",
+   "categoria": "411700",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411801",
+   "nombre": "ADQUISICIÓN DE BIENES INMUEBLES",
+   "categoria": "411800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411802",
+   "nombre": "ADQUISICIÓN DE MOBILIARIO",
+   "categoria": "411800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411803",
+   "nombre": "ADQUISICIÓN DE VEHÍCULO",
+   "categoria": "411800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "411804",
+   "nombre": "ADQUISICIÓN DE OTROS BIENES MUEBLES NO PEDAGÓGICOS",
+   "categoria": "411800",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": true,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": true,
+    "proretencion": false,
+    "internado": true,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": true,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  },
+  {
+   "codigo": "700001",
+   "nombre": "EGRESOS POR RECURSOS CENTRALIZADOS",
+   "categoria": "700000",
+   "dependencia": "M-CM-PS-SLEP",
+   "subvenciones": {
+    "general": true,
+    "adm_central_general": false,
+    "sep": true,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pertinencia": {
+    "general": false,
+    "adm_central_general": false,
+    "sep": false,
+    "adm_central_sep": false,
+    "pie": false,
+    "mantenimiento": false,
+    "proretencion": false,
+    "internado": false,
+    "refuerzo": false
+   },
+   "pagina": 119
+  }
+ ]
+}

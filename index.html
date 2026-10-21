@@ -238,6 +238,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .compra-acciones-cell { display:flex; gap:2px; }
   .compra-del-btn, .compra-edit-btn, .compra-dup-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
   .compra-del-btn:hover, .compra-edit-btn:hover, .compra-dup-btn:hover { opacity:.6; }
+  .plan-nota { margin:6px 0 8px; padding:6px 10px; border-radius:6px; font-size:12px; line-height:1.45;
+    background:var(--tone-blue-bg); color:var(--text-secondary); border:1px solid var(--tone-blue-border); }
+  .plan-nota.plan-nota-aviso { background:var(--tone-amber-bg); border-color:var(--tone-amber-border); color:var(--tone-amber-fg); }
+  .compra-no-habilitada td { background:var(--tone-amber-bg); }
+  .compra-aviso { color:var(--tone-amber-fg); font-weight:700; cursor:help; }
   .detalle-sin-compras { color:var(--text-muted); font-style:italic; text-align:left !important; padding:10px 8px !important; }
 
   .bysproy-add-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
@@ -1670,6 +1675,328 @@ const CUENTAS_SEP = [
 ];
 const CUENTAS_SEP_BY_CODIGO = {};
 CUENTAS_SEP.forEach(c => { CUENTAS_SEP_BY_CODIGO[c.codigo] = c; });
+
+// --- Plan de Cuentas SUPEREDUC 2026: matriz de cuentas habilitadas por subvención ---
+// Transcripción de la tabla de la sección 11 del Manual de Cuentas (págs. 112-119), que en el PDF
+// es una imagen. Cada cuenta lleva 9 flags, uno por columna del manual (orden de `columnas`):
+// 'x' = ✓ habilitada, 'R' = ✓ con punto rojo ● (habilitada pero sujeta a exigencias de pertinencia),
+// '.' = no habilitada. Cómo se extrajo y se verificó: data/plan_cuentas_2026_verificacion.md.
+// <plan-cuentas-2026:begin> — bloque generado por scripts/extract_plan_cuentas.py --inyectar (no editar a mano)
+const PLAN_CUENTAS_2026 = {
+  fuente: "Manual de Cuentas para la Rendición de Recursos Destinados a Educación 2026 (SUPEREDUC), sección 11, págs. 112-119",
+  columnas: ["general", "adm_central_general", "sep", "adm_central_sep", "pie", "mantenimiento", "proretencion", "internado", "refuerzo"],
+  // código de categoría -> nombre (la categoría de una cuenta es codigo.slice(0, 4) + "00")
+  categorias: {
+    "310100": "INGRESOS POR SUBVENCIONES",
+    "310200": "BONIFICACIONES E INCREMENTOS REMUNERACIONALES",
+    "310300": "SUBVENCIONES ESPECIALES",
+    "310400": "RELIQUIDACIONES, DEVOLUCIONES Y PAGOS MANUALES",
+    "310500": "DESCUENTOS Y MULTAS",
+    "310600": "BONOS Y AGUINALDOS LEY DE REAJUSTE SECTOR PÚBLICO",
+    "310700": "OTROS INGRESOS FISCALES",
+    "310800": "INGRESOS PRIVADOS ESTABLECIMIENTO",
+    "310900": "DONACIONES Y OTROS APORTES",
+    "311100": "OTROS INGRESOS",
+    "900000": "INGRESOS POR GASTOS NO ACEPTADOS",
+    "901000": "AJUSTES POR VALIDACIÓN DE DATOS RC",
+    "905000": "REINTEGROS AL MINISTERIO DE EDUCACIÓN POR DETERMINACIÓN DE SALDOS FINALES",
+    "910000": "AJUSTES POR RECTIFICACIÓN",
+    "910100": "AJUSTES POR RECTIFICACIÓN - REGULARIZACIONES BASE DE DATOS",
+    "910200": "AJUSTES POR RECTIFICACIÓN - CGR",
+    "910900": "OTROS AJUSTES POR RECTIFICACIÓN",
+    "920000": "INGRESOS POR OTROS AJUSTES",
+    "800000": "INGRESOS POR RECURSOS CENTRALIZADOS",
+    "410100": "GASTOS REMUNERACIONALES",
+    "410200": "GASTOS POR BONOS Y AGUINALDOS LEY DE REAJUSTE SECTOR PÚBLICO",
+    "410300": "OTROS GASTOS EN PERSONAL",
+    "410400": "APORTES PREVISIONALES",
+    "410500": "ASESORIA TÉCNICA Y ACTIVIDADES DE INFORMACIÓN, Y ORIENTACIÓN",
+    "410600": "GASTOS EN RECURSOS DE APRENDIZAJE",
+    "410700": "GASTOS EN EQUIPAMIENTO DE APOYO PEDAGÓGICO",
+    "410800": "GASTOS EN ALUMNOS",
+    "410900": "GASTOS DE OPERACIÓN",
+    "411000": "SERVICIOS BÁSICOS",
+    "411100": "SERVICIOS GENERALES",
+    "411200": "MULTAS E INTERESES",
+    "411400": "ARRIENDOS DE INMUEBLES",
+    "411500": "ARRIENDOS DE BIENES MUEBLES",
+    "411600": "GASTOS EN CONSTRUCCIÓN Y MANTENCIÓN DE INFRAESTRUCTURA",
+    "411700": "GASTOS MANTENCIÓN Y REPARACIÓN DE BIENES MUEBLES",
+    "411800": "ADQUISICIÓN DE BIENES MUEBLES E INMUEBLES",
+    "700000": "EGRESOS POR RECURSOS CENTRALIZADOS",
+  },
+  // [código, nombre, dependencia, flags por columna: x = ✓, R = ✓ + ● (pertinencia), . = no]
+  cuentas: [
+    ["310101", "SUBVENCIÓN BASE ART. 9° DFL N° 2/98 + LEY N° 19.933", "M-CM-PS-SLEP", "x........"],
+    ["310102", "INCREMENTO SUBVENCIÓN PIE ART. 9° DFL N° 2/98, + LEY N° 19.933", "M-CM-PS-SLEP", "....x...."],
+    ["310103", "INCREMENTO DE ZONA", "M-CM-PS-SLEP", "x...x..x."],
+    ["310104", "INCREMENTO DE RURALIDAD + PISO RURAL", "M-CM-PS-SLEP", "x........"],
+    ["310106", "LEY N° 19.410", "M-CM-PS-SLEP", "x........"],
+    ["310107", "LEY N° 19.464 Y N° 21.109", "M-CM-PS-SLEP", "xx......."],
+    ["310108", "APORTE POR FONDOS DE BECAS", "M-CM-PS-SLEP", "x........"],
+    ["310109", "APORTE POR GRATUIDAD", "M-CM-PS-SLEP", "x........"],
+    ["310110", "DIFERENCIA SUBVENCIÓN MÍNIMA", "M-CM-PS-SLEP", "x........"],
+    ["310111", "APORTE REFORMA DE PENSIONES LEY N°21.735", "M-CM-PS-SLEP", "xx......."],
+    ["310201", "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES DOCENTES", "M-CM-PS-SLEP", "x........"],
+    ["310202", "BONIFICACIÓN COMPENSATORIA, ART.3°, LEY N° 19.200", "M-CM-SLEP", "xx......."],
+    ["310203", "UMP COMPLEMENTARIA INCISO 2° ART.10° LEY N° 19.278", "M-CM-SLEP", "xx......."],
+    ["310204", "SNED DOCENTES ART. 40° DFL N° 2/98 ED", "M-CM-PS-SLEP", "x........"],
+    ["310205", "SNED ASISTENTES EDUCACIÓN LEY N° 20.244 Y ART. 45 LEY N° 21.109", "M-CM-PS-SLEP", "x........"],
+    ["310206", "BONIFICACIÓN DE PROFESORES ENCARGADOS, LEY N° 19.715, ART.13°", "M-CM-PS-SLEP", "x........"],
+    ["310207", "BRP TÍTULO Y MENCIÓN LEY N° 20.158", "M-CM-PS-SLEP", "xx......."],
+    ["310208", "ASIGNACIÓN DE EXCELENCIA PEDAGÓGICA (AEP) LEY N° 19.715", "M-CM-PS-SLEP", "x........"],
+    ["310209", "ASIGNACIÓN VARIABLE DE DESEMPEÑO INDIVIDUAL ART.17, LEY N° 19.933", "M-CM-SLEP", "x........"],
+    ["310210", "ASIGNACIÓN POR DESEMPEÑO COLECTIVO, ART.18, LEY N°19.933", "M-CM-PS-SLEP", "x........"],
+    ["310211", "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES DE LOS ASISTENTES DE LA EDUCACIÓN", "M-CM-PS-SLEP", "x........"],
+    ["310212", "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP DOCENTES", "M-CM-PS-SLEP", "xx......."],
+    ["310213", "ASIGNACIÓN POR TRAMO DE DESARROLLO PROFESIONAL", "M-CM-PS-SLEP", "xx......."],
+    ["310214", "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP ASISTENTES DE LA EDUCACIÓN", "M-CM-PS-SLEP", "xx......."],
+    ["310215", "BONO RENTAS MENORES ASISTENTES DE LA EDUCACIÓN", "M-CM-SLEP", "xx......."],
+    ["310301", "SUBVENCIÓN ESCOLAR PREFERENCIAL, LEY N° 20.248", "M-CM-PS-SLEP", "..x......"],
+    ["310302", "SUBVENCIÓN POR CONCENTRACIÓN, ART. 16 DE LA LEY N° 20.248", "M-CM-PS-SLEP", "..x......"],
+    ["310303", "APORTE ADICIONAL SEP", "M-CM-PS-SLEP", "..x......"],
+    ["310304", "APORTE EXTRAORDINARIO SEP", "M-CM-PS-SLEP", "..x......"],
+    ["310305", "SUBVENCIÓN ANUAL DE APOYO AL MANTENIMIENTO, ART. 37°, DFL(ED) N° 2, DE 1998", "M-CM-PS-SLEP", ".....x..."],
+    ["310306", "SUBVENCIÓN EDUCACIONAL PRORETENCIÓN", "M-CM-PS-SLEP", "......x.."],
+    ["310307", "SUBVENCIÓN DE INTERNADO", "M-CM-PS-SLEP", ".......x."],
+    ["310308", "SUBVENCIÓN DE REFUERZO EDUCATIVO, ART. 39, D.F.L. (ED) N° 2, DE 1998", "M-CM-PS-SLEP", "........x"],
+    ["310401", "RELIQUIDACIONES", "M-CM-PS-SLEP", "xx..xxxxx"],
+    ["310402", "RELIQUIDACIONES FINANCIAMIENTO COMPARTIDO", "M-CM-PS-SLEP", "x........"],
+    ["310403", "PAGOS MANUALES", "M-CM-PS-SLEP", "xxx.xxxxx"],
+    ["310404", "DEVOLUCIONES", "M-CM-PS-SLEP", "xx..xxxxx"],
+    ["310406", "AJUSTES POR PAGO REZAGADO SEP", "M-CM-PS-SLEP", "..x......"],
+    ["310501", "REINTEGROS", "M-CM-PS-SLEP", "x........"],
+    ["310502", "MULTAS", "M-CM-PS-SLEP", "x........"],
+    ["310503", "DESCUENTOS POR DISCREPANCIAS", "M-CM-PS-SLEP", "x........"],
+    ["310504", "DESCUENTOS POR DERECHOS DE ESCOLARIDAD", "M-CM-PS-SLEP", "x........"],
+    ["310505", "DESCUENTOS POR FINANCIAMIENTO COMPARTIDO", "M-CM-PS-SLEP", "x........"],
+    ["310506", "DESCUENTO POR ANTICIPO SUBVENCIÓN LEY N°20.822", "M-CM-SLEP", "xx......."],
+    ["310507", "OTROS DESCUENTOS", "M-CM-PS-SLEP", "xx......."],
+    ["310508", "GARANTÍA FONDO INFRAESTRUCTURA ESCOLAR (GIE)", "M-CM-PS-SLEP", "x........"],
+    ["310509", "RETENCIONES JUDICIALES", "M-CM-PS-SLEP", "xx......."],
+    ["310510", "RETENCIONES PREVISIONALES", "M-CM-PS-SLEP", "xx......."],
+    ["310511", "OTRAS RETENCIONES", "M-CM-PS-SLEP", "xx......."],
+    ["310512", "PRIVACIONES", "M-CM-PS-SLEP", "xx......."],
+    ["310601", "BONO DE ESCOLARIDAD Y BONO ADICIONAL", "M-CM-PS-SLEP", "xx......."],
+    ["310602", "AGUINALDO DE NAVIDAD", "M-CM-PS-SLEP", "xx......."],
+    ["310603", "AGUINALDO DE FIESTAS PATRIAS", "M-CM-PS-SLEP", "xx......."],
+    ["310604", "BONO ESPECIAL", "M-CM-PS-SLEP", "xx......."],
+    ["310605", "BONO VACACIONES", "M-CM-PS-SLEP", "xx......."],
+    ["310606", "BONO DESEMPEÑO LABORAL", "M-CM-PS-SLEP", "xx......."],
+    ["310607", "OTROS BONOS FISCALES", "M-CM-PS-SLEP", "xx......."],
+    ["310701", "FRANQUICIA D.L. Nº 889", "M-CM-PS-SLEP", "x........"],
+    ["310702", "OTROS INGRESOS FISCALES", "M-CM-PS-SLEP", "xx......."],
+    ["310704", "BONIFICACIÓN ADICIONAL POR ANTIGÜEDAD ART. N° 6 LEY N° 20.652", "M-CM-SLEP", "x........"],
+    ["310705", "APORTE FISCAL EXTRAORDINARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA EDUCACIÓN", "M-CM-SLEP", "xx......."],
+    ["310706", "APORTE COMPLEMENTARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA EDUCACIÓN", "M-CM-SLEP", "xx......."],
+    ["310708", "BONIFICACIÓN ADICIONAL, LEY N° 20.964 DE RETIRO VOLUNTARIO DE ASISTENTES", "M-CM-SLEP", "xx......."],
+    ["310709", "APOYO AL SISTEMA DE TRANSPORTE ESCOLAR RURAL (DECRETO SUPREMO N°118)", "M-CM-PS-SLEP", "xx......."],
+    ["310710", "ANTICIPO POR SUBVENCIÓN", "M-CM-SLEP", "xx......."],
+    ["310711", "INGRESOS POR CONVENIO A LICEOS BICENTENARIO", "M-CM-PS-SLEP", "x........"],
+    ["310712", "INGRESOS POR PLANES DE SUPERACIÓN PROFESIONAL (PSP)", "M-CM-SLEP", ".x......."],
+    ["310801", "MATRÍCULAS", "M-CM-PS-SLEP", "x........"],
+    ["310806", "ARRIENDO DE INSTALACIONES", "M-CM-PS-SLEP", "x........"],
+    ["310807", "OTROS INGRESOS DE LA OPERACIÓN", "M-CM-PS-SLEP", "x........"],
+    ["310808", "INGRESO FINANCIAMIENTO COMPARTIDO (FICOM)", "M-CM-PS", "x........"],
+    ["310809", "INGRESO POR RECUPERACIÓN JUDICIAL DE FINANCIAMIENTO COMPARTIDO (FICOM)", "M-CM-PS", "x........"],
+    ["310901", "CENTROS DE PADRES Y APODERADOS", "M-CM-PS-SLEP", "x........"],
+    ["310902", "INSTITUCIONES Y EMPRESAS", "M-CM-PS-SLEP", "xx......."],
+    ["310903", "PERSONAS NATURALES", "M-CM-PS-SLEP", "xx......."],
+    ["310904", "OTRAS DONACIONES", "M-CM-PS-SLEP", "xx......."],
+    ["311101", "INTERESES Y REAJUSTES DEL MERCADO DE CAPITALES", "M-CM-PS-SLEP", "xx......."],
+    ["311102", "OTROS INGRESOS FINANCIEROS", "M-CM-PS-SLEP", "x........"],
+    ["311103", "OTROS INGRESOS", "M-CM-PS-SLEP", "xx..x...."],
+    ["311104", "INGRESOS APOYO INICIO ACTIVIDAD", "PS", "x........"],
+    ["311105", "REINTEGRO LICENCIAS MÉDICAS", "M-CM-SLEP", "xxx.x.xxx"],
+    ["311106", "APORTE MUNICIPAL", "M-CM", "x........"],
+    ["900001", "INGRESOS POR GASTOS NO ACEPTADOS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["901001", "AJUSTES POR VALIDACIÓN DE DATOS RC", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["905001", "REINTEGROS AL MINISTERIO DE EDUCACIÓN POR DETERMINACIÓN DE SALDOS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910001", "AJUSTES POR RECTIFICACIÓN - AGREGAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910002", "AJUSTES POR RECTIFICACIÓN - REIMPUTAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910003", "AJUSTES POR RECTIFICACIÓN - MODIFICAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910004", "AJUSTES POR RECTIFICACIÓN - INGRESOS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910101", "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN – AGREGAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910102", "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - REIMPUTAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910103", "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - MODIFICAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910104", "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - INGRESOS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910105", "REGULARIZACION BASE DE DATOS - RECTIFICACIÓN - OTROS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910201", "AJUSTES POR RECTIFICACIÓN CGR – AGREGAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910202", "AJUSTES POR RECTIFICACIÓN CGR - REIMPUTAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910203", "AJUSTES POR RECTIFICACIÓN CGR - MODIFICAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910204", "AJUSTES POR RECTIFICACIÓN CGR - INGRESOS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910205", "AJUSTES POR RECTIFICACIÓN CGR - OTROS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910901", "OTROS AJUSTES POR RECTIFICACIÓN - AGREGAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910902", "OTROS AJUSTES POR RECTIFICACIÓN - REIMPUTAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910903", "OTROS AJUSTES POR RECTIFICACIÓN - MODIFICAR", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910904", "OTROS AJUSTES POR RECTIFICACIÓN - INGRESOS", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["910905", "OTROS AJUSTES POR RECTIFICACIÓN", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["920001", "OTROS AJUSTES", "M-CM-PS-SLEP", "xxxxxxxxx"],
+    ["800001", "INGRESOS POR RECURSOS CENTRALIZADOS", "M-CM-PS-SLEP", ".x.x....."],
+    ["410101", "SUELDO BASE", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410102", "HORAS EXTRAS", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410103", "LEY N° 19.933", "M-CM-PS-SLEP", "x...x...."],
+    ["410104", "INCREMENTO % ZONA", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410105", "BRP TÍTULO Y MENCIÓN LEY N° 20.158", "M-CM-PS-SLEP", "xxxxx...."],
+    ["410106", "LEY N° 19.464 ASISTENTES (INCLUYE INTERNADOS) (ART.5° TRANS.DFL N°", "M-CM-PS-SLEP", "x......x."],
+    ["410107", "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES DOCENTES", "M-CM-PS-SLEP", "x........"],
+    ["410108", "BONIFICACIÓN COMPENSATORIA ART 3°, LEY N° 19.200", "M-CM-SLEP", "xx......."],
+    ["410109", "SNED DOCENTES ART.40 DFL N° 2/98 ED", "M-CM-PS-SLEP", "x........"],
+    ["410110", "SNED ASISTENTES EDUCACIÓN LEY N° 20.244 Y ART. 45 LEY N°21.109", "M-CM-PS-SLEP", "x........"],
+    ["410111", "UMP COMPLEMENTARIA INCISO 2° ART. 10°, LEY N° 19.278", "M-CM-SLEP", "xx......."],
+    ["410112", "BONIFICACIÓN DE PROFESORES ENCARGADOS, LEY N° 19.715, ART. 13", "M-CM-PS-SLEP", "x........"],
+    ["410113", "ASIGNACIÓN DE EXCELENCIA PEDAGÓGICA (AEP) LEY N° 19.715", "M-CM-PS-SLEP", "x........"],
+    ["410114", "ASIGNACIÓN VARIABLE DE DESEMPEÑO INDIVIDUAL ART.17 Y 17 BIS DE LA LEY N° 19.933", "M-CM-SLEP", "x........"],
+    ["410115", "ASIGNACIÓN POR DESEMPEÑO COLECTIVO, ART.18, LEY N° 19.933", "M-CM-PS-SLEP", "x........"],
+    ["410116", "ASIGNACIONES", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410117", "PAGO OTROS BONOS DOCENTES FISCALES", "M-CM-PS-SLEP", "x........"],
+    ["410118", "PAGO OTROS BONOS ASISTENTES DE LA EDUCACIÓN FISCALES", "M-CM-PS-SLEP", "x........"],
+    ["410119", "COLACIÓN Y MOVILIZACIÓN", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410120", "DEVOLUCIÓN BONOS REMUNERACIONALES FISCALES", "M-CM-PS-SLEP", "x........"],
+    ["410121", "BONOS ACORDADOS CON LA ENTIDAD SOSTENEDORA", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410123", "ASIGNACIÓN DESEMPEÑO CONDICIONES DIFÍCILES ASISTENTES DE LA EDUCACIÓN", "M-CM-PS-SLEP", "x........"],
+    ["410124", "BONO INCENTIVO AL DESEMPEÑO LEY N° 20.248, ART. 8° N° 4", "M-CM-PS-SLEP", "..x......"],
+    ["410125", "PLANILLA COMPLEMENTARIA", "M-CM-PS-SLEP", "x........"],
+    ["410126", "BONO EXTRAORDINARIO (SAE)", "M-CM-PS-SLEP", "x........"],
+    ["410127", "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP DOCENTES", "M-CM-PS-SLEP", "x........"],
+    ["410128", "ASIGNACIÓN POR TRAMO DE DESARROLLO PROFESIONAL", "M-CM-PS-SLEP", "xxxxx...."],
+    ["410129", "PLANILLA SUPLEMENTARIA, ARTÍCULOS 19° Y 33° TRANSITORIOS DE LA LEY N° 20.903", "M-CM-PS-SLEP", "xxxxx...."],
+    ["410130", "ASIGNACIÓN DE RECONOCIMIENTO EN EACAP ASISTENTES DE LA EDUCACIÓN", "M-CM-PS-SLEP", "x........"],
+    ["410131", "BONO RENTAS MENORES ASISTENTES DE LA EDUCACIÓN", "M-CM-SLEP", "x........"],
+    ["410201", "PAGO BONO DE ESCOLARIDAD Y ADICIONAL", "M-CM-PS-SLEP", "xx......."],
+    ["410202", "PAGO AGUINALDO NAVIDAD", "M-CM-PS-SLEP", "xx......."],
+    ["410203", "PAGO AGUINALDO DE FIESTAS PATRIAS", "M-CM-PS-SLEP", "xx......."],
+    ["410204", "PAGO BONO ESPECIAL", "M-CM-PS-SLEP", "xx......."],
+    ["410205", "PAGO BONO VACACIONES", "M-CM-PS-SLEP", "xx......."],
+    ["410206", "PAGO BONO DESEMPEÑO LABORAL", "M-CM-SLEP", "xx......."],
+    ["410207", "OTROS BONOS NO IMPONIBLES LEY DE REAJUSTE", "M-CM-PS-SLEP", "xx......."],
+    ["410208", "DEVOLUCIÓN BONOS LEY DE REAJUSTE", "M-CM-PS-SLEP", "xx......."],
+    ["410301", "INDEMNIZACIONES Y/O FERIADO PROPORCIONAL", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410302", "VIÁTICOS", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410303", "BONO RETIRO ASISTENTES EDUCACIÓN", "M-CM-SLEP", "x........"],
+    ["410304", "OTROS GASTOS EN PERSONAL", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410306", "BONIFICACIÓN ADICIONAL POR ANTIGÜEDAD", "M-CM-SLEP", "x........"],
+    ["410307", "APORTE FISCAL EXTRAORDINARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA EDUCACIÓN", "M-CM-SLEP", "xx......."],
+    ["410308", "APORTE COMPLEMENTARIO POR RETIRO VOLUNTARIO PROFESIONALES DE LA", "M-CM-SLEP", "xx......."],
+    ["410309", "SALA CUNA", "M-CM-PS-SLEP", "xxRRx.xxx"],
+    ["410312", "BONIFICACIÓN POR RETIRO VOLUNTARIO AL PERSONAL ASISTENTE DE LA", "M-CM-SLEP", "xx......."],
+    ["410401", "SEGURO DE ACCIDENTE DEL TRABAJO", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410402", "SEGURO DE CESANTÍA", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410403", "SEGURO DE INVALIDEZ Y SOBREVIVENCIA (SIS)", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410404", "OTROS APORTES PREVISIONALES DE LA ENTIDAD SOSTENEDORA", "M-CM-PS-SLEP", "xxxxx.xxx"],
+    ["410405", "APORTE REFORMA DE PENSIONES LEY N°21.735", "M-CM-PS-SLEP", "xx......."],
+    ["410501", "ASISTENCIA TÉCNICO PEDAGÓGICA EDUCATIVA (REGISTRO ATE)", "M-CM-PS-SLEP", "..RR....."],
+    ["410502", "ACCIONES FORMATIVAS Y PERFECCIONAMIENTO DE RR.HH", "M-CM-PS-SLEP", "xxRRR...."],
+    ["410503", "ACTIVIDADES PARA EL FORTALECIMIENTO DE LOS OBJETIVOS DE MEJORAMIENTO DE LA CALIDAD EDUCATIVA", "M-CM-PS-SLEP", "xxRRR.x.."],
+    ["410601", "IMPLEMENTOS DE LABORATORIO", "M-CM-PS-SLEP", "x.x.Rxx.x"],
+    ["410602", "IMPLEMENTOS DEPORTIVOS", "M-CM-PS-SLEP", "x.x.Rxxx."],
+    ["410603", "INSTRUMENTOS MUSICALES Y ARTÍSTICOS", "M-CM-PS-SLEP", "x.x.Rxxx."],
+    ["410604", "RECURSOS AUDIOVISUALES Y SOFTWARE EDUCATIVO", "M-CM-PS-SLEP", "x.R.Rxxxx"],
+    ["410605", "MATERIAL Y RECURSOS DIDÁCTICOS", "M-CM-PS-SLEP", "x.x.R.xxx"],
+    ["410606", "BIBLIOTECAS, LIBROS Y REVISTAS", "M-CM-PS-SLEP", "x.x.R.xxx"],
+    ["410607", "EVENTOS EDUCATIVOS Y CULTURALES", "M-CM-PS-SLEP", "x.R...xxx"],
+    ["410608", "EVALUACIÓN DIAGNÓSTICA", "M-CM-PS-SLEP", "x.x.R.xxx"],
+    ["410609", "OTROS GASTOS EN RECURSOS DE APRENDIZAJE", "M-CM-PS-SLEP", "x.x.R.xxx"],
+    ["410701", "EQUIPOS DE FOTOGRAFÍA Y FILMACIÓN", "M-CM-PS-SLEP", "x.x.Rx.xx"],
+    ["410702", "PIZARRAS INTERACTIVAS", "M-CM-PS-SLEP", "x.x.Rx.xx"],
+    ["410703", "EQUIPOS INFORMÁTICOS Y LICENCIAS", "M-CM-PS-SLEP", "xxxxRx.xx"],
+    ["410704", "EQUIPOS REPRODUCTORES DE IMAGEN", "M-CM-PS-SLEP", "x.xxRx.xx"],
+    ["410705", "EQUIPOS MULTICOPIADORES", "M-CM-PS-SLEP", "x.x.Rx.x."],
+    ["410706", "EQUIPOS DE AMPLIFICACIÓN Y SONIDO", "M-CM-PS-SLEP", "x.x.Rx.xx"],
+    ["410707", "OTROS GASTOS EN EQUIPAMIENTO DE APOYO PEDAGÓGICO", "M-CM-PS-SLEP", "x.x.Rx.xx"],
+    ["410801", "UNIFORMES Y VESTUARIO", "M-CM-PS-SLEP", "x.R...xx."],
+    ["410802", "OTROS GASTOS ALUMNOS", "M-CM-PS-SLEP", "x.R...xx."],
+    ["410803", "TALLERES EXTRAPROGRAMÁTICOS", "M-CM-PS-SLEP", "x.x...xx."],
+    ["410804", "CONTRATACIÓN DE APOYO DE ESPECIALISTAS", "M-CM-PS-SLEP", "x.R.R.R.."],
+    ["410805", "APOYO AL ESTUDIANTE", "M-CM-PS-SLEP", "......x.."],
+    ["410806", "ÚTILES ESCOLARES", "M-CM-PS-SLEP", "x.R...x.."],
+    ["410901", "TRANSPORTE ESCOLAR", "M-CM-PS-SLEP", "xxR...Rx."],
+    ["410902", "MATERIALES DE OFICINA", "M-CM-PS-SLEP", "xx.R...x."],
+    ["410903", "REPRODUCCIÓN DE DOCUMENTOS", "M-CM-PS-SLEP", "xxRRR..x."],
+    ["410904", "ALIMENTACIÓN", "M-CM-PS-SLEP", "xxR...Rx."],
+    ["410905", "INSUMOS COMPUTACIONALES", "M-CM-PS-SLEP", "xxRRR..x."],
+    ["410906", "COMBUSTIBLE Y PEAJES", "M-CM-PS-SLEP", "xxRRR.Rx."],
+    ["410907", "MATERIALES Y ÚTILES DE ASEO", "M-CM-PS-SLEP", "xx.....x."],
+    ["410908", "PUBLICIDAD", "M-CM-PS-SLEP", "xx......."],
+    ["410909", "PASAJES", "M-CM-PS-SLEP", "xxRRR..x."],
+    ["410910", "OTROS GASTOS DE OPERACIÓN", "M-CM-PS-SLEP", "xxRR...x."],
+    ["410911", "GASTOS MUNICIPALES E IMPUESTOS", "M-CM-PS-SLEP", "xx......."],
+    ["410912", "CRÉDITOS FINANCIEROS", "M-CM-PS-SLEP", "xx......."],
+    ["410913", "GASTOS BANCARIOS", "M-CM-PS-SLEP", "xxRR....."],
+    ["410914", "DEVOLUCIÓN APOYO INICIO ACTIVIDAD", "PS", "xx......."],
+    ["410916", "CONTRATACIÓN DE SEGUROS", "M-CM-PS-SLEP", "xx......."],
+    ["410917", "DEVOLUCIONES DE FONDOS PÚBLICOS", "M-CM-PS-SLEP", "xxx.xxxxx"],
+    ["410918", "TRASLADO DE ESTUDIANTES POR ACTIVIDAD ESCOLAR", "M-CM-PS-SLEP", "xxR...R.."],
+    ["411001", "INTERNET", "M-CM-PS-SLEP", "xxRR..R.."],
+    ["411002", "AGUA", "M-CM-PS-SLEP", "xx.....x."],
+    ["411003", "GAS", "M-CM-PS-SLEP", "xx.....x."],
+    ["411004", "ELECTRICIDAD", "M-CM-PS-SLEP", "xx.....x."],
+    ["411005", "SERVICIO DE CORRESPONDENCIA (CORREOS)", "M-CM-PS-SLEP", "xx......."],
+    ["411006", "TELEFONÍA (MÓVIL Y FIJA)", "M-CM-PS-SLEP", "xx.....x."],
+    ["411007", "COMBUSTIBLE O FUENTE DE ENERGÍA PARA CALEFACCIÓN", "M-CM-PS-SLEP", "xx.....x."],
+    ["411008", "OTROS GASTOS SERVICIOS BÁSICOS", "M-CM-PS-SLEP", "xx.....x."],
+    ["411101", "CONTRATACIÓN SERVICIOS DE ASEO Y JARDINERÍA", "M-CM-PS-SLEP", "xx.....x."],
+    ["411102", "CONTRATACIÓN SERVICIOS DE SEGURIDAD", "M-CM-PS-SLEP", "xx.....x."],
+    ["411103", "CONTRATACIÓN OTROS SERVICIOS EXTERNOS", "M-CM-PS-SLEP", "xx.R....."],
+    ["411201", "MULTAS E INTERESES FISCALES Y PREVISIONALES", "M-CM-PS-SLEP", "x........"],
+    ["411401", "ARRIENDO DE LOCAL ESCOLAR", "M-CM-PS-SLEP", "x........"],
+    ["411402", "ARRIENDO DE OFICINAS Y/O DEPENDENCIAS DE ADMINISTRACIÓN", "M-CM-PS-SLEP", ".x.R...x."],
+    ["411403", "ARRIENDO DE OTROS BIENES INMUEBLES", "M-CM-PS-SLEP", "x.R...xx."],
+    ["411404", "MEJORAS ÚTILES Y NECESARIAS EN LOCAL ESCOLAR ARRENDADO", "M-CM-PS-SLEP", "x.R..x..."],
+    ["411501", "ARRIENDO DE EQUIPOS INFORMÁTICOS", "M-CM-PS-SLEP", "xxxxx..xx"],
+    ["411502", "ARRIENDO DE MAQUINARIAS Y EQUIPOS", "M-CM-PS-SLEP", "xxxxRx.x."],
+    ["411503", "ARRIENDO DE MOBILIARIO", "M-CM-PS-SLEP", "xxxxR..x."],
+    ["411504", "ARRIENDO DE OTROS BIENES MUEBLES", "M-CM-PS-SLEP", "xxxxx..x."],
+    ["411601", "MANTENIMIENTO Y REPARACIÓN DE INFRAESTRUCTURA", "M-CM-PS-SLEP", "xxR..x.x."],
+    ["411602", "CONSTRUCCIÓN DE INFRAESTRUCTURA (OBRA GRUESA)", "M-CM-PS-SLEP", "xxR....x."],
+    ["411603", "TERMINACIONES DE INFRAESTRUCTURA", "M-CM-PS-SLEP", "xxR..x.x."],
+    ["411604", "INSTALACIONES ELÉCTRICAS, ILUMINACIÓN Y SISTEMAS DE CALEFACCIÓN", "M-CM-PS-SLEP", "xxR..x.x."],
+    ["411605", "INSTALACIONES DE GAS", "M-CM-PS-SLEP", "xx...x.x."],
+    ["411606", "INSTALACIONES DE AGUA", "M-CM-PS-SLEP", "xx...x.x."],
+    ["411607", "ALCANTARILLADOS O POZOS SÉPTICOS", "M-CM-PS-SLEP", "xx...x.x."],
+    ["411608", "CIERRES PERIMETRALES Y OBRAS COMPLEMENTARIAS", "M-CM-PS-SLEP", "xxR..x.x."],
+    ["411609", "SERVICIOS HIGIÉNICOS", "M-CM-PS-SLEP", "xx...x.x."],
+    ["411610", "ELIMINACIÓN DE BARRERAS ARQUITÉCTONICAS DE MENOR ENVERGADURA", "M-CM-PS-SLEP", "xxR.xx.x."],
+    ["411701", "MANTENCIÓN  Y REPARACIÓN DE BIENES MUEBLES", "M-CM-PS-SLEP", "xxRR.x.x."],
+    ["411702", "REPUESTOS, MANTENIMIENTO Y REPARACIÓN DE VEHÍCULOS", "M-CM-PS-SLEP", "xxR......"],
+    ["411703", "MANTENCIÓN Y REPARACIÓN DE EQUIPOS COMPUTACIONALES", "M-CM-PS-SLEP", "xxRR.x.x."],
+    ["411704", "MANTENCIÓN Y REPARACIÓN DE MOBILIARIO ESCOLAR", "M-CM-PS-SLEP", "x.R..x.x."],
+    ["411801", "ADQUISICIÓN DE BIENES INMUEBLES", "M-CM-PS-SLEP", "x........"],
+    ["411802", "ADQUISICIÓN DE MOBILIARIO", "M-CM-PS-SLEP", "xxRR.x.x."],
+    ["411803", "ADQUISICIÓN DE VEHÍCULO", "M-CM-PS-SLEP", "xx......."],
+    ["411804", "ADQUISICIÓN DE OTROS BIENES MUEBLES NO PEDAGÓGICOS", "M-CM-PS-SLEP", "xx.R.x.x."],
+    ["700001", "EGRESOS POR RECURSOS CENTRALIZADOS", "M-CM-PS-SLEP", "x.x......"],
+  ],
+};
+// <plan-cuentas-2026:end>
+// Índices derivados de la matriz.
+const PLAN_COL_IDX = {};
+PLAN_CUENTAS_2026.columnas.forEach((col, i) => { PLAN_COL_IDX[col] = i; });
+const PLAN_CUENTAS_BY_CODIGO = {};
+PLAN_CUENTAS_2026.cuentas.forEach(([codigo, nombre, dependencia, flags]) => {
+  PLAN_CUENTAS_BY_CODIGO[codigo] = { codigo, nombre, dependencia, flags };
+});
+// Nivel de habilitación de una cuenta en una columna del manual: 0 = no habilitada, 1 = ✓,
+// 2 = ✓ con ● (habilitada sujeta a exigencias de pertinencia, secciones 9 y 10 del manual).
+function planNivelCuenta(codigo, col) {
+  const c = PLAN_CUENTAS_BY_CODIGO[codigo];
+  const i = PLAN_COL_IDX[col];
+  const f = (c && i !== undefined) ? c.flags[i] : '.';
+  return f === 'R' ? 2 : (f === 'x' ? 1 : 0);
+}
+// Catálogo del libro de compras de las fuentes con bysMode:'compras': los gastos 410500-699999 de
+// la matriz (los 4101xx-4104xx son personal y no pasan por compras). Los 51 códigos que ya tenía
+// SEP conservan su nombre y su subtítulo; para el resto el manual no trae el subtítulo en esta
+// tabla y se infiere por categoría: 4107xx (equipamiento) y 4118xx (adquisición de bienes muebles
+// e inmuebles) = Subt. 29, lo demás = Subt. 22. El nombre se escribe sin tildes, igual que el
+// catálogo SEP, para que el selector no mezcle estilos.
+const sinTildesPlan = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const CUENTAS_COMPRAS = PLAN_CUENTAS_2026.cuentas
+  .filter(([codigo]) => codigo >= '410500' && codigo < '700000')
+  .map(([codigo, nombre]) => CUENTAS_SEP_BY_CODIGO[codigo]
+    || { codigo, nombre: sinTildesPlan(nombre), subt: /^(4107|4118)/.test(codigo) ? '29' : '22' });
+const CUENTAS_COMPRAS_BY_CODIGO = {};
+CUENTAS_COMPRAS.forEach(c => { CUENTAS_COMPRAS_BY_CODIGO[c.codigo] = c; });
 // ITEMS_22/29 se mantienen (mismo nombre que antes) porque buildConceptoCatalog/sheetItemsAOA/
 // getConceptoSeries ya recorren estas listas de nombres para armar el Reporte y el Excel — ahora
 // son la lista fija de nombres oficiales en vez de una lista libre editable por el usuario.
@@ -1692,12 +2019,13 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 //   - bysMode: 'compras' (registro de compras con código de cuenta SUPEREDUC + documento/
 //     proveedor) | 'concepto' (ítems de Bienes y Servicios por concepto libre, sin código ni
 //     documento — para fuentes que no son parte del sistema de rendición de SUPEREDUC).
-// Nota sobre códigos de cuenta: el Manual de Cuentas SUPEREDUC 2026 (págs. 113-119) confirma que
-// cada subvención tiene su propio subconjunto de cuentas habilitadas (p.ej. Mantención casi no
-// tiene remuneraciones, solo infraestructura 411600-411610 + un par de mobiliario). Mientras no
-// se transcriba esa tabla completa por subvención, las 4 fuentes con bysMode:'compras' usan el
-// mismo catálogo CUENTAS_SEP (22+29) que SEP como aproximación temporal — más amplio de lo que
-// cada una realmente admite ante SUPEREDUC. Acotar esto es trabajo pendiente de una PR futura.
+// Códigos de cuenta: el Manual de Cuentas SUPEREDUC 2026 (sección 11, págs. 112-119) da, por cada
+// subvención, el subconjunto de cuentas habilitadas (p.ej. Mantención no admite remuneraciones;
+// solo infraestructura, mantención de bienes muebles y mobiliario). Esa matriz está transcrita en
+// PLAN_CUENTAS_2026 y `colPlan` indica a qué columna del manual corresponde cada fuente con
+// bysMode:'compras' (`colPlanAC`: columna propia de la fila AC; solo Subv. General la tiene en el
+// manual, en las demás la fila AC usa la columna de la fuente — ver colPlanOtraFuente). El selector
+// de código del registro de compras, la validación al agregar y la marca ⚠ salen de esa matriz.
 // codigoSupereduc: código oficial de la Columna B (Subvención) que exige el CSV de SUPEREDUC
 // (Manual de Usuario Capítulo III, Tabla 01) — null para las fuentes que no son parte de ese
 // sistema de rendición: JUNJI, FAEP (excluido explícitamente desde 2024 por el dictamen N°67 de
@@ -1705,10 +2033,10 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 // revisado) y los dos Aportes Fiscales Extraordinarios (ingresos aparte, no rendibles por el libro
 // de compras SUPEREDUC; se llevan separados por Educación y por JUNJI).
 const FUENTES_OTRAS = [
-  { key: 'general', label: 'Subvención General', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'GENERAL' },
-  { key: 'pie', label: 'PIE', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'PIE' },
-  { key: 'mantenimiento', label: 'Subv. Mantención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'MANTENIMIENTO' },
-  { key: 'prorretencion', label: 'Subv. Pro-Retención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'PRORETENCION' },
+  { key: 'general', label: 'Subvención General', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'GENERAL', colPlan: 'general', colPlanAC: 'adm_central_general' },
+  { key: 'pie', label: 'PIE', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'PIE', colPlan: 'pie' },
+  { key: 'mantenimiento', label: 'Subv. Mantención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'MANTENIMIENTO', colPlan: 'mantenimiento' },
+  { key: 'prorretencion', label: 'Subv. Pro-Retención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'PRORETENCION', colPlan: 'proretencion' },
   { key: 'junji', label: 'JUNJI', incomeShape: 'junji3', bysMode: 'concepto', universo: 'gesparvu', codigoSupereduc: null },
   { key: 'faep', label: 'FAEP', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
   { key: 'figa', label: 'FIGA', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
@@ -1717,6 +2045,28 @@ const FUENTES_OTRAS = [
 ];
 const FUENTES_OTRAS_BY_KEY = {};
 FUENTES_OTRAS.forEach(f => { FUENTES_OTRAS_BY_KEY[f.key] = f; });
+// Columna del Plan de Cuentas que rige a una entidad en una fuente con compras. La fila AC usa la
+// columna «Adm. Central» cuando el manual la tiene (solo Subv. General); si no, la de la fuente.
+// null si la fuente no lleva libro de compras (JUNJI, FAEP, FIGA, Aportes).
+function colPlanOtraFuente(fuenteKey, rbd) {
+  const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  if (!f || !f.colPlan) return null;
+  return (rbd === 'AC' && f.colPlanAC) ? f.colPlanAC : f.colPlan;
+}
+// 0 = código no habilitado para esa entidad/fuente, 1 = habilitado (✓), 2 = habilitado sujeto a
+// pertinencia (✓ ●). Sin columna de plan (fuente sin compras) no se restringe nada: devuelve 1.
+function nivelCuentaOtraFuente(fuenteKey, rbd, codigo) {
+  const col = colPlanOtraFuente(fuenteKey, rbd);
+  return col ? planNivelCuenta(codigo, col) : 1;
+}
+// Cuentas del libro de compras habilitadas para esa entidad/fuente, en el orden del manual.
+function cuentasComprasHabilitadas(fuenteKey, rbd) {
+  return CUENTAS_COMPRAS.filter(c => nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) > 0);
+}
+// ¿La columna admite alguna cuenta de personal (4101xx-4104xx)? Mantención no.
+function planAdmitePersonal(col) {
+  return PLAN_CUENTAS_2026.cuentas.some(([codigo]) => codigo >= '410100' && codigo < '410500' && planNivelCuenta(codigo, col) > 0);
+}
 // Fila fija adicional, fuera de DATA.registros: gasto a nivel del sostenedor (Administración
 // Central) y no de un establecimiento puntual. Mismo documento Firestore (sep_carga_rbd/AC) y
 // mismo shape que cualquier RBD — solo que no participa del universo SEP (Panel principal,
@@ -1867,10 +2217,10 @@ function mesFromFechaISO(fecha) {
   if (!m) return null;
   return MESES_CARGA[Number(m[2]) - 1] || null;
 }
-function itemsFromCompras(comprasMap) {
+function itemsFromCompras(comprasMap, catalogo = CUENTAS_SEP_BY_CODIGO) {
   const buckets = {};
   Object.values(comprasMap || {}).forEach(c => {
-    const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
+    const cat = catalogo[c.codigo];
     const mes = mesFromFechaISO(c.fechaDocumento);
     if (!cat || !mes) return;
     if (!buckets[c.codigo]) {
@@ -2048,7 +2398,7 @@ function ensureOtraFuente(rbd, fuenteKey) {
 // El total de B&S (Real+Proy) lo arma recomputeOtraFuente.
 function recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey) {
   const of = ensureOtraFuente(rbd, fuenteKey);
-  of.bys_items = itemsFromCompras(of.compras);
+  of.bys_items = itemsFromCompras(of.compras, CUENTAS_COMPRAS_BY_CODIGO);
 }
 // B&S por concepto libre (JUNJI/FAEP/FIGA/Aportes en `bys_items`; proyección de las fuentes
 // con compras en `bys_proy_items`) — mismo patrón de agregación que
@@ -3341,10 +3691,17 @@ document.getElementById('otrasFuentesModal').addEventListener('click', (e) => {
   if (e.target.id === 'otrasFuentesModal') cerrarOtrasFuentesModal();
 });
 
+// Texto de la marca ⚠ de una compra cuyo código no está habilitado para la subvención (null si lo está).
+function avisoCodigoNoHabilitado(fuenteKey, rbd, codigo) {
+  if (nivelCuentaOtraFuente(fuenteKey, rbd, codigo) > 0) return null;
+  const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  return `La cuenta ${codigo} no está habilitada para ${f.label}${rbd === 'AC' ? ' (Administración Central)' : ''} en el Plan de Cuentas SUPEREDUC 2026: SUPEREDUC la rechazaría.`;
+}
 function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
-  const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
-  return `<tr data-compra-id="${id}">
-    <td>${c.codigo}${cat ? ` · ${cat.nombre}` : ''}</td>
+  const cat = CUENTAS_COMPRAS_BY_CODIGO[c.codigo];
+  const aviso = avisoCodigoNoHabilitado(fuenteKey, rbd, c.codigo);
+  return `<tr data-compra-id="${id}"${aviso ? ' class="compra-no-habilitada"' : ''}>
+    <td>${aviso ? `<span class="compra-aviso" title="${aviso}">⚠</span> ` : ''}${c.codigo}${cat ? ` · ${cat.nombre}` : ''}</td>
     <td>${c.tipoDocumento || ''}</td>
     <td>${c.nroDocumento || ''}</td>
     <td>${c.fechaDocumento || ''}</td>
@@ -3361,9 +3718,13 @@ function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
   </tr>`;
 }
 
-function otrasFuentesOptionsCuentas() {
-  const grupo22 = CUENTAS_SEP_22.map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('');
-  const grupo29 = CUENTAS_SEP_29.map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('');
+// Solo las cuentas que el Plan de Cuentas 2026 habilita para esa subvención (● = habilitada sujeta
+// a pertinencia).
+function otrasFuentesOptionsCuentas(fuenteKey, rbd) {
+  const opt = c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}${nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 2 ? ' ●' : ''}</option>`;
+  const habilitadas = cuentasComprasHabilitadas(fuenteKey, rbd);
+  const grupo22 = habilitadas.filter(c => c.subt === '22').map(opt).join('');
+  const grupo29 = habilitadas.filter(c => c.subt === '29').map(opt).join('');
   return `<option value="">Código cuenta…</option>
     <optgroup label="Subt. 22 — Bienes y Servicios de Consumo">${grupo22}</optgroup>
     <optgroup label="Subt. 29 — Adquisición de Activos No Financieros">${grupo29}</optgroup>`;
@@ -3394,6 +3755,27 @@ function otrasFuentesTablaMes(titulo, rbd, fuenteKey, modo, obj, totalId) {
     </table>`;
 }
 
+// Nota bajo el título del registro de compras: cuántas cuentas habilita el Plan de Cuentas 2026 para
+// esta subvención, qué significa ●, y los avisos (compras con código no habilitado; Mantención no
+// admite personal).
+function notaPlanCuentasOtraFuenteHTML(rbd, fuenteKey, of) {
+  const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const col = colPlanOtraFuente(fuenteKey, rbd);
+  const hab = cuentasComprasHabilitadas(fuenteKey, rbd);
+  const conPert = hab.filter(c => nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 2).length;
+  const quien = rbd === 'AC' && col !== f.colPlan ? `${f.label} — Administración Central` : f.label;
+  let html = `<div class="plan-nota">Plan de Cuentas SUPEREDUC 2026 · <strong>${quien}</strong>: ${hab.length} cuentas habilitadas para el registro de compras de ${CUENTAS_COMPRAS.length}${conPert ? ` (● = ${conPert} sujetas a exigencias de pertinencia, secciones 9 y 10 del manual)` : ''}.${planAdmitePersonal(col) ? '' : ` Esta subvención <strong>no admite</strong> remuneraciones ni otros gastos en personal (cuentas 4101xx-4104xx).`}</div>`;
+  const malas = Object.values(of.compras || {}).filter(c => nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 0);
+  if (malas.length) {
+    const codigos = [...new Set(malas.map(c => c.codigo))].sort().join(', ');
+    html += `<div class="plan-nota plan-nota-aviso">⚠ ${malas.length} compra${malas.length === 1 ? '' : 's'} con una cuenta no habilitada para esta subvención (${codigos}): SUPEREDUC ${malas.length === 1 ? 'la rechazaría' : 'las rechazaría'}. Reclasifica la cuenta o elimina la compra.</div>`;
+  }
+  const rem = of.gasto_rem && of.gasto_rem.total;
+  if (!planAdmitePersonal(col) && rem) {
+    html += `<div class="plan-nota plan-nota-aviso">⚠ Hay ${fmtCLP(rem)} cargados como Remuneraciones en esta subvención, pero el Plan de Cuentas 2026 no habilita cuentas de personal para ella.</div>`;
+  }
+  return html;
+}
 function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
   const compras = of.compras || {};
   const filasCompras = Object.entries(compras)
@@ -3402,10 +3784,11 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
   return `
     <div class="compras-section" style="margin-top:14px;">
       <div class="detalle-header">
-        <strong>Registro de compras (${fuenteLabel}) — Bienes y Servicios</strong> — <span class="detalle-sub">catálogo de cuentas provisorio (el mismo de SEP) mientras se acota por subvención — ver nota en FUENTES_OTRAS.</span>
+        <strong>Registro de compras (${fuenteLabel}) — Bienes y Servicios</strong>
       </div>
+      ${notaPlanCuentasOtraFuenteHTML(rbd, fuenteKey, of)}
       <div class="compra-form-grid">
-        <label class="compra-field"><span class="compra-field-label">Código de cuenta</span><select class="compra-input of-compra-input" data-field="codigo">${otrasFuentesOptionsCuentas()}</select></label>
+        <label class="compra-field"><span class="compra-field-label">Código de cuenta</span><select class="compra-input of-compra-input" data-field="codigo">${otrasFuentesOptionsCuentas(fuenteKey, rbd)}</select></label>
         <label class="compra-field"><span class="compra-field-label">Tipo de documento</span><select class="compra-input of-compra-input" data-field="tipoDocumento">${otrasFuentesOptionsTipoDocumento()}</select></label>
         <label class="compra-field"><span class="compra-field-label">N° documento</span><input type="text" class="compra-input of-compra-input" data-field="nroDocumento" placeholder="N° documento"></label>
         <label class="compra-field"><span class="compra-field-label">Fecha documento</span><input type="date" class="compra-input of-compra-input" data-field="fechaDocumento" title="Fecha documento"></label>
@@ -3689,6 +4072,11 @@ function agregarCompraOtraFuente(rbd, fuenteKey) {
     alert('Completa al menos código de cuenta, fecha de documento y monto gasto antes de agregar.');
     return;
   }
+  const avisoCuenta = avisoCodigoNoHabilitado(fuenteKey, rbd, campos.codigo);
+  if (avisoCuenta || !CUENTAS_COMPRAS_BY_CODIGO[campos.codigo]) {
+    alert(avisoCuenta || `La cuenta ${campos.codigo} no existe en el catálogo del registro de compras.`);
+    return;
+  }
   const id = generarCompraId();
   const of = ensureOtraFuente(rbd, fuenteKey);
   of.compras[id] = campos;
@@ -3916,17 +4304,20 @@ function importOtraFuenteSimpleSheet(ws, fuenteKey, campo) {
   }
   return n;
 }
+// Las filas con una cuenta que existe en el catálogo pero no está habilitada para la subvención se
+// importan igual (no se pierde el dato) y quedan marcadas con ⚠ en el registro; el resumen las cuenta.
+// Devuelve { n, noHabilitadas }.
 function importOtraFuenteComprasSheet(ws, fuenteKey) {
   const rows = rowsFromSheet(ws);
   const porRbd = {};
-  let n = 0;
+  let n = 0, noHabilitadas = 0;
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     if (row[1] === undefined || row[1] === null || String(row[1]).trim() === '') continue;
     const rbd = String(row[1]).trim();
     const codigoRaw = row[3];
     const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
-    if (!CUENTAS_SEP_BY_CODIGO[codigo]) continue;
+    if (!CUENTAS_COMPRAS_BY_CODIGO[codigo]) continue;
     const campos = {
       codigo,
       tipoDocumento: String(row[4] || '').trim(),
@@ -3948,6 +4339,7 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
     if (!porRbd[rbd]) porRbd[rbd] = {};
     porRbd[rbd][id] = campos;
     n++;
+    if (nivelCuentaOtraFuente(fuenteKey, rbd, codigo) === 0) noHabilitadas++;
   }
   Object.keys(porRbd).forEach(rbd => {
     recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey);
@@ -3956,7 +4348,7 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
     scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { compras: porRbd[rbd] } } });
   });
   if (otrasFuentesRbdAbierto && porRbd[otrasFuentesRbdAbierto]) renderOtrasFuentesModalContenido();
-  return n;
+  return { n, noHabilitadas };
 }
 function importBysItemsSheet(ws, fuenteKey, lista = 'bys_items') {
   const rows = rowsFromSheet(ws);
@@ -4017,7 +4409,10 @@ function importOtraFuenteWorkbook(wbIn, fuenteKey) {
   }
   if (wbIn.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['REMUNERACIONES'], fuenteKey, 'gasto_rem') + ' filas');
   if (fuente.bysMode === 'compras') {
-    if (wbIn.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importOtraFuenteComprasSheet(wbIn.Sheets['COMPRAS'], fuenteKey) + ' filas');
+    if (wbIn.Sheets['COMPRAS']) {
+      const rc = importOtraFuenteComprasSheet(wbIn.Sheets['COMPRAS'], fuenteKey);
+      resumen.push('COMPRAS: ' + rc.n + ' filas' + (rc.noHabilitadas ? ` (⚠ ${rc.noHabilitadas} con cuenta no habilitada para ${fuente.label} en el Plan de Cuentas 2026: quedan marcadas en el registro)` : ''));
+    }
     if (wbIn.Sheets['BYS_PROY_ITEMS']) resumen.push('BYS_PROY_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_PROY_ITEMS'], fuenteKey, 'bys_proy_items') + ' filas');
   } else {
     if (wbIn.Sheets['BYS_ITEMS']) resumen.push('BYS_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_ITEMS'], fuenteKey) + ' filas');
@@ -4142,8 +4537,9 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
   if (fuente.bysMode === 'compras') {
     const compras = Object.values(of.compras || {}).sort((a, b) => (a.fechaDocumento || '').localeCompare(b.fechaDocumento || ''));
     const filasCompras = compras.map(c => {
-      const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
-      return `<tr><td>${escHtmlOF(c.codigo)}${cat ? ' · ' + escHtmlOF(cat.nombre) : ''}</td><td>${escHtmlOF(c.tipoDocumento)}</td><td>${escHtmlOF(c.nroDocumento)}</td><td>${escHtmlOF(c.fechaDocumento)}</td><td>${escHtmlOF(c.fechaPago)}</td><td>${escHtmlOF(c.descripcion)}</td><td>${escHtmlOF(c.rutProveedor)}</td><td>${escHtmlOF(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td>${escHtmlOF(c.documentoOriginal)}</td></tr>`;
+      const cat = CUENTAS_COMPRAS_BY_CODIGO[c.codigo];
+      const marca = nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 0 ? '⚠ ' : '';
+      return `<tr><td>${marca}${escHtmlOF(c.codigo)}${cat ? ' · ' + escHtmlOF(cat.nombre) : ''}</td><td>${escHtmlOF(c.tipoDocumento)}</td><td>${escHtmlOF(c.nroDocumento)}</td><td>${escHtmlOF(c.fechaDocumento)}</td><td>${escHtmlOF(c.fechaPago)}</td><td>${escHtmlOF(c.descripcion)}</td><td>${escHtmlOF(c.rutProveedor)}</td><td>${escHtmlOF(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td>${escHtmlOF(c.documentoOriginal)}</td></tr>`;
     }).join('') || `<tr><td colspan="11" class="detalle-sin-compras">Sin compras registradas.</td></tr>`;
     bysHTML = `
       ${tablaMesesEstaticaHTML('Bienes y Servicios — compras (Real)', (of.bys_items || []).map(it => ({ label: `${it.codigo} · ${it.item}`, obj: it })), 12, false)}

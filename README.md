@@ -188,7 +188,33 @@ cada fila) incluye este mismo desglose Real / Proyectado / Total.
 
 ### Pestaña "Reportes"
 
-Permite cruzar establecimiento × concepto × mes(es) para cualquier serie ya cargada (los 3
+Es la última pestaña de la barra y tiene dos vistas, que se eligen con los chips de arriba:
+**📊 Visualizador** (por defecto) y **🧮 Reporte personalizado**.
+
+**Visualizador (multi-fuente).** Consolida **todas las fuentes de financiamiento** al estilo del
+Visualizador de la plataforma de Rendición de Cuentas de SUPEREDUC (Manual, Cap. VII): filtros por
+Fuente (SEP + las 9 fuentes, chips con "Todas / Ninguna") y por Entidad (55 RBD, "AC" y los 13
+GESPARVU de JUNJI, con buscador; al elegir solo AC o solo GESPARVU quedan únicamente las fuentes
+cuyo universo los incluye), un panel **Saldo disponible** (Ingresos − Gastos) y dos tablas
+expandibles, **Ingresos** y **Gastos**, con columnas **Real / Proyectado / Total**:
+
+- **Agrupar por fuente** (por defecto): una fila por fuente que se expande a sus subcategorías
+  (Remuneraciones, Bienes y Servicios Subt. 22 / 29, Bienes y Servicios proyectados) y estas a
+  sus cuentas/conceptos.
+- **Agrupar por código / concepto (consolidado)**: una fila por cuenta (p. ej. 411601) que suma
+  todas las fuentes y se expande para ver cuánto aporta cada una.
+- Cada fila tiene el botón 📅 con el **detalle mensual** (Real / Proyectado / Total por mes). Las
+  celdas se pintan verde (real) o naranja (proyectado) con el mismo criterio de corte de cada
+  entidad; si en un mes se mezclan entidades con cortes distintos queda en degradé ("mixto").
+- Descargas: **⬇ Excel** de Ingresos y de Gastos por separado (hojas Detalle, Mensual Real,
+  Mensual Proyectado, Mensual Total, Filtros y, al agrupar por código, Consolidado), **⬇ CSV** y
+  **🖨 Exportar PDF** (imprime el árbol completamente expandido, sin el detalle mensual).
+- SEP se muestra por **año completo** (no depende del selector "Ver resumen acumulado hasta el
+  mes" de la pestaña SEP); con ese selector en Diciembre (el valor por defecto) los totales por
+  fuente coinciden con las tarjetas del Panel principal y de cada pestaña.
+
+**Reporte personalizado.** Es la vista original de esta pestaña, sin cambios: permite cruzar
+establecimiento × concepto × mes(es) para cualquier serie ya cargada (los 3
 ingresos SEP, Remuneraciones, cada ítem de compras Subt.22/29, el total de Bienes y Servicios
 (Proyección) y cada ítem de esa misma proyección por separado — se puede buscar, por ejemplo,
 "arriendo" y encontrar tanto la compra real como su proyección, cada una con su propio total).
@@ -319,8 +345,9 @@ como aproximación temporal. El Manual de Cuentas SUPEREDUC 2026 confirma que ca
 tiene su propio subconjunto de cuentas habilitadas (p. ej. Mantención casi no admite
 remuneraciones, solo cuentas de infraestructura) — acotar el selector por fuente requiere
 transcribir con cuidado esa tabla completa (~130 cuentas × 9 columnas) antes de aplicarla, dado
-el riesgo de error en datos financieros. Tampoco existe aún una vista que sume todas las fuentes por
-RBD (Dashboard / Reportes multi-fuente, en PRs siguientes).
+el riesgo de error en datos financieros. El "Reporte personalizado" (cruce entidad × concepto × mes)
+sigue siendo solo de SEP; sumarle la dimensión Fuente queda para una PR siguiente (el Visualizador
+ya cubre la vista consolidada multi-fuente).
 
 ## Fuentes de datos
 

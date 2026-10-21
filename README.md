@@ -15,6 +15,49 @@ para autenticarse y sincronizar (Firebase); la librería de Excel usada para exp
 sigue viniendo incluida en el propio archivo. Dentro del panel, el botón "❓ Cómo usar" (arriba a
 la derecha) tiene una guía rápida pensada para todo el equipo, sin pasos técnicos.
 
+### Estructura de pestañas y Panel principal (dashboard)
+
+La barra de pestañas va en tres grupos, siempre en este orden:
+
+1. **Inicio**: 🏠 **Panel principal** (dashboard, la pestaña que se abre al entrar) y 🎓 **SEP** (lo que antes
+   se llamaba "Panel principal": la tabla "Estado por RBD" con la regla 70/30; conserva todo su contenido).
+2. **Fuentes de financiamiento** (una pestaña por fuente, sin selector): Subv. General, PIE, Mantención,
+   Pro-Retención, JUNJI, FAEP, FIGA, Aporte Fiscal Educ. y Aporte Fiscal JUNJI.
+3. **Análisis**: 📉 % Ejecución y 📈 Reportes (siempre al final).
+
+En pantallas angostas la barra se vuelve una sola fila con scroll horizontal; en pantallas anchas envuelve
+por grupos.
+
+El **Panel principal** resume SEP + las 9 fuentes de un vistazo (todo en tiempo real, sin cargar nada aparte):
+
+- **Chips Total (Real+Proy) / Real / Proyectado**: cambian todas las cifras y gráficos de la pantalla.
+- **Franja consolidada**: Ingreso, Gasto Remuneraciones, Gasto Bienes y Servicios, Gasto Total, Saldo y
+  entidades en déficit (suma de SEP y las 9 fuentes).
+- **Una tarjeta por fuente** (10): saldo destacado (verde/rojo con ▲/▼ y etiqueta, nunca solo color), Ingreso
+  vs. Gasto en mini barras, % de ejecución (Gasto/Ingreso, con barra de progreso) y "N de M entidades en
+  déficit". **Clic (o Enter/Espacio) en una tarjeta abre la pestaña de esa fuente.** Las cifras coinciden
+  exactamente con las tarjetas KPI de la pestaña correspondiente en la misma vista (para SEP, "Ingreso" =
+  Ingreso SEP + Carrera Docente, el mismo que usa su Saldo, y siguen el selector "Ver resumen hasta el mes").
+  Cada tarjeta lleva además sus montos exactos en atributos `data-*`.
+- **Ingreso vs. Gasto por fuente** y **Composición del gasto** (Remuneraciones vs. Bienes y Servicios, en %):
+  barras con tooltip al pasar el cursor o enfocar y clic para abrir la pestaña. "Ver datos en tabla" muestra
+  los mismos números como tabla.
+- **Evolución mensual consolidada** (Ingreso vs. Gasto, enero–diciembre): se arma mes a mes con las mismas
+  reglas real/proyectado de cada pestaña (corte "Real hasta" por entidad en las fuentes; en SEP, ingreso real
+  hasta `DATA.n_meses`, remuneraciones hasta el corte de cada RBD, compras siempre reales y proyección de B&S
+  siempre proyectada). Es la serie del año completo: no depende del selector "Ver resumen hasta el mes" de SEP.
+  Los tests verifican que su total cuadra con la franja consolidada en las 3 vistas.
+- **Atención**: las 8 entidades con el saldo más negativo (según la vista elegida) entre SEP y todas las
+  fuentes; clic abre la pestaña y el detalle de esa entidad.
+- **🖨 Exportar PDF** del dashboard (mismo mecanismo de impresión del navegador; se ocultan la barra de
+  pestañas y los controles).
+
+Funciones: `computeTotalesSepParaDashboard()` (adaptador de SEP con la misma forma que
+`computeTotalesOtraFuente`), `irAPestana(tabId)`, `renderDashboard()` y las de gráficos (`renderDashComparativo`,
+`renderDashComposicion`, `renderDashMensual`, `renderDashAtencion`). Los gráficos usan la paleta del panel
+(Ingreso azul `--series-1`, Gasto naranja `--series-2`, Bienes y Servicios violeta `#7c3aed`), validada con el
+validador de paletas del skill `dataviz` (separación para daltonismo y contraste).
+
 ### Paleta y formato
 
 Usa la misma paleta y formato que el resto de los paneles de Finanzas SLEP Petorca (Control de
@@ -133,7 +176,7 @@ Cada celda del mes se colorea verde (real) o naranja (proyectada) según la mism
 detalle de cada RBD — Remuneraciones según el corte propio de cada establecimiento, así que al
 combinar varios RBD con cortes distintos en un mismo reporte, la fila "Subtotal" no se colorea
 (mezclaría criterios distintos). Este coloreado es independiente del selector "Ver resumen
-acumulado hasta el mes" del Panel principal, que solo afecta a las tarjetas KPI.
+acumulado hasta el mes" de la pestaña SEP, que solo afecta a las tarjetas KPI.
 
 ### Pestaña "Otras Fuentes"
 
@@ -144,8 +187,8 @@ JUNJI, FAEP, FIGA, Aporte Fiscal Extraordinario Educación y Aporte Fiscal Extra
 el seguimiento es simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores
 (Superávit/Déficit).
 
-- Cada fuente es su propia pestaña de primer nivel (junto a Panel principal/Reportes/%
-  Ejecución) — sin selector desplegable intermedio, se presiona directo.
+- Cada fuente es su propia pestaña de primer nivel (entre SEP y % Ejecución/Reportes, ver
+  "Estructura de pestañas") — sin selector desplegable intermedio, se presiona directo.
 - La tabla incluye una fila fija adicional, **"AC" (Administración Central)**, para gasto a
   nivel del sostenedor que no corresponde a un establecimiento puntual — no aparece en el Panel
   principal ni en Reportes de SEP, solo en esta pestaña (excepto en JUNJI, ver más abajo).
@@ -208,7 +251,7 @@ con el mismo criterio que las remuneraciones de SEP:
   (`otras_fuentes.{fuente}.bys_proy_items`, concepto libre, siempre Proyectada).
 - Cada pestaña muestra 3 filas de tarjetas KPI colapsables — **Real (ejecutado)**, **Proyectado** y
   **Total (Real + Proyectado)** — con Ingreso, Gasto Remuneraciones, Gasto Bienes y Servicios,
-  Gasto Total y Saldo (por defecto solo Total abierta, igual que Panel principal; el estado de cada
+  Gasto Total y Saldo (por defecto solo Total abierta, igual que la pestaña SEP; el estado de cada
   fila se recuerda en este navegador). Los chips "Total / Real / Proyectado" sobre la tabla cambian
   la base de sus columnas numéricas; la columna **Estado** siempre es sobre el Total.
 - En el modal, los encabezados de mes llevan la etiqueta Real/Proy. según el corte de esa entidad y
@@ -218,7 +261,7 @@ con el mismo criterio que las remuneraciones de SEP:
   `nEntidades / nDeficit / nSuperavit`; por entidad el desglose es `of.rp`.
 
 **Importar / exportar.** Cada una de las 9 pestañas tiene su propia fila de botones, igual
-criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de los datos de SEP:
+criterio que la pestaña SEP pero leyendo/escribiendo `otras_fuentes` en vez de los datos de SEP:
 
 - **⬇ Compras SUPEREDUC (CSV)** — solo en las 4 fuentes `bysMode:'compras'` (no en JUNJI/FAEP/
   FIGA, que no son parte de ese sistema de rendición): mismo formato de 13 columnas que el de
@@ -229,9 +272,9 @@ criterio que Panel principal pero leyendo/escribiendo `otras_fuentes` en vez de 
   `BYS_ITEMS` por concepto para las `bysMode:'concepto'`) y una hoja `META` con el corte "Real hasta
   el mes" de cada entidad, reimportable tal cual se exporta (el corte y la proyección de B&S
   sobreviven al round-trip; si una hoja falta en el archivo, el import no toca esos datos).
-- **🖨 Exportar PDF** — mismo mecanismo de impresión del navegador que ya usa Panel principal;
+- **🖨 Exportar PDF** — mismo mecanismo de impresión del navegador que ya usa la pestaña SEP;
   imprime la pestaña de fuente actualmente activa.
-- **⬇ Descargar carga (JSON)** — respaldo manual, igual criterio que el de Panel principal.
+- **⬇ Descargar carga (JSON)** — respaldo manual, igual criterio que el de la pestaña SEP.
 
 **Acciones por fila.** Cada tabla de fuente tiene al final una columna **Acciones** (igual que la
 de SEP) con descargas individuales de esa entidad (RBD, "AC" o GESPARVU), que no salen en el PDF

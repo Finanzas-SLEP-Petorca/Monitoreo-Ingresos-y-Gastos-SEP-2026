@@ -300,10 +300,31 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     @page { size: landscape; margin: 10mm 8mm; }
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
     .table-controls, .corte-control, .legend-row, .sep-notas, footer, .expand-cell, .compra-form-grid, .bysproy-add-row, .col-acciones { display:none !important; }
-    body, .wrap, .page-plane { background:#fff !important; }
+    /* html también: su fondo gris (--page-plane) se propaga al lienzo y asomaba como un bloque gris al final de la última página; la altura
+       100% de html/body no tiene sentido al paginar (U-15). */
+    html, body, .wrap, .page-plane { background:#fff !important; }
+    html, body { height:auto !important; }
     .wrap { max-width:none !important; padding:10px !important; }
+    /* Controles de sesión fuera del papel: botones "Cómo usar" / "Cerrar sesión", "Conectado como" y el estado de sincronización. */
+    header.top .header-right, .sync-bar, .user-box, .modal-sync { display:none !important; }
+    /* Sin espacio sobrante al final del documento: con las pestañas largas (p. ej. FAEP en A4) el margen/relleno de cierre de la sección, del panel y del
+       contenedor caía solo en una última hoja EN BLANCO. */
+    .wrap { padding-bottom:0 !important; }
+    section { margin-bottom:0 !important; }
+    .panel { padding-bottom:0 !important; }
+    body.print-single-rbd #printSingleWrap { padding-bottom:0 !important; }
     .table-scroll { max-height:none !important; overflow:visible !important; border:none !important; }
     table.data-table { min-width:0 !important; font-size:10.5px !important; }
+    /* La tabla SEP (13 columnas) y la fila del PDF individual medían 1.436 / 1.166 px sobre una hoja horizontal de ~975 px útiles: el navegador la encogía
+       o, según el tamaño de papel y la escala, la columna Estado (la última) quedaba cortada. Compacta para que quepa entera: fuente 9 px, encabezados
+       en varias líneas, barras de % más cortas; los montos siguen sin partirse (nowrap). */
+    #tab-panel table.data-table, #printSingleWrap table.data-table { width:100% !important; font-size:9px !important; }
+    #tab-panel table.data-table th, #tab-panel table.data-table td, #printSingleWrap table.data-table th, #printSingleWrap table.data-table td { padding:3px 3px !important; }
+    #tab-panel table.data-table th, #printSingleWrap table.data-table th { white-space:normal !important; line-height:1.15; vertical-align:bottom; }
+    #tab-panel table.data-table td.num, #printSingleWrap table.data-table td.num { white-space:nowrap; }
+    #tab-panel .pct-bar-track, #printSingleWrap .pct-bar-track { width:22px !important; margin-right:3px !important; }
+    #tab-panel .pct-bar-text, #printSingleWrap .pct-bar-text { width:auto !important; }
+    #tab-panel .tag, #printSingleWrap .tag { font-size:8px !important; padding:1px 5px !important; }
     table.data-table thead, table.data-table th { position:static !important; }
     .nombre-txt { max-width:none !important; overflow:visible !important; text-overflow:clip !important; white-space:normal !important; }
     .detalle-wrap { padding:8px 4px 8px 10px !important; }

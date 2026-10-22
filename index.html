@@ -240,6 +240,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .compra-field { display:flex; flex-direction:column; gap:3px; }
   .compra-field-label { font-size:10px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.02em; }
   .compra-input { padding:6px 8px; border-radius:5px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); width:100%; box-sizing:border-box; }
+  /* "Doc. original" solo sirve para notas de crédito/débito: con cualquier otro tipo de documento se ATENÚA (rótulo más suave y borde punteado),
+     pero NO se deshabilita —sigue editable para no ocultar ni bloquear los valores que ya tienen las compras existentes—. Solo CSS (:has sobre la opción
+     elegida): se actualiza también cuando el formulario se rellena por código (✏️ / ⧉ / limpiar). Sin :has() el navegador ignora la regla y el campo se ve normal. */
+  .compra-form-grid:not(:has(select[data-field="tipoDocumento"] option[value^="Nota de"]:checked)) .compra-field-docorig .compra-field-label { color:var(--text-muted); font-weight:500; }
+  .compra-form-grid:not(:has(select[data-field="tipoDocumento"] option[value^="Nota de"]:checked)) .compra-field-docorig .compra-input { border-style:dashed; }
+  td.col-dc em.dc-derivado { font-style:italic; }
   .compra-form-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .add-compra-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
   .add-compra-btn:hover { filter:brightness(.9); }
@@ -249,7 +255,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .cancelar-edicion-btn:hover { background:var(--gridline); }
   .cancelar-edicion-btn.hidden { display:none; }
   .compras-scroll { overflow-x:auto; margin-top:8px; }
-  table.compras-table { min-width:1100px; table-layout:auto; }
+  table.compras-table { min-width:1180px; table-layout:auto; }
   table.compras-table th, table.compras-table td { white-space:nowrap; }
   .compra-acciones-cell { display:flex; gap:2px; }
   table.detalle-table td.compra-acciones-cell { overflow:visible; } /* que el anillo de foco de ✏️ ⧉ 🗑 no lo recorte la celda (U-13) */
@@ -910,6 +916,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <button id="downloadComprasSepBtn" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras (Subt.22/29) de todos los RBD con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD; para eso usa ⬇ CSV SEP de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
         <button id="downloadCargaBtn" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         <button id="limpiarDuplicadosBtn" type="button" class="hidden" style="background:#b45309; border-color:#b45309;" title="Revisa si quedaron compras duplicadas con ID &quot;0&quot; — un rastro del bug de carga masiva ya corregido — y permite eliminarlas (solo la copia duplicada, nunca la compra correcta)">🧹 Revisar duplicados (ID &quot;0&quot;)</button>
+        <button id="migrarDcBtn" type="button" class="hidden" style="background:#0f766e; border-color:#0f766e;" title="Mueve a &quot;N° DC&quot; los números de Documento Contable (DC_344…) que se anotaron en &quot;Doc. original&quot;, en SEP y en las fuentes con compras. Pide confirmación y se puede repetir sin riesgo (lo ya migrado no se vuelve a tocar).">🗂 Migrar DC</button>
       </div>
       <div class="corte-control">
         <label for="corteMesSelect">Ver resumen (KPI y % Ejecución) acumulado hasta el mes:</label>
@@ -2364,11 +2371,55 @@ function rutSupereduc(rut) {
   const m = /^(\d{7,8})([\dK])$/.exec(t);
   return m ? `${m[1]}-${m[2]}` : original; // si no parece un RUT se deja tal cual (no se inventa nada)
 }
+// ----------------------------------------------------------------------------
+// N° DC (Documento Contable interno). Campo propio `documentoContable` de cada compra: un texto libre corto
+// (p. ej. "DC_344") que dice en qué carpeta/SET está el respaldo del gasto. Es de uso INTERNO: nunca va al CSV de
+// SUPEREDUC. Antes se anotaba en "Documento original" (que solo sirve para notas de crédito/débito); esos valores
+// legados se reconocen con RE_DC_LEGADO ("DC_344", "DC-33", "DC_22 - No hay PME", "dc 12"…; NO "123-FAC"):
+//   · mientras no se migren se MUESTRAN como N° DC (derivado, en cursiva) sin tocar lo guardado;
+//   · el botón admin "Migrar DC" los mueve a `documentoContable` (ver migrarDcDesdeDocOriginal);
+//   · el CSV de SUPEREDUC los trata como "Documento Original" vacío (documentoOriginalSupereduc).
+// ----------------------------------------------------------------------------
+const RE_DC_LEGADO = /^\s*DC[\s_-]*\d+/i;
+const AYUDA_DC = 'Documento contable interno: carpeta/SET con el respaldo';
+const AYUDA_DOC_ORIGINAL = 'Solo notas de crédito/débito: número-TIPO, p. ej. 123-FAC';
+const TITULO_DC_DERIVADO = 'Tomado de Doc. original; usa «Migrar DC» para moverlo';
+function esDcLegado(valor) { return typeof valor === 'string' && RE_DC_LEGADO.test(valor); }
+// { texto, derivado }: el N° DC propio de la compra o, si no tiene, el DC legado que está en Doc. original ('' si ninguno).
+function dcDeCompra(c) {
+  c = c || {};
+  const propio = textoSeguro(c.documentoContable).trim();
+  if (propio) return { texto: propio, derivado: false };
+  const legado = textoSeguro(c.documentoOriginal).trim();
+  return esDcLegado(legado) ? { texto: legado, derivado: true } : { texto: '', derivado: false };
+}
+// Contenido de la celda "N° DC" de las tablas de compras (siempre escapado).
+function celdaDcHTML(c) {
+  const dc = dcDeCompra(c);
+  if (!dc.texto) return '';
+  return dc.derivado ? `<em class="dc-derivado" title="${escHtml(TITULO_DC_DERIVADO)}">${escHtml(dc.texto)}</em>` : escHtml(dc.texto);
+}
+// Columna "N° DC" en una hoja COMPRAS de Excel: el encabezado puede llamarse "N° DC", "NroDC" o "DocumentoContable".
+// Devuelve su índice o -1 si el archivo es antiguo (sin la columna).
+function indiceColumnaDc(encabezado) {
+  return (encabezado || []).findIndex(h => /^(n[°º]?\s*dc|nro\.?\s*dc|documento\s*contable)$/i.test(String(h == null ? '' : h).trim().replace(/\s+/g, ' ')));
+}
+
+// Importar: pone `documentoContable` en los campos de la compra solo si el archivo trae la columna Y hay algo que escribir
+// (un N° DC, o limpiar uno que la compra ya tenía): así exportar → reimportar deja intacta una compra que nunca tuvo el campo.
+function aplicarDcImportado(campos, fila, idxDc, previa) {
+  if (idxDc < 0) return;
+  const dc = String(fila[idxDc] || '').trim();
+  if (dc || (previa && previa.documentoContable !== undefined)) campos.documentoContable = dc;
+}
+
 // "Documento Original": vacío salvo en NOTACRE/NOTADEB, donde debe ser número-TIPO (123-FAC) y el tipo
 // original una factura (FAC, FACE, FACEL, FACEX). Acepta "123-FAC", "123 - Factura electrónica" o "FAC-123".
+// Un DC legado ("DC_344") nunca es un documento original: sale vacío (y en una NC/ND cuenta como "sin Documento Original").
 function documentoOriginalSupereduc(compra, codigoTipo) {
   if (codigoTipo !== 'NOTACRE' && codigoTipo !== 'NOTADEB') return { texto: '', ok: true };
   const t = textoSeguro(compra.documentoOriginal).trim();
+  if (esDcLegado(t)) return { texto: '', ok: false };
   const FACTURAS = ['FAC', 'FACE', 'FACEL', 'FACEX'];
   let m = /^([^\s-]+)\s*-\s*(.+)$/.exec(t);
   if (m) {
@@ -3408,6 +3459,7 @@ function buildDetalleHTML(rbd, printMode) {
       <td>${escHtml(c.nombreProveedor || '')}</td>
       <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
       <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
+      <td class="col-dc">${celdaDcHTML(c)}</td>
       <td>${escHtml(c.documentoOriginal || '')}</td>
       ${printMode ? '' : `<td class="compra-acciones-cell">
         <button type="button" class="compra-edit-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Editar compra" aria-label="Editar compra ${nombreCompra}">✏️</button>
@@ -3433,7 +3485,8 @@ function buildDetalleHTML(rbd, printMode) {
       <label class="compra-field"><span class="compra-field-label">Nombre proveedor</span><input type="text" class="compra-input" data-field="nombreProveedor" placeholder="Nombre proveedor"></label>
       <label class="compra-field"><span class="compra-field-label">Monto gasto</span><input type="number" class="compra-input" data-field="montoGasto" placeholder="Monto gasto"></label>
       <label class="compra-field"><span class="compra-field-label">Monto documento</span><input type="number" class="compra-input" data-field="montoDocumento" placeholder="Monto documento"></label>
-      <label class="compra-field"><span class="compra-field-label">Documento original</span><input type="text" class="compra-input" data-field="documentoOriginal" placeholder="Documento original (folio/nota)"></label>
+      <label class="compra-field compra-field-dc" title="${escHtml(AYUDA_DC)}"><span class="compra-field-label">N° DC</span><input type="text" class="compra-input" data-field="documentoContable" maxlength="100" autocomplete="off" placeholder="p. ej. DC_344" title="${escHtml(AYUDA_DC)}"></label>
+      <label class="compra-field compra-field-docorig" title="${escHtml(AYUDA_DOC_ORIGINAL)}"><span class="compra-field-label">Doc. original (NC/ND)</span><input type="text" class="compra-input" data-field="documentoOriginal" autocomplete="off" placeholder="123-FAC" title="${escHtml(AYUDA_DOC_ORIGINAL)}"></label>
       <span class="compra-form-actions">
         <button type="button" class="add-compra-btn" data-rbd="${rbd}">+ Agregar compra</button>
         <button type="button" class="cancelar-edicion-btn hidden" data-rbd="${rbd}">✕ Cancelar edición</button>
@@ -3442,13 +3495,13 @@ function buildDetalleHTML(rbd, printMode) {
     return `
     <div class="compras-section">
       <div class="detalle-header">
-        <strong>Registro de compras SEP (Subt. 22 y 29)</strong> — <span class="detalle-sub">mismos campos que exige SUPEREDUC al cargar los gastos; cada compra se suma sola al ítem y mes que le corresponda según su Fecha Documento.</span>
+        <strong>Registro de compras SEP (Subt. 22 y 29)</strong> — <span class="detalle-sub">mismos campos que exige SUPEREDUC al cargar los gastos; cada compra se suma sola al ítem y mes que le corresponda según su Fecha Documento. <strong>N° DC</strong> es interno (${escHtml(AYUDA_DC)}) y no va en el CSV de SUPEREDUC; <strong>Doc. original</strong> es solo para notas de crédito/débito.</span>
       </div>
       ${formHTML}
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
-          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th>${printMode ? '' : '<th aria-label="Acciones"></th>'}</tr></thead>
-          <tbody>${filas || `<tr><td colspan="${printMode ? 11 : 12}" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
+          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th><th title="${escHtml(AYUDA_DOC_ORIGINAL)}">Doc. original</th>${printMode ? '' : '<th aria-label="Acciones"></th>'}</tr></thead>
+          <tbody>${filas || `<tr><td colspan="${printMode ? 12 : 13}" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
         </table>
       </div>
     </div>`;
@@ -3756,6 +3809,103 @@ async function limpiarComprasIdLiteralCero() {
   }
 }
 document.getElementById('limpiarDuplicadosBtn').addEventListener('click', limpiarComprasIdLiteralCero);
+
+// --- "Migrar DC" (herramienta admin, junto a "Revisar duplicados"): hasta ahora el número de Documento Contable se
+// anotaba en "Doc. original" (DC_344, DC-33, "DC_22 - No hay PME"…). Ahora tiene campo propio (`documentoContable`, "N° DC"):
+// este botón mueve ese valor COMPLETO (sin interpretar el comentario que lo acompañe) a `documentoContable` y deja
+// `documentoOriginal` vacío, en SEP y en las fuentes con registro de compras. Solo toca compras con `documentoContable`
+// vacío y un DC legado en `documentoOriginal` (ver esDcLegado), así que repetirlo no cambia nada (idempotente). ---
+function detectarDcEnDocOriginal() {
+  const items = [];
+  const revisa = (rbd, fuenteKey, compras) => {
+    Object.entries(objetoPlano(compras)).forEach(([id, c]) => {
+      if (!c || typeof c !== 'object' || Array.isArray(c)) return;
+      if (textoSeguro(c.documentoContable).trim()) return;
+      const valor = textoSeguro(c.documentoOriginal).trim();
+      if (esDcLegado(valor)) items.push({ rbd, fuenteKey, id, valor });
+    });
+  };
+  Object.entries(CARGA_MANUAL.compras_por_rbd || {}).forEach(([rbd, compras]) => revisa(rbd, null, compras));
+  FUENTES_OTRAS.filter(f => f.bysMode === 'compras').forEach(f => {
+    Object.entries(CARGA_MANUAL.otras_fuentes_por_rbd || {}).forEach(([rbd, porFuente]) => revisa(rbd, f.key, porFuente && porFuente[f.key] && porFuente[f.key].compras));
+  });
+  return items;
+}
+// Un documento de Firestore por RBD/entidad: { compras: { id: {...} }, otras_fuentes: { fuente: { compras: { id: {...} } } } } con solo los dos campos que cambian.
+function payloadsMigrarDc(items) {
+  const porDoc = {};
+  items.forEach(({ rbd, fuenteKey, id, valor }) => {
+    const p = porDoc[rbd] || (porDoc[rbd] = {});
+    const cambio = { documentoContable: valor, documentoOriginal: '' }; // '' = vacío, igual que cuando se borra el campo en el formulario
+    if (fuenteKey === null) { (p.compras = p.compras || {})[id] = cambio; }
+    else {
+      const of = (p.otras_fuentes = p.otras_fuentes || {});
+      ((of[fuenteKey] = of[fuenteKey] || { compras: {} }).compras)[id] = cambio;
+    }
+  });
+  return porDoc;
+}
+const MAX_OPERACIONES_POR_LOTE = 400; // Firestore admite 500 por writeBatch; se deja margen
+// Muestra u oculta el botón (solo ADMIN_EMAILS) y le pone el contador solo si hay algo que migrar.
+function actualizarBotonMigrarDc() {
+  const btn = document.getElementById('migrarDcBtn');
+  if (!btn) return;
+  const esAdmin = !!currentUser && ADMIN_EMAILS.includes(currentUser.email);
+  btn.classList.toggle('hidden', !esAdmin);
+  if (!esAdmin) return;
+  const n = detectarDcEnDocOriginal().length;
+  const texto = n > 0 ? `🗂 Migrar DC (${n})` : '🗂 Migrar DC';
+  if (btn.textContent !== texto) btn.textContent = texto;
+}
+async function migrarDcDesdeDocOriginal() {
+  if (!currentUser || !ADMIN_EMAILS.includes(currentUser.email)) {
+    alert('Esta herramienta de mantenimiento está restringida a Wilson Rojas.');
+    return;
+  }
+  const items = detectarDcEnDocOriginal();
+  if (!items.length) {
+    alert('No hay compras con un número de DC anotado en "Doc. original": no hay nada que migrar.');
+    return;
+  }
+  const porOrigen = {};
+  items.forEach(it => { const k = it.fuenteKey === null ? 'SEP' : FUENTES_OTRAS_BY_KEY[it.fuenteKey].label; porOrigen[k] = (porOrigen[k] || 0) + 1; });
+  const detalle = Object.entries(porOrigen).map(([k, n]) => `  • ${k}: ${n}`).join('\n');
+  const entidades = new Set(items.map(it => it.rbd)).size;
+  const ok = confirm(
+    `Se encontraron ${items.length} compras con un DC anotado en "Doc. original" (${entidades} RBD/entidades):\n\n${detalle}\n\n` +
+    `Se moverá el valor COMPLETO a "N° DC" y "Doc. original" quedará vacío. Es seguro repetirlo: lo ya migrado no se vuelve a tocar.\n\n¿Migrar estas ${items.length} compras?`
+  );
+  if (!ok) return;
+  // Pantalla: el cambio se ve de inmediato (el eco de Firestore trae lo mismo).
+  items.forEach(({ rbd, fuenteKey, id, valor }) => {
+    const c = fuenteKey === null
+      ? ((CARGA_MANUAL.compras_por_rbd || {})[rbd] || {})[id]
+      : (((((CARGA_MANUAL.otras_fuentes_por_rbd || {})[rbd] || {})[fuenteKey]) || {}).compras || {})[id];
+    if (c) { c.documentoContable = valor; c.documentoOriginal = ''; }
+  });
+  renderTable();
+  renderOtrasFuentesTable();
+  if (otrasFuentesRbdAbierto) renderOtrasFuentesModalContenido();
+  actualizarBotonMigrarDc();
+  // Guardado: un set con merge por documento, en lotes de a lo más MAX_OPERACIONES_POR_LOTE operaciones.
+  const porDoc = payloadsMigrarDc(items);
+  const rbds = Object.keys(porDoc);
+  try {
+    const lotes = [];
+    for (let i = 0; i < rbds.length; i += MAX_OPERACIONES_POR_LOTE) {
+      const batch = writeBatch(db);
+      rbds.slice(i, i + MAX_OPERACIONES_POR_LOTE).forEach(rbd => {
+        batch.set(doc(db, CARGA_COLLECTION, rbd), { ...porDoc[rbd], lastModifiedBy: currentUser.email, lastModifiedAt: serverTimestamp() }, { merge: true });
+      });
+      lotes.push(batch.commit());
+    }
+    await Promise.all(lotes);
+    alert(`Listo: se movieron ${items.length} números de DC a "N° DC" (${entidades} RBD/entidades).`);
+  } catch (err) {
+    alert('No se pudo guardar la migración para el resto del equipo: ' + err.message + '\nPuedes repetir "Migrar DC": solo reintenta lo que falte.');
+  }
+}
+document.getElementById('migrarDcBtn').addEventListener('click', migrarDcDesdeDocOriginal);
 const tableBodyEl = document.getElementById('tableBody');
 tableBodyEl.addEventListener('click', (e) => {
   const rowBtn = e.target.closest('.row-action-btn');
@@ -4294,6 +4444,7 @@ function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
     <td>${escHtml(c.nombreProveedor || '')}</td>
     <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
     <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
+    <td class="col-dc">${celdaDcHTML(c)}</td>
     <td>${escHtml(c.documentoOriginal || '')}</td>
     <td class="compra-acciones-cell">
       <button type="button" class="compra-del-btn of-compra-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-compra-id="${escHtml(id)}" title="Eliminar compra" aria-label="Eliminar compra ${escHtml([c.tipoDocumento, c.nroDocumento ? 'N° ' + c.nroDocumento : ''].filter(Boolean).join(' ') || ('cuenta ' + (c.codigo || id)))}">🗑</button>
@@ -4368,7 +4519,7 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
   return `
     <div class="compras-section" style="margin-top:14px;">
       <div class="detalle-header">
-        <strong>Registro de compras (${fuenteLabel}) — Bienes y Servicios</strong>
+        <strong>Registro de compras (${fuenteLabel}) — Bienes y Servicios</strong> — <span class="detalle-sub"><strong>N° DC</strong> es interno (${escHtml(AYUDA_DC)}) y no va en el CSV de SUPEREDUC; <strong>Doc. original</strong> es solo para notas de crédito/débito.</span>
       </div>
       ${notaPlanCuentasOtraFuenteHTML(rbd, fuenteKey, of)}
       <div class="compra-form-grid">
@@ -4382,15 +4533,16 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
         <label class="compra-field"><span class="compra-field-label">Nombre proveedor</span><input type="text" class="compra-input of-compra-input" data-field="nombreProveedor" placeholder="Nombre proveedor"></label>
         <label class="compra-field"><span class="compra-field-label">Monto gasto</span><input type="number" class="compra-input of-compra-input" data-field="montoGasto" placeholder="Monto gasto"></label>
         <label class="compra-field"><span class="compra-field-label">Monto documento</span><input type="number" class="compra-input of-compra-input" data-field="montoDocumento" placeholder="Monto documento"></label>
-        <label class="compra-field"><span class="compra-field-label">Documento original</span><input type="text" class="compra-input of-compra-input" data-field="documentoOriginal" placeholder="Documento original (folio/nota)"></label>
+        <label class="compra-field compra-field-dc" title="${escHtml(AYUDA_DC)}"><span class="compra-field-label">N° DC</span><input type="text" class="compra-input of-compra-input" data-field="documentoContable" maxlength="100" autocomplete="off" placeholder="p. ej. DC_344" title="${escHtml(AYUDA_DC)}"></label>
+        <label class="compra-field compra-field-docorig" title="${escHtml(AYUDA_DOC_ORIGINAL)}"><span class="compra-field-label">Doc. original (NC/ND)</span><input type="text" class="compra-input of-compra-input" data-field="documentoOriginal" autocomplete="off" placeholder="123-FAC" title="${escHtml(AYUDA_DOC_ORIGINAL)}"></label>
         <span class="compra-form-actions">
           <button type="button" class="add-compra-btn of-add-compra-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}">+ Agregar compra</button>
         </span>
       </div>
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
-          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th><th aria-label="Acciones de la compra"></th></tr></thead>
-          <tbody>${filasCompras || `<tr><td colspan="12" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
+          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th><th title="${escHtml(AYUDA_DOC_ORIGINAL)}">Doc. original</th><th aria-label="Acciones de la compra"></th></tr></thead>
+          <tbody>${filasCompras || `<tr><td colspan="13" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
         </table>
       </div>
     </div>`;
@@ -4836,13 +4988,13 @@ function sheetOtraFuenteSimpleAOA(fuenteKey, campo, onlyRbd) {
   return rows;
 }
 function sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd) {
-  const headers = ['ID', 'RBD', 'Nombre', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal'];
+  const headers = ['ID', 'RBD', 'Nombre', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal', 'N° DC'];
   const rows = [headers];
   filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const compras = (of && of.compras) || {};
     Object.entries(compras).forEach(([id, c]) => {
-      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
+      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
     });
   });
   return rows;
@@ -4924,6 +5076,7 @@ function importOtraFuenteSimpleSheet(ws, fuenteKey, campo) {
 // Devuelve { n, noHabilitadas }.
 function importOtraFuenteComprasSheet(ws, fuenteKey) {
   const rows = rowsFromSheet(ws);
+  const idxDc = indiceColumnaDc(rows[0]); // N° DC: -1 en un Excel antiguo (sin la columna) → no se toca el N° DC que ya tenga la compra
   const porRbd = {};
   let n = 0, noHabilitadas = 0;
   for (let i = 1; i < rows.length; i++) {
@@ -4954,7 +5107,9 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
     const errId = validarClaveMapa(id, 'El ID de la compra');
     if (errId) { rechazarFilaImportacion('COMPRAS', i + 1, errId); continue; }
     const of = ensureOtraFuente(rbd, fuenteKey);
-    of.compras[id] = campos;
+    const previa = of.compras[id];
+    aplicarDcImportado(campos, row, idxDc, previa);
+    of.compras[id] = (idxDc < 0 && previa && previa.documentoContable) ? { ...campos, documentoContable: previa.documentoContable } : campos;
     if (!porRbd[rbd]) porRbd[rbd] = {};
     porRbd[rbd][id] = campos;
     n++;
@@ -5164,13 +5319,13 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
     const filasCompras = compras.map(c => {
       const cat = CUENTAS_COMPRAS_BY_CODIGO[c.codigo];
       const marca = nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 0 ? '⚠ ' : '';
-      return `<tr><td>${marca}${escHtml(c.codigo)}${cat ? ' · ' + escHtml(cat.nombre) : ''}</td><td>${escHtml(c.tipoDocumento)}</td><td>${escHtml(c.nroDocumento)}</td><td>${escHtml(c.fechaDocumento)}</td><td>${escHtml(c.fechaPago)}</td><td>${escHtml(c.descripcion)}</td><td>${escHtml(c.rutProveedor)}</td><td>${escHtml(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td>${escHtml(c.documentoOriginal)}</td></tr>`;
-    }).join('') || `<tr><td colspan="11" class="detalle-sin-compras">Sin compras registradas.</td></tr>`;
+      return `<tr><td>${marca}${escHtml(c.codigo)}${cat ? ' · ' + escHtml(cat.nombre) : ''}</td><td>${escHtml(c.tipoDocumento)}</td><td>${escHtml(c.nroDocumento)}</td><td>${escHtml(c.fechaDocumento)}</td><td>${escHtml(c.fechaPago)}</td><td>${escHtml(c.descripcion)}</td><td>${escHtml(c.rutProveedor)}</td><td>${escHtml(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td class="col-dc">${celdaDcHTML(c)}</td><td>${escHtml(c.documentoOriginal)}</td></tr>`;
+    }).join('') || `<tr><td colspan="12" class="detalle-sin-compras">Sin compras registradas.</td></tr>`;
     bysHTML = `
       ${tablaMesesEstaticaHTML('Bienes y Servicios — compras (Real)', (of.bys_items || []).map(it => ({ label: `${it.codigo} · ${it.item}`, obj: it })), 12, false)}
       ${tablaMesesEstaticaHTML('Proyección Bienes y Servicios', (of.bys_proy_items || []).map(it => ({ label: it.concepto, obj: it })), corte, true)}
       <div class="detalle-header" style="margin-top:10px;"><strong>Registro de compras</strong></div>
-      <table class="detalle-table compras-table"><thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th></tr></thead><tbody>${filasCompras}</tbody></table>`;
+      <table class="detalle-table compras-table"><thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>N° DC</th><th>Doc. original</th></tr></thead><tbody>${filasCompras}</tbody></table>`;
   } else {
     bysHTML = tablaMesesEstaticaHTML('Bienes y Servicios (por concepto)', (of.bys_items || []).map(it => ({ label: it.concepto, obj: it })), corte, false);
   }
@@ -7248,12 +7403,12 @@ function sheetBysProyeccionAOA(onlyRbd) {
 // mismo Excel tras editarlo/agregar filas sin duplicar las compras ya cargadas: fila con ID
 // existente = actualiza esa compra, fila con ID vacío = compra nueva. ---
 function sheetComprasAOA(onlyRbd) {
-  const headers = ['ID', 'RBD', 'Establecimiento', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal'];
+  const headers = ['ID', 'RBD', 'Establecimiento', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal', 'N° DC'];
   const rows = [headers];
   registrosPara(onlyRbd).forEach(r => {
     const compras = (CARGA_MANUAL.compras_por_rbd || {})[r.rbd] || {};
     Object.entries(compras).forEach(([id, c]) => {
-      rows.push([id, Number(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '']);
+      rows.push([id, Number(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
     });
   });
   return rows;
@@ -7488,6 +7643,7 @@ function excelDateToISO(val) {
 // actualiza esa compra en vez de duplicarla; fila con ID vacío crea una compra nueva.
 function importComprasSheet(ws) {
   const rows = rowsFromSheet(ws);
+  const idxDc = indiceColumnaDc(rows[0]); // N° DC: -1 en un Excel antiguo (sin la columna) → no se toca el N° DC que ya tenga la compra
   const porRbd = {};
   let n = 0;
   for (let i = 1; i < rows.length; i++) {
@@ -7522,7 +7678,10 @@ function importComprasSheet(ws) {
     if (errId) { rechazarFilaImportacion('COMPRAS', i + 1, errId); continue; }
     if (!CARGA_MANUAL.compras_por_rbd) CARGA_MANUAL.compras_por_rbd = {};
     if (!CARGA_MANUAL.compras_por_rbd[rbd]) CARGA_MANUAL.compras_por_rbd[rbd] = {};
-    CARGA_MANUAL.compras_por_rbd[rbd][id] = campos;
+    const previa = CARGA_MANUAL.compras_por_rbd[rbd][id];
+    aplicarDcImportado(campos, row, idxDc, previa);
+    // Sin columna N° DC en el archivo, lo que ya tiene la compra se conserva (en Firestore el merge no lo toca; aquí tampoco se pierde).
+    CARGA_MANUAL.compras_por_rbd[rbd][id] = (idxDc < 0 && previa && previa.documentoContable) ? { ...campos, documentoContable: previa.documentoContable } : campos;
     if (!porRbd[rbd]) porRbd[rbd] = {};
     porRbd[rbd][id] = campos;
     n++;
@@ -7834,6 +7993,7 @@ function showApp(user) {
   document.getElementById('user-display-name').textContent = displayName;
   document.getElementById('user-avatar').textContent = (displayName.trim()[0] || '?').toUpperCase();
   document.getElementById('limpiarDuplicadosBtn').classList.toggle('hidden', !ADMIN_EMAILS.includes(user.email));
+  actualizarBotonMigrarDc();
   actualizarIndicioTabs(); // #app recién se mostró: ahora sí tiene ancho medible
   startFirestoreSync();
 }
@@ -8189,6 +8349,7 @@ function aplicarSnapshot(snapshot) {
   if (otrasFuentesRbdAbierto) renderOtrasFuentesModalContenido(); // el modal de una fuente refleja cambios y borrados remotos (SEP: renderTable → renderModalContenido)
   renderDashboard();
   if (!document.getElementById('tab-reportes').classList.contains('hidden')) renderVisualizador();
+  actualizarBotonMigrarDc(); // el contador "(n)" sigue a los datos (cambios propios y de otras personas)
 
   syncEstado.docsInvalidos = docsInvalidos;
   syncEstado.ultimaEdicion = latestEmail && latestAt ? { email: latestEmail, at: latestAt } : null;
@@ -8202,7 +8363,7 @@ function aplicarSnapshot(snapshot) {
 // Copia una compra leída de Firestore con los tipos que el panel espera (textos como texto, montos
 // como número finito); conserva cualquier otro campo.
 function sanitizaCompra(c) {
-  return {
+  const limpia = {
     ...c,
     codigo: textoSeguro(c.codigo),
     tipoDocumento: textoSeguro(c.tipoDocumento),
@@ -8216,6 +8377,9 @@ function sanitizaCompra(c) {
     montoGasto: num(c.montoGasto),
     montoDocumento: num(c.montoDocumento),
   };
+  // N° DC: solo si la compra lo trae (así una compra sin el campo no gana una clave nueva en respaldos ni en comparaciones).
+  if (c.documentoContable !== undefined) limpia.documentoContable = textoSeguro(c.documentoContable);
+  return limpia;
 }
 
 // ¿El snapshot viene del caché local y no del servidor? Un snapshot sin `metadata` (como los que

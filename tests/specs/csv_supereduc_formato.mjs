@@ -73,7 +73,8 @@ await correrSpec('csv_supereduc_formato', async (t) => {
     t.eq(f[1004][C.ORIG], '', 'SEP: Documento Original vacío en toda factura/boleta con referencia interna');
     t.eq([f[1002][C.TIPO], f[1002][C.ORIG]], ['NOTACRE', '1001-FAC'], 'SEP: NOTACRE lleva Documento Original = número-TIPO (1001-FAC)');
     t.eq([f[1003][C.TIPO], f[1003][C.ORIG]], ['NOTADEB', '45-FACEL'], 'SEP: NOTADEB con "45 - Factura electrónica" sale como 45-FACEL');
-    t.eq(filas.slice(1).filter(r => r[C.ORIG] !== '').map(r => r[C.NRO]).sort(), ['1002', '1003', '1009'], 'SEP: Documento Original solo en las notas de crédito/débito (nunca en otro tipo)');
+    // 1009 es una NC cuyo "Documento Original" es un DC legado ("DC_1"): no es un documento original, sale vacío (y sigue contando en el aviso, más abajo).
+    t.eq(filas.slice(1).filter(r => r[C.ORIG] !== '').map(r => r[C.NRO]).sort(), ['1002', '1003'], 'SEP: Documento Original solo en las notas de crédito/débito con número-TIPO (el DC legado de la NC 1009 sale vacío)');
     t.eq(f[1005][C.TIPO], 'BOLHE', 'SEP: boleta de honorarios electrónica → BOLHE (Sección 12 del Manual de Cuentas)');
     t.eq([f[1006][C.TIPO], f[1007][C.FDOC]], ['Vale', '2026-02-31'], 'SEP: un tipo sin código oficial o una fecha inexistente se exportan tal cual (igual se descarga)');
     // aviso previo con el conteo

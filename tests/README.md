@@ -52,6 +52,11 @@ node tests/run.mjs                             # tu versión modificada contra e
 > formatos nuevos): es la prueba de que detectan los defectos de interfaz originales (contenedor de 1360 px que no se contrae, filas de fuente sin teclado,
 > Enter/"Acceso denegado" del login, tablas del Panel principal en móvil, PDF con Estado cortado / controles de sesión / hojas en blanco, formatos numéricos mezclados).
 
+> **Desde la PR C2 (U-09 / U-10 / U-11 / U-12 / U-13, accesibilidad)** `APP_HTML=@37275b1` (el `index.html` de `main` justo antes de esa PR) FALLA a propósito en
+> `a11y_modales`, `a11y_pestanas`, `a11y_nombres`, `a11y_contraste` y `a11y_foco`: es la prueba de que detectan los defectos originales (diálogos sin rol ni gestión de foco,
+> pestañas sin ARIA ni flechas y sin `<nav>`/`<main>`, ~775 controles sin nombre accesible, ~185 incumplimientos de contraste, foco sin contorno propio). En el golden, esa PR
+> solo cambia el MARCADO (atributos ARIA, tokens de color) y no el texto ni las cifras; su baseline se regeneró con los hashes de marcado nuevos.
+
 ### Flujo recomendado para un cambio grande en `index.html`
 
 1. `node tests/run.mjs` en el árbol limpio → confirma que el arnés está sano (todo PASS).
@@ -73,6 +78,9 @@ tests/
     spec.mjs              mini-arnés de specs (t.ok/t.eq/t.bug, RESULT:, modo de bugs conocidos)
     capture-utils.mjs     texto normalizado de un panel, descargas CSV/xlsx/json, lectura de xlsx con SheetJS
     layout.mjs            medirLayout(page): ancho de página, recortes, alcance de "Cerrar sesión" y de las 13 pestañas, tarjetas KPI (spec layout_anchos)
+    a11y.mjs              medidores de accesibilidad (specs a11y_*): analizarContraste (texto visible compuesto sobre su fondo real), nombresAccesibles / axDe / landmarks
+                          (árbol de accesibilidad de Chromium por CDP), medirFoco / medirFocoActivo (contorno de foco, contraste y recortes)
+    a11y-vistas.mjs      recorrerVistas(h, visitante): todas las vistas, estados y modales; recorrerLogin(): los 4 estados de la pantalla de acceso
     pdf-paginas.mjs       analizarPdf(buf): páginas y hojas en blanco de un PDF de Chromium, sin dependencias; textoPorPagina() usa pdftotext si existe
     pack.mjs              empaquetado (zlib) de listas largas del baseline
     config.mjs            constantes (BASELINE_REF, correos de prueba, fecha congelada)
@@ -198,6 +206,11 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `movil_dashboard` | U-14: a 390 / 360 / 768 px las tablas "Ver datos en tabla" del Panel principal tienen scroll propio, celdas `nowrap`, ningún monto partido, la página no desborda y la lista "Atención" cabe |
 | `impresion_paginas` | U-15: `page.pdf()` en Carta y A4 horizontal de SEP, PDF de fila, Panel principal, 3 PDF de entidad y las 9 vistas de fuente: tablas dentro de la hoja (columna Estado completa), sin controles de sesión ni texto de sincronización, `<html>` blanco y ninguna hoja sin texto |
 | `formato_numeros` | U-16: en las 13 pestañas, modales, % Ejecución (tarjetas, tabla, tooltip, gráfico) y lo impreso: pesos `$1.234` / `-$1.234`, porcentajes `54,6%` (siempre con decimal y coma), millones `1,23 M`; y el CSV de respaldo conserva su formato (`54.6%`) |
+| `a11y_modales` | U-09: los 3 diálogos (detalle SEP, detalle de fuente, "Cómo usar") son `role="dialog" aria-modal="true"` con nombre (`aria-labelledby`); el foco entra al botón Cerrar, Tab / Shift+Tab ciclan dentro, el fondo (`.wrap`) queda `inert` y fuera del árbol de accesibilidad, Escape / ✕ / clic en el velo cierran y el foco vuelve al ▸ / fila / "Cómo usar" (también tras repintarse las filas con un cambio remoto y desde el panel "Atención", que cambia de pestaña); el reconciliador no pierde foco, cursor ni atributos ARIA; cerrar sesión con un diálogo abierto no deja la página inert |
+| `a11y_pestanas` | U-10: landmarks (1 banner, 1 `<nav>` con nombre, 1 `<main>`, sin duplicados); 3 `tablist` con nombre, 13 `tab` con `aria-selected`/`aria-controls` y 13 `tabpanel` con `aria-labelledby`; tabindex itinerante (una sola parada de Tab en la barra); ←/→ (entre los 3 grupos, con vuelta), Home/End, Enter/Espacio; clic del ratón e `irAPestana` (tarjetas del Panel principal; el foco pasa a la pestaña) dejan estado, panel y foco coherentes; a 390 px la barra con scroll sigue operable |
+| `a11y_nombres` | U-11: en las ~52 vistas/estados y 16 modales (5.653 controles visibles, 732 celdas de monto) y en los 4 estados de la pantalla de acceso, ningún control queda sin nombre accesible (calculado por Chromium) ni con `title`/`placeholder` como único nombre; celdas "<concepto>, <mes>, <entidad>" únicas por modal; botones solo-icono con `aria-label`; acciones de fila sin nombres repetidos; casos concretos de la auditoría (buscadores, filtros, "Real hasta", % Ejecución, Reportes, modo edición de compra) |
+| `a11y_contraste` | U-12: contraste de TODO el texto visible (≈ 39.000 textos en ≈ 160 vistas/estados: vistas, modales, acceso, avisos de sincronización roja/sin conexión, celda inválida, compra en edición, tooltips, colección vacía, y el estado `:hover` de ≈ 58 controles y `:focus-visible`): ≥ 4,5:1 (3:1 si ≥ 24 px o ≥ 18,66 px en negrita), color compuesto con alfa/opacidad sobre el fondo real (degradados → peor parada, SVG, placeholders); autoprueba del detector con casos conocidos; exclusiones solo de controles deshabilitados |
+| `a11y_foco` | U-13: en una muestra de cada tipo de control (≈ 730 controles, 50 firmas) de cada vista y modal, y en un recorrido real con Tab, el foco de teclado muestra un contorno de ≥ 2 px (outline o box-shadow) con ≥ 3:1 frente al fondo (y frente al relleno si queda pegado), sin recortes por `overflow` (también a 390 px); con el ratón no aparece anillo y el hover de tarjetas, pestañas y "Atención" no cambia |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Bugs conocidos: `known-bug` vs `enforced`
@@ -251,9 +264,26 @@ Conviene correrlo antes de mergear cambios que toquen `onSnapshot`, el guardado 
 siembra. Detalle y lista de lo que el mock modela mal (orden de snapshots, límite de 1500 bytes de la ruta completa, errores
 transitorios que el SDK nunca entrega a `setDoc`, tiempos de detección de red) en `tests/e2e-real/README.md`.
 
+## Diagnóstico de accesibilidad con axe-core (opcional, no versionado)
+
+Los specs `a11y_*` miden con helpers propios (sin dependencias). Para cazar cosas que se escapen se puede correr **axe-core** a mano, instalado FUERA del repo:
+
+```bash
+mkdir -p /home/user/.a11y && cd /home/user/.a11y && npm init -y && npm install axe-core
+# en un script de diagnóstico: boot() + recorrerVistas() de tests/lib/a11y-vistas.mjs y, en cada vista,
+#   await page.evaluate(fs.readFileSync('/home/user/.a11y/node_modules/axe-core/axe.min.js', 'utf8'));
+#   await page.evaluate(() => axe.run(document.querySelector('#app'), { runOnly: ['wcag2a','wcag2aa','wcag21a','wcag21aa','best-practice'] }));
+```
+
+Con la PR C2 quedan solo hallazgos del Panel principal que NO son parte de esa PR (ver la descripción de la PR): `label-content-name-mismatch` en las tarjetas y barras
+(`aria-label` más corto que el texto visible), `list`/`aria-allowed-role` en la lista "Atención" (`<li role="link">`), y los avisos menores `empty-table-header` (las
+columnas de acciones se nombran con `aria-label`, que axe no cuenta como texto visible).
+
 ## Limitaciones
 
 - No prueba contra Firebase real ni el envío real del correo; las reglas de seguridad (`firestore.rules`) no se ejecutan.
+- Los specs `a11y_*` miden lo que Chromium expone (árbol de accesibilidad, estilos calculados): no sustituyen una prueba con un lector de pantalla real (NVDA / JAWS / VoiceOver) ni con
+  zoom/reflow a 400 %. El contraste se calcula sobre el color compuesto de fondos con alfa y degradados lineales simples; no analiza imágenes ni `mix-blend-mode` (el panel no los usa).
 - El golden master es de **cobertura amplia, no exhaustiva**: no recorre todas las combinaciones de filtros; el golden no renderiza los PDF (captura el HTML que se iba a imprimir); la
   paginación real la cubre `impresion_paginas` con `page.pdf()` (sin ver el diálogo de impresión de cada navegador ni las impresoras). Las rutas de error de red del SDK real (reintentos, cuotas) se simulan solo con `failNextWrite`/`setOffline`.
 - El mock no persiste la cola offline entre recargas (el SDK real sí, vía IndexedDB).

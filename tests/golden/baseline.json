@@ -3,7 +3,7 @@
   "esquema": 1,
   "baseline_ref": "0f16ace",
   "html_bajo_prueba": "árbol de trabajo (index.html)",
-  "html_sha1": "15657e876f20bc7b721db960bb8a88968f9e5beb",
+  "html_sha1": "255c76c8dd71a2a2c56f9cdc811c3c31509ba08a",
   "fixture_sha1": "c5f4627fb5c44c5ba028c42539c639f2745c1358",
   "fixture": {
    "generado_por": "tests/fixtures/generate.mjs",
@@ -338,7 +338,7 @@
    "svg": [
     "1fbad05d170a2d"
    ],
-   "htmlHash": "0d9e3178e5b276"
+   "htmlHash": "09cfa938b1043d"
   },
   "dashboard.real": {
    "text": [
@@ -649,7 +649,7 @@
    "svg": [
     "0b50f3947a6e1f"
    ],
-   "htmlHash": "0234ee88685105"
+   "htmlHash": "09ab4d31ae30a9"
   },
   "dashboard.proy": {
    "text": [
@@ -957,7 +957,7 @@
    "svg": [
     "12eddf6f108077"
    ],
-   "htmlHash": "1b9b139fb651df"
+   "htmlHash": "148ac4a0c27fa2"
   },
   "dashboard.atencion-modal": {
    "text": [
@@ -1177,7 +1177,7 @@
     "input [rbd=5401006,fuente=junji,modo=of_bys_item,concepto=Seguros & garantías,mes=NOVIEMBRE] = 393857",
     "input [rbd=5401006,fuente=junji,modo=of_bys_item,concepto=Seguros & garantías,mes=DICIEMBRE] = 393857"
    ],
-   "htmlHash": "024fb56a74a2aa"
+   "htmlHash": "11c9ebf2611cfd"
   },
   "sep.default": {
    "text": [
@@ -1417,7 +1417,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "0bd66e041c462d"
+   "htmlHash": "078f886ebb3dfb"
   },
   "sep.filtro-deficit": {
    "text": [
@@ -1501,7 +1501,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "1ac213bded8ec4"
+   "htmlHash": "1ecd12b0722bdc"
   },
   "sep.filtro-riesgo": {
    "text": [
@@ -1579,7 +1579,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "162a86ea9ed811"
+   "htmlHash": "11aba8b4e2b53f"
   },
   "sep.busqueda-liceo": {
    "text": [
@@ -1673,7 +1673,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "0f38cf9a8f31b6"
+   "htmlHash": "11a78b54a719e2"
   },
   "sep.corte-julio": {
    "text": [
@@ -1913,7 +1913,7 @@
     "Datos a revisar | 0",
     "⚠ Gasto SEP sin marco | 1"
    ],
-   "htmlHash": "05b3574db1808c"
+   "htmlHash": "0510330ca4f210"
   },
   "sep.orden-rbd": {
    "text": [
@@ -2234,7 +2234,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "009ce3b1b3ba3c"
+   "htmlHash": "086eea9d07687b"
   },
   "modal.sep.1120": {
    "text": [
@@ -2407,7 +2407,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "13f3a0cec94fea"
+   "htmlHash": "0e2bd14ce77647"
   },
   "modal.sep.1128": {
    "text": [
@@ -2629,7 +2629,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "07ebcb668e687a"
+   "htmlHash": "1cf2ed64267f10"
   },
   "modal.sep.1123": {
    "text": [
@@ -2854,7 +2854,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "0867be3319fa80"
+   "htmlHash": "1e7a65e52df595"
   },
   "modal.sep.1125": {
    "text": [
@@ -3059,7 +3059,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "19f5d86601e917"
+   "htmlHash": "023635a7167d3d"
   },
   "of.general.total": {
    "text": [
@@ -3177,7 +3177,7 @@
     "Gasto Total (Total) | $218.842.285",
     "Saldo (Total) | $345.459.430"
    ],
-   "htmlHash": "108d276ff2f427"
+   "htmlHash": "0760a132db8ede"
   },
   "of.general.real": {
    "text": [
@@ -3295,7 +3295,7 @@
     "Gasto Total (Total) | $218.842.285",
     "Saldo (Total) | $345.459.430"
    ],
-   "htmlHash": "149b9c9911cd06"
+   "htmlHash": "05542ea7d10629"
   },
   "of.general.proy": {
    "text": [
@@ -3413,7 +3413,7 @@
     "Gasto Total (Total) | $218.842.285",
     "Saldo (Total) | $345.459.430"
    ],
-   "htmlHash": "0994376b5f130b"
+   "htmlHash": "0d0410ac78731a"
   },
   "of.pie.total": {
    "text": [
@@ -3531,7 +3531,7 @@
     "Gasto Total (Total) | $223.181.425",
     "Saldo (Total) | $359.048.290"
    ],
-   "htmlHash": "1f4ccc3c512352"
+   "htmlHash": "10f48e178f20f6"
   },
   "of.mantenimiento.total": {
    "text": [
@@ -3649,7 +3649,7 @@
     "Gasto Total (Total) | $22.056.000",
     "Saldo (Total) | $614.120.575"
    ],
-   "htmlHash": "0766bbe930782e"
+   "htmlHash": "16e2d267778fe9"
   },
   "of.prorretencion.total": {
    "text": [
@@ -3767,7 +3767,7 @@
     "Gasto Total (Total) | $701.676.720",
     "Saldo (Total) | $1.068.832.415"
    ],
-   "htmlHash": "1001b5def83bb8"
+   "htmlHash": "1f8fe0333a3ce0"
   },
   "of.junji.total": {
    "text": [
@@ -3841,7 +3841,7 @@
     "Gasto Total (Total) | $536.832.000",
     "Saldo (Total) | -$50.460.005"
    ],
-   "htmlHash": "08cd3e6b489807"
+   "htmlHash": "1ba555fe538309"
   },
   "of.junji.real": {
    "text": [
@@ -3915,7 +3915,7 @@
     "Gasto Total (Total) | $536.832.000",
     "Saldo (Total) | -$50.460.005"
    ],
-   "htmlHash": "03f43b3d352ced"
+   "htmlHash": "0d2c68ab9f0042"
   },
   "of.junji.proy": {
    "text": [
@@ -3989,7 +3989,7 @@
     "Gasto Total (Total) | $536.832.000",
     "Saldo (Total) | -$50.460.005"
    ],
-   "htmlHash": "0d3ebdee2e104c"
+   "htmlHash": "0e3b7129b768ad"
   },
   "of.faep.total": {
    "text": [
@@ -4106,7 +4106,7 @@
     "Gasto Total (Total) | $291.677.145",
     "Saldo (Total) | $75.644.565"
    ],
-   "htmlHash": "002f8987c14f5a"
+   "htmlHash": "06fc92b4a9187f"
   },
   "of.faep.real": {
    "text": [
@@ -4223,7 +4223,7 @@
     "Gasto Total (Total) | $291.677.145",
     "Saldo (Total) | $75.644.565"
    ],
-   "htmlHash": "11e3470ad17f6a"
+   "htmlHash": "1a3035ab4087fc"
   },
   "of.faep.proy": {
    "text": [
@@ -4340,7 +4340,7 @@
     "Gasto Total (Total) | $291.677.145",
     "Saldo (Total) | $75.644.565"
    ],
-   "htmlHash": "1e26dcc5b21f0b"
+   "htmlHash": "1d4e7c9aa5f4e8"
   },
   "of.figa.total": {
    "text": [
@@ -4457,7 +4457,7 @@
     "Gasto Total (Total) | $303.939.435",
     "Saldo (Total) | $82.832.565"
    ],
-   "htmlHash": "19dafcf677104b"
+   "htmlHash": "1c3536044e972b"
   },
   "of.aporte_educ.total": {
    "text": [
@@ -4574,7 +4574,7 @@
     "Gasto Total (Total) | $294.324.000",
     "Saldo (Total) | $67.560.000"
    ],
-   "htmlHash": "1bca943a2361a3"
+   "htmlHash": "0629b0144fce9f"
   },
   "of.aporte_junji.total": {
    "text": [
@@ -4648,7 +4648,7 @@
     "Gasto Total (Total) | $49.392.000",
     "Saldo (Total) | $6.142.290"
    ],
-   "htmlHash": "11499698483106"
+   "htmlHash": "040e913d0bcb16"
   },
   "modal.of.general.1121": {
    "text": [
@@ -4792,7 +4792,7 @@
     "input [rbd=1121,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=NOVIEMBRE] = 317000",
     "input [rbd=1121,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=DICIEMBRE] = 317000"
    ],
-   "htmlHash": "140a7cefc2dd83"
+   "htmlHash": "07d4b0c89d671e"
   },
   "modal.of.general.AC": {
    "text": [
@@ -4945,7 +4945,7 @@
     "input [rbd=AC,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=general,modo=of_bys_proy_item,concepto=Alimentación,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "00aaf9751e6af3"
+   "htmlHash": "0f0ad5eb05fa26"
   },
   "modal.of.pie.1121": {
    "text": [
@@ -5089,7 +5089,7 @@
     "input [rbd=1121,fuente=pie,modo=of_bys_proy_item,concepto=Material didáctico,mes=NOVIEMBRE] = 505000",
     "input [rbd=1121,fuente=pie,modo=of_bys_proy_item,concepto=Material didáctico,mes=DICIEMBRE] = 505000"
    ],
-   "htmlHash": "145cc9ae5aa29a"
+   "htmlHash": "13c47e2df42e80"
   },
   "modal.of.mantenimiento.1121": {
    "text": [
@@ -5224,7 +5224,7 @@
     "input [rbd=1121,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 522000",
     "input [rbd=1121,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=DICIEMBRE] = 522000"
    ],
-   "htmlHash": "19c2c2400b4d91"
+   "htmlHash": "16ca2f2a52ee5d"
   },
   "modal.of.mantenimiento.AC": {
    "text": [
@@ -5365,7 +5365,7 @@
     "input [rbd=AC,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=mantenimiento,modo=of_bys_proy_item,concepto=Servicios básicos,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "1907fa04b7a38d"
+   "htmlHash": "05b54efc2fc6a6"
   },
   "modal.of.prorretencion.AC": {
    "text": [
@@ -5518,7 +5518,7 @@
     "input [rbd=AC,fuente=prorretencion,modo=of_bys_proy_item,concepto=Mantención menor,mes=NOVIEMBRE] = 2000000",
     "input [rbd=AC,fuente=prorretencion,modo=of_bys_proy_item,concepto=Mantención menor,mes=DICIEMBRE] = 2000000"
    ],
-   "htmlHash": "13f7b34b40e56b"
+   "htmlHash": "06824a97107aaa"
   },
   "modal.of.junji.5402002": {
    "text": [
@@ -5738,7 +5738,7 @@
     "input [rbd=5402002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 508143",
     "input [rbd=5402002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 508143"
    ],
-   "htmlHash": "1cfb484b055499"
+   "htmlHash": "1caabd7a9038cc"
   },
   "modal.of.junji.5404002": {
    "text": [
@@ -5958,7 +5958,7 @@
     "input [rbd=5404002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 584286",
     "input [rbd=5404002,fuente=junji,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 584286"
    ],
-   "htmlHash": "0ff325f289b901"
+   "htmlHash": "024c77bbab5921"
   },
   "modal.of.faep.1121": {
    "text": [
@@ -6102,7 +6102,7 @@
     "input [rbd=1121,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 1232714",
     "input [rbd=1121,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=DICIEMBRE] = 1232714"
    ],
-   "htmlHash": "184f32b688db92"
+   "htmlHash": "15ff164a43183e"
   },
   "modal.of.faep.AC": {
    "text": [
@@ -6246,7 +6246,7 @@
     "input [rbd=AC,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=NOVIEMBRE] = 4928000",
     "input [rbd=AC,fuente=faep,modo=of_bys_item,concepto=Servicios básicos,mes=DICIEMBRE] = 4928000"
    ],
-   "htmlHash": "1599361665402c"
+   "htmlHash": "065b16f4bfbd18"
   },
   "modal.of.figa.AC": {
    "text": [
@@ -6390,7 +6390,7 @@
     "input [rbd=AC,fuente=figa,modo=of_bys_item,concepto=Mantención menor,mes=NOVIEMBRE] = 4700000",
     "input [rbd=AC,fuente=figa,modo=of_bys_item,concepto=Mantención menor,mes=DICIEMBRE] = 4700000"
    ],
-   "htmlHash": "153d7a2235a384"
+   "htmlHash": "0628ed4914915a"
   },
   "modal.of.aporte_educ.1121": {
    "text": [
@@ -6534,7 +6534,7 @@
     "input [rbd=1121,fuente=aporte_educ,modo=of_bys_item,concepto=Transporte escolar,mes=NOVIEMBRE] = 1019286",
     "input [rbd=1121,fuente=aporte_educ,modo=of_bys_item,concepto=Transporte escolar,mes=DICIEMBRE] = 1019286"
    ],
-   "htmlHash": "0d313a02e4e9ab"
+   "htmlHash": "1e085f2fa90048"
   },
   "modal.of.aporte_junji.5402002": {
    "text": [
@@ -6665,7 +6665,7 @@
     "input [rbd=5402002,fuente=aporte_junji,modo=of_bys_item,concepto=Alimentación,mes=NOVIEMBRE] = 124143",
     "input [rbd=5402002,fuente=aporte_junji,modo=of_bys_item,concepto=Alimentación,mes=DICIEMBRE] = 124143"
    ],
-   "htmlHash": "10a1177c35814a"
+   "htmlHash": "1ade9aeda63fb9"
   },
   "ejec.sep.agregado": {
    "text": [
@@ -6749,7 +6749,7 @@
    "svg": [
     "11070a7bd1a745"
    ],
-   "htmlHash": "1e8bda17d2a79d"
+   "htmlHash": "19673a5bb1c90a"
   },
   "ejec.sep.1121": {
    "text": [
@@ -6837,7 +6837,7 @@
    "svg": [
     "1c625e46ae8278"
    ],
-   "htmlHash": "0bebecacdf7bdc"
+   "htmlHash": "13a6f7090ccec6"
   },
   "ejec.sep.1121.solo-bys": {
    "text": [
@@ -6923,7 +6923,7 @@
    "svg": [
     "0145d39efb203d"
    ],
-   "htmlHash": "1babdf8a21a2f1"
+   "htmlHash": "10f3069022df0b"
   },
   "ejec.general": {
    "text": [
@@ -7018,7 +7018,7 @@
    "svg": [
     "1756d34bfb1fe1"
    ],
-   "htmlHash": "024bdd32c62562"
+   "htmlHash": "155b50b53cf1a4"
   },
   "ejec.pie": {
    "text": [
@@ -7113,7 +7113,7 @@
    "svg": [
     "1cf93bb5988f67"
    ],
-   "htmlHash": "092f3b4497991e"
+   "htmlHash": "0bb3c9c43896ed"
   },
   "ejec.mantenimiento": {
    "text": [
@@ -7208,7 +7208,7 @@
    "svg": [
     "123ee001fbf542"
    ],
-   "htmlHash": "0bd4a50147ae37"
+   "htmlHash": "183e57adc39bfb"
   },
   "ejec.prorretencion": {
    "text": [
@@ -7303,7 +7303,7 @@
    "svg": [
     "15c6a0bb0ffa95"
    ],
-   "htmlHash": "06f2bb8596e6cc"
+   "htmlHash": "1ccffa15d5f220"
   },
   "ejec.junji": {
    "text": [
@@ -7398,7 +7398,7 @@
    "svg": [
     "0bd261d18dd1ea"
    ],
-   "htmlHash": "1c448abb0eec3a"
+   "htmlHash": "1c42dfed18f76e"
   },
   "ejec.faep": {
    "text": [
@@ -7493,7 +7493,7 @@
    "svg": [
     "00e0f06540332b"
    ],
-   "htmlHash": "1d894c3432799b"
+   "htmlHash": "0cf30d6754548c"
   },
   "ejec.figa": {
    "text": [
@@ -7588,7 +7588,7 @@
    "svg": [
     "0edd9e798d6ddd"
    ],
-   "htmlHash": "1cb1ba21967c3b"
+   "htmlHash": "11b4c2fa927ea6"
   },
   "ejec.aporte_educ": {
    "text": [
@@ -7683,7 +7683,7 @@
    "svg": [
     "0ac719f9d685ec"
    ],
-   "htmlHash": "1fe7d5ffecacb2"
+   "htmlHash": "1f4ce609a5542a"
   },
   "ejec.aporte_junji": {
    "text": [
@@ -7777,7 +7777,7 @@
    "svg": [
     "112e54e847096d"
    ],
-   "htmlHash": "10998da28fcc93"
+   "htmlHash": "0b37033274d501"
   },
   "ejec.consolidado": {
    "text": [
@@ -7871,7 +7871,7 @@
    "svg": [
     "1ced6ce3df20ed"
    ],
-   "htmlHash": "06dd9b090b2ee1"
+   "htmlHash": "147419169c1860"
   },
   "ejec.general.1121": {
    "text": [
@@ -7966,7 +7966,7 @@
    "svg": [
     "19d38f84e49067"
    ],
-   "htmlHash": "0e715e0c5cbc72"
+   "htmlHash": "067083005aba6b"
   },
   "ejec.general.1121.sin-total": {
    "text": [
@@ -8059,7 +8059,7 @@
    "svg": [
     "0c1c971d14d1a2"
    ],
-   "htmlHash": "19ef7c3167d16e"
+   "htmlHash": "1fda332368c749"
   },
   "ejec.sep.1128": {
    "text": [
@@ -8144,7 +8144,7 @@
    "svg": [
     "1ed209a91c1217"
    ],
-   "htmlHash": "0c9fcf6bf86983"
+   "htmlHash": "1cd6c95721a432"
   },
   "rep.vz.default": {
    "text": [
@@ -8214,7 +8214,7 @@
     "SALDO PROYECTADO | $1.707.574.155",
     "SALDO TOTAL (REAL+PROY) | $4.711.932.583"
    ],
-   "htmlHash": "035a1d60a1efe5"
+   "htmlHash": "19d61f1ab4e9db"
   },
   "rep.vz.expandido": {
    "text": [
@@ -8377,7 +8377,7 @@
     "SALDO PROYECTADO | $1.707.574.155",
     "SALDO TOTAL (REAL+PROY) | $4.711.932.583"
    ],
-   "htmlHash": "05a03636ef24be"
+   "htmlHash": "059ff92a9aa17d"
   },
   "rep.vz.por-codigo": {
    "text": [
@@ -8553,7 +8553,7 @@
     "SALDO PROYECTADO | $1.707.574.155",
     "SALDO TOTAL (REAL+PROY) | $4.711.932.583"
    ],
-   "htmlHash": "031a6368c13eb9"
+   "htmlHash": "0a8d2aef53a047"
   },
   "rep.vz.subconjunto": {
    "text": [
@@ -8640,7 +8640,7 @@
     "SALDO PROYECTADO | $150.569.290",
     "SALDO TOTAL (REAL+PROY) | $364.819.723"
    ],
-   "htmlHash": "121c9fac7f2ca8"
+   "htmlHash": "09dfeb27b1010a"
   },
   "rep.vz.sin-seleccion": {
    "text": [
@@ -8682,7 +8682,7 @@
     "SALDO PROYECTADO | $0",
     "SALDO TOTAL (REAL+PROY) | $0"
    ],
-   "htmlHash": "01ea380087e061"
+   "htmlHash": "15fd7694c2bd0e"
   },
   "rep.pers.catalogo-grupos": {
    "text": [
@@ -8725,7 +8725,7 @@
     "1123 ESCUELA GABRIELA MISTRAL 410606 · BIBLIOTECAS, LIBROS Y REVISTAS (Subt.22) $0 $0 $0 $0 $0 $0 $793.000 $793.000",
     "Subtotal — 410606 · BIBLIOTECAS, LIBROS Y REVISTAS (Subt.22) $0 $0 $1.484.567 $0 $0 $0 $2.609.000 $4.093.567"
    ],
-   "htmlHash": "181bff76fe5475"
+   "htmlHash": "0e166a4ac76ffc"
   },
   "rep.pers.multifuente": {
    "text": [
@@ -8748,7 +8748,7 @@
     "Subtotal — [FAEP] B&S — Alimentación $6.433.000 $6.264.000 $6.536.000 $5.926.286 $5.926.286 $31.085.572",
     "5402002 RINCONCITO [Aporte Fiscal JUNJI] Ingreso $878.000 $917.000 $719.000 $874.857 $874.857 $4.263.714"
    ],
-   "htmlHash": "1e50cb1985f6bf"
+   "htmlHash": "133523a0f1200e"
   }
  },
  "datos": {

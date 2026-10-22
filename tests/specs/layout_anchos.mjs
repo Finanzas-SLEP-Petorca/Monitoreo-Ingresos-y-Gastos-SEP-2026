@@ -42,7 +42,9 @@ await correrSpec('layout_anchos', async (t) => {
         if (m.wrapRect[0] !== esperado[0] || m.wrapRect[1] !== esperado[1]) p(`el contenedor debería medir 1360 px centrado ${JSON.stringify(esperado)} y mide ${JSON.stringify(m.wrapRect)}`);
       }
     }
-    t.ok(problemas.length === 0, `${w} px · 13 pestañas sin recortes, sin scroll horizontal de página, con "Cerrar sesión" y pestañas alcanzables`, problemas.slice(0, 10).join('\n      ') + (problemas.length > 10 ? `\n      … (${problemas.length} problemas)` : ''));
+    t.ok(problemas.length === 0, `${w} px · 13 pestañas sin recortes, sin scroll horizontal de página, con "Cerrar sesión" y pestañas alcanzables`);
+    problemas.slice(0, 14).forEach((x) => t.info('PROBLEMA ' + x));
+    if (problemas.length > 14) t.info(`… ${problemas.length} problemas en total`);
     t.noErrores(h);
     await h.close();
   }

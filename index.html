@@ -3845,7 +3845,10 @@ function payloadsMigrarDc(items) {
   });
   return porDoc;
 }
-const MAX_OPERACIONES_POR_LOTE = 400; // Firestore admite 500 por writeBatch; se deja margen
+// Firestore admite 500 operaciones por writeBatch; se deja margen con 400. Cada documento cuenta como 2 (el set y la transformación
+// serverTimestamp de la auditoría, que el servidor puede contar aparte): así un lote lleva a lo más 200 documentos.
+const MAX_OPERACIONES_POR_LOTE = 400;
+const OPERACIONES_POR_DOCUMENTO = 2;
 // Muestra u oculta el botón (solo ADMIN_EMAILS) y le pone el contador solo si hay algo que migrar.
 function actualizarBotonMigrarDc() {
   const btn = document.getElementById('migrarDcBtn');
@@ -3890,11 +3893,12 @@ async function migrarDcDesdeDocOriginal() {
   // Guardado: un set con merge por documento, en lotes de a lo más MAX_OPERACIONES_POR_LOTE operaciones.
   const porDoc = payloadsMigrarDc(items);
   const rbds = Object.keys(porDoc);
+  const docsPorLote = Math.max(1, Math.floor(MAX_OPERACIONES_POR_LOTE / OPERACIONES_POR_DOCUMENTO));
   try {
     const lotes = [];
-    for (let i = 0; i < rbds.length; i += MAX_OPERACIONES_POR_LOTE) {
+    for (let i = 0; i < rbds.length; i += docsPorLote) {
       const batch = writeBatch(db);
-      rbds.slice(i, i + MAX_OPERACIONES_POR_LOTE).forEach(rbd => {
+      rbds.slice(i, i + docsPorLote).forEach(rbd => {
         batch.set(doc(db, CARGA_COLLECTION, rbd), { ...porDoc[rbd], lastModifiedBy: currentUser.email, lastModifiedAt: serverTimestamp() }, { merge: true });
       });
       lotes.push(batch.commit());

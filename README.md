@@ -28,7 +28,16 @@ La barra de pestañas va en tres grupos, siempre en este orden:
 Los rótulos de las fuentes son cortos para que las 13 pestañas quepan en **una sola fila** desde ~1360 px de
 ancho (General, PIE, Mantención, Pro-Retención, JUNJI, FAEP, FIGA, Aporte Educ. y Aporte JUNJI; el nombre
 completo está en el `title` de cada botón y en el título de su pestaña). En pantallas más angostas la barra
-envuelve por grupos y, desde 760 px o menos, pasa a una sola fila con scroll horizontal.
+envuelve por grupos (y el grupo de fuentes se parte en varias líneas si hace falta) y, desde 760 px o menos,
+pasa a una sola fila con scroll horizontal propio: el borde que tiene más pestañas ocultas se difumina para
+indicarlo.
+
+**Adaptación al ancho de la ventana.** El contenedor principal mide como máximo 1360 px y se contrae con la
+ventana (se verifica a 1024, 1280, 1366 y 1440 px, y se degrada a tableta y móvil): no hay scroll horizontal
+de la página, el encabezado deja "❓ Cómo usar" y "Cerrar sesión" siempre a la vista (el subtítulo cede ancho
+antes de que bajen de fila) y las tablas anchas (SEP, fuentes, Reportes, "Ver datos en tabla" del Panel
+principal) hacen scroll horizontal dentro de su propio contenedor, con el encabezado fijo al desplazarse
+hacia abajo. A 1440 px o más el diseño es el mismo de siempre.
 
 #### % Ejecución por fuente
 
@@ -88,6 +97,21 @@ dato (azul = ingreso, ámbar = gasto, verde/rojo = saldo según el signo, gris =
 a la vez. Las variables de color viven en `:root` (no en una clase particular) justamente para
 que tanto la pantalla de login como el panel interno compartan la misma paleta.
 
+### Formato de números (presentación es-CL)
+
+Todo lo que se **ve** en pantalla, en los modales y en lo que se imprime usa el mismo formato (funciones `fmtCLP`,
+`fmtPct` y `fmtMillones` de `index.html`):
+
+| Qué | Formato | Ejemplo |
+|---|---|---|
+| Pesos | `$` + miles con punto, sin decimales; el signo negativo va **antes** del `$` | `$1.234.567` · `-$1.234.567` · `$5.000` |
+| Porcentaje | una decimal con **coma** (también los enteros) y miles con punto | `54,6%` · `100,0%` · `1.234,5%` |
+| Millones (gráficos y tarjetas del Panel principal) | coma decimal y miles con punto | `22,1 M` · `5.061 M` |
+
+Los **respaldos y las salidas de intercambio conservan su propio formato (es contrato y no cambia)**: los CSV y Excel
+de respaldo (p. ej. el resumen SEP trae `54.6%` y montos sin separadores), el JSON y el CSV de compras para
+SUPEREDUC. Las celdas editables de los meses muestran el monto tal como se teclea (`1500000`, con coma para decimales).
+
 ### Acceso: correo institucional + enlace mágico
 
 El panel es de acceso restringido. Al abrirlo, ingresa tu correo institucional
@@ -96,7 +120,9 @@ un enlace de acceso sin contraseña (*passwordless*) que expira en 1 hora. Al ha
 enlace quedas autenticado en el panel. Solo los correos de la whitelist (constante
 `ALLOWED_EMAILS` en `index.html`, la misma lista usada en Firestore Rules) pueden entrar — si tu
 correo no está autorizado verás "Acceso denegado" y deberás pedirle a Wilson Rojas que lo agregue
-en ambos lugares.
+en ambos lugares. En el campo de correo, **Enter** envía el enlace (igual que el botón); si el correo no está
+autorizado, la pantalla "Acceso denegado" cierra esa sesión y ofrece **"Usar otro correo"**, que vuelve al formulario
+limpio sin recargar la página.
 
 **A dónde vuelve el enlace del correo.** El enlace lleva de regreso a la URL **real de la página**
 (origen + ruta, sin `?query` ni `#hash`) cuando el panel se sirve por `http`/`https` — en producción
@@ -106,6 +132,15 @@ como respaldo (constante `URL_PRODUCCION` en `index.html`). Así un cambio de no
 ya no deja el enlace apuntando a una página que da 404; si algún día cambia el dominio, además hay
 que agregarlo en Firebase Console → Authentication → Settings → *Authorized domains*. Al completar el
 acceso, el panel borra de la barra de direcciones los parámetros del enlace (`apiKey`, `oobCode`…).
+
+### Impresión / PDF
+
+Los botones "🖨 Exportar PDF" (Panel principal, SEP, cada fuente, % Ejecución, Reportes) y el 🖨 de cada fila usan el
+diálogo de impresión del navegador (hoja horizontal Carta o A4). Al imprimir se ocultan las pestañas, los controles
+(botones, filtros) y todo lo de sesión ("Cómo usar", "Cerrar sesión", "Conectado como" y el estado de
+sincronización). La tabla SEP y la fila del PDF individual de un RBD se compactan (9 px, encabezados en varias líneas)
+para que la columna **Estado** entre completa en la hoja, y el espacio sobrante al final del documento se elimina para
+que no salga una última hoja en blanco. `tests/specs/impresion_paginas.mjs` lo verifica generando los PDF con Playwright.
 
 ### Edición colaborativa en tiempo real
 
@@ -392,6 +427,12 @@ criterio que la pestaña SEP pero leyendo/escribiendo `otras_fuentes` en vez de 
 - **🖨 Exportar PDF** — mismo mecanismo de impresión del navegador que ya usa la pestaña SEP;
   imprime la pestaña de fuente actualmente activa.
 - **⬇ Descargar carga (JSON)** — respaldo manual, igual criterio que el de la pestaña SEP.
+
+**Con el teclado.** Cada fila de las tablas de fuente es focusable (Tab; el foco se ve con un anillo azul):
+**Enter** o **Espacio** sobre la fila abren el detalle de la entidad (como el botón ▸ de la tabla SEP; Espacio no
+desplaza la página), el foco entra al modal, **Escape** lo cierra y devuelve el foco a la fila. En los botones
+de **Acciones** de la fila, Enter/Espacio siguen siendo de ese botón (no abren el detalle). Si otra persona guarda
+mientras tanto y la tabla se repinta, el foco vuelve a la fila equivalente.
 
 **Acciones por fila.** Cada tabla de fuente tiene al final una columna **Acciones** (igual que la
 de SEP) con descargas individuales de esa entidad (RBD, "AC" o GESPARVU), que no salen en el PDF

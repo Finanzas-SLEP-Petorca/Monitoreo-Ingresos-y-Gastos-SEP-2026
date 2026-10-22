@@ -21,7 +21,7 @@ node tests/specs/persistencia.mjs        # un spec directamente (sin la tabla)
 ```
 
 Código de salida: `0` si todo es PASS o KNOWN_BUG; `1` si algo FALLA.
-Duración: ≈ 2 min la suite completa (golden ≈ 50 s). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
+Duración: ≈ 6–7 min la suite completa (golden ≈ 50 s; los specs más largos son `escritura_modal_tecleo`, `seguridad_xss`, `modal_equivalencia` y `sync_estado`). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
 
 ### Qué HTML se prueba (`APP_HTML`)
 
@@ -47,6 +47,11 @@ node tests/run.mjs                             # tu versión modificada contra e
 > cambiaron con F-03: el rojo persistente con reintento manual y la siembra al confirmar el servidor): son la prueba de que detectan los defectos originales
 > (montos alterados al teclear, indicador verde con `permission-denied` y reintentos infinitos, modal de fuentes obsoleto, conceptos `__x__`).
 
+> **Desde la PR C1 (U-01 / U-05 / U-14 / U-15 / U-16 / U-21)** `APP_HTML=@b2c1153` (el `index.html` de `main` justo antes de esa PR) FALLA a propósito en
+> `layout_anchos`, `teclado_fuentes`, `login_enter_rechazo`, `movil_dashboard`, `impresion_paginas` y `formato_numeros` (y en el golden, cuyo baseline ya trae los
+> formatos nuevos): es la prueba de que detectan los defectos de interfaz originales (contenedor de 1360 px que no se contrae, filas de fuente sin teclado,
+> Enter/"Acceso denegado" del login, tablas del Panel principal en móvil, PDF con Estado cortado / controles de sesión / hojas en blanco, formatos numéricos mezclados).
+
 ### Flujo recomendado para un cambio grande en `index.html`
 
 1. `node tests/run.mjs` en el árbol limpio → confirma que el arnés está sano (todo PASS).
@@ -67,6 +72,8 @@ tests/
     pw.mjs                carga Playwright (import o ruta global) y Chromium sin descargar nada
     spec.mjs              mini-arnés de specs (t.ok/t.eq/t.bug, RESULT:, modo de bugs conocidos)
     capture-utils.mjs     texto normalizado de un panel, descargas CSV/xlsx/json, lectura de xlsx con SheetJS
+    layout.mjs            medirLayout(page): ancho de página, recortes, alcance de "Cerrar sesión" y de las 13 pestañas, tarjetas KPI (spec layout_anchos)
+    pdf-paginas.mjs       analizarPdf(buf): páginas y hojas en blanco de un PDF de Chromium, sin dependencias; textoPorPagina() usa pdftotext si existe
     pack.mjs              empaquetado (zlib) de listas largas del baseline
     config.mjs            constantes (BASELINE_REF, correos de prueba, fecha congelada)
   mockfb/
@@ -185,6 +192,12 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `modal_equivalencia` | el reconciliador de los modales deja exactamente lo mismo que reconstruirlos desde cero: tras 24 cambios remotos aleatorios (semilla fija) en SEP, General y FAEP —compras, ítems, conceptos, montos, corte— el modal reconciliado y el reabierto tienen la misma estructura, textos, atributos y valores |
 | `claves_invalidas` | F-03 (c): un concepto `__x__` / vacío / de más de 1500 bytes se rechaza con mensaje claro (modal y Excel de fuentes y de SEP: ítem, ID de compra, RBD), la barra `/` y los bordes válidos se aceptan, y el resto del RBD sigue guardándose sin escrituras rechazadas |
 | `auth_flujo` | lista de correos autorizados, "Acceso denegado", enlace de correo (válido, vencido, con prompt), cerrar sesión, administrador |
+| `layout_anchos` | U-01: a 1024 / 1280 / 1366 / 1440 / 768 / 390 px y en las 13 pestañas: sin scroll horizontal de página ni de `.wrap`, "Cerrar sesión" y "Cómo usar" dentro de la ventana y alcanzables, las 13 pestañas alcanzables (≥ 768 px todas visibles; ≤ 760 px barra con scroll propio + indicación), tarjetas KPI sin recortar, nada recortado por `overflow:hidden`; a ≥ 1440 px el contenedor sigue siendo de 1360 px centrado |
+| `teclado_fuentes` | U-05: en las 9 fuentes las filas son focusables, Tab llega a la primera, Enter abre el detalle, el foco entra al modal y Escape lo devuelve a la fila; Espacio abre sin desplazar nada; Ctrl+Enter / otras teclas no abren; XLS/PDF conservan su Enter/Espacio; el foco sobrevive al repintado por un cambio remoto; el clic sigue igual y sin anillo |
+| `login_enter_rechazo` | U-21: Enter en el correo envía (vacío / no autorizado / autorizado, sin doble envío); "Acceso denegado" conserva el formulario, cierra la sesión, enfoca "Usar otro correo", que restablece el formulario limpio y deja el flujo funcionando; también al volver de un enlace de un correo no autorizado y a 390 px |
+| `movil_dashboard` | U-14: a 390 / 360 / 768 px las tablas "Ver datos en tabla" del Panel principal tienen scroll propio, celdas `nowrap`, ningún monto partido, la página no desborda y la lista "Atención" cabe |
+| `impresion_paginas` | U-15: `page.pdf()` en Carta y A4 horizontal de SEP, PDF de fila, Panel principal, 3 PDF de entidad y las 9 vistas de fuente: tablas dentro de la hoja (columna Estado completa), sin controles de sesión ni texto de sincronización, `<html>` blanco y ninguna hoja sin texto |
+| `formato_numeros` | U-16: en las 13 pestañas, modales, % Ejecución (tarjetas, tabla, tooltip, gráfico) y lo impreso: pesos `$1.234` / `-$1.234`, porcentajes `54,6%` (siempre con decimal y coma), millones `1,23 M`; y el CSV de respaldo conserva su formato (`54.6%`) |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Bugs conocidos: `known-bug` vs `enforced`
@@ -241,8 +254,8 @@ transitorios que el SDK nunca entrega a `setDoc`, tiempos de detección de red) 
 ## Limitaciones
 
 - No prueba contra Firebase real ni el envío real del correo; las reglas de seguridad (`firestore.rules`) no se ejecutan.
-- El golden master es de **cobertura amplia, no exhaustiva**: no recorre todas las combinaciones de filtros; los PDF reales (impresión del navegador) no se renderizan:
-  se captura el HTML que se iba a imprimir. Las rutas de error de red del SDK real (reintentos, cuotas) se simulan solo con `failNextWrite`/`setOffline`.
+- El golden master es de **cobertura amplia, no exhaustiva**: no recorre todas las combinaciones de filtros; el golden no renderiza los PDF (captura el HTML que se iba a imprimir); la
+  paginación real la cubre `impresion_paginas` con `page.pdf()` (sin ver el diálogo de impresión de cada navegador ni las impresoras). Las rutas de error de red del SDK real (reintentos, cuotas) se simulan solo con `failNextWrite`/`setOffline`.
 - El mock no persiste la cola offline entre recargas (el SDK real sí, vía IndexedDB).
 - Los gráficos SVG se comparan por hash (detecta cambios, no dice cuáles).
 - Un baseline generado con otra versión de Chromium/ICU puede diferir solo en formato de números/fechas.

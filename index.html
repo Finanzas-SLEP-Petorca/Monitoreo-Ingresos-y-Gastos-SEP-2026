@@ -62,7 +62,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   }
   * { box-sizing: border-box; }
   html, body { margin:0; padding:0; height:100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--page-plane); color: var(--text-primary); }
-  .wrap { max-width: 1360px; margin: 0 auto; padding: 20px 18px 24px; }
+  /* width:100% a propósito: con solo max-width + margin:0 auto el contenedor (hijo de flex en columna) se ajusta al ancho
+     MÍNIMO de su contenido (tablas anchas, grupo de pestañas) y se queda en 1330–1360 px aunque la ventana sea menor,
+     recortando pestañas, "Cerrar sesión" y columnas (U-01). Así se contrae hasta el ancho de la ventana. */
+  .wrap { width: 100%; max-width: 1360px; margin: 0 auto; padding: 20px 18px 24px; }
 
   header.top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:20px; }
   header.top h1 { font-size:23px; margin:0 0 3px; font-weight:800; letter-spacing:-0.01em; }
@@ -394,21 +397,27 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .help-content .help-contact { margin-top:18px; padding:10px 12px; border-radius:8px; background:#f6f9fc; border:1px solid var(--border); }
   .rbd-editor-info { font-size:10.5px; color:var(--text-muted); margin-top:6px; }
 
-  .header-right { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+  .header-right { display:flex; flex-direction:column; align-items:flex-end; gap:10px; flex:0 1 auto; max-width:100%; }
+  /* El bloque de título cede ancho (el subtítulo pasa a 2 líneas) antes de que las acciones ("Cerrar sesión") caigan a otra fila (U-01). */
+  header.top > div:first-child { flex:1 1 320px; min-width:0; }
   .header-logo { height:40px; width:auto; display:block; }
   @media print { .header-logo { display:none !important; } }
 
   /* ---- PESTAÑAS (Panel principal / Reportes) ---- */
   /* ---- BARRA DE PESTAÑAS agrupada: inicio (Panel principal/SEP) | fuentes | análisis ---- */
   .tab-bar { display:flex; gap:8px; margin-bottom:16px; padding:0; background:none; border:none; box-shadow:none; width:auto; max-width:100%; flex-wrap:wrap; align-items:stretch; }
-  .tab-group { display:flex; gap:2px; padding:4px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; box-shadow:0 1px 3px rgba(17,24,39,0.05); flex-wrap:nowrap; }
+  .tab-group { display:flex; gap:2px; padding:4px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; box-shadow:0 1px 3px rgba(17,24,39,0.05); flex-wrap:wrap; max-width:100%; }
   .tab-btn { padding:8px 9px; border:none; background:none; font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:7px; white-space:nowrap; }
   .tab-btn:hover { color:var(--text-primary); background:var(--page-plane); }
   .tab-btn.active { color:var(--series-1); background:var(--tone-blue-bg); }
   @media (max-width:560px) { .user-box { flex-wrap:wrap; white-space:normal; } .header-right { align-items:flex-start; } }
   @media (max-width:760px) {
     .tab-bar { flex-wrap:nowrap; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
-    .tab-group { flex-shrink:0; }
+    .tab-group { flex-shrink:0; max-width:none; }
+    /* Indicación de que la barra sigue hacia un lado (las clases las pone actualizarIndicioTabs()): el borde que tiene más pestañas se difumina. */
+    .tab-bar.tabs-mas-der { -webkit-mask-image:linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image:linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+    .tab-bar.tabs-mas-izq { -webkit-mask-image:linear-gradient(to left, #000 calc(100% - 40px), transparent); mask-image:linear-gradient(to left, #000 calc(100% - 40px), transparent); }
+    .tab-bar.tabs-mas-izq.tabs-mas-der { -webkit-mask-image:linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent); mask-image:linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
   }
 
   /* ---- DASHBOARD (Panel principal) ---- */
@@ -6021,6 +6030,16 @@ document.getElementById('vzExcelGas').addEventListener('click', () => vzDescarga
 });
 
 
+// Barra de pestañas con scroll propio en pantallas angostas (≤760 px): marca qué borde tiene más pestañas ocultas (CSS: .tabs-mas-izq / .tabs-mas-der).
+const tabBarEl = document.querySelector('.wrap > .tab-bar');
+function actualizarIndicioTabs() {
+  const max = tabBarEl.scrollWidth - tabBarEl.clientWidth;
+  tabBarEl.classList.toggle('tabs-mas-izq', max > 1 && tabBarEl.scrollLeft > 1);
+  tabBarEl.classList.toggle('tabs-mas-der', max > 1 && tabBarEl.scrollLeft < max - 1);
+}
+tabBarEl.addEventListener('scroll', actualizarIndicioTabs, { passive: true });
+window.addEventListener('resize', actualizarIndicioTabs);
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
@@ -7597,6 +7616,7 @@ function showApp(user) {
   document.getElementById('user-display-name').textContent = displayName;
   document.getElementById('user-avatar').textContent = (displayName.trim()[0] || '?').toUpperCase();
   document.getElementById('limpiarDuplicadosBtn').classList.toggle('hidden', !ADMIN_EMAILS.includes(user.email));
+  actualizarIndicioTabs(); // #app recién se mostró: ahora sí tiene ancho medible
   startFirestoreSync();
 }
 

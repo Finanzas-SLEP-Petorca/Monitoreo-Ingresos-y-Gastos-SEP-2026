@@ -68,8 +68,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
      (teclado), así que el clic del ratón no lo muestra; los estilos de hover no cambian. :where() deja la especificidad en cero para que cada componente
      pueda ajustarlo (p. ej. las filas de las fuentes lo dibujan hacia adentro). Los elementos con tabindex="-1" (foco programático) no muestran anillo. */
   :where(a[href], button, input:not([type="hidden"]), select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible { outline:2px solid var(--focus-ring); outline-offset:2px; }
-  /* Dentro de las tablas (.table-scroll, contenedor con scroll y borde) un anillo hacia afuera quedaría recortado en los bordes: ahí se dibuja hacia adentro. */
-  .table-scroll :focus-visible { outline-offset:-2px; }
+  /* Dentro de las tablas con scroll (.table-scroll, .compras-scroll) un anillo hacia afuera quedaría recortado en los bordes: ahí se dibuja hacia adentro
+     (son controles sin relleno o blancos, así que el anillo se ve igual). */
+  :is(.table-scroll, .compras-scroll) :focus-visible { outline-offset:-2px; }
   html, body { margin:0; padding:0; height:100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--page-plane); color: var(--text-primary); }
   /* width:100% a propósito: con solo max-width + margin:0 auto el contenedor (hijo de flex en columna) se ajusta al ancho
      MÍNIMO de su contenido (tablas anchas, grupo de pestañas) y se queda en 1330–1360 px aunque la ventana sea menor,
@@ -203,8 +204,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .detalle-sub { color:var(--text-muted); margin-left:8px; }
   .detalle-empty { font-size:11.5px; color:var(--text-muted); background:rgba(250,178,25,0.1); border:1px solid rgba(250,178,25,0.3); border-radius:4px; padding:8px 10px; margin-bottom:10px; }
   .alerta-sep-banner { font-size:12px; color:var(--status-critical); background:rgba(208,59,59,0.08); border:1px solid rgba(208,59,59,0.3); border-radius:4px; padding:9px 12px; margin-bottom:10px; font-weight:500; }
-  /* padding:4px + margen negativo (U-13): el contenido queda exactamente donde estaba, pero el anillo de foco (2 px + 2 px de separación) de los controles pegados al borde
-     ya no lo recorta el overflow del contenedor. */
+  /* padding:4px + margen negativo (U-13): el contenido NO se mueve (verificado midiendo posiciones antes/después), pero el anillo de foco (2 px + 2 px de separación)
+     de los controles pegados al borde (campos del formulario de compra, "+ Agregar …") ya no lo recorta el overflow del contenedor. */
   .detalle-scroll { overflow-x:auto; padding:4px; margin:-4px; }
   .rem-corte-control { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary); margin:6px 0 2px; }
   .rem-corte-control select { padding:3px 6px; border-radius:5px; border:1px solid var(--baseline); font-size:11px; background:#fff; color:var(--text-primary); }
@@ -247,7 +248,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .cancelar-edicion-btn { padding:6px 10px; border-radius:5px; border:1px solid var(--baseline); background:#fff; color:var(--text-secondary); font-size:12px; cursor:pointer; white-space:nowrap; }
   .cancelar-edicion-btn:hover { background:var(--gridline); }
   .cancelar-edicion-btn.hidden { display:none; }
-  .compras-scroll { overflow-x:auto; padding:4px; margin:4px -4px -4px; }
+  .compras-scroll { overflow-x:auto; margin-top:8px; }
   table.compras-table { min-width:1100px; table-layout:auto; }
   table.compras-table th, table.compras-table td { white-space:nowrap; }
   .compra-acciones-cell { display:flex; gap:2px; }

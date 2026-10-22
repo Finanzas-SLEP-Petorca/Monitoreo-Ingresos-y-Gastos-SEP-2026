@@ -2495,14 +2495,18 @@ const ING_PRIORITARIO_REAL = {"1121": [19647139, 20856564, 20063211, 21779752, 2
 //  · porcentaje: 54,6%        (una decimal con coma, miles con punto; ver fmtPct)
 //  · millones:   1,23 M       (fmtMillones)
 // useGrouping:'always' agrupa también los números de 4 dígitos ($5.000): algunos motores usan la regla del español de España y los dejan sin punto.
+// Los Intl.NumberFormat se crean UNA vez (perezosamente): Number.toLocaleString con opciones construye uno nuevo en cada llamada y, con miles de montos
+// (Reportes con todos los conceptos), volvía la pantalla ~5 veces más lenta.
+const _nf = {};
+function nfEsCL(clave, opciones) { return _nf[clave] || (_nf[clave] = new Intl.NumberFormat('es-CL', opciones)); }
 function fmtCLP(n) {
   const r = Math.round(n) || 0; // || 0: Math.round(-0.4) es -0 y no debe salir como "-$0"
-  return (r < 0 ? '-' : '') + '$' + Math.abs(r).toLocaleString('es-CL', { useGrouping: 'always' });
+  return (r < 0 ? '-' : '') + '$' + nfEsCL('clp', { useGrouping: 'always', maximumFractionDigits: 0 }).format(Math.abs(r));
 }
 // Porcentaje con 1 decimal y coma. Redondea con toFixed(1) (igual que hacían SEP y % Ejecución) y recién después formatea, para no cambiar ninguna cifra.
 function fmtPct(p) {
   const r = Number(Number(p).toFixed(1)) || 0; // || 0: evita "-0,0%"
-  return r.toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1, useGrouping: 'always' }) + '%';
+  return nfEsCL('pct1', { minimumFractionDigits: 1, maximumFractionDigits: 1, useGrouping: 'always' }).format(r) + '%';
 }
 
 const kpiRow = document.getElementById('kpiRow');
@@ -5211,7 +5215,7 @@ function fmtMillones(n) {
   const m = (Number(n) || 0) / 1e6;
   const abs = Math.abs(m);
   const d = abs === 0 ? 0 : (abs >= 100 ? 0 : (abs >= 10 ? 1 : 2));
-  return m.toLocaleString('es-CL', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: 'always' }) + ' M';
+  return nfEsCL('mill' + d, { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: 'always' }).format(m) + ' M';
 }
 function dashPct(gasto, ingreso) { return ingreso > 0 ? (gasto / ingreso) * 100 : null; }
 function fmtPct1(p) { return p.toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'; }

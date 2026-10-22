@@ -3,7 +3,7 @@
   "esquema": 1,
   "baseline_ref": "0f16ace",
   "html_bajo_prueba": "árbol de trabajo (index.html)",
-  "html_sha1": "9319b27a0f65f81080d6a8ff953e0eb7b84459f6",
+  "html_sha1": "15657e876f20bc7b721db960bb8a88968f9e5beb",
   "fixture_sha1": "c5f4627fb5c44c5ba028c42539c639f2745c1358",
   "fixture": {
    "generado_por": "tests/fixtures/generate.mjs",

@@ -97,6 +97,36 @@ dato (azul = ingreso, ámbar = gasto, verde/rojo = saldo según el signo, gris =
 a la vez. Las variables de color viven en `:root` (no en una clase particular) justamente para
 que tanto la pantalla de login como el panel interno compartan la misma paleta.
 
+### Accesibilidad y teclado (WCAG 2.1 AA)
+
+El panel se puede usar sin ratón y con lector de pantalla. Qué hay y cómo se comprueba:
+
+- **Estructura de la página.** `<header>` (banner), `<nav aria-label="Secciones del panel">` con la barra de pestañas y un único `<main>` que
+  contiene los 13 paneles. Los tres diálogos (detalle por RBD, detalle de una fuente y "❓ Cómo usar") cuelgan fuera de la zona principal.
+- **Pestañas** (patrón WAI-ARIA *tabs*). Los tres grupos (Inicio / Fuentes de financiamiento / Análisis) son `role="tablist"`; cada pestaña es
+  `role="tab"` con `aria-selected` y `aria-controls`, y cada panel `role="tabpanel"` con `aria-labelledby`. Solo la pestaña activa está en el orden de
+  **Tab** (las otras 12 tienen `tabindex="-1"`). Con el foco en la barra: **← / →** pasan a la pestaña vecina **y la abren** (las 13 forman una sola
+  secuencia aunque estén en tres grupos; del final se vuelve al principio), **Inicio / Fin** van a la primera / última, **Enter** o **Espacio** también
+  activan. Al abrir una pestaña desde una tarjeta del Panel principal, el foco pasa a esa pestaña (antes se perdía).
+- **Diálogos modales.** Cada uno es `role="dialog" aria-modal="true"` con nombre (su título). Al abrirlo el foco entra al botón **✕ Cerrar**, **Tab /
+  Shift+Tab** ciclan solo dentro del diálogo, el resto de la página queda `inert` (ni foco ni lectores de pantalla) y **Escape**, ✕ o un clic en el velo lo
+  cierran. Al cerrar, el foco vuelve a lo que lo abrió (la fila o el botón ▸, o "❓ Cómo usar"); si esa fila se repintó por un cambio de otra persona se
+  usa la fila vigente de la misma entidad, y si se abrió desde el panel "Atención" (que cambia de pestaña) vuelve a la fila de esa entidad. El contenido del
+  diálogo se sigue reconciliando con cada cambio remoto sin mover el foco, el cursor ni lo tecleado.
+- **Nombres accesibles.** Toda celda de monto se llama `<concepto>, <mes>, <entidad>` (p. ej. "Remuneraciones (Subt. 21), enero, RBD 1121"); los
+  buscadores, filtros y selectores tienen etiqueta; los botones solo-icono (✕, 🗑, ✏️, ⧉, 🖨, 📅, ▸) llevan `aria-label` y las acciones de cada fila dicen
+  de qué entidad son ("Descargar PDF del RBD 1121"). Regla: ningún control depende de `title` o `placeholder` como único nombre.
+- **Contraste.** Todo texto visible (también en estado *hover*, con foco y en los avisos de sincronización) cumple 4,5:1 (3:1 si mide ≥ 24 px, o ≥ 18,66 px
+  en negrita). Los colores están en los tokens de `:root`: `--text-muted`, `--status-good`, `--status-critical`, `--tone-green-fg`, `--tone-amber-fg` y
+  `--series-2-btn` (fondo de los botones naranjas con texto blanco) ya salen ≥ 4,5:1 sobre blanco, el fondo de página y las tarjetas tintadas; al agregar un
+  color nuevo conviene probarlo con `node tests/run.mjs spec a11y_contraste`. Quedan exentos los controles deshabilitados (p. ej. el selector de entidad de
+  % Ejecución cuando no aplica).
+- **Foco visible.** Un único `:focus-visible` para todo el panel: contorno sólido de 2 px (`--focus-ring`, #1d4ed8) separado 2 px del control (dentro de las
+  tablas con scroll se dibuja hacia adentro para que no lo recorten). Solo aparece al navegar con el teclado: el clic del ratón no lo muestra, y los estilos
+  de *hover* no cambian.
+
+Pruebas automáticas (Playwright): `a11y_modales`, `a11y_pestanas`, `a11y_nombres`, `a11y_contraste` y `a11y_foco` (ver `tests/README.md`).
+
 ### Formato de números (presentación es-CL)
 
 Todo lo que se **ve** en pantalla, en los modales y en lo que se imprime usa el mismo formato (funciones `fmtCLP`,

@@ -498,7 +498,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-linechart svg { display:block; width:100%; height:auto; overflow:visible; }
   .dash-linechart text { font-family:inherit; }
   .dash-atencion { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
-  .dash-atencion li { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; padding:8px 10px; border:1px solid var(--border); border-radius:8px; cursor:pointer; background:var(--surface-1); }
+  .dash-atencion li { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:8px; align-items:center; padding:8px 10px; border:1px solid var(--border); border-radius:8px; cursor:pointer; background:var(--surface-1); }
   .dash-atencion li:hover, .dash-atencion li:focus-visible { background:var(--tone-red-bg); border-color:var(--tone-red-border); outline:none; }
   .dash-atencion .a-fuente { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.03em; }
   .dash-atencion .a-nombre { font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -507,7 +507,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-tabla { margin-top:10px; font-size:12px; }
   .dash-tabla summary { cursor:pointer; color:var(--series-1); font-weight:600; }
   .dash-tabla table { width:100%; border-collapse:collapse; margin-top:6px; }
-  .dash-tabla th, .dash-tabla td { padding:4px 6px; border-bottom:1px solid var(--gridline); text-align:right; font-variant-numeric:tabular-nums; }
+  .dash-tabla th, .dash-tabla td { padding:4px 6px; border-bottom:1px solid var(--gridline); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  /* Contenedor con scroll propio (U-14): en pantallas angostas la tabla desbordaba la página y los montos se partían en dos líneas. */
+  .dash-tabla > div { overflow-x:auto; max-width:100%; }
   .dash-tabla th:first-child, .dash-tabla td:first-child { text-align:left; }
   #dashTooltip { position:fixed; z-index:9999; pointer-events:none; background:var(--brand-navy); color:#fff; border-radius:8px; padding:8px 10px; font-size:12px; box-shadow:0 6px 18px rgba(15,31,61,.35); max-width:290px; display:none; }
   #dashTooltip .tt-title { font-weight:700; margin-bottom:4px; }

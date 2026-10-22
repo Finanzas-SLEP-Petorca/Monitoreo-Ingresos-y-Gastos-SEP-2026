@@ -38,7 +38,7 @@ await correrSpec('movil_dashboard', async (t) => {
       const it = document.createTreeWalker(document.getElementById('tab-dashboard'), NodeFilter.SHOW_TEXT);
       for (let n = it.nextNode(); n; n = it.nextNode()) {
         const tx = n.textContent.trim();
-        if (!/^(▼ )?\$-?[\d.]+$/.test(tx) && !/^-?[\d.,]+ M$/.test(tx)) continue;
+        if (!/^(▼ )?-?\$-?[\d.]+$/.test(tx) && !/^-?[\d.,]+ M$/.test(tx)) continue;
         const el = n.parentElement;
         if (el.closest('details:not([open])') || !el.getClientRects().length) continue;
         const r = document.createRange(); r.selectNodeContents(n);

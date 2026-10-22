@@ -57,6 +57,10 @@ node tests/run.mjs                             # tu versión modificada contra e
 > pestañas sin ARIA ni flechas y sin `<nav>`/`<main>`, ~775 controles sin nombre accesible, ~185 incumplimientos de contraste, foco sin contorno propio). En el golden, esa PR
 > solo cambia el MARCADO (atributos ARIA, tokens de color) y no el texto ni las cifras; su baseline se regeneró con los hashes de marcado nuevos.
 
+> **Desde la PR del N° DC (campo `documentoContable`)** `APP_HTML=@4bf3d93` (el `index.html` de `main` justo antes de esa PR) FALLA a propósito en `n_dc` (no existe el campo, la columna, el botón
+> "Migrar DC" ni la tolerancia del Excel/CSV al DC legado) y en el golden. En el golden esa PR cambia solo lo que tiene que ver con el campo: el botón admin "🗂 Migrar DC (5)" en la barra de SEP, el texto de ayuda
+> y los rótulos del formulario de compras, la columna "N° DC" de las tablas de compras (SEP y fuentes, también en los PDF por fila) y la hoja COMPRAS de los Excel; los CSV, los totales, los % y los gráficos no cambian.
+
 ### Flujo recomendado para un cambio grande en `index.html`
 
 1. `node tests/run.mjs` en el árbol limpio → confirma que el arnés está sano (todo PASS).
@@ -152,6 +156,9 @@ la fila **AC**, los **13 GESPARVU** y un `_meta`, con cifras sintéticas (PRNG c
 `ingreso_items` (Preferente/Prioritario/Carrera Docente), `rem` (`real_hasta_mes` variado), `bys_proyeccion`, `compras` (todos los tipos de documento,
 nota de crédito con monto negativo, caso con `& < > " '`), y `otras_fuentes.{general,pie,mantenimiento,prorretencion,junji,faep,figa,aporte_educ,aporte_junji}`
 con la forma exacta que lee `aplicarSnapshot()` y códigos de cuenta válidos según el Plan de Cuentas 2026 (incluye compras con cuenta **no habilitada** para ver la marca ⚠).
+Para el campo **N° DC** se reescriben (sin agregar compras ni consumir números aleatorios, así que montos, tipos y fechas no cambian) 9 compras que ya existían: en SEP/1121 un DC legado en Doc. original
+(`DC_344`, `DC_22 - No hay PME`, `DC-33`), un `documentoContable` propio (`DC_501`) y uno con caracteres peligrosos; en General/1121 y General/AC un DC legado (`DC_77`, `DC_12 - carpeta azul`) y un
+`documentoContable` propio (`DC_900`); y en PIE/1121 uno propio (`DC_88`). El botón "Migrar DC" del fixture cuenta 5.
 Si cambia el fixture hay que regenerar el baseline del golden master.
 
 ## Golden master (`tests/golden/`)
@@ -211,6 +218,7 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `a11y_nombres` | U-11: en las ~52 vistas/estados y 16 modales (5.653 controles visibles, 732 celdas de monto) y en los 4 estados de la pantalla de acceso, ningún control queda sin nombre accesible (calculado por Chromium) ni con `title`/`placeholder` como único nombre; celdas "<concepto>, <mes>, <entidad>" únicas por modal; botones solo-icono con `aria-label`; acciones de fila sin nombres repetidos; casos concretos de la auditoría (buscadores, filtros, "Real hasta", % Ejecución, Reportes, modo edición de compra) |
 | `a11y_contraste` | U-12: contraste de TODO el texto visible (≈ 39.000 textos en ≈ 160 vistas/estados: vistas, modales, acceso, avisos de sincronización roja/sin conexión, celda inválida, compra en edición, tooltips, colección vacía, y el estado `:hover` de ≈ 58 controles y `:focus-visible`): ≥ 4,5:1 (3:1 si ≥ 24 px o ≥ 18,66 px en negrita), color compuesto con alfa/opacidad sobre el fondo real (degradados → peor parada, SVG, placeholders); autoprueba del detector con casos conocidos; exclusiones solo de controles deshabilitados |
 | `a11y_foco` | U-13: en una muestra de cada tipo de control (≈ 730 controles, 50 firmas) de cada vista y modal, y en un recorrido real con Tab, el foco de teclado muestra un contorno de ≥ 2 px (outline o box-shadow) con ≥ 3:1 frente al fondo (y frente al relleno si queda pegado), sin recortes por `overflow` (también a 390 px); con el ratón no aparece anillo y el hover de tarjetas, pestañas y "Atención" no cambia |
+| `n_dc` | campo propio "N° DC" (`documentoContable`, Documento Contable interno) en las compras: formulario (rótulo, ayuda, 100 caracteres, junto a Doc. original) y tabla (columna siempre visible) de SEP y de General / PIE / Mantención / Pro-Retención y la entidad AC; guardado (el write lleva `documentoContable` en el mapa de la compra, `merge:true`, sin tocar `documentoOriginal`), ✏️ / ⧉ / 🗑; "Doc. original (NC/ND)" se atenúa pero NO se deshabilita; escape XSS (escrito y derivado); regla de detección del DC legado (`DC_344`, `DC-33`, `dc 12`, `DC_22 - No hay PME` sí; `123-FAC`, `DCX`, `Folio DC_3` no) y su visualización derivada en cursiva; botón admin "Migrar DC (n)" (oculto para quien no es admin, contador solo si n > 0, confirmación con el conteo, valor completo, `batch.set` con merge, lotes de ≤ 400 operaciones con 450 documentos sintéticos, idempotente, el contador sigue a los cambios remotos); CSV SUPEREDUC idéntico con y sin N° DC (sin la columna, 13 campos), un DC legado no sale como Documento Original y cuenta como `docOrig` en el aviso; Excel (columna "N° DC", `neutralizaFormula`, exportar → importar → exportar sin alterar datos, edición/limpieza desde el Excel, archivo antiguo sin la columna no borra N° DC) en SEP y fuentes; XLS/PDF/CSV por fila |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Bugs conocidos: `known-bug` vs `enforced`

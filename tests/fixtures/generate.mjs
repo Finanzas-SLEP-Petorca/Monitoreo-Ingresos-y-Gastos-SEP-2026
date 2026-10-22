@@ -12,7 +12,7 @@
 //     rem: { meses, total, real_hasta_mes },
 //     bys_proyeccion: { items: { "<codigo SEP>": { meses, total } } },
 //     compras: { "<id>": { codigo, tipoDocumento, nroDocumento, fechaDocumento, fechaPago, descripcion,
-//                          rutProveedor, nombreProveedor, montoGasto, montoDocumento, documentoOriginal } },
+//                          rutProveedor, nombreProveedor, montoGasto, montoDocumento, documentoOriginal, documentoContable? } },
 //     otras_fuentes: { general|pie|mantenimiento|prorretencion: { ingreso, gasto_rem, compras, bys_proy_items, real_hasta_mes },
 //                      faep|figa|aporte_educ:               { ingreso, gasto_rem, bys_items, real_hasta_mes },
 //                      junji:                               { ingreso_operacion, ingreso_homologacion, ingreso_carrera_docente, gasto_rem, bys_items, real_hasta_mes },
@@ -257,6 +257,25 @@ gesparvu.forEach((g, k) => {
   }
   docs[g.rbd] = { rbd: g.rbd, nombre: g.nombre, otras_fuentes: of, lastModifiedBy: EMAILS[k % EMAILS.length], lastModifiedAt: ts(g.rbd) };
 });
+
+// N° DC (Documento Contable interno): casos para el golden master y los specs. Se reescriben compras que YA existen (no se agrega
+// ninguna ni se consumen números aleatorios), así que montos, totales, fechas y tipos de documento de todo el fixture quedan igual.
+//   · DC legado en "Doc. original" (sin documentoContable): se muestra derivado y es lo que migra el botón "Migrar DC" (5 compras).
+//   · documentoContable propio (con "Doc. original" vacío), incluida una con caracteres peligrosos.
+{
+  const sep = docs['1121'].compras;
+  sep.c1121_3.documentoOriginal = 'DC_344';
+  sep.c1121_4.documentoOriginal = 'DC_22 - No hay PME';
+  sep.c1121_mismo_mes.documentoOriginal = 'DC-33';
+  sep.c1121_5.documentoOriginal = ''; sep.c1121_5.documentoContable = 'DC_501';
+  sep.c1121_especial.documentoContable = "DC_<9> & 'Z'; \"Q\"";
+  const of1121 = docs['1121'].otras_fuentes;
+  of1121.general.compras.oge_1121_1.documentoOriginal = 'DC_77';
+  of1121.pie.compras.opi_1121_1.documentoOriginal = ''; of1121.pie.compras.opi_1121_1.documentoContable = 'DC_88';
+  const ac = docs.AC.otras_fuentes.general.compras;
+  ac.oge_AC_1.documentoOriginal = ''; ac.oge_AC_1.documentoContable = 'DC_900';
+  ac.oge_AC_3.documentoOriginal = 'DC_12 - carpeta azul';
+}
 
 // Documento "_meta" (herencia de versiones anteriores del panel): debe ser ignorado por aplicarSnapshot.
 docs._meta = { items_22: [], items_29: [], lastModifiedBy: EMAILS[0], lastModifiedAt: ts('_meta') };

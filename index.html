@@ -42,25 +42,34 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     --page-plane:     #eef2f7;
     --text-primary:   #111827;
     --text-secondary: #5b6472;
-    --text-muted:     #94a3b8;
+    /* U-12: --text-muted pasó de #94a3b8 (2,0–2,6:1) a #5b6b82 (≥ 4,5:1 sobre blanco, el fondo de página y las tarjetas tintadas); idem los tonos de estado de abajo. */
+    --text-muted:     #5b6b82;
     --gridline:       #e2e8f0;
     --baseline:       #cbd5e1;
     --border:         rgba(17,24,39,0.09);
     --series-1: #2563eb;
     --series-2: #eb6834;
+    --series-2-btn: #c94b17;   /* fondo de los botones naranjas con texto blanco: #eb6834 daba 3,2:1; este da 4,7:1 (U-12) */
     --series-3: #475569;
-    --status-good: #15803d;
+    --status-good: #127235;
     --status-warning: #b45309;
     --status-serious: #ec835a;
-    --status-critical: #d03b3b;
+    --status-critical: #b52f2f;
     --brand-navy: #0f1f3d;
+    --focus-ring: #1d4ed8;   /* U-13: anillo de foco de teclado; 6,7:1 sobre blanco y ≥ 5,7:1 sobre el fondo de página y los tonos pastel */
     --tone-blue-bg: #e8f0fe; --tone-blue-fg: #1d4ed8; --tone-blue-border: #c7ddfb;
-    --tone-green-bg: #e7f7ee; --tone-green-fg: #0f9d58; --tone-green-border: #bfe8d0;
-    --tone-amber-bg: #fdf3e0; --tone-amber-fg: #a3630a; --tone-amber-border: #f6ddb0;
+    --tone-green-bg: #e7f7ee; --tone-green-fg: #0b7a3e; --tone-green-border: #bfe8d0;
+    --tone-amber-bg: #fdf3e0; --tone-amber-fg: #9a5b08; --tone-amber-border: #f6ddb0;
     --tone-red-bg: #fdeaea; --tone-red-fg: #c0392b; --tone-red-border: #f6c6c6;
     --tone-gray-bg: #eef1f5; --tone-gray-fg: #475569; --tone-gray-border: #dbe3ec;
   }
   * { box-sizing: border-box; }
+  /* U-13: anillo de foco de teclado único y visible (2 px sólidos con separación de 2 px; ≥ 3:1 frente al fondo claro que lo rodea). Solo con :focus-visible
+     (teclado), así que el clic del ratón no lo muestra; los estilos de hover no cambian. :where() deja la especificidad en cero para que cada componente
+     pueda ajustarlo (p. ej. las filas de las fuentes lo dibujan hacia adentro). Los elementos con tabindex="-1" (foco programático) no muestran anillo. */
+  :where(a[href], button, input:not([type="hidden"]), select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible { outline:2px solid var(--focus-ring); outline-offset:2px; }
+  /* Dentro de las tablas (.table-scroll, contenedor con scroll y borde) un anillo hacia afuera quedaría recortado en los bordes: ahí se dibuja hacia adentro. */
+  .table-scroll :focus-visible { outline-offset:-2px; }
   html, body { margin:0; padding:0; height:100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--page-plane); color: var(--text-primary); }
   /* width:100% a propósito: con solo max-width + margin:0 auto el contenedor (hijo de flex en columna) se ajusta al ancho
      MÍNIMO de su contenido (tablas anchas, grupo de pestañas) y se queda en 1330–1360 px aunque la ventana sea menor,
@@ -126,7 +135,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .table-controls input, .table-controls select { padding:6px 10px; border-radius:6px; border:1px solid var(--baseline); font-size:13px; background:var(--surface-1); color:var(--text-primary); }
   .table-controls input { flex:1; min-width:200px; }
   .table-controls button { padding:6px 14px; border-radius:6px; border:1px solid var(--series-1); font-size:13px; background:var(--series-1); color:#fff; font-weight:600; cursor:pointer; white-space:nowrap; }
-  .table-controls button:hover { opacity:.88; }
+  .table-controls button:hover { filter:brightness(.9); } /* antes opacity:.88: aclaraba el fondo con el texto blanco y bajaba el contraste a ~3,8:1 (U-12) */
 
   .corte-control { display:flex; align-items:center; gap:8px; margin:-2px 0 6px; font-size:12.5px; color:var(--text-secondary); flex-wrap:wrap; }
   .corte-control label { font-weight:600; }
@@ -194,7 +203,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .detalle-sub { color:var(--text-muted); margin-left:8px; }
   .detalle-empty { font-size:11.5px; color:var(--text-muted); background:rgba(250,178,25,0.1); border:1px solid rgba(250,178,25,0.3); border-radius:4px; padding:8px 10px; margin-bottom:10px; }
   .alerta-sep-banner { font-size:12px; color:var(--status-critical); background:rgba(208,59,59,0.08); border:1px solid rgba(208,59,59,0.3); border-radius:4px; padding:9px 12px; margin-bottom:10px; font-weight:500; }
-  .detalle-scroll { overflow-x:auto; }
+  /* padding:4px + margen negativo (U-13): el contenido queda exactamente donde estaba, pero el anillo de foco (2 px + 2 px de separación) de los controles pegados al borde
+     ya no lo recorta el overflow del contenedor. */
+  .detalle-scroll { overflow-x:auto; padding:4px; margin:-4px; }
   .rem-corte-control { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary); margin:6px 0 2px; }
   .rem-corte-control select { padding:3px 6px; border-radius:5px; border:1px solid var(--baseline); font-size:11px; background:#fff; color:var(--text-primary); }
   .rem-corte-control-print { font-size:11px; color:var(--text-secondary); margin:6px 0 2px; }
@@ -202,15 +213,15 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   table.detalle-table th { background:#eef2f7; color:var(--text-secondary); font-weight:600; text-align:left; padding:5px 7px; border:1px solid var(--gridline); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   table.detalle-table th.mes-real, table.detalle-table th.mes-proy { white-space:normal; overflow:visible; text-overflow:clip; text-align:center; line-height:1.25; }
   table.detalle-table th.mes-real { background:#e3f6ea; color:#0b7a3e; }
-  table.detalle-table th.mes-proy { background:#fdf1de; color:#a3630a; }
+  table.detalle-table th.mes-proy { background:#fdf1de; color:var(--tone-amber-fg); }
   table.detalle-table td.mes-real { background:rgba(12,163,92,0.06); }
   table.detalle-table td.mes-proy { background:rgba(224,138,0,0.06); }
   #reporteTable th.mes-real, #reporteTable th.mes-proy { white-space:normal; text-align:right; line-height:1.25; }
   #reporteTable th.mes-real { background:#e3f6ea; color:#0b7a3e; }
-  #reporteTable th.mes-proy { background:#fdf1de; color:#a3630a; }
+  #reporteTable th.mes-proy { background:#fdf1de; color:var(--tone-amber-fg); }
   #reporteTable td.mes-real { background:rgba(12,163,92,0.08); }
   #reporteTable td.mes-proy { background:rgba(224,138,0,0.08); }
-  .mes-tag { display:block; font-size:8.5px; font-weight:500; text-transform:none; letter-spacing:0; opacity:.85; }
+  .mes-tag { display:block; font-size:8.5px; font-weight:500; text-transform:none; letter-spacing:0; }
   table.detalle-table td { padding:4px 7px; border:1px solid var(--gridline); color:var(--text-primary); overflow:hidden; }
   table.detalle-table td.item-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text-secondary); }
   table.detalle-table td:first-child, table.detalle-table th:first-child { width:210px; max-width:210px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -221,7 +232,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   input.celda-input { width:100%; max-width:66px; text-align:right; border:1px solid #e8d98a; background:#fffbe0; color:#1a1aa6; font-size:10px; padding:3px 4px; border-radius:3px; font-variant-numeric: tabular-nums; box-sizing:border-box; }
   input.celda-input:focus { outline:2px solid var(--series-1); background:#fff9c4; }
   input.celda-input.celda-invalida { border-color:var(--status-critical); background:#fdecec; color:var(--status-critical); }
-  input.celda-input::placeholder { color:#b9b6a8; }
+  input.celda-input::placeholder { color:#75716a; }
 
   .compras-section { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
   .compra-form-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:8px; margin:10px 0; align-items:end; }
@@ -230,16 +241,17 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .compra-input { padding:6px 8px; border-radius:5px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); width:100%; box-sizing:border-box; }
   .compra-form-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .add-compra-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
-  .add-compra-btn:hover { opacity:.88; }
+  .add-compra-btn:hover { filter:brightness(.9); }
   .compra-form-grid.editing .add-compra-btn { background:#b45309; border-color:#b45309; }
   .compra-form-grid.editing { outline:2px solid #b45309; outline-offset:6px; border-radius:6px; }
   .cancelar-edicion-btn { padding:6px 10px; border-radius:5px; border:1px solid var(--baseline); background:#fff; color:var(--text-secondary); font-size:12px; cursor:pointer; white-space:nowrap; }
   .cancelar-edicion-btn:hover { background:var(--gridline); }
   .cancelar-edicion-btn.hidden { display:none; }
-  .compras-scroll { overflow-x:auto; margin-top:8px; }
+  .compras-scroll { overflow-x:auto; padding:4px; margin:4px -4px -4px; }
   table.compras-table { min-width:1100px; table-layout:auto; }
   table.compras-table th, table.compras-table td { white-space:nowrap; }
   .compra-acciones-cell { display:flex; gap:2px; }
+  table.detalle-table td.compra-acciones-cell { overflow:visible; } /* que el anillo de foco de ✏️ ⧉ 🗑 no lo recorte la celda (U-13) */
   .compra-del-btn, .compra-edit-btn, .compra-dup-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
   .compra-del-btn:hover, .compra-edit-btn:hover, .compra-dup-btn:hover { opacity:.6; }
   .plan-nota { margin:6px 0 8px; padding:6px 10px; border-radius:6px; font-size:12px; line-height:1.45;
@@ -252,7 +264,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .bysproy-add-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
   .bysproy-add-row select.bysproy-add-select { width:auto; min-width:280px; flex:0 1 auto; }
   .add-bysproy-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
-  .add-bysproy-btn:hover { opacity:.88; }
+  .add-bysproy-btn:hover { filter:brightness(.9); }
   .bysproy-del-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
   .bysproy-del-btn:hover { opacity:.6; }
 
@@ -279,6 +291,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     .viz-root { display:flex; flex-direction:column; flex:1 1 0%; min-height:0; }
     .wrap { flex:1 1 0%; display:flex; flex-direction:column; min-height:0; overflow-y:auto; }
     header.top, .wrap > .tab-bar { flex-shrink:0; }
+    /* <main> (U-10) envuelve los paneles y hace de eslabón del flex: así cada pestaña se dimensiona igual que cuando colgaba directo de .wrap. */
+    main.main-contenido { display:flex; flex-direction:column; flex:1 1 0%; min-height:0; }
     .tab-content:not(.hidden) { display:flex; flex-direction:column; flex:1 1 0%; min-height:0; }
     .tab-content > .kpi-row { flex-shrink:0; }
     .tab-content > section { flex:1 1 0%; display:flex; flex-direction:column; min-height:0; }
@@ -378,7 +392,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .login-field input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--baseline); font-size:13.5px; background:#fff; color:var(--text-primary); }
   .login-field input:focus { outline:2px solid var(--series-1); border-color:var(--series-1); }
   .login-btn { width:100%; margin-top:14px; padding:11px 14px; border-radius:8px; border:1px solid var(--series-1); background:var(--series-1); color:#fff; font-size:13.5px; font-weight:600; cursor:pointer; }
-  .login-btn:hover { opacity:.9; }
+  .login-btn:hover { filter:brightness(.92); }
   .login-btn:disabled { opacity:.6; cursor:default; }
   .login-error { margin-top:14px; font-size:12px; background:rgba(208,59,59,0.08); border:1px solid rgba(208,59,59,0.25); color:var(--status-critical); border-radius:8px; padding:10px 12px; }
   .login-success { text-align:center; }
@@ -414,7 +428,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .help-content strong { color:var(--text-primary); }
   .help-content .help-tag { display:inline-block; padding:1px 7px; border-radius:4px; font-size:11.5px; font-weight:600; }
   .help-content .help-tag.real { background:#e3f6ea; color:#0b7a3e; }
-  .help-content .help-tag.proy { background:#fdf1de; color:#a3630a; }
+  .help-content .help-tag.proy { background:#fdf1de; color:var(--tone-amber-fg); }
   .help-content .help-tag.final { background:#dce7f5; color:#1c4e80; }
   .help-content .help-contact { margin-top:18px; padding:10px 12px; border-radius:8px; background:#f6f9fc; border:1px solid var(--border); }
   .rbd-editor-info { font-size:10.5px; color:var(--text-muted); margin-top:6px; }
@@ -471,7 +485,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media (max-width:720px) { .dash-cards { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
   @media (max-width:480px) { .dash-cards { grid-template-columns:1fr; } }
   .dash-card { background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:14px; cursor:pointer; box-shadow:0 1px 3px rgba(17,24,39,0.05); transition:border-color .12s, box-shadow .12s, transform .12s; min-width:0; }
-  .dash-card:hover, .dash-card:focus-visible { border-color:var(--series-1); box-shadow:0 6px 16px rgba(37,99,235,0.13); transform:translateY(-1px); outline:none; }
+  .dash-card:hover, .dash-card:focus-visible { border-color:var(--series-1); box-shadow:0 6px 16px rgba(37,99,235,0.13); transform:translateY(-1px); }
   .dash-card .c-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
   .dash-card .c-name { font-weight:700; font-size:14px; display:flex; align-items:center; gap:6px; min-width:0; }
   .dash-card .c-estado { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; }
@@ -502,7 +516,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-nota-chart { font-size:11.5px; color:var(--text-muted); margin:0 0 8px; }
   .dash-bars { display:grid; gap:7px; }
   .dash-bar-row { display:grid; grid-template-columns:122px 1fr; gap:8px; align-items:center; padding:3px 4px; border-radius:7px; cursor:pointer; }
-  .dash-bar-row:hover, .dash-bar-row:focus-visible { background:var(--page-plane); outline:none; }
+  .dash-bar-row:hover, .dash-bar-row:focus-visible { background:var(--page-plane); }
   .dash-bar-row .b-name { font-size:11.5px; font-weight:600; color:var(--text-primary); line-height:1.2; overflow-wrap:anywhere; }
   .dash-bar-row .b-lines { display:grid; gap:3px; min-width:0; }
   .dash-bar-line { display:flex; align-items:center; gap:6px; min-width:0; }
@@ -512,7 +526,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-bar-val { font-size:11px; color:var(--text-secondary); font-variant-numeric:tabular-nums; white-space:nowrap; }
   .dash-stack { display:flex; gap:2px; height:16px; min-width:0; }
   .dash-stack .seg { display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; color:#fff; min-width:0; overflow:hidden; white-space:nowrap; }
-  .dash-stack .seg.rem { background:var(--chart-gas); border-radius:0; }
+  .dash-stack .seg.rem { background:var(--chart-gas); border-radius:0; color:var(--text-primary); }
   .dash-stack .seg.bys { background:var(--chart-bys); border-radius:0 4px 4px 0; }
   .dash-stack .seg.rem:last-child { border-radius:0 4px 4px 0; }
   .dash-stack .vacio { flex:1; background:var(--tone-gray-bg); border-radius:4px; color:var(--text-muted); font-size:10.5px; display:flex; align-items:center; padding-left:8px; }
@@ -521,7 +535,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-linechart text { font-family:inherit; }
   .dash-atencion { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
   .dash-atencion li { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:8px; align-items:center; padding:8px 10px; border:1px solid var(--border); border-radius:8px; cursor:pointer; background:var(--surface-1); }
-  .dash-atencion li:hover, .dash-atencion li:focus-visible { background:var(--tone-red-bg); border-color:var(--tone-red-border); outline:none; }
+  .dash-atencion li:hover, .dash-atencion li:focus-visible { background:var(--tone-red-bg); border-color:var(--tone-red-border); }
   .dash-atencion .a-fuente { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.03em; }
   .dash-atencion .a-nombre { font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .dash-atencion .a-saldo { font-size:13px; font-weight:700; color:var(--status-critical); font-variant-numeric:tabular-nums; white-space:nowrap; }
@@ -687,7 +701,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   /* Filas de las pestañas de fuente operables con teclado (tabindex=0): anillo de foco solo al navegar con teclado (:focus-visible), no al hacer clic. */
   tr.otras-fuentes-row { scroll-margin-top:34px; }
   tr.otras-fuentes-row:focus { outline:none; }
-  tr.otras-fuentes-row:focus-visible { outline:2px solid var(--series-1); outline-offset:-2px; background:var(--tone-blue-bg); }
+  tr.otras-fuentes-row:focus-visible { outline:2px solid var(--focus-ring); outline-offset:-2px; background:var(--tone-blue-bg); }
   tr.otras-fuentes-row:focus-visible .rbd-clickable { text-decoration:underline; }
   .table-empty-row td { text-align:center; color:var(--text-muted); font-size:13px; padding:28px !important; }
 
@@ -779,29 +793,30 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
   </header>
 
-  <div class="tab-bar">
-    <div class="tab-group" aria-label="Inicio">
-      <button class="tab-btn active" data-tab="dashboard" type="button">🏠 Panel principal</button>
-      <button class="tab-btn" data-tab="panel" type="button">🎓 SEP</button>
+  <nav class="tab-bar" aria-label="Secciones del panel">
+    <div class="tab-group" role="tablist" aria-label="Inicio">
+      <button class="tab-btn active" data-tab="dashboard" type="button" role="tab" id="tabbtn-dashboard" aria-controls="tab-dashboard" aria-selected="true" tabindex="0"><span aria-hidden="true">🏠</span> Panel principal</button>
+      <button class="tab-btn" data-tab="panel" type="button" role="tab" id="tabbtn-panel" aria-controls="tab-panel" aria-selected="false" tabindex="-1"><span aria-hidden="true">🎓</span> SEP</button>
     </div>
-    <div class="tab-group" aria-label="Fuentes de financiamiento">
-      <button class="tab-btn" data-tab="of-general" type="button" title="Subvención General">💰 General</button>
-      <button class="tab-btn" data-tab="of-pie" type="button">🧩 PIE</button>
-      <button class="tab-btn" data-tab="of-mantenimiento" type="button">🔧 Mantención</button>
-      <button class="tab-btn" data-tab="of-prorretencion" type="button">📌 Pro-Retención</button>
-      <button class="tab-btn" data-tab="of-junji" type="button">🧸 JUNJI</button>
-      <button class="tab-btn" data-tab="of-faep" type="button">🏗️ FAEP</button>
-      <button class="tab-btn" data-tab="of-figa" type="button">🌐 FIGA</button>
-      <button class="tab-btn" data-tab="of-aporte_educ" type="button" title="Aporte Fiscal Extraordinario Educación">🏛️ Aporte Educ.</button>
-      <button class="tab-btn" data-tab="of-aporte_junji" type="button" title="Aporte Fiscal Extraordinario JUNJI">🍼 Aporte JUNJI</button>
+    <div class="tab-group" role="tablist" aria-label="Fuentes de financiamiento">
+      <button class="tab-btn" data-tab="of-general" type="button" title="Subvención General" role="tab" id="tabbtn-of-general" aria-controls="tab-of-general" aria-selected="false" tabindex="-1"><span aria-hidden="true">💰</span> General</button>
+      <button class="tab-btn" data-tab="of-pie" type="button" role="tab" id="tabbtn-of-pie" aria-controls="tab-of-pie" aria-selected="false" tabindex="-1"><span aria-hidden="true">🧩</span> PIE</button>
+      <button class="tab-btn" data-tab="of-mantenimiento" type="button" role="tab" id="tabbtn-of-mantenimiento" aria-controls="tab-of-mantenimiento" aria-selected="false" tabindex="-1"><span aria-hidden="true">🔧</span> Mantención</button>
+      <button class="tab-btn" data-tab="of-prorretencion" type="button" role="tab" id="tabbtn-of-prorretencion" aria-controls="tab-of-prorretencion" aria-selected="false" tabindex="-1"><span aria-hidden="true">📌</span> Pro-Retención</button>
+      <button class="tab-btn" data-tab="of-junji" type="button" role="tab" id="tabbtn-of-junji" aria-controls="tab-of-junji" aria-selected="false" tabindex="-1"><span aria-hidden="true">🧸</span> JUNJI</button>
+      <button class="tab-btn" data-tab="of-faep" type="button" role="tab" id="tabbtn-of-faep" aria-controls="tab-of-faep" aria-selected="false" tabindex="-1"><span aria-hidden="true">🏗️</span> FAEP</button>
+      <button class="tab-btn" data-tab="of-figa" type="button" role="tab" id="tabbtn-of-figa" aria-controls="tab-of-figa" aria-selected="false" tabindex="-1"><span aria-hidden="true">🌐</span> FIGA</button>
+      <button class="tab-btn" data-tab="of-aporte_educ" type="button" title="Aporte Fiscal Extraordinario Educación" role="tab" id="tabbtn-of-aporte_educ" aria-controls="tab-of-aporte_educ" aria-selected="false" tabindex="-1"><span aria-hidden="true">🏛️</span> Aporte Educ.</button>
+      <button class="tab-btn" data-tab="of-aporte_junji" type="button" title="Aporte Fiscal Extraordinario JUNJI" role="tab" id="tabbtn-of-aporte_junji" aria-controls="tab-of-aporte_junji" aria-selected="false" tabindex="-1"><span aria-hidden="true">🍼</span> Aporte JUNJI</button>
     </div>
-    <div class="tab-group" aria-label="Análisis">
-      <button class="tab-btn" data-tab="ejecucion" type="button">📉 % Ejecución</button>
-      <button class="tab-btn" data-tab="reportes" type="button">📈 Reportes</button>
+    <div class="tab-group" role="tablist" aria-label="Análisis">
+      <button class="tab-btn" data-tab="ejecucion" type="button" role="tab" id="tabbtn-ejecucion" aria-controls="tab-ejecucion" aria-selected="false" tabindex="-1"><span aria-hidden="true">📉</span> % Ejecución</button>
+      <button class="tab-btn" data-tab="reportes" type="button" role="tab" id="tabbtn-reportes" aria-controls="tab-reportes" aria-selected="false" tabindex="-1"><span aria-hidden="true">📈</span> Reportes</button>
     </div>
-  </div>
+  </nav>
 
-  <div id="tab-dashboard" class="tab-content">
+  <main id="contenido-principal" class="main-contenido">
+  <div id="tab-dashboard" class="tab-content" role="tabpanel" aria-labelledby="tabbtn-dashboard">
     <section class="dash">
       <div class="dash-head">
         <div>
@@ -837,7 +852,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           </div>
           <p class="dash-nota-chart">% del gasto de cada fuente. Clic en una fila para abrir la pestaña.</p>
           <div class="dash-bars" id="dashChartComp"></div>
-          <details class="dash-tabla" id="dashTablaFuentes"><summary>Ver datos en tabla</summary><div id="dashTablaFuentesBody"></div></details>
+          <details class="dash-tabla" id="dashTablaFuentes"><summary>Ver datos en tabla</summary><div id="dashTablaFuentesBody" tabindex="0" role="region" aria-label="Datos del gráfico por fuente (tabla con desplazamiento)"></div></details>
         </div>
       </div>
       <div class="dash-grid2">
@@ -848,7 +863,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           </div>
           <p class="dash-nota-chart" id="dashNotaMensual">Suma de SEP y de todas las fuentes, enero a diciembre (millones de pesos).</p>
           <div class="dash-linechart" id="dashChartMes"></div>
-          <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="dashTablaMesBody"></div></details>
+          <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="dashTablaMesBody" tabindex="0" role="region" aria-label="Datos de la evolución mensual (tabla con desplazamiento)"></div></details>
         </div>
         <div class="dash-panel">
           <div class="dash-panel-head">
@@ -862,7 +877,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <div id="dashTooltip" role="tooltip"></div>
 
-  <div id="tab-panel" class="tab-content hidden">
+  <div id="tab-panel" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-panel">
   <div class="panel-sep-head"><h2 style="margin:0 0 4px;">🎓 SEP — Subvención Escolar Preferencial</h2><p class="dash-sub" style="margin:0 0 12px;">Monitoreo por establecimiento (RBD) con la regla 70% remuneraciones / 30% bienes y servicios.</p></div>
 
   <button type="button" class="kpi-section-label" data-section="real" onclick="toggleKpiSection('real')"><span class="kpi-toggle-icon">▾</span> Real (ejecutado)</button>
@@ -878,21 +893,21 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     <h2>Estado por RBD <span class="count-chip" id="rbdCountChip"></span></h2>
     <div class="panel">
       <div class="table-controls">
-        <input type="text" id="searchInput" placeholder="Buscar por RBD o nombre de establecimiento…">
-        <select id="estadoFilter">
+        <input type="text" id="searchInput" placeholder="Buscar por RBD o nombre de establecimiento…" aria-label="Buscar establecimiento por RBD o nombre">
+        <select id="estadoFilter" aria-label="Filtrar establecimientos por estado">
           <option value="">Todos los estados</option>
           <option value="deficit">Déficit</option>
           <option value="riesgo">En riesgo</option>
           <option value="superavit">Superávit</option>
         </select>
         <button id="downloadBtn" type="button">⬇ CSV</button>
-        <button id="downloadExcelBtn" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar con &quot;Importar Excel&quot;">⬇ Excel</button>
+        <button id="downloadExcelBtn" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar con &quot;Importar Excel&quot;">⬇ Excel</button>
         <button id="importExcelBtn" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
         <input type="file" id="importExcelInput" accept=".xlsx" style="display:none;">
         <button id="exportPdfBtn" type="button" style="background:#374151; border-color:#374151;" title="PDF general (solo el resumen, sin detalle por RBD)">🖨 Exportar PDF (general)</button>
         <button id="downloadResumenExcelBtn" type="button" style="background:#0e7490; border-color:#0e7490;" title="Excel del resumen general (mismas columnas que la tabla y el PDF general) — respeta el filtro/búsqueda actual, sin detalle por RBD">⬇ Excel (resumen general)</button>
         <button id="downloadComprasSepBtn" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras (Subt.22/29) de todos los RBD con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD; para eso usa ⬇ CSV SEP de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
-        <button id="downloadCargaBtn" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+        <button id="downloadCargaBtn" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         <button id="limpiarDuplicadosBtn" type="button" class="hidden" style="background:#b45309; border-color:#b45309;" title="Revisa si quedaron compras duplicadas con ID &quot;0&quot; — un rastro del bug de carga masiva ya corregido — y permite eliminarlas (solo la copia duplicada, nunca la compra correcta)">🧹 Revisar duplicados (ID &quot;0&quot;)</button>
       </div>
       <div class="corte-control">
@@ -913,7 +928,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <table class="data-table">
           <thead>
             <tr>
-              <th class="expand-cell" rowspan="2"></th>
+              <th class="expand-cell" rowspan="2" aria-label="Abrir detalle"></th>
               <th data-key="rbd" rowspan="2">RBD</th>
               <th data-key="nombre" rowspan="2">Establecimiento</th>
               <th data-key="marco_anual_proy" class="num" rowspan="2" title="Ingreso SEP anual">Ingreso SEP anual</th>
@@ -944,7 +959,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-panel -->
 
-  <div id="tab-reportes" class="tab-content hidden">
+  <div id="tab-reportes" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-reportes">
     <section>
       <h2>Reportes</h2>
       <div class="vz-fila rep-vista-row">
@@ -979,7 +994,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                       <button type="button" class="link-btn" id="vzEntNinguno">Ninguno</button>
                     </span>
                   </div>
-                  <input type="text" id="vzEntSearch" placeholder="Buscar RBD, GESPARVU o nombre…" class="report-search">
+                  <input type="text" id="vzEntSearch" placeholder="Buscar RBD, GESPARVU o nombre…" class="report-search" aria-label="Buscar entidad por RBD, GESPARVU o nombre">
                   <div class="report-checklist vz-ent-list" id="vzEntList"></div>
                 </div>
               </details>
@@ -1012,12 +1027,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <span class="vz-btnrow">
             <button type="button" class="vz-btn-sec" id="vzExpIng">Expandir todo</button>
             <button type="button" class="vz-btn-sec" id="vzContIng">Contraer todo</button>
-            <button type="button" id="vzExcelIng" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel Ingresos</button>
+            <button type="button" id="vzExcelIng" style="background:#1b8247; border-color:#1b8247; color:#fff;">⬇ Excel Ingresos</button>
           </span>
         </div>
         <div class="table-scroll">
           <table class="data-table vz-table" id="vzTablaIng">
-            <thead><tr><th>Concepto</th><th class="num">Real</th><th class="num">Proyectado</th><th class="num">Total</th><th class="vz-th-act"></th></tr></thead>
+            <thead><tr><th>Concepto</th><th class="num">Real</th><th class="num">Proyectado</th><th class="num">Total</th><th class="vz-th-act" aria-label="Detalle mensual"></th></tr></thead>
             <tbody id="vzBodyIng"></tbody>
           </table>
         </div>
@@ -1029,12 +1044,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <span class="vz-btnrow">
             <button type="button" class="vz-btn-sec" id="vzExpGas">Expandir todo</button>
             <button type="button" class="vz-btn-sec" id="vzContGas">Contraer todo</button>
-            <button type="button" id="vzExcelGas" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel Gastos</button>
+            <button type="button" id="vzExcelGas" style="background:#1b8247; border-color:#1b8247; color:#fff;">⬇ Excel Gastos</button>
           </span>
         </div>
         <div class="table-scroll">
           <table class="data-table vz-table" id="vzTablaGas">
-            <thead><tr><th>Concepto</th><th class="num">Real</th><th class="num">Proyectado</th><th class="num">Total</th><th class="vz-th-act"></th></tr></thead>
+            <thead><tr><th>Concepto</th><th class="num">Real</th><th class="num">Proyectado</th><th class="num">Total</th><th class="vz-th-act" aria-label="Detalle mensual"></th></tr></thead>
             <tbody id="vzBodyGas"></tbody>
           </table>
         </div>
@@ -1055,7 +1070,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                   <button type="button" class="link-btn" id="reporteRbdNinguno">Ninguno</button>
                 </span>
               </div>
-              <input type="text" id="reporteRbdSearch" placeholder="Buscar RBD, código o nombre…" class="report-search">
+              <input type="text" id="reporteRbdSearch" placeholder="Buscar RBD, código o nombre…" class="report-search" aria-label="Buscar entidad por RBD, código o nombre">
               <div class="report-checklist" id="reporteRbdList"></div>
             </div>
             <div class="report-filter-col">
@@ -1067,7 +1082,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 </span>
               </div>
               <div class="vz-chips report-fuente-chips" id="reporteFuenteChips" title="Filtra qué grupos de conceptos se muestran (no cambia lo seleccionado)"></div>
-              <input type="text" id="reporteConceptoSearch" placeholder="Buscar concepto…" class="report-search">
+              <input type="text" id="reporteConceptoSearch" placeholder="Buscar concepto…" class="report-search" aria-label="Buscar concepto por nombre o código">
               <div class="report-checklist" id="reporteConceptoList"></div>
             </div>
             <div class="report-filter-col">
@@ -1083,7 +1098,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           </div>
           <div class="table-controls" style="margin-top:14px;">
             <button id="reporteCsvBtn" type="button">⬇ CSV</button>
-            <button id="reporteExcelBtn" type="button" style="background:#1e8a4c; border-color:#1e8a4c;">⬇ Excel</button>
+            <button id="reporteExcelBtn" type="button" style="background:#1b8247; border-color:#1b8247;">⬇ Excel</button>
             <button id="reportePdfBtn" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
           </div>
           <div class="corte-legend" id="reporteCorteNota" style="margin-top:8px;"></div>
@@ -1100,7 +1115,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-reportes -->
 
-  <div id="tab-ejecucion" class="tab-content hidden">
+  <div id="tab-ejecucion" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-ejecucion">
     <section>
       <h2 id="ejecTitulo">% Ejecución — SEP</h2>
       <div class="panel">
@@ -1109,7 +1124,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <span class="of-chips ejec-chips" id="ejecFuenteChips" role="group" aria-label="Fuente de financiamiento"></span>
         </div>
         <div class="table-controls">
-          <select id="ejecRbdSelect"></select>
+          <select id="ejecRbdSelect" aria-label="Entidad que se muestra en % Ejecución"></select>
           <div class="ejec-toggle-group">
             <label class="ejec-toggle"><input type="checkbox" id="ejecShowRem" checked><span class="ejec-legend-dot" style="background:var(--series-1)"></span><span id="ejecLblRem">Remuneraciones (Subt. 21)</span></label>
             <label class="ejec-toggle"><input type="checkbox" id="ejecShowBys" checked><span class="ejec-legend-dot" style="background:var(--series-2)"></span><span id="ejecLblBys">Bienes y Servicios (22+29)</span></label>
@@ -1151,7 +1166,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
        se reemplazó por una pestaña de primer nivel por fuente (sin selector intermedio). Las 5
        comparten el mismo modal (#otrasFuentesModal más abajo) y el mismo renderOtrasFuentesTable()
        parametrizado por otrasFuentesSel — solo el <tbody> de destino cambia según la fuente activa. -->
-  <div id="tab-of-general" class="tab-content hidden">
+  <div id="tab-of-general" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-general">
     <section>
       <h2>Subvención General</h2>
       <div class="panel">
@@ -1160,11 +1175,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
           <button id="downloadComprasOFBtn-general" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Subv. General con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
-          <button id="downloadExcelOFBtn-general" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-general" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-general" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-general" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-general" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-general" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-general" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-general">
@@ -1190,7 +1205,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-general -->
 
-  <div id="tab-of-pie" class="tab-content hidden">
+  <div id="tab-of-pie" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-pie">
     <section>
       <h2>PIE — Programa de Integración Escolar</h2>
       <div class="panel">
@@ -1199,11 +1214,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
           <button id="downloadComprasOFBtn-pie" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de PIE con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
-          <button id="downloadExcelOFBtn-pie" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-pie" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-pie" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-pie" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-pie" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-pie" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-pie" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-pie">
@@ -1229,7 +1244,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-pie -->
 
-  <div id="tab-of-mantenimiento" class="tab-content hidden">
+  <div id="tab-of-mantenimiento" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-mantenimiento">
     <section>
       <h2>Subvención de Apoyo al Mantenimiento</h2>
       <div class="panel">
@@ -1238,11 +1253,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
           <button id="downloadComprasOFBtn-mantenimiento" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Mantención con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
-          <button id="downloadExcelOFBtn-mantenimiento" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-mantenimiento" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-mantenimiento" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-mantenimiento" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-mantenimiento" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-mantenimiento" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-mantenimiento" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-mantenimiento">
@@ -1268,7 +1283,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-mantenimiento -->
 
-  <div id="tab-of-prorretencion" class="tab-content hidden">
+  <div id="tab-of-prorretencion" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-prorretencion">
     <section>
       <h2>Subvención Pro-Retención</h2>
       <div class="panel">
@@ -1277,11 +1292,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
           <button id="downloadComprasOFBtn-prorretencion" type="button" style="background:#0f766e; border-color:#0f766e;" title="Todas las compras de Pro-Retención con las columnas de la plantilla SUPEREDUC (tipo de documento por código, fechas dd-mm-aaaa). Antes de descargar avisa qué filas rechazaría la plataforma. OJO: la plataforma carga un CSV por RBD/entidad; para eso usa ⬇ CSV SUPEREDUC de cada fila.">⬇ Compras SUPEREDUC (CSV)</button>
-          <button id="downloadExcelOFBtn-prorretencion" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-prorretencion" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de esta fuente (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-prorretencion" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-prorretencion" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-prorretencion" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-prorretencion" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-prorretencion" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-prorretencion">
@@ -1307,7 +1322,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-prorretencion -->
 
-  <div id="tab-of-junji" class="tab-content hidden">
+  <div id="tab-of-junji" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-junji">
     <section>
       <h2>JUNJI</h2>
       <div class="panel">
@@ -1315,11 +1330,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         sin techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Las filas son
         los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
         <div class="table-controls">
-          <button id="downloadExcelOFBtn-junji" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de JUNJI (3 líneas de Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-junji" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de JUNJI (3 líneas de Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-junji" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-junji" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-junji" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-junji" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-junji">
@@ -1345,7 +1360,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-junji -->
 
-  <div id="tab-of-faep" class="tab-content hidden">
+  <div id="tab-of-faep" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-faep">
     <section>
       <h2>FAEP</h2>
       <div class="panel">
@@ -1354,11 +1369,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
         fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
-          <button id="downloadExcelOFBtn-faep" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de FAEP (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-faep" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de FAEP (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-faep" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-faep" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-faep" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-faep" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-faep" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-faep">
@@ -1384,7 +1399,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-faep -->
 
-  <div id="tab-of-figa" class="tab-content hidden">
+  <div id="tab-of-figa" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-figa">
     <section>
       <h2>FIGA</h2>
       <div class="panel">
@@ -1393,11 +1408,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         el saldo acumulado es Superávit o Déficit. Incluye una fila fija "AC — Administración Central" para gasto
         del sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
-          <button id="downloadExcelOFBtn-figa" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de FIGA (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-figa" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de FIGA (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-figa" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-figa" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-figa" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-figa" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-figa" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-figa">
@@ -1423,7 +1438,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-figa -->
 
-  <div id="tab-of-aporte_educ" class="tab-content hidden">
+  <div id="tab-of-aporte_educ" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-aporte_educ">
     <section>
       <h2>Aporte Fiscal Extraordinario Educación</h2>
       <div class="panel">
@@ -1432,11 +1447,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         acumulado es Superávit o Déficit. Incluye una fila fija "AC — Administración Central" para gasto del
         sostenedor que no es de un establecimiento puntual.</div>
         <div class="table-controls">
-          <button id="downloadExcelOFBtn-aporte_educ" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de Aporte Fiscal Extraord. Educación (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-aporte_educ" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de Aporte Fiscal Extraord. Educación (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-aporte_educ" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-aporte_educ" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-aporte_educ" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-aporte_educ" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-aporte_educ" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-aporte_educ">
@@ -1462,7 +1477,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   </div>
   <!-- /#tab-of-aporte_educ -->
 
-  <div id="tab-of-aporte_junji" class="tab-content hidden">
+  <div id="tab-of-aporte_junji" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-of-aporte_junji">
     <section>
       <h2>Aporte Fiscal Extraordinario JUNJI</h2>
       <div class="panel">
@@ -1471,11 +1486,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         indica si el saldo acumulado es Superávit o Déficit. Las filas son los 13 GESPARVU (jardín infantil / sala
         cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
         <div class="table-controls">
-          <button id="downloadExcelOFBtn-aporte_junji" type="button" style="background:#1e8a4c; border-color:#1e8a4c;" title="Descarga la carga completa de Aporte Fiscal Extraord. JUNJI (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-aporte_junji" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de Aporte Fiscal Extraord. JUNJI (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-aporte_junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-aporte_junji" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-aporte_junji" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
-          <button id="downloadCargaOFBtn-aporte_junji" type="button" style="background:var(--series-2); border-color:var(--series-2);">⬇ Descargar carga (JSON)</button>
+          <button id="downloadCargaOFBtn-aporte_junji" type="button" style="background:var(--series-2-btn); border-color:var(--series-2-btn);">⬇ Descargar carga (JSON)</button>
         </div>
         <div class="table-scroll" style="margin-top:12px;">
           <table class="data-table" id="otrasFuentesTable-aporte_junji">
@@ -1500,9 +1515,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </section>
   </div>
   <!-- /#tab-of-aporte_junji -->
+  </main>
 
+</div>
+<!-- /.wrap -->
+
+<!-- Diálogos modales (U-09): FUERA de .wrap a propósito, para poder marcar .wrap como `inert` mientras hay uno abierto sin inertizar al propio diálogo. -->
 <div id="otrasFuentesModal" class="modal-overlay hidden">
-  <div class="modal-panel">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="otrasFuentesModalTitle" tabindex="-1">
     <div class="modal-header">
       <div>
         <h3 id="otrasFuentesModalTitle"></h3>
@@ -1516,7 +1536,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 </div>
 
 <div id="rbdModal" class="modal-overlay hidden">
-  <div class="modal-panel">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
     <div class="modal-header">
       <div>
         <h3 id="modalTitle"></h3>
@@ -1530,10 +1550,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 </div>
 
 <div id="helpModal" class="modal-overlay hidden">
-  <div class="modal-panel">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle" tabindex="-1">
     <div class="modal-header">
       <div>
-        <h3>❓ Cómo usar el panel</h3>
+        <h3 id="helpModalTitle">❓ Cómo usar el panel</h3>
         <div class="modal-subtitle">Guía rápida para todo el equipo — no hace falta saber nada técnico</div>
       </div>
       <button id="helpModalCloseBtn" type="button" class="modal-close" aria-label="Cerrar">✕</button>
@@ -1626,8 +1646,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     </div>
   </div>
 </div>
-</div>
-<!-- /.wrap: #printSingleWrap se queda AFUERA de .wrap a propósito — en impresión de un solo
+<!-- /.wrap (cerrado más arriba, antes de los modales): #printSingleWrap se queda AFUERA de .wrap a propósito — en impresión de un solo
      RBD (o de % Ejecución) se oculta .wrap por completo (body.print-single-rbd .wrap{display:none}),
      y un div escondido nunca deja ver a sus hijos aunque ellos mismos tengan display:block, así
      que si printSingleWrap quedara adentro de .wrap jamás se vería nada al imprimir. -->
@@ -3239,7 +3258,11 @@ window.onRemRealHastaChange = onRemRealHastaChange;
 // ancho de columnas (el reclamo de que "los cuadros están dispares en forma").
 const DETALLE_COLGROUP = `<colgroup><col style="width:210px;">${MESES_CARGA.map(() => '<col style="width:84px;">').join('')}<col style="width:112px;"></colgroup>`;
 
-function celdaInputHTML(rbd, modo, mes, v, extra, printMode) {
+// Nombre accesible de una celda de monto: "<concepto>, <mes>, <entidad>" (p. ej. "Remuneraciones, enero, RBD 1121"): único dentro del modal (U-11).
+function nombreCeldaMonto(concepto, mes, entidad) {
+  return `${concepto}, ${MESES_CARGA_TITLE[MESES_CARGA.indexOf(mes)].toLowerCase()}, ${entidad}`;
+}
+function celdaInputHTML(rbd, modo, mes, v, extra, printMode, concepto) {
   const idx = MESES_CARGA.indexOf(mes) + 1;
   const cls = esRealParaModo(modo, rbd, idx) ? 'mes-real' : 'mes-proy';
   // En el PDF individual por RBD (printMode=true) el <input> no sirve de nada (no es editable
@@ -3249,7 +3272,7 @@ function celdaInputHTML(rbd, modo, mes, v, extra, printMode) {
     return `<td class="num ${cls}">${v ? fmtCLP(v) : '—'}</td>`;
   }
   return `<td class="num ${cls}"><input type="text" inputmode="numeric" autocomplete="off" class="celda-input" value="${formatoMontoCelda(v)}" placeholder="0"
-            data-rbd="${rbd}" data-modo="${modo}" data-mes="${mes}" ${extra || ''}
+            aria-label="${escHtml(nombreCeldaMonto(concepto, mes, 'RBD ' + rbd))}" data-rbd="${rbd}" data-modo="${modo}" data-mes="${mes}" ${extra || ''}
             oninput="onCeldaInput(this)"></td>`;
 }
 
@@ -3289,7 +3312,7 @@ function buildDetalleHTML(rbd, printMode) {
     const total = s ? s.total : 0;
     const cells = MESES_CARGA.map(m => {
       const v = s ? (s.meses[m] || 0) : 0;
-      return celdaInputHTML(rbd, modo, m, v, '', printMode);
+      return celdaInputHTML(rbd, modo, m, v, '', printMode, label);
     }).join('');
     // Solo Remuneraciones tiene un corte "reales hasta" editable — Bienes y Servicios
     // (Proyección) siempre se ve como proyectado (ver esRealParaModo). En el PDF (printMode) se
@@ -3318,8 +3341,8 @@ function buildDetalleHTML(rbd, printMode) {
     const itemsList = bp ? bp.items : [];
     const total = bp ? bp.total : 0;
     const filas = itemsList.map(it => {
-      const cells = MESES_CARGA.map(m => celdaInputHTML(rbd, 'bys_proy', m, it.meses[m] || 0, `data-codigo="${escHtml(it.codigo)}"`, printMode)).join('');
-      const delCell = printMode ? '' : `<td class="compra-acciones-cell" style="width:32px;"><button type="button" class="bysproy-del-btn" data-rbd="${rbd}" data-codigo="${escHtml(it.codigo)}" title="Quitar ítem de la proyección">🗑</button></td>`;
+      const cells = MESES_CARGA.map(m => celdaInputHTML(rbd, 'bys_proy', m, it.meses[m] || 0, `data-codigo="${escHtml(it.codigo)}"`, printMode, 'Proyección ' + nombreItemBysProyeccion(it.codigo))).join('');
+      const delCell = printMode ? '' : `<td class="compra-acciones-cell" style="width:32px;"><button type="button" class="bysproy-del-btn" data-rbd="${rbd}" data-codigo="${escHtml(it.codigo)}" title="Quitar ítem de la proyección" aria-label="Quitar ítem de la proyección: ${escHtml(nombreItemBysProyeccion(it.codigo))}">🗑</button></td>`;
       return `<tr><td class="item-label">${escHtml(nombreItemBysProyeccion(it.codigo))}</td>${cells}<td class="num item-total" id="bysproyitemtotal-${rbd}-${idSeguro(it.codigo)}">${fmtCLP(it.total)}</td>${delCell}</tr>`;
     }).join('');
     const filasHTML = filas || `<tr><td colspan="${printMode ? 14 : 15}" class="detalle-sin-compras">Sin ítems de proyección todavía${printMode ? '' : ' — elige uno de la lista de abajo y agrégalo'}.</td></tr>`;
@@ -3329,7 +3352,7 @@ function buildDetalleHTML(rbd, printMode) {
     const yaAgregados = new Set(itemsList.map(it => it.codigo));
     const addRowHTML = printMode ? '' : `
       <div class="bysproy-add-row">
-        <select class="compra-input bysproy-add-select" id="bysproyAddSelect-${rbd}">
+        <select class="compra-input bysproy-add-select" id="bysproyAddSelect-${rbd}" aria-label="Ítem de proyección de Bienes y Servicios para agregar, RBD ${rbd}">
           <option value="">+ Elegir ítem de proyección para agregar…</option>
           <optgroup label="Subt. 22 — Bienes y Servicios de Consumo">${CUENTAS_SEP_22.filter(c => !yaAgregados.has(c.codigo)).map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('')}</optgroup>
           <optgroup label="Subt. 29 — Adquisición de Activos No Financieros">${CUENTAS_SEP_29.filter(c => !yaAgregados.has(c.codigo)).map(c => `<option value="${c.codigo}">${c.codigo} · ${c.nombre}</option>`).join('')}</optgroup>
@@ -3337,7 +3360,7 @@ function buildDetalleHTML(rbd, printMode) {
         <button type="button" class="add-bysproy-btn" data-rbd="${rbd}">+ Agregar ítem</button>
       </div>`;
     return `<table class="detalle-table">${DETALLE_COLGROUP}
-      <thead><tr><th>Bienes y Servicios (Proyección) — por ítem</th>${mesHeaderCellsHTML('bys_proy', rbd)}<th class="num">Total</th>${printMode ? '' : '<th></th>'}</tr></thead>
+      <thead><tr><th>Bienes y Servicios (Proyección) — por ítem</th>${mesHeaderCellsHTML('bys_proy', rbd)}<th class="num">Total</th>${printMode ? '' : '<th aria-label="Acciones"></th>'}</tr></thead>
       <tbody>${filasHTML}${totalRow}</tbody>
     </table>${addRowHTML}`;
   }
@@ -3350,7 +3373,7 @@ function buildDetalleHTML(rbd, printMode) {
       const total = it ? it.total : 0;
       const cells = MESES_CARGA.map(m => {
         const v = it ? (it.meses[m] || 0) : 0;
-        return celdaInputHTML(rbd, 'ingreso_item', m, v, `data-item="${escHtml(itemName)}"`, printMode);
+        return celdaInputHTML(rbd, 'ingreso_item', m, v, `data-item="${escHtml(itemName)}"`, printMode, itemName);
       }).join('');
       return `<tr><td class="item-label">${itemName}</td>${cells}<td class="num item-total" id="ingresoitemtotal-${rbd}-${idx}">${fmtCLP(total)}</td></tr>`;
     }).join('');
@@ -3372,6 +3395,7 @@ function buildDetalleHTML(rbd, printMode) {
   function filaCompra(id, c) {
     const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
     const idAttr = escHtml(id);
+    const nombreCompra = escHtml([c.tipoDocumento, c.nroDocumento ? 'N° ' + c.nroDocumento : ''].filter(Boolean).join(' ') || ('cuenta ' + (c.codigo || id)));
     return `<tr data-compra-id="${idAttr}">
       <td>${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}</td>
       <td>${escHtml(c.tipoDocumento || '')}</td>
@@ -3385,9 +3409,9 @@ function buildDetalleHTML(rbd, printMode) {
       <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
       <td>${escHtml(c.documentoOriginal || '')}</td>
       ${printMode ? '' : `<td class="compra-acciones-cell">
-        <button type="button" class="compra-edit-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Editar compra">✏️</button>
-        <button type="button" class="compra-dup-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Duplicar compra">⧉</button>
-        <button type="button" class="compra-del-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Eliminar compra">🗑</button>
+        <button type="button" class="compra-edit-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Editar compra" aria-label="Editar compra ${nombreCompra}">✏️</button>
+        <button type="button" class="compra-dup-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Duplicar compra" aria-label="Duplicar compra ${nombreCompra}">⧉</button>
+        <button type="button" class="compra-del-btn" data-rbd="${rbd}" data-compra-id="${idAttr}" title="Eliminar compra" aria-label="Eliminar compra ${nombreCompra}">🗑</button>
       </td>`}
     </tr>`;
   }
@@ -3422,7 +3446,7 @@ function buildDetalleHTML(rbd, printMode) {
       ${formHTML}
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
-          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th>${printMode ? '' : '<th></th>'}</tr></thead>
+          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th>${printMode ? '' : '<th aria-label="Acciones"></th>'}</tr></thead>
           <tbody>${filas || `<tr><td colspan="${printMode ? 11 : 12}" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
         </table>
       </div>
@@ -3489,9 +3513,9 @@ function renderTable() {
       <td class="num pct-ejec-total-final" data-field="pct_ejec_total">${fmtPct(r.pct_ejec_total)}</td>
       <td data-field="estado">${estadoTagHTML(r)}</td>
       <td class="col-acciones">
-        <button class="row-action-btn" data-action="excel" data-rbd="${r.rbd}" title="Descargar Excel solo de este RBD">⬇ XLS</button>
-        <button class="row-action-btn" data-action="csvsep" data-rbd="${r.rbd}" title="Descargar compras SUPEREDUC (CSV) solo de este RBD">⬇ CSV SEP</button>
-        <button class="row-action-btn" data-action="pdf" data-rbd="${r.rbd}" title="Descargar PDF solo de este RBD">🖨</button>
+        <button class="row-action-btn" data-action="excel" data-rbd="${r.rbd}" title="Descargar Excel solo de este RBD" aria-label="Descargar Excel (XLS) del RBD ${r.rbd}">⬇ XLS</button>
+        <button class="row-action-btn" data-action="csvsep" data-rbd="${r.rbd}" title="Descargar compras SUPEREDUC (CSV) solo de este RBD" aria-label="Descargar compras SUPEREDUC (CSV SEP) del RBD ${r.rbd}">⬇ CSV SEP</button>
+        <button class="row-action-btn" data-action="pdf" data-rbd="${r.rbd}" title="Descargar PDF solo de este RBD" aria-label="Descargar PDF del RBD ${r.rbd}">🖨</button>
       </td>
     </tr>`).join('');
   }
@@ -3746,6 +3770,62 @@ tableBodyEl.addEventListener('click', (e) => {
   if (abrir) abrirModalRbd(abrir.getAttribute('data-abrir-rbd'));
 });
 
+// ============================================================================
+// ===== Accesibilidad de los 3 diálogos modales (U-09): #rbdModal (detalle SEP), #otrasFuentesModal (detalle de las fuentes) y #helpModal ("Cómo usar") =====
+// Cada .modal-panel es un role="dialog" aria-modal="true" con nombre (aria-labelledby → su título) y tabindex="-1". Al abrir: el foco entra al diálogo (botón
+// Cerrar, el primer control útil), el resto de la página (.wrap) queda `inert` (ni foco ni lectores de pantalla) y Tab / Shift+Tab ciclan DENTRO del diálogo. Escape y
+// el clic en el velo siguen cerrando (cada modal ya tenía su manejador). Al cerrar se libera la página y el foco vuelve al elemento que abrió el diálogo; si ese
+// elemento ya no existe o está oculto (las filas y tarjetas se repintan con cada snapshot, y el panel "Atención" cambia de pestaña antes de abrir) se usa un
+// elemento equivalente (la fila o el botón ▸ de la misma entidad) y, en último caso, la pestaña activa. Nada de esto toca el contenido de .modal-body, que se
+// reconcilia con morphContenedor en cada snapshot: el foco, el cursor y lo tecleado no se pierden.
+const A11Y_ENFOCABLES = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+const a11yOrigenModal = new Map(); // id del overlay → { el, alterno } del foco que había al abrirlo
+function a11yVisible(el) { return !!(el && el.isConnected && el.getClientRects && el.getClientRects().length > 0); }
+// Hay que llamarla ANTES de abrir el modal (y antes de cambiar de pestaña): después el foco ya se movió.
+function a11yOrigenFoco(alterno) {
+  const a = document.activeElement;
+  return { el: (a && a.nodeType === 1 && a !== document.body && a !== document.documentElement) ? a : null, alterno: alterno || null };
+}
+function a11yEnfocables(panel) {
+  return Array.from(panel.querySelectorAll(A11Y_ENFOCABLES)).filter(el => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden');
+}
+// El overlay ya está visible (sin .hidden). Marca la página como inerte y lleva el foco al botón Cerrar.
+function a11yModalAbierto(overlay, origen) {
+  a11yOrigenModal.set(overlay.id, origen || a11yOrigenFoco());
+  const wrap = document.querySelector('#app .wrap');
+  if (wrap) wrap.toggleAttribute('inert', true);
+  const panel = overlay.querySelector('.modal-panel');
+  const inicial = panel.querySelector('.modal-close') || a11yEnfocables(panel)[0] || panel;
+  inicial.focus({ preventScroll: true });
+}
+// El overlay ya está oculto (y vaciado). Libera la página (si no queda otro modal abierto) y devuelve el foco.
+function a11yModalCerrado(overlay) {
+  const origen = a11yOrigenModal.get(overlay.id) || null;
+  a11yOrigenModal.delete(overlay.id);
+  if (!document.querySelector('.modal-overlay:not(.hidden)')) {
+    const wrap = document.querySelector('#app .wrap');
+    if (wrap) wrap.toggleAttribute('inert', false);
+  }
+  let destino = origen && origen.el;
+  if (!a11yVisible(destino)) destino = origen && origen.alterno ? origen.alterno() : null;
+  if (!a11yVisible(destino)) destino = document.querySelector('.tab-btn.active');
+  if (a11yVisible(destino)) destino.focus({ preventScroll: true });
+}
+// Trampa de foco: con un modal abierto Tab / Shift+Tab no salen del diálogo (ni siquiera hacia la barra del navegador).
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Tab' || e.ctrlKey || e.altKey || e.metaKey) return;
+  const overlay = document.querySelector('.modal-overlay:not(.hidden)');
+  if (!overlay) return;
+  const panel = overlay.querySelector('.modal-panel');
+  const f = a11yEnfocables(panel);
+  const actual = document.activeElement;
+  if (!f.length) { e.preventDefault(); panel.focus({ preventScroll: true }); return; }
+  const primero = f[0], ultimo = f[f.length - 1];
+  if (!panel.contains(actual)) { e.preventDefault(); (e.shiftKey ? ultimo : primero).focus({ preventScroll: true }); }
+  else if (e.shiftKey && (actual === primero || actual === panel)) { e.preventDefault(); ultimo.focus({ preventScroll: true }); }
+  else if (!e.shiftKey && actual === ultimo) { e.preventDefault(); primero.focus({ preventScroll: true }); }
+});
+
 // --- Modal de detalle por RBD: reemplaza la fila desplegable de antes. Se abre al hacer clic
 // en el RBD, el nombre del establecimiento, o el ícono ▸ de una fila; se cierra con el botón
 // ✕, la tecla Escape, o al hacer clic fuera del panel (sobre el fondo oscuro). ---
@@ -3803,6 +3883,8 @@ function morphNodo(v, n, opts) {
   if (v.nodeType !== 1) { if (v.nodeValue !== n.nodeValue) v.nodeValue = n.nodeValue; return; }
   if (v.matches('.compra-form-grid')) return; // lo que la persona está escribiendo en el formulario: nunca se toca
   if (v.tagName === 'INPUT' && v.classList.contains('celda-input')) {
+    const nombre = n.getAttribute('aria-label'); // el nombre accesible (U-11) sí se mantiene al día; poner un atributo no mueve ni el foco ni el cursor
+    if (nombre !== null && v.getAttribute('aria-label') !== nombre) v.setAttribute('aria-label', nombre);
     if (tieneFocoMorph(v, opts)) return; // la celda que se está tecleando conserva su texto, su cursor y su foco
     const nuevoValor = n.getAttribute('value') || '';
     if (v.value !== nuevoValor) v.value = nuevoValor;
@@ -3893,12 +3975,15 @@ function renderModalContenido(opts) {
   }
 }
 
-function abrirModalRbd(rbd) {
+// `origen`: el foco previo, capturado por quien cambió de pestaña antes de abrir (panel "Atención"); si no viene se toma aquí. Alterno: el botón ▸ de la fila.
+function abrirModalRbd(rbd, origen) {
+  const orig = origen || a11yOrigenFoco(() => document.querySelector(`#tableBody .expand-btn[data-abrir-rbd="${CSS.escape(String(rbd))}"]`));
   modalRbdAbierto = rbd;
   delete document.getElementById('modalBody').dataset.rbd; // al abrir siempre se construye de cero
   renderModalContenido();
   document.getElementById('rbdModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+  a11yModalAbierto(document.getElementById('rbdModal'), orig);
 }
 
 function cerrarModal() {
@@ -3907,6 +3992,7 @@ function cerrarModal() {
   document.getElementById('modalBody').innerHTML = '';
   delete document.getElementById('modalBody').dataset.rbd;
   document.body.style.overflow = '';
+  a11yModalCerrado(document.getElementById('rbdModal'));
 }
 
 document.getElementById('modalCloseBtn').addEventListener('click', cerrarModal);
@@ -3918,9 +4004,12 @@ document.getElementById('rbdModal').addEventListener('click', (e) => {
 // se puede abrir/cerrar en cualquier momento sin afectar el resto del panel. ---
 function cerrarHelpModal() {
   document.getElementById('helpModal').classList.add('hidden');
+  a11yModalCerrado(document.getElementById('helpModal'));
 }
 document.getElementById('helpBtn').addEventListener('click', () => {
+  const orig = a11yOrigenFoco(() => document.getElementById('helpBtn'));
   document.getElementById('helpModal').classList.remove('hidden');
+  a11yModalAbierto(document.getElementById('helpModal'), orig);
 });
 document.getElementById('helpModalCloseBtn').addEventListener('click', cerrarHelpModal);
 document.getElementById('helpModal').addEventListener('click', (e) => {
@@ -4106,7 +4195,7 @@ function montarBloqueRealProyOtraFuente(f) {
   controles.innerHTML = `
     <span class="of-ctl-label">Vista de la tabla:</span>
     <span class="of-chips" role="group" aria-label="Vista de la tabla">${OF_VISTAS.map(v => `<button type="button" class="of-chip" data-of-vista="${v.key}">${v.label}</button>`).join('')}</span>
-    <span class="of-ctl-label" style="margin-left:10px;">Real hasta el mes:</span>
+    <label class="of-ctl-label" for="ofCorteSelect-${f.key}" style="margin-left:10px;">Real hasta el mes:</label>
     <select class="of-corte-select" id="ofCorteSelect-${f.key}">${MESES_CARGA_TITLE.map((m, i) => `<option value="${i + 1}">${m}</option>`).join('')}</select>
     <button type="button" id="ofCorteAplicarBtn-${f.key}" title="Fija este mes como corte Real/Proyectado en todas las entidades de esta fuente">Aplicar a todas las entidades</button>`;
   panel.insertBefore(controles, tablaScroll);
@@ -4156,19 +4245,20 @@ FUENTES_OTRAS.forEach(f => {
   });
 });
 
-// Fila de la que se abrió el detalle (si el foco estaba en una): al cerrar el modal el foco vuelve ahí, y mientras está abierto el foco
-// entra al modal (botón de cerrar) para que Tab recorra su contenido en vez de la página que queda detrás (U-05).
-let otrasFuentesFilaOrigen = null;
-function abrirOtrasFuentesModal(rbd) {
-  const activo = document.activeElement;
-  const filaOrigen = activo && activo.closest ? activo.closest('tr.otras-fuentes-row') : null;
-  otrasFuentesFilaOrigen = filaOrigen ? { tbodyId: filaOrigen.parentElement.id, rbd: filaOrigen.getAttribute('data-rbd') } : null;
+// Al abrir, el foco entra al modal (botón de cerrar) para que Tab recorra su contenido en vez de la página que queda detrás (U-05 / U-09); al cerrar vuelve a
+// la fila (o a lo que tuviera el foco) de la que se abrió. Las filas se reconstruyen con cada snapshot: el "alterno" las busca por RBD en la tabla de la fuente.
+function abrirOtrasFuentesModal(rbd, origen) {
+  const fuenteAlAbrir = otrasFuentesSel;
+  const orig = origen || a11yOrigenFoco(() => {
+    const tbody = document.getElementById('otrasFuentesTbody-' + fuenteAlAbrir);
+    return tbody && Array.from(tbody.querySelectorAll('tr[data-rbd]')).find(f => f.getAttribute('data-rbd') === String(rbd));
+  });
   otrasFuentesRbdAbierto = rbd;
   delete document.getElementById('otrasFuentesModalBody').dataset.rbd; // al abrir siempre se construye de cero
   renderOtrasFuentesModalContenido();
   document.getElementById('otrasFuentesModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  document.getElementById('otrasFuentesModalCloseBtn').focus({ preventScroll: true });
+  a11yModalAbierto(document.getElementById('otrasFuentesModal'), orig);
 }
 function cerrarOtrasFuentesModal() {
   otrasFuentesRbdAbierto = null;
@@ -4176,13 +4266,7 @@ function cerrarOtrasFuentesModal() {
   document.getElementById('otrasFuentesModalBody').innerHTML = '';
   delete document.getElementById('otrasFuentesModalBody').dataset.rbd;
   document.body.style.overflow = '';
-  const origen = otrasFuentesFilaOrigen;
-  otrasFuentesFilaOrigen = null;
-  if (origen) { // la fila se reconstruye con cada snapshot: se busca por RBD
-    const tbody = document.getElementById(origen.tbodyId);
-    const fila = tbody && Array.from(tbody.querySelectorAll('tr[data-rbd]')).find(f => f.getAttribute('data-rbd') === origen.rbd);
-    if (fila && fila.getClientRects().length) fila.focus({ preventScroll: true });
-  }
+  a11yModalCerrado(document.getElementById('otrasFuentesModal'));
 }
 document.getElementById('otrasFuentesModalCloseBtn').addEventListener('click', cerrarOtrasFuentesModal);
 document.getElementById('otrasFuentesModal').addEventListener('click', (e) => {
@@ -4211,7 +4295,7 @@ function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
     <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
     <td>${escHtml(c.documentoOriginal || '')}</td>
     <td class="compra-acciones-cell">
-      <button type="button" class="compra-del-btn of-compra-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-compra-id="${escHtml(id)}" title="Eliminar compra">🗑</button>
+      <button type="button" class="compra-del-btn of-compra-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-compra-id="${escHtml(id)}" title="Eliminar compra" aria-label="Eliminar compra ${escHtml([c.tipoDocumento, c.nroDocumento ? 'N° ' + c.nroDocumento : ''].filter(Boolean).join(' ') || ('cuenta ' + (c.codigo || id)))}">🗑</button>
     </td>
   </tr>`;
 }
@@ -4240,16 +4324,17 @@ function mesHeaderCellsCorteHTML(corte, forzarProy) {
     return `<th class="num ${cls}">${m}<span class="mes-tag">${cls === 'mes-real' ? 'Real' : 'Proy.'}</span></th>`;
   }).join('');
 }
-function otrasFuentesFilaMesesHTML(rbd, fuenteKey, modo, obj) {
+function otrasFuentesFilaMesesHTML(rbd, fuenteKey, modo, obj, concepto) {
   const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
+  const entidad = otrasFuentesTituloEntidad({ rbd }, fuenteKey);
   return MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, false)}"><input type="text" inputmode="numeric" autocomplete="off" class="celda-input" value="${formatoMontoCelda(obj.meses[m])}" placeholder="0"
-    data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
+    aria-label="${escHtml(nombreCeldaMonto(concepto, m, entidad))}" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
 }
 function otrasFuentesTablaMes(titulo, rbd, fuenteKey, modo, obj, totalId) {
   const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
   return `<table class="detalle-table" style="margin-top:8px;">${DETALLE_COLGROUP}
       <thead><tr><th>${titulo}</th>${mesHeaderCellsCorteHTML(corte, false)}<th class="num">Total</th></tr></thead>
-      <tbody><tr><td class="item-label">${titulo}</td>${otrasFuentesFilaMesesHTML(rbd, fuenteKey, modo, obj)}<td class="num item-total" id="${totalId}">${fmtCLP(obj.total)}</td></tr></tbody>
+      <tbody><tr><td class="item-label">${titulo}</td>${otrasFuentesFilaMesesHTML(rbd, fuenteKey, modo, obj, titulo)}<td class="num item-total" id="${totalId}">${fmtCLP(obj.total)}</td></tr></tbody>
     </table>`;
 }
 
@@ -4303,7 +4388,7 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
       </div>
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
-          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th><th></th></tr></thead>
+          <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>Doc. original</th><th aria-label="Acciones de la compra"></th></tr></thead>
           <tbody>${filasCompras || `<tr><td colspan="12" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
         </table>
       </div>
@@ -4321,10 +4406,12 @@ function bysItemFilaHTML(rbd, fuenteKey, concepto, it, modo = 'of_bys_item') {
   const prefijoId = forzarProy ? 'ofbysproyitem' : 'ofbysitem';
   const corte = realHastaMesOtraFuente(ensureOtraFuente(rbd, fuenteKey));
   const conceptoHTML = escHtml(concepto);
+  const entidad = otrasFuentesTituloEntidad({ rbd }, fuenteKey);
+  const nombreFila = (forzarProy ? 'Proyección ' : '') + concepto;
   const cells = MESES_CARGA.map((m, i) => `<td class="num ${claseMesOtraFuente(i, corte, forzarProy)}"><input type="text" inputmode="numeric" autocomplete="off" class="celda-input" value="${formatoMontoCelda(it.meses[m])}" placeholder="0"
-    data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-concepto="${conceptoHTML}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
+    aria-label="${escHtml(nombreCeldaMonto(nombreFila, m, entidad))}" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-modo="${modo}" data-concepto="${conceptoHTML}" data-mes="${m}" oninput="onOtraFuenteCeldaInput(this)"></td>`).join('');
   return `<tr>
-    <td class="item-label">${conceptoHTML} <button type="button" class="bysproy-del-btn of-bysitem-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${lista}" data-concepto="${conceptoHTML}" title="Quitar ítem">🗑</button></td>
+    <td class="item-label">${conceptoHTML} <button type="button" class="bysproy-del-btn of-bysitem-del-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${lista}" data-concepto="${conceptoHTML}" title="Quitar ítem" aria-label="Quitar ítem ${escHtml(nombreFila)}">🗑</button></td>
     ${cells}
     <td class="num item-total" id="${prefijoId}-${rbd}-${fuenteKey}-${idSeguro(concepto)}">${fmtCLP(it.total)}</td>
   </tr>`;
@@ -4977,9 +5064,10 @@ function otrasFuentesAccionesHTML(fuenteKey, rbd) {
   const csvTitle = fuente.codigoSupereduc
     ? 'Descargar compras SUPEREDUC (CSV) solo de esta entidad'
     : 'Descargar el detalle mensual (CSV) solo de esta entidad';
-  return `<button class="row-action-btn" data-action="excel" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="Descargar Excel solo de esta entidad (se puede reimportar con Importar Excel)">⬇ XLS</button>
-        <button class="row-action-btn" data-action="csv" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="${csvTitle}">${csvLabel}</button>
-        <button class="row-action-btn" data-action="pdf" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="Descargar PDF solo de esta entidad">🖨</button>`;
+  const entidad = escHtml(otrasFuentesTituloEntidad({ rbd }, fuenteKey));
+  return `<button class="row-action-btn" data-action="excel" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="Descargar Excel solo de esta entidad (se puede reimportar con Importar Excel)" aria-label="Descargar Excel (XLS) de ${entidad}">⬇ XLS</button>
+        <button class="row-action-btn" data-action="csv" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="${csvTitle}" aria-label="${fuente.codigoSupereduc ? 'Descargar compras SUPEREDUC (CSV SUPEREDUC) de' : 'Descargar detalle mensual (CSV) de'} ${entidad}">${csvLabel}</button>
+        <button class="row-action-btn" data-action="pdf" data-rbd="${rbd}" data-fuente="${fuenteKey}" title="Descargar PDF solo de esta entidad" aria-label="Descargar PDF de ${entidad}">🖨</button>`;
 }
 
 function exportOtraFuenteEntidadExcel(fuenteKey, rbd) {
@@ -5226,7 +5314,10 @@ function dashColorEjec(p) { return p >= 100 ? 'var(--status-critical)' : (p >= 9
 function irAPestana(tabId) {
   const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
   if (!btn) return;
+  const activo = document.activeElement;
   btn.click();
+  // Si el foco estaba dentro del panel que se acaba de ocultar (p. ej. la tarjeta del Panel principal) se pierde en <body>: pasa a la pestaña nueva.
+  if (activo && activo !== document.body && activo.getClientRects && activo.getClientRects().length === 0) btn.focus({ preventScroll: true });
   try { btn.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) { /* navegadores sin soporte */ }
   window.scrollTo({ top: 0 });
 }
@@ -5551,9 +5642,14 @@ function dashEntidadesEnDeficit(fuentes) {
   return lista.sort((a, b) => a.saldo - b.saldo);
 }
 function abrirEntidadDesdeDashboard(e) {
+  // El foco previo (el ítem de "Atención") se captura ANTES de cambiar de pestaña: ahí queda oculto, así que al cerrar el modal el foco vuelve a la fila de esa entidad.
+  const alterno = e.fkey === 'sep'
+    ? () => document.querySelector(`#tableBody .expand-btn[data-abrir-rbd="${CSS.escape(String(e.rbd))}"]`)
+    : () => { const tb = document.getElementById('otrasFuentesTbody-' + e.fkey); return tb && Array.from(tb.querySelectorAll('tr[data-rbd]')).find(f => f.getAttribute('data-rbd') === String(e.rbd)); };
+  const origen = a11yOrigenFoco(alterno);
   irAPestana(e.tab);
-  if (e.fkey === 'sep') abrirModalRbd(e.rbd);
-  else { otrasFuentesSel = e.fkey; abrirOtrasFuentesModal(e.rbd); }
+  if (e.fkey === 'sep') abrirModalRbd(e.rbd, origen);
+  else { otrasFuentesSel = e.fkey; abrirOtrasFuentesModal(e.rbd, origen); }
 }
 function renderDashAtencion(fuentes) {
   const ul = document.getElementById('dashAtencion');
@@ -5862,12 +5958,12 @@ function vzFilasHTML(roots, tipo) {
     const real = Math.round(vzSum(n.real)), proy = Math.round(vzSum(n.proy));
     const id = escHtml(n.id);
     const caret = tieneHijos
-      ? `<button type="button" class="vz-caret" data-vz-toggle="${id}" aria-expanded="${abierto}" title="${abierto ? 'Contraer' : 'Expandir'}">${abierto ? '▾' : '▸'}</button>`
+      ? `<button type="button" class="vz-caret" data-vz-toggle="${id}" aria-expanded="${abierto}" aria-label="Expandir o contraer ${escHtml(n.label)}" title="${abierto ? 'Contraer' : 'Expandir'}">${abierto ? '▾' : '▸'}</button>`
       : '<span class="vz-caret-sp"></span>';
     filas.push(`<tr class="vz-row vz-d${Math.min(depth, 3)} ${tieneHijos ? 'vz-parent' : 'vz-leaf'}" data-vz-id="${id}" data-vz-tipo="${tipo}">
       <td class="vz-name" style="padding-left:${8 + depth * 18}px">${caret}${n.icono ? n.icono + ' ' : ''}${escHtml(n.label)}</td>
       <td class="num vz-real">${fmtCLP(real)}</td><td class="num vz-proy">${fmtCLP(proy)}</td><td class="num vz-total">${fmtCLP(real + proy)}</td>
-      <td class="vz-act"><button type="button" class="vz-mes-btn${mesAbierto ? ' active' : ''}" data-vz-mes="${id}" aria-pressed="${mesAbierto}" title="Detalle mensual">📅</button></td>
+      <td class="vz-act"><button type="button" class="vz-mes-btn${mesAbierto ? ' active' : ''}" data-vz-mes="${id}" aria-pressed="${mesAbierto}" aria-label="Detalle mensual de ${escHtml(n.label)}" title="Detalle mensual">📅</button></td>
     </tr>`);
     if (mesAbierto) filas.push(`<tr class="vz-mes-row"><td colspan="5">${vzMesDetalleHTML(n)}</td></tr>`);
     if (tieneHijos && abierto) n.children.forEach(c => rec(c, depth + 1));
@@ -5894,7 +5990,7 @@ function renderVisualizador() {
   document.getElementById('vzEntidadesResumen').textContent = `Entidades (${vzState.entidades.size} de ${VZ_ENTIDADES.length} seleccionadas)`;
   document.getElementById('vzNota').innerHTML =
     `Cada mes se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span>, ` +
-    `<span style="background:#fdf1de; color:#a3630a; padding:1px 5px; border-radius:3px;">proyectado</span> o mixto según el "Real hasta" de cada entidad ` +
+    `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectado</span> o mixto según el "Real hasta" de cada entidad ` +
     `(SEP: ingreso real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}, remuneraciones según el corte de cada RBD; compras siempre reales; proyecciones siempre proyectadas). ` +
     `SEP se muestra con el año completo, sin depender del selector "Ver resumen hasta el mes".`;
 
@@ -6130,9 +6226,16 @@ function actualizarIndicioTabs() {
 tabBarEl.addEventListener('scroll', actualizarIndicioTabs, { passive: true });
 window.addEventListener('resize', actualizarIndicioTabs);
 
+// Pestañas con el patrón WAI-ARIA "tabs" (U-10): role=tablist por grupo, role=tab con aria-selected / aria-controls, tabindex itinerante (solo la pestaña
+// activa entra en el orden de Tab; las demás se alcanzan con las flechas) y role=tabpanel + aria-labelledby en cada panel (ver el HTML de la barra).
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      const activa = b === btn;
+      b.classList.toggle('active', activa);
+      b.setAttribute('aria-selected', activa ? 'true' : 'false');
+      b.tabIndex = activa ? 0 : -1;
+    });
     const tab = btn.getAttribute('data-tab');
     document.getElementById('tab-dashboard').classList.toggle('hidden', tab !== 'dashboard');
     document.getElementById('tab-panel').classList.toggle('hidden', tab !== 'panel');
@@ -6159,6 +6262,26 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
       renderOtrasFuentesTable(fuenteDelTab.key);
     }
   });
+});
+
+// Teclado de las pestañas (U-10): ←/→ mueven y ACTIVAN la pestaña vecina (activación automática del patrón tabs); Home / End van a la primera / última.
+// Las 13 pestañas forman una sola secuencia aunque estén en 3 grupos (con una sola pestaña en el orden de Tab, las flechas son la única forma de llegar
+// a las de otros grupos); al llegar al final se vuelve al principio.
+tabBarEl.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+  const btn = e.target.closest && e.target.closest('.tab-btn');
+  if (!btn) return;
+  const todas = Array.from(tabBarEl.querySelectorAll('.tab-btn'));
+  const i = todas.indexOf(btn);
+  let j = null;
+  if (e.key === 'ArrowRight') j = (i + 1) % todas.length;
+  else if (e.key === 'ArrowLeft') j = (i - 1 + todas.length) % todas.length;
+  else if (e.key === 'Home') j = 0;
+  else if (e.key === 'End') j = todas.length - 1;
+  if (j === null) return;
+  e.preventDefault();
+  todas[j].focus();
+  todas[j].click();
 });
 
 // Catálogo de conceptos reportables: los 3 ingresos SEP, Remuneraciones (fila única por RBD),
@@ -6472,7 +6595,7 @@ function renderReporte() {
   }<th class="num">Total selección</th>`;
   document.getElementById('reporteCorteNota').innerHTML =
     `Cada celda se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span> o ` +
-    `<span style="background:#fdf1de; color:#a3630a; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
+    `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
     `(<b>SEP</b> — Ingreso: real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}; Remuneraciones: el corte propio de cada RBD; compras Subt.22/29: siempre reales; Bienes y Servicios Proyección: siempre proyectada) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
     `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (por defecto ${MESES_CARGA_TITLE[DATA.n_meses - 1]}); B&S por código (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
     `Los subtotales de una fuente se colorean solo si todas las entidades coinciden. Un concepto solo genera filas para las entidades que le corresponden (RBD → SEP y fuentes por RBD; AC → fuentes por RBD; GESPARVU → JUNJI y Aporte Fiscal JUNJI).`;
@@ -7694,6 +7817,10 @@ function ultimaEdicionRbdHTML(rbd) {
 
 // ============== AUTH: acceso por correo institucional + enlace mágico ==============
 function showLoginScreen() {
+  // Un modal abierto (p. ej. sesión que vence con el detalle abierto) no puede quedar tras la pantalla de acceso con la página marcada como inerte.
+  if (modalRbdAbierto) cerrarModal();
+  if (otrasFuentesRbdAbierto) cerrarOtrasFuentesModal();
+  if (!document.getElementById('helpModal').classList.contains('hidden')) cerrarHelpModal();
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('app').classList.add('hidden');
 }

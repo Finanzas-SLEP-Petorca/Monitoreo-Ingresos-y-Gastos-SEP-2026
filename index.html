@@ -663,6 +663,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   /* ---- Fila: RBD/Establecimiento clickeables (abren el modal de detalle) ---- */
   .rbd-clickable { cursor:pointer; }
   tr.rbd-row:hover .rbd-clickable, tr.otras-fuentes-row:hover .rbd-clickable { text-decoration:underline; }
+  /* Filas de las pestañas de fuente operables con teclado (tabindex=0): anillo de foco solo al navegar con teclado (:focus-visible), no al hacer clic. */
+  tr.otras-fuentes-row { scroll-margin-top:34px; }
+  tr.otras-fuentes-row:focus { outline:none; }
+  tr.otras-fuentes-row:focus-visible { outline:2px solid var(--series-1); outline-offset:-2px; background:var(--tone-blue-bg); }
+  tr.otras-fuentes-row:focus-visible .rbd-clickable { text-decoration:underline; }
   .table-empty-row td { text-align:center; color:var(--text-muted); font-size:13px; padding:28px !important; }
 
   /* ---- MODAL: detalle editable por RBD ---- */
@@ -4014,7 +4019,7 @@ function renderOtrasFuentesTable(fuenteKey) {
     const of = recomputeOtraFuente(r.rbd, key);
     const b = of.rp[vista];
     const corteTxt = MESES_CARGA_ABREV[realHastaMesOtraFuente(of) - 1];
-    return `<tr class="otras-fuentes-row" data-rbd="${escHtml(r.rbd)}">
+    return `<tr class="otras-fuentes-row" data-rbd="${escHtml(r.rbd)}" tabindex="0" aria-label="Ver detalle de ${escHtml(r.nombre)}">
       <td class="rbd-clickable" data-abrir-otra-fuente="${escHtml(r.rbd)}">${escHtml(r.rbd)}</td>
       <td class="rbd-clickable" data-abrir-otra-fuente="${escHtml(r.rbd)}"><span class="nombre-txt" title="${escHtml(r.nombre)}">${escHtml(r.nombre)}</span></td>
       <td class="of-real-hasta">${corteTxt}</td>
@@ -4027,7 +4032,17 @@ function renderOtrasFuentesTable(fuenteKey) {
       <td class="col-acciones">${otrasFuentesAccionesHTML(key, r.rbd)}</td>
     </tr>`;
   }).join('');
+  // El tbody se reconstruye con cada snapshot (cualquier persona que guarde): si el foco del teclado estaba en una fila (o en uno de sus
+  // botones), se devuelve a la fila nueva equivalente; si no, la persona perdería el lugar entre el Tab y el Enter (U-05).
+  const activo = document.activeElement;
+  const filaActiva = activo && tbody.contains(activo) ? activo.closest('tr[data-rbd]') : null;
+  const foco = filaActiva ? { rbd: filaActiva.getAttribute('data-rbd'), accion: activo.matches('.row-action-btn') ? activo.getAttribute('data-action') : null } : null;
   tbody.innerHTML = filas;
+  if (foco) {
+    const fila = Array.from(tbody.querySelectorAll('tr[data-rbd]')).find(f => f.getAttribute('data-rbd') === foco.rbd);
+    const el = fila && (foco.accion ? fila.querySelector(`.row-action-btn[data-action="${foco.accion}"]`) : fila);
+    if (el) el.focus({ preventScroll: true });
+  }
   renderOtrasFuentesKpis(key);
 }
 
@@ -4091,14 +4106,31 @@ FUENTES_OTRAS.forEach(f => {
     const cell = e.target.closest('[data-abrir-otra-fuente]');
     if (cell) abrirOtrasFuentesModal(cell.getAttribute('data-abrir-otra-fuente'));
   });
+  // Teclado (U-05): con el foco EN la fila, Enter o Espacio abren el detalle (como el botón ▸ de la tabla SEP). Solo si el foco está en la
+  // fila misma: en los botones XLS/CSV/PDF (u otro control) Enter/Espacio siguen siendo de ese control. preventDefault evita que Espacio desplace la página.
+  tabla.addEventListener('keydown', (e) => {
+    if ((e.key !== 'Enter' && e.key !== ' ') || e.ctrlKey || e.altKey || e.metaKey) return;
+    const fila = e.target;
+    if (!fila.matches || !fila.matches('tr.otras-fuentes-row')) return;
+    e.preventDefault();
+    if (e.repeat) return; // mantener la tecla apretada no reabre el detalle
+    abrirOtrasFuentesModal(fila.getAttribute('data-rbd'));
+  });
 });
 
+// Fila de la que se abrió el detalle (si el foco estaba en una): al cerrar el modal el foco vuelve ahí, y mientras está abierto el foco
+// entra al modal (botón de cerrar) para que Tab recorra su contenido en vez de la página que queda detrás (U-05).
+let otrasFuentesFilaOrigen = null;
 function abrirOtrasFuentesModal(rbd) {
+  const activo = document.activeElement;
+  const filaOrigen = activo && activo.closest ? activo.closest('tr.otras-fuentes-row') : null;
+  otrasFuentesFilaOrigen = filaOrigen ? { tbodyId: filaOrigen.parentElement.id, rbd: filaOrigen.getAttribute('data-rbd') } : null;
   otrasFuentesRbdAbierto = rbd;
   delete document.getElementById('otrasFuentesModalBody').dataset.rbd; // al abrir siempre se construye de cero
   renderOtrasFuentesModalContenido();
   document.getElementById('otrasFuentesModal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+  document.getElementById('otrasFuentesModalCloseBtn').focus({ preventScroll: true });
 }
 function cerrarOtrasFuentesModal() {
   otrasFuentesRbdAbierto = null;
@@ -4106,6 +4138,13 @@ function cerrarOtrasFuentesModal() {
   document.getElementById('otrasFuentesModalBody').innerHTML = '';
   delete document.getElementById('otrasFuentesModalBody').dataset.rbd;
   document.body.style.overflow = '';
+  const origen = otrasFuentesFilaOrigen;
+  otrasFuentesFilaOrigen = null;
+  if (origen) { // la fila se reconstruye con cada snapshot: se busca por RBD
+    const tbody = document.getElementById(origen.tbodyId);
+    const fila = tbody && Array.from(tbody.querySelectorAll('tr[data-rbd]')).find(f => f.getAttribute('data-rbd') === origen.rbd);
+    if (fila && fila.getClientRects().length) fila.focus({ preventScroll: true });
+  }
 }
 document.getElementById('otrasFuentesModalCloseBtn').addEventListener('click', cerrarOtrasFuentesModal);
 document.getElementById('otrasFuentesModal').addEventListener('click', (e) => {

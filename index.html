@@ -212,7 +212,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .rem-corte-control-print { font-size:11px; color:var(--text-secondary); margin:6px 0 2px; }
   .rem-corte-control .corte-origen { color:var(--text-muted); font-style:italic; }
   /* Mes de cierre global (pestaña SEP) + aviso de entidades con corte distinto; el Panel principal muestra solo una línea de texto. */
-  .cierre-control { background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin:0 0 12px; font-size:12.5px; color:var(--text-secondary); }
+  .cierre-control { flex-shrink:0; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin:0 0 12px; font-size:12.5px; color:var(--text-secondary); }
   .cierre-fila { display:flex; align-items:center; gap:8px 12px; flex-wrap:wrap; }
   .cierre-fila .cierre-etiqueta { font-weight:700; color:var(--text-primary); }
   .cierre-fila .cierre-valor { color:var(--series-1); font-size:14px; }
@@ -3229,7 +3229,7 @@ function kpiCards(t) {
 
 function kpiCardsReal(rp) {
   return [
-    { label: 'Ingreso SEP (Real)', value: fmtCLP(rp.ingresoReal), full: 'Preferente + Prioritario ya ejecutados (Liquidación Web Mineduc)', tone: 'blue' },
+    { label: 'Ingreso SEP (Real)', value: fmtCLP(rp.ingresoReal), full: 'Preferente + Prioritario hasta el corte "Ingresos reales hasta" de cada RBD', tone: 'blue' },
     { label: 'Carrera Docente (Real)', value: fmtCLP(rp.carreraReal), full: 'Ya ejecutado', tone: 'blue' },
     { label: 'Gasto Remuneraciones (Real)', value: fmtCLP(rp.remReal), full: 'Según el corte "reales hasta" de cada RBD', tone: 'amber' },
     { label: 'Gasto Bienes y Servicios (Real)', value: fmtCLP(rp.bysReal), full: 'Compras ya documentadas (Subt.22+29)', tone: 'amber' },
@@ -3239,7 +3239,7 @@ function kpiCardsReal(rp) {
 
 function kpiCardsProy(rp) {
   return [
-    { label: 'Ingreso SEP (Proyectado)', value: fmtCLP(rp.ingresoProy), full: 'Promedio de los meses reales — editable', tone: 'blue' },
+    { label: 'Ingreso SEP (Proyectado)', value: fmtCLP(rp.ingresoProy), full: 'Meses posteriores al corte "Ingresos reales hasta" de cada RBD — editable', tone: 'blue' },
     { label: 'Carrera Docente (Proyectado)', value: fmtCLP(rp.carreraProy), full: 'Meses aún no confirmados', tone: 'blue' },
     { label: 'Gasto Remuneraciones (Proyectado)', value: fmtCLP(rp.remProy), full: 'Meses posteriores al corte "reales hasta" de cada RBD', tone: 'amber' },
     { label: 'Gasto Bienes y Servicios (Proyectado)', value: fmtCLP(rp.bysProy), full: 'Fila "Bienes y Servicios (Proyección)" — se suma a las compras reales', tone: 'amber' },
@@ -4121,7 +4121,7 @@ function renderControlCierre() {
     txt.textContent = nombreMesCorte(mesCierreGlobal);
     const quien = mesCierrePor ? getNameFromEmail(mesCierrePor) : '';
     meta.textContent = (quien || mesCierreEn)
-      ? `(fijado${quien ? ' por ' + quien : ''}${mesCierreEn ? ' ' + formatFechaHoraChile(mesCierreEn) : ''})`
+      ? `· fijado${quien ? ' por ' + quien : ''}${mesCierreEn ? ' ' + formatFechaHoraChile(mesCierreEn) : ''}`
       : '';
   } else {
     txt.textContent = 'sin definir';
@@ -4145,7 +4145,7 @@ function renderControlCierre() {
   const lista = document.getElementById('cierreAvisoLista');
   const html = !distintas.length ? '' :
     `<table><thead><tr><th scope="col">Entidad</th><th scope="col">Fuente</th><th scope="col">Corte actual</th><th scope="col">Detalle</th></tr></thead><tbody>` +
-    distintas.map((f, i) => `<tr><td>${escHtml(f.titulo)} — ${escHtml(f.nombre)}</td><td>${escHtml(f.etiqueta)}</td><td>${escHtml(nombreMesCorte(f.corte))}</td>` +
+    distintas.map((f, i) => `<tr><td>${escHtml(f.titulo === f.nombre ? f.titulo : `${f.titulo} — ${f.nombre}`)}</td><td>${escHtml(f.etiqueta)}</td><td>${escHtml(nombreMesCorte(f.corte))}</td>` +
       `<td><button type="button" data-cierre-abrir="${i}" aria-label="Abrir el detalle de ${escHtml(f.titulo)}, ${escHtml(f.etiqueta)} (corte actual: ${escHtml(nombreMesCorte(f.corte))})">Abrir detalle</button></td></tr>`).join('') +
     `</tbody></table>`;
   if (html !== cierreListaHtml) { // sin repintar si no cambió: así no se pierde el desplazamiento ni el foco de la lista abierta

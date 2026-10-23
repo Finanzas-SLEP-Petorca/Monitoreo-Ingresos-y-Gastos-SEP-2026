@@ -979,7 +979,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       </div>
       <details class="sep-notas">
         <summary>ℹ️ Cómo se calculan estos % y qué muestra el resumen (notas)</summary>
-        <span class="corte-legend">Las casillas de resumen de arriba y el gráfico de % Ejecución muestran los montos acumulados solo hasta este mes. No afecta si un monto se ve <span class="swatch real"></span>Real o <span class="swatch proy"></span>Proyectado en el detalle de cada RBD — eso ahora se marca aparte, en Ingreso/Remuneraciones/Compras/Proyección B&S.</span>
+        <span class="corte-legend">Las casillas de resumen de arriba y las casillas "a &lt;mes&gt;" de % Ejecución muestran los montos acumulados solo hasta este mes (el gráfico y la tabla de % Ejecución siguen mostrando el año completo). No afecta si un monto se ve <span class="swatch real"></span>Real o <span class="swatch proy"></span>Proyectado en el detalle de cada RBD — eso se marca aparte, en Ingreso/Remuneraciones/Compras/Proyección B&S —, ni cómo se rotula cada mes de % Ejecución (Real / Proy. / Mixto, según el corte real de cada RBD).</span>
         <div class="legend-row" style="margin-top:6px; margin-bottom:4px;">
         <span><strong>% Ejec. Remuneraciones</strong>: gasto en remuneraciones / meta de remuneraciones de ese RBD (70% del Ingreso SEP + 100% de Carrera Docente, ya que ese ingreso solo puede usarse ahí). 100% = gastó justo la meta.</span>
         <span><strong>% Ejec. B&S</strong>: gasto Subt.22+29 / meta 30% del Ingreso SEP de ese RBD. 100% = gastó justo la meta.</span>
@@ -1703,6 +1703,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         para todas juntas. Arriba se elige la fuente con los botones (SEP, General, PIE, etc. y "Consolidado"): en
         SEP se mide contra la meta anual 70%/30%; en las demás fuentes, que no tienen meta, se mide contra el
         Ingreso anual Total (Real+Proyectado) de lo que estés viendo.</p>
+        <p>La columna "Corte" de la tabla marca cada mes como <span class="help-tag real">Real</span>,
+        <span class="help-tag proy">Proy.</span> o Mixto según el corte real de lo que estés viendo (en SEP, el "Ingresos reales
+        hasta" y el "Remuneraciones reales hasta" de cada RBD; en las fuentes, el "Real hasta" de cada entidad): Real si todos los
+        cortes cubren ese mes, Proy. si ninguno y Mixto si hay cortes distintos. No depende del selector "Ver resumen acumulado hasta
+        el mes" de la pestaña SEP, que solo decide hasta qué mes se suman las casillas "a &lt;mes&gt;".</p>
 
         <h4>10. Exportar e imprimir</h4>
         <p>Cada fila tiene botones para descargar el Excel o el CSV SUPEREDUC solo de ese establecimiento, y un
@@ -8895,9 +8900,10 @@ document.getElementById('signout-btn').addEventListener('click', async () => {
 });
 
 // ============== FIRESTORE: modelo por RBD (colección "sep_carga_rbd") ==============
-// Un documento por RBD (id = RBD): { rbd, nombre, ingreso_items: {item: {item, meses, total}},
-// rem: {meses, total}, agregado: {items: {"subt|item": {subtitulo, item, meses, total}}},
-// lastModifiedBy, lastModifiedAt, compras }. Las compras (Subt.22/29) van en un MAPA (no un
+// Un documento por RBD, por "AC" (Administración Central) y por GESPARVU (id = código): { rbd, nombre, ingreso_items: {item: {item, meses, total}},
+// ingreso_real_hasta_mes (corte propio de ingresos, opcional), rem: {meses, total, real_hasta_mes}, bys_proyeccion: {items: {codigo: {meses, total}}},
+// compras: {id: {...}}, otras_fuentes: {fuente: {...}}, lastModifiedBy, lastModifiedAt } (el "agregado" por ítem de B&S ya no se guarda: se deriva de las
+// compras con itemsFromCompras), más el documento "_meta" (mes de cierre global). Las compras (Subt.22/29) van en un MAPA (no un
 // array), igual que antes los ítems, para poder guardar/eliminar solo la compra tocada con
 // merge:true, sin pisar ediciones simultáneas de otra compra del mismo RBD hechas por otro
 // usuario — el código de cuenta ya es un catálogo fijo (CUENTAS_SEP), no hace falta un
@@ -9221,10 +9227,10 @@ function startFirestoreSync() {
 // Se dispara sola la primera vez que el SERVIDOR confirma que la colección "sep_carga_rbd" está
 // vacía (nunca por un snapshot vacío del caché local; ver startFirestoreSync): sube a
 // Firestore los datos que hoy viven embebidos en este HTML (DATA, ITEMS_22/29 e
-// ING_PREFERENTE_REAL/ING_PRIORITARIO_REAL vía seedIngresoItems()), un setDoc por RBD.
+// ING_PREFERENTE_REAL/ING_PRIORITARIO_REAL vía seedIngresoItems()), un batch.set (merge:true) por RBD en un solo writeBatch.
 // Una vez hecha esta primera carga la colección deja de estar vacía y este bloque nunca
 // vuelve a ejecutarse — puede eliminarse del código con seguridad tras confirmar la
-// migración (revisando en Firebase Console → Firestore que los 52 RBD quedaron cargados).
+// migración (revisando en Firebase Console → Firestore que los 55 RBD de DATA.registros —52 con marco y 3 sin marco— quedaron cargados).
 // ============================================================================
 async function seedFirestoreConDatosIniciales() {
   setSyncStatus('yellow', 'Cargando datos iniciales por primera vez…');

@@ -178,7 +178,7 @@ Las tablas de Ingreso SEP y Remuneraciones son editables directo en el navegador
 y Servicios (Subt. 22 y 29) se carga distinto: en vez de escribir un total mensual a mano, cada RBD
 tiene un "Registro de compras" con los mismos campos que exige SUPEREDUC al cargar los gastos
 (código de cuenta oficial, tipo y número de documento, fechas, proveedor, montos, documento
-original) — el ítem y el mes se calculan solos a partir de esas compras, agrupadas por código de
+original) más el **N° DC** de uso interno (ver abajo) — el ítem y el mes se calculan solos a partir de esas compras, agrupadas por código de
 cuenta y por el mes de la Fecha Documento. Cada compra ya cargada se puede editar (✏️, corrige sus
 datos sin duplicarla), duplicar (⧉, precarga el formulario con los mismos datos para una compra
 parecida) o eliminar (🗑). El botón "⬇ Compras SUPEREDUC (CSV)" descarga todas las
@@ -200,6 +200,34 @@ a la del documento o fuera de 2026, monto gasto mayor que el del documento, desc
 100 caracteres, nota de crédito/débito sin `número-TIPO`; y un aviso informativo para los documentos
 de honorarios, que SUPEREDUC recibe en su Libro de Honorarios, Cap. IV); si cancelas el aviso no se
 descarga nada. El archivo, si se confirma, se descarga igual con los datos tal como están en el panel.
+
+**N° DC (Documento Contable interno).** Cada compra tiene un campo propio **N° DC** (`documentoContable`, texto
+libre de hasta 100 caracteres, p. ej. `DC_344`): el número del documento contable interno, es decir, la
+carpeta/SET donde está el respaldo del gasto y la única pista de que ese gasto ya fue registrado. Está en el
+formulario y en la tabla de compras (columna siempre visible, junto a *Doc. original*) del modal de SEP y del modal
+de las 4 fuentes con registro de compras (General, PIE, Mantención, Pro-Retención, incluida la entidad AC), y sigue
+las mismas reglas que el resto de la compra (editar ✏️, duplicar ⧉, eliminar 🗑, guardado en tiempo real: la clave
+`documentoContable` va en el mismo mapa de la compra y se fusiona celda a celda).
+
+- **No va al CSV de SUPEREDUC** (las columnas A–M no cambian). Solo está en el Excel de respaldo/importación
+  (columna **N° DC**, al final de la hoja COMPRAS; un archivo antiguo sin esa columna se importa igual y no borra los
+  N° DC que ya tenían las compras) y en el XLS/PDF de cada fila.
+- **Doc. original queda solo para notas de crédito/débito** (`número-TIPO`, p. ej. `123-FAC`), que es lo único que
+  usa SUPEREDUC. Con cualquier otro tipo de documento el campo se *atenúa* (rótulo más suave, borde punteado) pero
+  **no se deshabilita**: así no se ocultan ni se bloquean los valores que ya tienen las compras existentes.
+- **Datos anteriores.** Mientras un DC siga escrito en *Doc. original* (`DC_344`, `DC-33`, `DC_22 - No hay PME`;
+  se reconoce con `/^\s*DC[\s_-]*\d+/i`, que no calza con `123-FAC`), la columna N° DC lo **muestra** en cursiva
+  (tomado de *Doc. original*) sin tocar lo guardado. En el CSV de SUPEREDUC ese valor **no sale como "Documento
+  Original"** (sale vacío; si la compra es nota de crédito/débito cuenta en el aviso previo como "sin Documento
+  Original").
+- **Botón admin "🗂 Migrar DC (n)"** (junto a "Revisar duplicados", visible solo para `ADMIN_EMAILS`; el contador
+  `(n)` aparece solo si hay algo que migrar). Pide confirmación mostrando cuántas compras se verán afectadas (SEP y
+  fuentes con compras), mueve el valor **completo** de *Doc. original* a *N° DC* (sin interpretar el comentario) y deja
+  *Doc. original* vacío. Solo toca compras con *N° DC* vacío y un DC en *Doc. original*, así que repetirlo no cambia
+  nada. Escribe un `set` con `merge:true` por documento en lotes (`writeBatch`) de a lo más 400 operaciones (cada
+  documento cuenta como 2: el `set` y la marca de hora de la auditoría; es decir, hasta 200 documentos por lote).
+- N° DC es texto libre: se escapa siempre con `escHtml` y, en Excel, `neutralizaFormula` le antepone un apóstrofo si
+  empieza con `=`, `+`, `-`, `@` (al importar se quita).
 
 A diferencia de una planilla o de una sesión de navegador aislada, cada cambio (edición de celda,
 compra agregada o eliminada) se guarda solo (con un pequeño retraso de ~400ms tras dejar de
@@ -229,7 +257,7 @@ llegó a Firestore se superpone a lo recibido, así que nunca retrocede. El moda
 Si tienes muchas compras para cargar de una sola vez, no hace falta escribirlas una por una en el
 formulario: el botón "⬇ Excel" incluye una hoja **COMPRAS** (una fila por compra, con las mismas
 columnas del formulario — RBD, Código, Tipo y N° de documento, Fecha Documento, Fecha Pago,
-Descripción, Proveedor, Montos, Documento original — más una columna **ID**). Puedes editar esa
+Descripción, Proveedor, Montos, Documento original, N° DC — más una columna **ID**). Puedes editar esa
 hoja o pegar filas nuevas y volver a subirla con "⬆ Importar Excel": las filas con **ID vacío** se
 cargan como compras nuevas, y las filas con un **ID ya existente** (el que trae el propio Excel
 exportado) actualizan esa misma compra en vez de duplicarla — por eso conviene exportar primero,

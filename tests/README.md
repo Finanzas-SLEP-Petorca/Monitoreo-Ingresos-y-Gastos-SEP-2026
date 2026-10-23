@@ -21,7 +21,7 @@ node tests/specs/persistencia.mjs        # un spec directamente (sin la tabla)
 ```
 
 Código de salida: `0` si todo es PASS o KNOWN_BUG; `1` si algo FALLA.
-Duración: ≈ 12 min la suite completa (golden ≈ 70 s; los specs más largos son `n_dc`, `escritura_modal_tecleo`, `a11y_contraste`, `corte_ingresos`, `modal_equivalencia`, `sync_estado`, `seguridad_xss` y `mes_cierre_global`). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
+Duración: ≈ 15 min la suite completa (47 pruebas: fixture + 45 specs + golden; golden ≈ 85 s; los specs más largos son `n_dc`, `escritura_modal_tecleo`, `a11y_contraste`, `corte_ingresos`, `modal_equivalencia`, `sync_estado`, `seguridad_xss` y `mes_cierre_global`). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
 
 ### Qué HTML se prueba (`APP_HTML`)
 
@@ -109,6 +109,8 @@ tests/
     estado.mjs            (specs del Estado) oráculo INDEPENDIENTE (BigInt, sin compartir ni el redondeo ni el punto flotante de index.html): Estado esperado de cada RBD de SEP y de cada entidad de las 9 fuentes
                           (incl. el saldo de Operación para B&S de JUNJI) desde los documentos del fixture, y lectores de lo que muestran la tabla SEP (filas y filtro), las tablas de las fuentes, las tarjetas KPI y el Panel principal
     compras.mjs           (specs de compras) fixtureSinCompras(), compraBase(), libroXlsx() / importarLibro() (arma y sube un .xlsx por el <input type=file>), celdaItem(), montosFilaCompra()
+    honorarios.mjs        (specs de honorarios) oráculo INDEPENDIENTE (BigInt, sin compartir código con index.html): totales por mes/cuenta/RBD de boletas y proyección desde los documentos del fixture, 70/30 «opción B»
+                          (personal = Rem. + Hon.), y lectores de la pantalla (leerCLP, tarjetas, filaSepTexto, filaDetalleMeses, filaProyeccion, llenarFormHon, boleta…)
     config.mjs            constantes (BASELINE_REF, correos de prueba, fecha congelada)
   mockfb/
     core.js               núcleo del mock (window.__mockfb): Firestore en memoria + Auth
@@ -118,6 +120,7 @@ tests/
     default.json          fixture generado (70 documentos)       cierre.json   variante con mes de cierre y cortes propios (ver abajo)
                                                                   compras.json  variante con casos de signo de NC/ND, fechas con avisos e ID "0" (ver abajo)
                                                                   estado.json   variante con los casos de borde del Estado de SEP y de las fuentes, y de JUNJI (ver abajo)
+                                                                  honorarios.json  variante con boletas y proyección de Honorarios (Subt. 21) en SEP (ver abajo)
   golden/
     capture.mjs           recorrido de todas las vistas y exportaciones     diff.mjs  comparación legible
     golden.mjs            CLI (comparar / --update)                         baseline.json  línea base (≈ 0,7 MB)
@@ -203,6 +206,12 @@ Fuentes de una línea: FAEP 1130 saldo $0 → Superávit, 1131 -$1 → Déficit,
 Operación − B&S): 5402002 +500.000 / -500.000 → Déficit solo por Operación; 5402004 -1.000.000 / +1.500.000 → solo por el saldo total; 5401006 -1.200.000 / -200.000 → ambas; 5401007 $0 / $0 → Superávit; 5401005 +999.999 / -$1 → Déficit solo por Operación;
 y Aporte Fiscal JUNJI 5401004 con B&S = 90 % de su única línea → Superávit. El resto de las entidades conserva las cifras de `default.json`.
 
+**`honorarios.json`** (también de `generate.mjs`; `--check` lo verifica) es `default.json` con `honorarios` (boletas por id) y `hon_proyeccion` **agregados** a 1120, 1121, 1122, 1123, 1125 y 1128 (sin tocar nada más ni consumir números aleatorios:
+los demás RBD y todas las compras quedan igual). SEP/1121 trae 12 boletas: los 5 tipos (BOLH, BHE, BOLHE, BPST, BPSTE), un reparto (Monto Gasto 200.000 de 500.000), N° DC, texto con `& < > " '`, y los casos con aviso: fecha de 2025 (suma en diciembre),
+fecha `10/03/2026` (no suma), cuenta `999999` fuera del catálogo (no suma), cuenta `411101` no habilitada para SEP (suma), tipo `FAC` (no es de honorarios) y `BHE` en `410904` (la cuenta no lo acepta); más una proyección de `410803`
+(enero, que se SUMA a la boleta de enero, y agosto-diciembre) y de `410304`. SEP/1122 tiene 2 boletas y proyección; 1123 solo proyección; 1125 una boleta de diciembre; 1128 una boleta de 9.000.000 que empuja el saldo; 1120 (sin marco SEP) una boleta
+que dispara «⚠ Gasto SEP sin marco». Las compras y las demás fuentes no cambian (los totales de B&S de `default.json` siguen siendo los mismos).
+
 ## Golden master (`tests/golden/`)
 
 `capture.mjs` abre el panel con el fixture, recorre cada vista y guarda en `baseline.json`:
@@ -222,6 +231,14 @@ y Aporte Fiscal JUNJI 5401004 con B&S = 90 % de su única línea → Superávit.
   (5402002, 5402004, 5401006, 5401005, 5401007) y de FAEP 1131, CSV y Excel de resumen, PDF general y por fila, CSV de detalle (JUNJI y FAEP) y PDF de JUNJI, y % Ejecución de SEP (agregado y 1130).
 - Sección **`cierre`** (fixture `cierre`, entradas `cierre.*`): Panel principal (3 vistas), pestaña SEP con el control del mes de cierre y el aviso abierto, modales de 4 RBD (corte propio ≠ cierre, = cierre,
   diciembre y sin corte propio), JSON de respaldo, PDF de dos filas, % Ejecución consolidado, Visualizador (SEP) y Reporte personalizado de ingresos con sus CSV.
+
+- Sección **`honorarios`** (fixture `honorarios`, entradas `honorarios.*`): Panel principal (3 vistas), pestaña SEP (tarjetas Real / Proyectado / Total, tabla con «Gasto Hon.» y % de personal, corte a marzo, filtro Déficit), modales de SEP 1121 (todas las marcas ⚠,
+  el resumen de avisos, el formulario en edición con los avisos en vivo), 1122, 1123 (solo proyección) y 1120 (sin marco), % Ejecución (SEP agregado, 1121 y Consolidado), Visualizador, Reporte personalizado y las exportaciones de SEP (Excel de carga con `HONORARIOS` y `HON_PROYECCION`,
+  resumen, JSON, la fila 1121 en XLS / PDF y el PDF general).
+
+> **Cambios del golden por Honorarios (PR-1).** `baseline.json` se regeneró **después de revisar cada diferencia una por una** (61 vistas y varias exportaciones). Todas las cifras en pesos de las fixtures `default`, `cierre`, `compras` y `estado` quedan **idénticas**; lo que cambia
+> es texto y estructura por causa de Honorarios: columna/tarjetas/línea «Gasto Hon.» ($0 sin boletas), encabezados renombrados a «% Ejec. Personal (Rem.+Hon.)», «Saldo post Personal», «% Personal / Ingreso», el bloque de Honorarios del modal de SEP, las columnas nuevas de % Ejecución y Reportes,
+> el catálogo del Reporte personalizado de SEP (107 → 109 conceptos), las marcas «⚠ muévelo a Honorarios» de las compras antiguas con tipo de honorarios, y, en las exportaciones, las dos hojas nuevas (solo encabezados en las fixtures sin boletas), las dos claves nuevas del JSON y la columna extra del resumen.
 
 `node tests/run.mjs golden` compara contra el baseline y, por cada vista/exportación distinta, muestra un diff por líneas con contexto
 (`-` baseline, `+` actual). El marcado HTML distinto con el mismo texto solo se informa, no falla.
@@ -276,7 +293,27 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `estado_unico` | L-07, fixture `estado`: el Estado de SEP y de las 9 fuentes sale de UNA regla (Déficit ⇔ saldo < 0; Riesgo solo en SEP ⇔ gasto/recurso ≥ 90 % exacto con saldo ≥ 0; si no, Superávit) y todo lugar que cuenta o lista déficit coincide entre sí y con un cálculo independiente (BigInt): bordes (saldo $0, 99,996 %, -$1, 89,999 % vs 90,000 %, recurso 0 con y sin gasto, Carrera Docente en el recurso, RBD sin marco con gasto), filas y filtro de SEP, tarjeta "RBD en déficit" (con su universo), las 9 pestañas de fuente (filas y tarjeta "N de M"), franja y tarjetas por fuente del Panel principal, lista "Atención" (vista Total = todas las entidades en Déficit, en orden; vistas Real / Proyectado por el signo del saldo), CSV y Excel de resumen, PDF general y por fila, CSV de detalle de las fuentes, cambios remotos que cruzan un borde, y que la evolución mensual cuadra con la franja en las 3 vistas |
 | `estado_junji` | L-08, fixture `estado`: JUNJI es Déficit si el saldo total < 0 O el saldo de Operación para B&S < 0 (Operación − B&S): las 5 GESPARVU de borde (solo Operación, solo saldo total, ambas, $0 → Superávit, -$1), aviso visible y tooltip con la causa y su monto, tarjeta KPI y del Panel principal, "Atención" con la causa (también cuando el saldo total es grande), subtítulo y saldo de Operación del modal con edición EN VIVO (1.000.000 → Superávit, 1.000.001 → Déficit…), nada derivado se guarda en Firestore, CSV de detalle y PDF de la entidad, y "sin cambio donde no aplica" (las otras 8 fuentes, de una sola línea, siguen Déficit ⇔ saldo < 0; Aporte JUNJI y su modal sin saldo de Operación) |
 | `ejecucion_rotulos` | L-09: en % Ejecución de SEP el rótulo y el estilo Real / Proy. / Mixto de cada mes (columna "Corte", tooltip, línea "Corte" y tramo punteado del gráfico) salen de los cortes reales (ingresos: propio > cierre > `DATA.n_meses`; remuneraciones: `rem.real_hasta_mes`) y NO del selector "hasta el mes" (con el defecto —diciembre— antes los 12 meses salían "Real"; con el selector en marzo, de abril en adelante "Proy."); agregado, un RBD con cortes iguales / distintos / sin corte propio, fixture `cierre`, un cambio remoto del mes de cierre, y que cada fuente y el Consolidado siguen rotulándose por su "Real hasta" aunque se mueva el selector |
+| `honorarios_cuentas` | Honorarios PR-1: el catálogo (`data/honorarios_cuentas_2026.json`) y el bloque de `index.html` dicen lo mismo; 36 cuentas (las 35 del spec + 411404), 410803 solo Honorarios, 411801 solo BHE, las «sin BHE»; todas existen en el Plan de Cuentas con el mismo nombre; el selector de cuenta de SEP lista las habilitadas (27, 24 con ●) y el de tipo solo los que la cuenta acepta; el selector de compras ya no trae los 5 tipos |
+| `honorarios_modelo` | Honorarios PR-1: el modelo por boleta y el bloque «Honorarios (Subt. 21)» de SEP: fila mensual de solo lectura (por Fecha Documento), proyección por cuenta (se SUMA), avisos, N° DC, lo que no entra en los totales; alta/edición/duplicado/eliminación con write de SOLO esa boleta (`honorarios.<id>`, `merge:true`, tipo como código); proyección; varias personas a la vez (formulario a medias, alta/borrado ajeno); documentos dañados; recarga |
+| `honorarios_70_30` | Honorarios PR-1: la regla 70/30 «opción B» contra un cálculo independiente: `gasto_personal = rem + hon` (cualquier cuenta), `saldo_rem`, `% Ejec. Personal`, `gasto_total = rem + hon + B&S`, Estado, tarjetas Real/Proy/Total, selector «hasta el mes», encabezados y leyendas; B&S no cambia |
+| `honorarios_consistencia` | Honorarios PR-1, invariante: el gasto total y el saldo de SEP son idénticos en la pestaña SEP, Panel principal (tarjeta, franja, serie mensual, «Atención»), % Ejecución (SEP y Consolidado) y Reportes (Visualizador y Reporte personalizado) en Total / Real / Proyectado |
+| `honorarios_excel` | Honorarios PR-1: hojas `HONORARIOS` y `HON_PROYECCION` (columnas, una fila por boleta, ID, tipo como código, N° DC, neutralización de fórmulas solo en texto libre), exportar → reimportar → exportar idempotente, claves deterministas sin duplicar, filas rechazadas con motivo, un Excel antiguo no borra nada |
+| `honorarios_compras` | Honorarios PR-1: compras sin los 5 tipos en el selector; las antiguas con esos tipos siguen sumando en B&S (cero cambio de cifras), con la marca «⚠ muévelo a Honorarios» y su resumen (SEP y General), sin botón de migración, editar no pierde el tipo, y el aviso previo al CSV de SUPEREDUC dice «muévelo al registro de Honorarios» |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
+
+### Honorarios (PR-1): qué falla contra el panel anterior (`APP_HTML=@1f0821b`)
+
+`1f0821b` es el `index.html` justo antes de Honorarios (merge de la PR #63). Estos specs **fallan** contra él y **pasan** con el árbol (así se comprobó que prueban Honorarios y no algo que ya existía):
+
+```bash
+APP_HTML=@1f0821b node tests/run.mjs spec honorarios_cuentas honorarios_modelo honorarios_70_30 honorarios_consistencia honorarios_excel honorarios_compras \
+  roundtrip_excel persistencia seguridad_xss formulas_csv_excel modal_equivalencia escritura_modal_tecleo csv_supereduc_formato corte_ingresos a11y_nombres a11y_contraste a11y_foco
+# → 17 FAIL, 0 PASS
+```
+
+Los 6 `honorarios_*` son nuevos; los otros 11 se **extendieron** con su parte de Honorarios: `roundtrip_excel` y `corte_ingresos` (las 8 hojas del Excel de carga, y exportar → importar de `HONORARIOS` / `HON_PROYECCION`), `persistencia` (alta, edición, borrado y proyección con write parcial `honorarios.<id>` y `deleteField`),
+`seguridad_xss` y `formulas_csv_excel` (texto libre de boletas: se ve literal, apóstrofo solo en descripción, nombre del prestador y N° DC), `modal_equivalencia` (40 pasos con boletas y proyección y la comprobación de que el bloque está en el modal), `escritura_modal_tecleo` (teclear en el formulario de honorarios y en la proyección con cambios ajenos),
+`csv_supereduc_formato` (aviso «muévelo al registro de Honorarios») y `a11y_nombres` / `a11y_contraste` / `a11y_foco` (el bloque de honorarios en los recorridos de vistas, `recorrerHonorarios` de `tests/lib/a11y-vistas.mjs`).
 
 ### Bugs conocidos: `known-bug` vs `enforced`
 
@@ -321,7 +358,7 @@ El mock de arriba es rápido y determinista, pero lo escribimos nosotros: no dem
 `setup.sh`; las dependencias, unos 280 MB, se instalan fuera del repositorio en `E2E_HOME`, por defecto `/home/user/.e2e-real`).
 
 ```bash
-bash tests/e2e-real/setup.sh && node tests/e2e-real/run.mjs        # los 10 specs contra el árbol, ≈ 7 min
+bash tests/e2e-real/setup.sh && node tests/e2e-real/run.mjs        # los 11 specs contra el árbol (el 11 es Honorarios por boleta), ≈ 8 min
 node tests/e2e-real/run.mjs --matriz                                # además contra @069f9dd y @baseline, ≈ 15 min
 ```
 

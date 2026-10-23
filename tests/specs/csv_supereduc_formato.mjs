@@ -27,6 +27,8 @@ const COMPRAS = {
   i: compra({ nroDocumento: '1009', tipoDocumento: 'Nota de crédito', documentoOriginal: 'DC_1', montoGasto: -500, montoDocumento: -500 }), // NC sin número-TIPO
   j: compra({ nroDocumento: '1010', tipoDocumento: 'Boleta', rutProveedor: '111111111' }),                               // correcta; RUT sin guion
 };
+// Los 18 nombres que el panel sabe traducir a código. Los 5 de honorarios YA NO están en el selector de compras (Honorarios PR-1: se registran en «Honorarios (Subt. 21)»); se conservan
+// aquí porque las compras antiguas guardadas con ellos se leen y se exportan con su código (y avisan «muévelo al registro de Honorarios»).
 const TIPOS_PANEL = ['Boleta', 'Boleta exenta', 'Boleta electrónica', 'Boleta exenta electrónica', 'Boleta de honorarios manual', 'Boleta de honorarios exenta', 'Boleta de honorarios electrónica',
   'Boleta honorarios prestación de servicios a terceros', 'Boleta honorarios prestación de servicios a terceros electrónica', 'Factura', 'Factura exenta', 'Factura electrónica', 'Factura exenta electrónica',
   'Otro documento exento', 'Finiquito', 'Documento extranjero', 'Nota de crédito', 'Nota de débito'];
@@ -90,6 +92,7 @@ await correrSpec('csv_supereduc_formato', async (t) => {
     t.ok(tiene(/más de 100 caracteres/, 1), 'aviso: 1 fila con descripción de más de 100 caracteres');
     t.ok(tiene(/número-TIPO/, 1), 'aviso: 1 nota de crédito sin Documento Original con formato número-TIPO');
     t.ok(tiene(/honorarios/, 1), 'aviso: 1 documento de honorarios (van en otro libro de SUPEREDUC)');
+    t.ok(lista.some(l => l.includes('no va en el Libro de Compras, muévelo al registro de Honorarios (SUPEREDUC lo recibe en el Libro de Honorarios, Cap. IV)')), 'aviso: dice «muévelo al registro de Honorarios» (Honorarios PR-1: ya no se cargan como compra)', lista);
     // lo guardado y lo que se ve NO cambian
     t.eq((await h.writes()).length, 0, 'la exportación no escribe nada en Firestore');
     const st = await h.store();
@@ -171,6 +174,7 @@ await correrSpec('csv_supereduc_formato', async (t) => {
     t.ok(fm.every(r => r[C.SUB] === 'MANTENIMIENTO'), 'Mantención: columna Subvención = MANTENIMIENTO');
     t.ok(fm.filter(r => r[C.TIPO] === 'NOTACRE' || r[C.TIPO] === 'NOTADEB').every(r => r[C.ORIG] === '7-FACEL') && fm.filter(r => r[C.TIPO] !== 'NOTACRE' && r[C.TIPO] !== 'NOTADEB').every(r => r[C.ORIG] === ''), 'Mantención: Documento Original solo en NOTACRE/NOTADEB');
     t.ok(/honorarios/.test(ultimoConfirm(h) || '') && /en 5 de 18 compras/.test(ultimoConfirm(h) || ''), 'Mantención: el aviso cuenta las 5 boletas de honorarios (en 5 de 18)', (ultimoConfirm(h) || '').split('\n')[0]);
+    t.ok(/5 filas: documento de honorarios[^\n]*muévelo al registro de Honorarios/.test(ultimoConfirm(h) || ''), 'Mantención: y les dice «muévelo al registro de Honorarios»');
     // General + AC (sin problemas: sin aviso)
     await clickTab(page, 'General');
     h.dialogs.length = 0;

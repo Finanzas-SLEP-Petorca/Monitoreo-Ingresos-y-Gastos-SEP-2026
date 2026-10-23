@@ -147,6 +147,88 @@ await correrSpec('persistencia', async (t) => {
   t.eq(w[0] && w[0].payload.bys_proyeccion, { items: { '410904': DEL } }, 'SEP proyección B&S: quitar ítem usa deleteField()');
   await cerrarModales(h);
 
+  // ---------------------------------------------------------------- SEP: Honorarios (boleta por id y proyección por cuenta)
+  await abrirModalSep(h, '1121');
+  await h.clearWrites();
+  const campoHon = (f) => `#modalBody .hon-form-grid .hon-input[data-field="${f}"]`;
+  await page.selectOption(campoHon('codigo'), '410803');
+  await page.selectOption(campoHon('tipoDocumento'), 'BOLHE');
+  await page.fill(campoHon('nroDocumento'), 'H-1');
+  await page.fill(campoHon('fechaDocumento'), '2026-04-10');
+  await page.fill(campoHon('fechaPago'), '2026-04-20');
+  await page.fill(campoHon('descripcion'), 'Taller de prueba');
+  await page.fill(campoHon('rutProveedor'), '11111111-1');
+  await page.fill(campoHon('nombreProveedor'), 'Prestador T');
+  await page.fill(campoHon('montoGasto'), '350000');
+  await page.click('#modalBody .add-hon-btn');
+  await h.flushWrites();
+  w = writesDe(await h.writes(), '1121');
+  t.eq(w.length, 1, 'SEP honorarios: 1 write inmediato (sin esperar el debounce)');
+  const honId = Object.keys(w[0].payload.honorarios || {})[0];
+  t.ok(esMergeSet(w[0]) && Object.keys(w[0].payload.honorarios).length === 1 && w[0].payload.honorarios[honId].codigo === '410803' && w[0].payload.honorarios[honId].tipoDocumento === 'BOLHE' && w[0].payload.honorarios[honId].montoGasto === 350000 && w[0].payload.honorarios[honId].montoDocumento === 350000, 'SEP honorarios: merge:true con UNA boleta por ID (tipo como código; Monto documento = Monto gasto)', w[0].payload);
+  t.ok(marcasAuditoria(w[0]), 'SEP honorarios: lleva lastModifiedBy/serverTimestamp');
+  st = await h.store();
+  t.eq(Object.keys(st[RUTA('1121')].honorarios), [honId], 'SEP honorarios: el servidor tiene la boleta');
+  t.eq(Object.keys(st[RUTA('1121')].compras).sort(), Object.keys(fx['1121'].compras).sort(), 'SEP honorarios: las compras no cambian (la boleta no es una compra)');
+  // otra persona agrega OTRA boleta del mismo RBD: se fusiona por id (no pisa la nuestra)
+  await h.remoto('1121', `d.honorarios = d.honorarios || {}; d.honorarios.hRemota = { codigo: '410304', tipoDocumento: 'BHE', nroDocumento: 'R-1', fechaDocumento: '2026-05-02', fechaPago: '2026-05-09', descripcion: 'Remota', rutProveedor: '9-9', nombreProveedor: 'Otra persona', montoGasto: 1000, montoDocumento: 1000 };`);
+  await h.waitIdle();
+  st = await h.store();
+  t.eq(Object.keys(st[RUTA('1121')].honorarios).sort(), ['hRemota', honId].sort(), 'SEP honorarios: dos personas, dos boletas del mismo RBD: conviven (merge profundo por id)');
+  t.eq(await page.locator('#modalBody tr[data-hon-id]').count(), 2, 'SEP honorarios: el detalle abierto muestra ambas');
+  const textoFilaHon = () => page.evaluate(() => document.querySelector('#tableBody tr[data-rbd="1121"]').innerText.replace(/\s+/g, ' ').trim());
+  const filaHonAntes = await textoFilaHon();
+  await h.mock('emitSnapshot'); await h.waitIdle();
+  t.eq(await textoFilaHon(), filaHonAntes, 'SEP honorarios: tras re-emitir el snapshot la fila no cambia');
+  await cerrarModales(h);
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForFunction(() => document.getElementById('sync-indicator').classList.contains('green'));
+  await h.waitIdle();
+  await abrirModalSep(h, '1121');
+  t.eq(await page.locator(`#modalBody tr[data-hon-id="${honId}"]`).count(), 1, 'SEP honorarios: tras recargar la página la boleta sigue en el registro');
+  // proyección por cuenta: agregar / editar un mes / quitar
+  await h.clearWrites();
+  await page.selectOption('#honproyAddSelect-1121', '410304');
+  await page.click('#modalBody .add-honproy-btn[data-rbd="1121"]');
+  await h.flushWrites();
+  w = writesDe(await h.writes(), '1121');
+  t.ok(w.length === 1 && esMergeSet(w[0]) && w[0].payload.hon_proyeccion.items['410304'] && w[0].payload.hon_proyeccion.items['410304'].total === 0, 'SEP proyección de honorarios: agregar la cuenta escribe hon_proyeccion.items.410304 (merge:true)', w);
+  await h.clearWrites();
+  await page.fill('input.celda-input[data-rbd="1121"][data-modo="hon_proy"][data-codigo="410304"][data-mes="NOVIEMBRE"]', '90000');
+  await h.flushWrites();
+  w = writesDe(await h.writes(), '1121');
+  t.eq(w[0].payload.hon_proyeccion.items['410304'].meses, { NOVIEMBRE: 90000 }, 'SEP proyección de honorarios: editar un mes escribe solo ese mes');
+  await h.clearWrites();
+  await page.click('#modalBody button.honproy-del-btn[data-rbd="1121"][data-codigo="410304"]');
+  await h.flushWrites();
+  w = writesDe(await h.writes(), '1121');
+  t.eq(w[0] && w[0].payload.hon_proyeccion, { items: { '410304': DEL } }, 'SEP proyección de honorarios: quitar la cuenta usa deleteField()');
+  // eliminar la boleta => deleteField sobre su id
+  await h.clearWrites();
+  await page.click(`#modalBody button.hon-del-btn[data-hon-id="${honId}"]`);
+  await h.flushWrites();
+  w = writesDe(await h.writes(), '1121');
+  t.ok(w.length === 1 && esMergeSet(w[0]) && JSON.stringify(w[0].payload.honorarios) === JSON.stringify({ [honId]: DEL }), 'SEP honorarios: borrar la boleta es { honorarios: { <id>: deleteField() } } con merge:true', w);
+  st = await h.store();
+  t.eq(Object.keys(st[RUTA('1121')].honorarios), ['hRemota'], 'SEP honorarios: en el servidor queda la boleta de la otra persona');
+  // error permanente: lo tecleado en la proyección se conserva en pantalla y el reintento manual lo guarda
+  await page.selectOption('#honproyAddSelect-1121', '410803');
+  await page.click('#modalBody .add-honproy-btn[data-rbd="1121"]');
+  await h.flushWrites();
+  await h.clearWrites();
+  await h.mock('failNextWrite', 'permission-denied');
+  await page.fill('input.celda-input[data-rbd="1121"][data-modo="hon_proy"][data-codigo="410803"][data-mes="OCTUBRE"]', '12345');
+  await h.flushWrites();
+  await h.waitIdle();
+  t.eq(await page.inputValue('input.celda-input[data-rbd="1121"][data-modo="hon_proy"][data-codigo="410803"][data-mes="OCTUBRE"]'), '12345', 'SEP proyección de honorarios: con el write rechazado el valor tecleado se conserva en pantalla');
+  t.ok(/sin guardar/.test(await page.evaluate(() => document.querySelector('#rbdModal .modal-sync-text').textContent)), 'SEP proyección de honorarios: el aviso rojo del modal dice «cambios sin guardar»');
+  await page.click('#rbdModal .modal-sync-retry'); // el aviso también está dentro del modal abierto
+  await page.waitForFunction(() => window.__mockfb.writes.some(x => x.status === 'acked'), null, { timeout: 15000 });
+  await h.waitIdle();
+  st = await h.store();
+  t.eq(st[RUTA('1121')].hon_proyeccion.items['410803'].meses.OCTUBRE, 12345, 'SEP proyección de honorarios: «Reintentar» lo guarda');
+  await cerrarModales(h);
+
   // ---------------------------------------------------------------- Fuente con compras (General): ingreso, compra, borrar compra
   await h.clearWrites();
   await clickTab(page, 'General');

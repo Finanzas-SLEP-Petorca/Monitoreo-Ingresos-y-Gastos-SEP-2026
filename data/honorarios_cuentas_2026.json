@@ -1,0 +1,1377 @@
+{
+ "fuente": "Manual de Cuentas para la Rendición de Recursos Destinados a Educación 2026 (SUPEREDUC), recuadros «Documentos Habilitados» de las secciones 9 y 10 (págs. 46-111); matriz de la sección 12 (págs. 120-124) revisada en imagen.",
+ "tipos_honorarios": [
+  {
+   "codigo": "BOLH",
+   "nombre": "Boleta de honorarios manual"
+  },
+  {
+   "codigo": "BHE",
+   "nombre": "Boleta de honorarios exenta"
+  },
+  {
+   "codigo": "BOLHE",
+   "nombre": "Boleta de honorarios electrónica"
+  },
+  {
+   "codigo": "BPST",
+   "nombre": "Boleta honorarios prestación de servicios a terceros"
+  },
+  {
+   "codigo": "BPSTE",
+   "nombre": "Boleta honorarios prestación de servicios a terceros electrónica"
+  }
+ ],
+ "columnas": [
+  "general",
+  "adm_central_general",
+  "sep",
+  "adm_central_sep",
+  "pie",
+  "mantenimiento",
+  "proretencion",
+  "internado",
+  "refuerzo"
+ ],
+ "n_cuentas": 36,
+ "cuentas": [
+  {
+   "codigo": "410304",
+   "nombre": "OTROS GASTOS EN PERSONAL",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "ODE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "FIN",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 61,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "pie",
+    "proretencion",
+    "internado",
+    "refuerzo"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "410309",
+   "nombre": "SALA CUNA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "ODE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 62,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "pie",
+    "proretencion",
+    "internado",
+    "refuerzo"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep"
+   ]
+  },
+  {
+   "codigo": "410501",
+   "nombre": "ASISTENCIA TÉCNICO PEDAGÓGICA EDUCATIVA (REGISTRO ATE)",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 65,
+   "subvenciones": [
+    "sep",
+    "adm_central_sep"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep"
+   ]
+  },
+  {
+   "codigo": "410502",
+   "nombre": "ACCIONES FORMATIVAS Y PERFECCIONAMIENTO DE RR.HH",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "DOCEX",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 67,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "pie"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep",
+    "pie"
+   ]
+  },
+  {
+   "codigo": "410503",
+   "nombre": "ACTIVIDADES PARA EL FORTALECIMIENTO DE LOS OBJETIVOS DE MEJORAMIENTO DE LA CALIDAD EDUCATIVA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "DOCEX",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 69,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "pie",
+    "proretencion"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep",
+    "pie"
+   ]
+  },
+  {
+   "codigo": "410607",
+   "nombre": "EVENTOS EDUCATIVOS Y CULTURALES",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "ODE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "DOCEX",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 75,
+   "subvenciones": [
+    "general",
+    "sep",
+    "proretencion",
+    "internado",
+    "refuerzo"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "410608",
+   "nombre": "EVALUACIÓN DIAGNÓSTICA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 75,
+   "subvenciones": [
+    "general",
+    "sep",
+    "pie",
+    "proretencion",
+    "internado",
+    "refuerzo"
+   ],
+   "pertinencia": [
+    "pie"
+   ]
+  },
+  {
+   "codigo": "410801",
+   "nombre": "UNIFORMES Y VESTUARIO",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 82,
+   "subvenciones": [
+    "general",
+    "sep",
+    "proretencion",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "410802",
+   "nombre": "OTROS GASTOS ALUMNOS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "ODE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 82,
+   "subvenciones": [
+    "general",
+    "sep",
+    "proretencion",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "410803",
+   "nombre": "TALLERES EXTRAPROGRAMÁTICOS",
+   "libro": "honorarios",
+   "libro_manual": "Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "pagina_manual": 84,
+   "subvenciones": [
+    "general",
+    "sep",
+    "proretencion",
+    "internado"
+   ],
+   "pertinencia": [],
+   "observacion": "Única cuenta cuyo Libro de Rendición es solo «Honorarios»: gastos por contratación de personas naturales para talleres."
+  },
+  {
+   "codigo": "410804",
+   "nombre": "CONTRATACIÓN DE APOYO DE ESPECIALISTAS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOLH",
+    "BHE",
+    "FACE",
+    "ODE",
+    "BOLEX",
+    "BOLHE",
+    "FACEX",
+    "BPST",
+    "BPSTE"
+   ],
+   "pagina_manual": 84,
+   "subvenciones": [
+    "general",
+    "sep",
+    "pie",
+    "proretencion"
+   ],
+   "pertinencia": [
+    "sep",
+    "pie",
+    "proretencion"
+   ]
+  },
+  {
+   "codigo": "410901",
+   "nombre": "TRANSPORTE ESCOLAR",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 86,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "proretencion",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep",
+    "proretencion"
+   ]
+  },
+  {
+   "codigo": "410903",
+   "nombre": "REPRODUCCIÓN DE DOCUMENTOS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "ODE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 88,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "pie",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep",
+    "pie"
+   ]
+  },
+  {
+   "codigo": "410904",
+   "nombre": "ALIMENTACIÓN",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 88,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "proretencion",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep",
+    "proretencion"
+   ]
+  },
+  {
+   "codigo": "410908",
+   "nombre": "PUBLICIDAD",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 90,
+   "subvenciones": [
+    "general",
+    "adm_central_general"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "410910",
+   "nombre": "OTROS GASTOS DE OPERACIÓN",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "ODE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "DOCEX",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 91,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep"
+   ]
+  },
+  {
+   "codigo": "410918",
+   "nombre": "TRASLADO DE ESTUDIANTES POR ACTIVIDAD ESCOLAR",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos – Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 94,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "proretencion"
+   ],
+   "pertinencia": [
+    "sep",
+    "proretencion"
+   ]
+  },
+  {
+   "codigo": "411101",
+   "nombre": "CONTRATACIÓN SERVICIOS DE ASEO Y JARDINERÍA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOLH",
+    "FAC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 97,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "internado"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "411102",
+   "nombre": "CONTRATACIÓN SERVICIOS DE SEGURIDAD",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOLH",
+    "FAC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 97,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "internado"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "411103",
+   "nombre": "CONTRATACIÓN OTROS SERVICIOS EXTERNOS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 98,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "adm_central_sep"
+   ],
+   "pertinencia": [
+    "adm_central_sep"
+   ]
+  },
+  {
+   "codigo": "411404",
+   "nombre": "MEJORAS ÚTILES Y NECESARIAS EN LOCAL ESCOLAR ARRENDADO",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 100,
+   "subvenciones": [
+    "general",
+    "sep",
+    "mantenimiento"
+   ],
+   "pertinencia": [
+    "sep"
+   ],
+   "observacion": "No figuraba en la lista de 35 del spec. Su recuadro (pág. 101) dice «Libro de Rendición: Compras y Otros Gastos» pero lista BOLH, BOLHE, BPST y BPSTE entre los documentos habilitados, y la matriz de la pág. 124 los marca (BOLH, BOLHE, BPST; BPSTE en la columna cortada de la imagen): se incluye porque el manual la habilita para esos documentos. Sin BHE."
+  },
+  {
+   "codigo": "411601",
+   "nombre": "MANTENIMIENTO Y REPARACIÓN DE INFRAESTRUCTURA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 103,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411602",
+   "nombre": "CONSTRUCCIÓN DE INFRAESTRUCTURA (OBRA GRUESA)",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOLH",
+    "FAC",
+    "FACE",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 104,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411603",
+   "nombre": "TERMINACIONES DE INFRAESTRUCTURA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 104,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411604",
+   "nombre": "INSTALACIONES ELÉCTRICAS, ILUMINACIÓN Y SISTEMAS DE CALEFACCIÓN",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 105,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411605",
+   "nombre": "INSTALACIONES DE GAS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 105,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "411606",
+   "nombre": "INSTALACIONES DE AGUA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 105,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "411607",
+   "nombre": "ALCANTARILLADOS O POZOS SÉPTICOS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 105,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "411608",
+   "nombre": "CIERRES PERIMETRALES Y OBRAS COMPLEMENTARIAS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 106,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411609",
+   "nombre": "SERVICIOS HIGIÉNICOS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 106,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": []
+  },
+  {
+   "codigo": "411610",
+   "nombre": "ELIMINACIÓN DE BARRERAS ARQUITÉCTONICAS DE MENOR ENVERGADURA",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLH",
+    "FAC",
+    "BOLEC",
+    "BOLHE",
+    "FACEL",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 106,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "pie",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411701",
+   "nombre": "MANTENCIÓN  Y REPARACIÓN DE BIENES MUEBLES",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 107,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep"
+   ]
+  },
+  {
+   "codigo": "411702",
+   "nombre": "REPUESTOS, MANTENIMIENTO Y REPARACIÓN DE VEHÍCULOS",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 108,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411703",
+   "nombre": "MANTENCIÓN Y REPARACIÓN DE EQUIPOS COMPUTACIONALES",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 108,
+   "subvenciones": [
+    "general",
+    "adm_central_general",
+    "sep",
+    "adm_central_sep",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep",
+    "adm_central_sep"
+   ]
+  },
+  {
+   "codigo": "411704",
+   "nombre": "MANTENCIÓN Y REPARACIÓN DE MOBILIARIO ESCOLAR",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BOLH",
+    "BHE",
+    "BOLHE",
+    "BPST",
+    "BPSTE"
+   ],
+   "docs_manual": [
+    "BOL",
+    "BOLE",
+    "BOLH",
+    "BHE",
+    "FAC",
+    "FACE",
+    "BOLEC",
+    "BOLEX",
+    "BOLHE",
+    "FACEL",
+    "FACEX",
+    "BPST",
+    "BPSTE",
+    "NOTACRE",
+    "NOTADEB"
+   ],
+   "pagina_manual": 108,
+   "subvenciones": [
+    "general",
+    "sep",
+    "mantenimiento",
+    "internado"
+   ],
+   "pertinencia": [
+    "sep"
+   ]
+  },
+  {
+   "codigo": "411801",
+   "nombre": "ADQUISICIÓN DE BIENES INMUEBLES",
+   "libro": "compras+honorarios",
+   "libro_manual": "Compras y Otros Gastos - Honorarios",
+   "docs": [
+    "BHE"
+   ],
+   "docs_manual": [
+    "BHE",
+    "ODE",
+    "BOLEX"
+   ],
+   "pagina_manual": 109,
+   "subvenciones": [
+    "general"
+   ],
+   "pertinencia": [],
+   "observacion": "El recuadro (pág. 109) y la matriz (pág. 124, revisada en imagen) coinciden: solo acepta BHE entre los 5 tipos de honorarios (además de ODE y BOLEX, que no son de honorarios)."
+  }
+ ],
+ "diferencias_con_el_spec": {
+  "solo_en_el_texto": [
+   "411404"
+  ],
+  "solo_en_el_spec": []
+ }
+}

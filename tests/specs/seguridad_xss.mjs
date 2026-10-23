@@ -28,6 +28,12 @@ const compraPayload = (k, extra = {}) => ({
   montoGasto: 1000, montoDocumento: 1200, documentoOriginal: `${k} ${P.script}`, ...extra,
 });
 const ofCompraPayload = (k, extra = {}) => compraPayload(k, { codigo: '410503', ...extra });
+// Boleta de honorarios (Subt. 21): mismos textos libres que una compra (sin documentoOriginal) + N° DC.
+const honPayload = (k, extra = {}) => ({
+  codigo: '410803', tipoDocumento: `${k} ${P.img}`, nroDocumento: `${k} ${P.svg}`, fechaDocumento: '2026-03-02', fechaPago: `${k} ${P.script}`,
+  descripcion: `${k} ${P.amp} ${P.img}`, rutProveedor: `${k} ${P.svg}`, nombreProveedor: `${k} ${P.comillas} ${P.img}`,
+  montoGasto: 1000, montoDocumento: 1200, documentoContable: `${k} ${P.attr}`, ...extra,
+});
 
 function armarFixture() {
   const docs = JSON.parse(JSON.stringify(cargarFixture('default').docs));
@@ -37,6 +43,8 @@ function armarFixture() {
   d1121.compras[ID_RARO] = compraPayload('SEP1');
   d1121.compras[ID_RARO_2] = compraPayload('SEP2', { codigo: P.img });   // código de cuenta inexistente con marcado
   d1121.bys_proyeccion.items[P.attr] = { meses: { SEPTIEMBRE: 5 }, total: 5 };
+  d1121.honorarios = { [ID_RARO]: honPayload('HON1'), [ID_RARO_2]: honPayload('HON2', { codigo: P.img }) };   // ids con marcado; la 2.ª con una cuenta fuera del catálogo con marcado
+  d1121.hon_proyeccion = { items: { [P.attr]: { meses: { SEPTIEMBRE: 6 }, total: 6 } } };                      // «cuenta» de la proyección con forma de atributo HTML
   const of = d1121.otras_fuentes;
   of.general.compras.og1 = ofCompraPayload('GEN');
   of.general.compras.og2 = ofCompraPayload('GENx', { codigo: P.img });  // cuenta no habilitada -> aviso en el title
@@ -115,6 +123,35 @@ await correrSpec('seguridad_xss', async (t) => {
     return i.closest('tr').querySelector('.item-total').textContent.replace(/\D/g, '');
   }, P.attr);
   t.eq(Number(totProy), 45, 'proyección con código raro: el total de su fila se actualiza (5 + 40)');
+  // ---------------------------------------------------------------- SEP: Honorarios (Subt. 21) — boletas y proyección con texto libre peligroso
+  txt = await textoDe('#modalBody .hon-section');
+  t.ok(txt.includes(`HON1 ${P.amp} ${P.img}`), 'honorarios: la descripción se ve LITERAL (una sola vez escapada)');
+  t.ok(txt.includes(`HON1 ${P.svg}`) && txt.includes(`HON1 ${P.script}`) && txt.includes(`HON1 ${P.comillas} ${P.img}`) && txt.includes(`HON1 ${P.attr}`), 'honorarios: N° de boleta, RUT, prestador y N° DC se ven literales');
+  t.ok(!txt.includes('&amp;amp;') && !txt.includes('&lt;img'), 'honorarios: no hay doble escape');
+  const idsHon = await page.evaluate(() => Array.from(document.querySelectorAll('#modalBody tr[data-hon-id]')).map(tr => tr.dataset.honId));
+  t.ok(idsHon.includes(ID_RARO) && idsHon.includes(ID_RARO_2), 'honorarios: los ids con comillas y marcado llegan intactos al DOM (data-hon-id)', idsHon);
+  t.ok(await page.evaluate(() => /onfocus/.test(document.querySelector('#modalBody table.hon-table').innerText)), 'honorarios: el N° DC con forma de atributo se muestra como texto');
+  t.ok(await page.evaluate((cod) => Array.from(document.querySelectorAll('#modalBody input.celda-input[data-modo="hon_proy"]')).some(i => i.dataset.codigo === cod), P.attr), 'honorarios: la «cuenta» de la proyección con forma de atributo llega intacta a data-codigo');
+  await page.evaluate((id) => { Array.from(document.querySelectorAll('#modalBody .hon-edit-btn')).find(b => b.dataset.honId === id).click(); }, ID_RARO);
+  const campoHon = (c) => page.evaluate((f) => document.querySelector(`#modalBody .hon-input[data-field="${f}"]`).value, c);
+  t.eq(await campoHon('descripcion'), `HON1 ${P.amp} ${P.img}`, 'editar boleta con id raro: el formulario recibe la descripción exacta (sin escapes)');
+  t.eq(await campoHon('nombreProveedor'), `HON1 ${P.comillas} ${P.img}`, 'editar boleta con id raro: el prestador exacto');
+  t.eq(await campoHon('documentoContable'), `HON1 ${P.attr}`, 'editar boleta con id raro: el N° DC exacto');
+  await page.click('#modalBody .cancelar-edicion-hon-btn');
+  await h.clearWrites();
+  await page.evaluate((id) => { Array.from(document.querySelectorAll('#modalBody .hon-del-btn')).find(b => b.dataset.honId === id).click(); }, ID_RARO);
+  await h.waitIdle();
+  const wDelHon = (await h.writes()).filter(w => w.path === RUTA('1121'));
+  t.ok(wDelHon.length === 1 && wDelHon[0].payload.honorarios && wDelHon[0].payload.honorarios[ID_RARO] && wDelHon[0].payload.honorarios[ID_RARO].__sentinel === 'deleteField', 'quitar la boleta con id raro: deleteField sobre la clave EXACTA', wDelHon[0] && wDelHon[0].payload);
+  await page.evaluate((cod) => {
+    const i = Array.from(document.querySelectorAll('#modalBody input.celda-input[data-modo="hon_proy"]')).find(x => x.dataset.codigo === cod && x.dataset.mes === 'OCTUBRE');
+    i.focus(); i.value = '40'; i.dispatchEvent(new Event('input', { bubbles: true }));
+  }, P.attr);
+  const totHonProy = await page.evaluate((cod) => {
+    const i = Array.from(document.querySelectorAll('#modalBody input.celda-input[data-modo="hon_proy"]')).find(x => x.dataset.codigo === cod && x.dataset.mes === 'OCTUBRE');
+    return i.closest('tr').querySelector('.item-total').textContent.replace(/\D/g, '');
+  }, P.attr);
+  t.eq(Number(totHonProy), 46, 'proyección de honorarios con código raro: el total de su fila se actualiza (6 + 40)');
   await h.flushWrites();
   await limpio('modal SEP tras editar');
   await page.keyboard.press('Escape');
@@ -225,7 +262,7 @@ await correrSpec('seguridad_xss', async (t) => {
   // ---------------------------------------------------------------- Reportes
   await clickTab(page, 'Reportes');
   await limpio('Reportes · Visualizador');
-  for (let ronda = 0; ronda < 6; ronda++) {   // cada clic redibuja el árbol y aparecen nuevos nodos por expandir
+  for (let ronda = 0; ronda < 16; ronda++) {   // cada clic redibuja el árbol y aparecen nuevos nodos por expandir (los nodos de Honorarios de SEP suman rondas)
     const quedan = await page.evaluate(() => { const b = Array.from(document.querySelectorAll('#vzBodyGas [data-vz-toggle]')).find(x => x.getAttribute('aria-expanded') !== 'true'); if (b) b.click(); return !!b; });
     if (!quedan) break;
   }

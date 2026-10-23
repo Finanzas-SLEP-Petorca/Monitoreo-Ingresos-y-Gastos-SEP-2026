@@ -308,6 +308,71 @@ await correrSpec('escritura_modal_tecleo', async (t) => {
     await h.close();
   }
 
+  // ======================================================================== SEP: Honorarios (celdas de la proyección y formulario de la boleta)
+  {
+    const h = await boot({ fixture: 'honorarios' });
+    const { page } = h;
+    await abrirSep(h, '1122');
+    const celdaHon = (mes) => `#modalBody input.celda-input[data-rbd="1122"][data-modo="hon_proy"][data-codigo="410803"][data-mes="${mes}"]`;
+    const guardadoHon = async (mes) => (((await docSep(h, '1122')).hon_proyeccion.items['410803'].meses) || {})[mes];
+    await page.evaluate(() => { document.querySelectorAll('#modalBody *').forEach((e, i) => { e.__marca = i + 1; }); });
+    // H1) teclear 1500000 con pausas > 400 ms en una celda de la proyección de honorarios (guardado + eco entre dígitos)
+    await escenario(t, 'H1)', async () => {
+      const sel = celdaHon('ENERO');
+      await page.click(sel);
+      await page.keyboard.type(TECLEADO, { delay: 450 });
+      await page.waitForTimeout(1100);
+      await h.waitIdle();
+      t.eq(await page.inputValue(sel), TECLEADO, 'H1) honorarios (proyección): tras el guardado y su eco el campo sigue siendo lo tecleado');
+      t.eq(await guardadoHon('ENERO'), 1500000, 'H1) honorarios (proyección): se guardó 1500000');
+      t.ok(await page.evaluate((s) => document.activeElement === document.querySelector(s), sel), 'H1) honorarios (proyección): la celda conserva el foco');
+      await h.flushWrites();
+    });
+    // H2) otra persona guarda OTRA celda de la misma cuenta y OTRA boleta mientras se teclea: lo tecleado no cambia
+    await escenario(t, 'H2)', async () => {
+      const sel = celdaHon('FEBRERO');
+      await page.click(sel);
+      await page.keyboard.type('12', { delay: 80 });
+      await h.remoto('1122', "d.hon_proyeccion.items['410803'].meses.MARZO = 777; d.honorarios.h1122_x = { codigo: '410803', tipoDocumento: 'BOLH', nroDocumento: 'X', fechaDocumento: '2026-05-05', fechaPago: '', descripcion: 'otra', rutProveedor: '', nombreProveedor: '', montoGasto: 5, montoDocumento: 5 };");
+      await page.keyboard.type('34', { delay: 80 });
+      await page.waitForTimeout(700);
+      await h.waitIdle();
+      t.eq(await page.inputValue(sel), '1234', 'H2) honorarios (proyección): con otra persona guardando en el mismo RBD, lo tecleado sigue siendo 1234');
+      t.eq(await page.inputValue(celdaHon('MARZO')), '777', 'H2) honorarios (proyección): y la celda que cambió la otra persona se actualiza');
+      await h.flushWrites();
+      t.eq(await guardadoHon('FEBRERO'), 1234, 'H2) honorarios (proyección): se guardó 1234');
+    });
+    // H3) montos pegados y texto no numérico
+    await escenario(t, 'H3)', async () => {
+      const sel = celdaHon('ABRIL');
+      await pegar(page, sel, '$ 1.500.000');
+      await h.flushWrites();
+      t.eq(await guardadoHon('ABRIL'), 1500000, 'H3) honorarios (proyección): «$ 1.500.000» pegado se guarda como 1500000');
+      await pegar(page, sel, 'abc');
+      t.ok(await page.evaluate((s) => document.querySelector(s).classList.contains('celda-invalida'), sel), 'H3) honorarios (proyección): un texto no numérico marca la celda como inválida');
+      await h.flushWrites();
+      t.eq(await guardadoHon('ABRIL'), 1500000, 'H3) honorarios (proyección): y NO toca lo guardado');
+    });
+    // H4) formulario de la boleta a medias y modo edición sobreviven a un snapshot de OTRO RBD y a uno propio (sin boletas duplicadas)
+    await escenario(t, 'H4)', async () => {
+      await page.click('#modalBody tr[data-hon-id="h1122_1"] .hon-edit-btn');
+      await page.focus('#modalBody .hon-form-grid [data-field="descripcion"]');
+      await page.keyboard.type(' EDITANDO', { delay: 30 });
+      await h.remoto('1121', "d.rem.meses.ENERO = 4242;");           // snapshot de otro RBD
+      await h.remoto('1122', "d.rem.meses.ENERO = 1111;");           // snapshot del mismo RBD (cambio ajeno)
+      await h.waitIdle();
+      t.eq(await page.evaluate(() => ({ edit: document.querySelector('#modalBody .hon-form-grid').dataset.editingId, descripcion: document.querySelector('#modalBody .hon-form-grid [data-field="descripcion"]').value, boton: document.querySelector('#modalBody .add-hon-btn').textContent })),
+        { edit: 'h1122_1', descripcion: 'Taller de teatro EDITANDO', boton: '💾 Guardar cambios de honorario' }, 'H4) honorarios: el formulario a medias y el modo edición sobreviven a snapshots ajenos');
+      await page.click('#modalBody .add-hon-btn');
+      await h.flushWrites();
+      const hon = (await docSep(h, '1122')).honorarios;
+      t.eq([Object.keys(hon).filter(k => k.startsWith('h1122_')).sort(), hon.h1122_1.descripcion], [['h1122_1', 'h1122_2', 'h1122_x'], 'Taller de teatro EDITANDO'], 'H4) honorarios: guardar la edición actualiza la MISMA boleta (no se crea una copia)');
+    });
+    t.eq(await page.evaluate(() => Array.from(document.querySelectorAll('#modalBody input.celda-input')).filter(i => i.dataset.modo === 'hon_proy').every(i => i.__marca)), true, 'honorarios: los nodos de la proyección no se reemplazaron durante todo el escenario');
+    t.noErrores(h);
+    await h.close();
+  }
+
   // ======================================================================== Fuentes (no deben romperse)
   {
     const h = await boot({ fixture: 'default' });

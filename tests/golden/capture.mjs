@@ -515,6 +515,80 @@ async function seccionEstado(h, R) {
   }
 }
 
+// Con el fixture "honorarios" (default + Honorarios (Subt. 21) por boleta y proyección en 1120, 1121, 1122, 1123, 1125 y 1128 — ver generate.mjs): el Panel principal con la línea y la columna de honorarios
+// dentro del gasto total, la pestaña SEP (tarjetas Real / Proyectado / Total y la tabla con «Gasto Hon.» y el % de personal), el detalle de 1121 (todas las marcas ⚠ y el formulario con avisos en vivo),
+// de 1122 (boletas + proyección), 1123 (solo proyección) y 1120 (sin marco SEP), % Ejecución (SEP, un RBD y Consolidado), el Visualizador, el Reporte personalizado y las exportaciones de SEP
+// (Excel de carga con las hojas HONORARIOS y HON_PROYECCION, resumen, JSON, la fila 1121 en XLS / PDF y el PDF general).
+async function seccionHonorarios(h, R) {
+  const { page } = h;
+  const fila = (rbd, accion) => `#tableBody button.row-action-btn[data-action="${accion}"][data-rbd="${rbd}"]`;
+  await abrirDetails(page, '#tab-dashboard');
+  for (const v of ['total', 'real', 'proy']) {
+    await page.click(`.dash-chips button[data-dash-vista="${v}"]`);
+    await R.vista(`honorarios.dashboard.${v}`, '#tab-dashboard');
+  }
+  await page.click('.dash-chips button[data-dash-vista="total"]');
+  await h.clickTab('SEP');
+  await R.vista('honorarios.sep', '#tab-panel');
+  await setSelect(page, '#corteMesSelect', 3);
+  await R.vista('honorarios.sep.corte-marzo', '#kpiRowReal, #kpiRowProy, #kpiRow');
+  await setSelect(page, '#corteMesSelect', 12);
+  await setSelect(page, '#estadoFilter', 'deficit');
+  await R.vista('honorarios.sep.filtro-deficit', '#tab-panel');
+  await setSelect(page, '#estadoFilter', '');
+  for (const rbd of ['1121', '1122', '1123', '1120']) {
+    await page.click(`#tableBody td.rbd-clickable[data-abrir-rbd="${rbd}"]`);
+    await h.waitIdle();
+    await R.vista(`honorarios.modal.sep.${rbd}`, '#rbdModal');
+    if (rbd === '1121') { // formulario en modo edición con los avisos en vivo (fecha de 2025, pago anterior al documento, gasto mayor que el documento)
+      await page.click('#modalBody tr[data-hon-id="h1121_1"] .hon-edit-btn');
+      await page.fill('#modalBody .hon-form-grid [data-field="fechaDocumento"]', '2025-12-30');
+      await page.fill('#modalBody .hon-form-grid [data-field="fechaPago"]', '2025-12-01');
+      await page.fill('#modalBody .hon-form-grid [data-field="montoGasto"]', '900.000');
+      await page.fill('#modalBody .hon-form-grid [data-field="montoDocumento"]', '100.000');
+      await R.vista('honorarios.modal.sep.1121.formulario-edicion-avisos', '#modalBody .hon-form-grid');
+      await page.click('#modalBody .cancelar-edicion-hon-btn');
+    }
+    await page.keyboard.press('Escape');
+    await h.waitIdle();
+  }
+  await h.clickTab('% Ejecución');
+  await R.vista('honorarios.ejec.sep.agregado', '#tab-ejecucion');
+  await setSelect(page, '#ejecRbdSelect', '1121');
+  await R.vista('honorarios.ejec.sep.1121', '#tab-ejecucion');
+  await setSelect(page, '#ejecRbdSelect', '');
+  await page.click('#ejecFuenteChips .of-chip[data-ejec-fuente="consolidado"]');
+  await R.vista('honorarios.ejec.consolidado', '#tab-ejecucion');
+  await h.clickTab('Reportes');
+  await page.click('#vzFuentesNinguna');
+  await page.click('#vzFuenteChips [data-vz-fuente="sep"]');
+  await page.click('#vzExpGas');
+  await R.vista('honorarios.rep.vz.sep', SEL_VZ);
+  await R.descarga('honorarios.exp.vz.sep.csv', () => page.click('#vzCsvBtn'));
+  await page.click('#vzAgruparChips [data-vz-agrupar="codigo"]');
+  await page.click('#vzExpGas');
+  await R.vista('honorarios.rep.vz.sep.por-codigo', SEL_VZ);
+  await page.click('#vzLimpiarBtn');
+  await page.click('#reporteVistaChips [data-reporte-vista="personalizado"]');
+  await h.waitIdle();
+  const f = await configurarPersonalizado(h, R, { entidades: ['1121', '1122', '1123', '1125', '1128'], conceptos: ['rem', 'hon', 'hon_proy'], meses: ['ENERO', 'MARZO', 'JUNIO', 'AGOSTO', 'DICIEMBRE'] });
+  R.dato('honorarios.rep.pers.faltantes', f);
+  await R.vista('honorarios.rep.pers', SEL_PERS);
+  await R.descarga('honorarios.exp.pers.csv', () => page.click('#reporteCsvBtn'));
+  await h.clickTab('SEP');
+  await R.descarga('honorarios.exp.sep.excel-carga', () => page.click('#downloadExcelBtn'));
+  await R.descarga('honorarios.exp.sep.excel-resumen', () => page.click('#downloadResumenExcelBtn'));
+  await R.descarga('honorarios.exp.sep.csv-resumen', () => page.click('#downloadBtn'));
+  await R.descarga('honorarios.exp.sep.json-carga', () => page.click('#downloadCargaBtn'));
+  await R.descarga('honorarios.exp.sep.fila.1121.xls', () => page.click(fila('1121', 'excel')));
+  await R.descarga('honorarios.exp.sep.fila.1121.csv', () => page.click(fila('1121', 'csvsep')));
+  await R.imprimir('honorarios.print.sep.fila.1121', () => page.click(fila('1121', 'pdf')));
+  await R.imprimir('honorarios.print.sep.fila.1123', () => page.click(fila('1123', 'pdf')));
+  await R.imprimir('honorarios.print.sep.general', () => page.click('#exportPdfBtn'));
+  await h.clickTab('Panel principal');
+  await R.imprimir('honorarios.print.dashboard', () => page.click('#dashPdfBtn'));
+}
+
 export const SECCIONES = [
   { nombre: 'dashboard', fn: seccionEncabezadoYDashboard },
   { nombre: 'sep', fn: seccionSep },
@@ -526,6 +600,7 @@ export const SECCIONES = [
   { nombre: 'cierre', fixture: 'cierre', fn: seccionCierre },
   { nombre: 'compras', fixture: 'compras', fn: seccionCompras },
   { nombre: 'estado', fixture: 'estado', fn: seccionEstado },
+  { nombre: 'honorarios', fixture: 'honorarios', fn: seccionHonorarios },
 ];
 
 export async function capturar({ log = () => {}, solo = null, html = undefined } = {}) {

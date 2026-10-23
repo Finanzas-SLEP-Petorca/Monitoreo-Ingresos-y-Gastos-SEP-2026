@@ -1,5 +1,5 @@
 // modal_equivalencia — el reconciliador de los modales (morphContenedor) debe dejar EXACTAMENTE lo mismo que una reconstrucción
-// completa: tras una secuencia aleatoria (pero fija: semilla) de cambios remotos —altas y bajas de compras, ítems y conceptos,
+// completa: tras una secuencia aleatoria (pero fija: semilla) de cambios remotos —altas y bajas de compras, boletas de honorarios, ítems y conceptos,
 // cambios de montos y del corte "Real hasta"— el modal abierto y el modal cerrado y vuelto a abrir (construcción desde cero) tienen
 // la misma estructura, los mismos textos, los mismos atributos y los mismos valores en celdas y selectores.
 import { boot, clickTab } from '../lib/boot.mjs';
@@ -8,7 +8,7 @@ import { correrSpec } from '../lib/spec.mjs';
 function prng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 const MESES = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
 
-// Firma estructural del contenido de un modal (sin el formulario de compra, que no se reconcilia y parte vacío en ambos casos).
+// Firma estructural del contenido de un modal (sin los formularios de compra ni de honorarios, que no se reconcilian y parten vacíos en ambos casos).
 const FIRMA = (sel) => {
   const raiz = document.querySelector(sel);
   const out = [];
@@ -16,7 +16,7 @@ const FIRMA = (sel) => {
     if (n.nodeType === 3) { const t = n.nodeValue.replace(/\s+/g, ' ').trim(); if (t) out.push('T:' + t); return; }
     if (n.nodeType !== 1) return;
     const attrs = Array.from(n.attributes).filter(a => !(n.tagName === 'INPUT' && a.name === 'value') && !['title', 'aria-invalid', 'style'].includes(a.name)).map(a => a.name + '=' + a.value).sort().join(';');
-    out.push('<' + n.tagName + (attrs ? ' ' + attrs : '') + ((n.tagName === 'INPUT' || n.tagName === 'SELECT') && !n.closest('.compra-form-grid') ? ' val=' + n.value : '') + '>');
+    out.push('<' + n.tagName + (attrs ? ' ' + attrs : '') + ((n.tagName === 'INPUT' || n.tagName === 'SELECT') && !n.closest('.compra-form-grid, .hon-form-grid') ? ' val=' + n.value : '') + '>');
     n.childNodes.forEach(walk);
     out.push('</' + n.tagName + '>');
   };
@@ -49,8 +49,10 @@ await correrSpec('modal_equivalencia', async (t) => {
   const reabrirSep = async () => { await page.keyboard.press('Escape'); await h.waitIdle(); await abrirSep(); };
   await abrirSep();
   let ok = 0;
-  for (let i = 0; i < 24; i++) {
-    const op = pick(['addCompra', 'delCompra', 'editCompra', 'addBys', 'delBys', 'ingreso', 'rem', 'corte']);
+  const PASOS_SEP = 40;
+  const opsHon = [];
+  for (let i = 0; i < PASOS_SEP; i++) {
+    const op = pick(['addCompra', 'delCompra', 'editCompra', 'addBys', 'delBys', 'ingreso', 'rem', 'corte', 'addHon', 'delHon', 'editHon', 'addHonProy', 'delHonProy', 'editHonProy']);
     const n = Math.floor(rnd() * 1000);
     const codigo = pick(['410605', '410904', '411601']);
     const mes = pick(MESES);
@@ -63,11 +65,25 @@ await correrSpec('modal_equivalencia', async (t) => {
       ingreso: `d.ingreso_items['Carrera Docente'].meses.${mes} = ${n * 7};`,
       rem: `d.rem.meses.${mes} = ${n * 13};`,
       corte: `d.rem.real_hasta_mes = ${1 + (n % 12)};`,
+      // Honorarios (Subt. 21): boletas por id y proyección por cuenta (incluye cuentas del catálogo y una fuera de él, textos con & < > ")
+      addHon: `d.honorarios = d.honorarios || {}; d.honorarios['hA${n}'] = { codigo: '${pick(['410803', '410304', '411601', '999999'])}', tipoDocumento: '${pick(['BOLHE', 'BOLH', 'BPST', 'FAC'])}', nroDocumento: 'B-${n}', fechaDocumento: '2026-0${1 + (n % 9)}-1${n % 9}', fechaPago: '2026-0${1 + (n % 9)}-2${n % 9}', descripcion: 'Boleta ${n} <b>&</b> "q"', rutProveedor: '1-9', nombreProveedor: 'Prest ${n}', montoGasto: ${1000 + n}, montoDocumento: ${1000 + n}, documentoContable: 'DC_${n}' };`,
+      delHon: `const ids = Object.keys(d.honorarios || {}); if (ids.length) delete d.honorarios[ids[${n} % ids.length]];`,
+      editHon: `const ids = Object.keys(d.honorarios || {}); if (ids.length) d.honorarios[ids[${n} % ids.length]].descripcion = 'Editada ${n} & <i>';`,
+      addHonProy: `d.hon_proyeccion = d.hon_proyeccion || {}; d.hon_proyeccion.items = d.hon_proyeccion.items || {}; d.hon_proyeccion.items['${pick(['410803', '410304', '410501'])}'] = { meses: ${meses0(n)}, total: 0 };`,
+      delHonProy: `if (d.hon_proyeccion && d.hon_proyeccion.items) delete d.hon_proyeccion.items['${pick(['410803', '410304', '410501'])}'];`,
+      editHonProy: `const ks = Object.keys((d.hon_proyeccion && d.hon_proyeccion.items) || {}); if (ks.length) d.hon_proyeccion.items[ks[${n} % ks.length]].meses.${mes} = ${n * 5};`,
     }[op];
+    if (/Hon/.test(op)) opsHon.push(op);
     await h.remoto('1121', cuerpo);
     if (await comparar('#modalBody', reabrirSep, `SEP paso ${i} (${op})`)) ok++;
   }
-  t.eq(ok, 24, 'SEP: tras 24 cambios remotos aleatorios el modal reconciliado es idéntico al reconstruido desde cero');
+  t.eq(ok, PASOS_SEP, `SEP: tras ${PASOS_SEP} cambios remotos aleatorios (compras, boletas de honorarios, proyecciones, ingresos y cortes) el modal reconciliado es idéntico al reconstruido desde cero`);
+  // El bloque «Honorarios (Subt. 21)» está en el modal y sus filas son EXACTAMENTE las boletas del documento (que el reconciliador y la reconstrucción coincidan no basta: ambos podrían omitir el bloque).
+  await h.remoto('1121', "d.honorarios = d.honorarios || {}; d.honorarios['hFinal'] = { codigo: '410803', tipoDocumento: 'BOLHE', nroDocumento: 'F-1', fechaDocumento: '2026-05-05', fechaPago: '2026-05-06', descripcion: 'Boleta final', rutProveedor: '1-9', nombreProveedor: 'Final', montoGasto: 12345, montoDocumento: 12345 };");
+  if (await comparar('#modalBody', reabrirSep, 'SEP paso final (boleta fija)')) ok++;
+  const boletasDoc = Object.keys((await h.store())['sep_carga_rbd/1121'].honorarios || {}).sort();
+  t.ok(opsHon.length >= 8 && boletasDoc.includes('hFinal'), 'SEP: la secuencia incluyó cambios de honorarios (alta, baja y edición de boletas y de proyección) y la boleta final está en el documento', { opsHon: opsHon.length, boletas: boletasDoc.length });
+  t.eq(await page.evaluate(() => Array.from(document.querySelectorAll('#modalBody table.hon-table tbody tr[data-hon-id]')).map(tr => tr.dataset.honId).sort()), boletasDoc, 'SEP: las filas del registro de honorarios del modal son las boletas del documento');
   await page.keyboard.press('Escape'); await h.waitIdle();
 
   // ============================================================ Fuentes: General (compras + proyección por concepto) y FAEP (conceptos)

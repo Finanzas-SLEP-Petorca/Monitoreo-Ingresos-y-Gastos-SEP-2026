@@ -2,9 +2,9 @@
 
 Panel de seguimiento de Ingresos y Gastos por establecimiento (RBD) y por fuente de
 financiamiento, para el Servicio Local de Educación Pública (SLEP) Petorca. Para SEP, compara
-el ingreso de cada colegio contra el gasto real en remuneraciones (Subtítulo 21) y en bienes y servicios
+el ingreso de cada colegio contra el gasto real en remuneraciones y honorarios (Subtítulo 21) y en bienes y servicios
 (Subtítulos 22 y 29), aplicando la regla de que el 70% del ingreso SEP debe destinarse a
-remuneraciones y el 30% a bienes y servicios, e identifica déficit o superávit por
+personal (remuneraciones + honorarios) y el 30% a bienes y servicios, e identifica déficit o superávit por
 establecimiento.
 
 ## Cómo usarlo
@@ -208,17 +208,17 @@ SUPEREDUC, que exige subir por RBD (por eso el archivo con todos los RBD no se p
 
 **Cómo se arma el CSV de SUPEREDUC.** Sigue el Manual de Usuario de Rendición de Cuentas 2026
 (Cap. III, columnas A–M y Tabla 02), sin cambiar lo que el panel guarda ni lo que muestra:
-el *Tipo de documento* sale como **código** (`FACEL`, `BOL`, `NOTACRE`…; las boletas de honorarios,
-`BOLH`/`BHE`/`BOLHE`/`BPST`/`BPSTE`, según la Sección 12 del Manual de Cuentas); las fechas salen
+el *Tipo de documento* sale como **código** (`FACEL`, `BOL`, `NOTACRE`…; los documentos de honorarios,
+`BOLH`/`BHE`/`BOLHE`/`BPST`/`BPSTE`, ya **no son una opción** del selector de compras: se registran en Honorarios, ver abajo); las fechas salen
 **dd-mm-aaaa**; la descripción se recorta a **100** caracteres; el RUT sale **sin puntos y con
 guion** (`76123456-7`); y *Documento Original* va **vacío** salvo en notas de crédito/débito, donde
 debe ser `número-TIPO` (p. ej. `123-FAC`). Una misma función (`normalizaFilaCompraSupereduc`)
 sirve a SEP y a las fuentes. Antes de descargar, el panel **avisa cuántas compras** traen datos que
 la plataforma rechazaría y por qué (tipo sin código oficial, fecha inválida, fecha de pago anterior
 a la del documento o fuera de 2026, monto gasto mayor que el del documento, descripción de más de
-100 caracteres, nota de crédito/débito sin `número-TIPO`; y un aviso informativo para los documentos
-de honorarios, que SUPEREDUC recibe en su Libro de Honorarios, Cap. IV); si cancelas el aviso no se
-descarga nada. El archivo, si se confirma, se descarga igual con los datos tal como están en el panel.
+100 caracteres, nota de crédito/débito sin `número-TIPO`; y un aviso para las compras **antiguas** con un
+tipo de documento de honorarios: «muévelo al registro de Honorarios», porque SUPEREDUC las recibe en su Libro de
+Honorarios, Cap. IV, no en el de Compras); si cancelas el aviso no se descarga nada. El archivo, si se confirma, se descarga igual con los datos tal como están en el panel.
 
 **N° DC (Documento Contable interno).** Cada compra tiene un campo propio **N° DC** (`documentoContable`, texto
 libre de hasta 100 caracteres, p. ej. `DC_344`): el número del documento contable interno, es decir, la
@@ -357,10 +357,43 @@ son necesarios para que los cambios queden guardados (la importación de Excel y
 SUBT22/SUBT29, esos gastos se cargan como compras; el Excel que se exporta todavía trae esas dos hojas, derivadas de las compras y solo de
 consulta, y el importador las ignora).
 
-El botón "⬇ Excel" descarga la carga completa (hojas `INGRESO`, `REMUNERACIONES`, `SUBT22` y `SUBT29` —estas dos solo de consulta—, `COMPRAS` y
-`BYS_PROYECCION`) lista para reimportar; es distinto del botón "⬇ Excel (resumen general)", que descarga en una sola hoja el
+El botón "⬇ Excel" descarga la carga completa (hojas `INGRESO`, `REMUNERACIONES`, `SUBT22` y `SUBT29` —estas dos solo de consulta—, `COMPRAS`,
+`BYS_PROYECCION`, `HONORARIOS` y `HON_PROYECCION`) lista para reimportar; es distinto del botón "⬇ Excel (resumen general)", que descarga en una sola hoja el
 mismo resumen que se ve en pantalla y que trae "🖨 Exportar PDF (general)" (Ingreso SEP, gastos,
 % de ejecución, saldos, Estado) para todos los RBD que cumplan el filtro/búsqueda actual.
+
+### Honorarios (Subt. 21) en SEP: registro por boleta
+
+Los honorarios son **Subtítulo 21 pero no son remuneración**: SUPEREDUC los recibe en su propio libro (Libro de Honorarios, Cap. IV del
+Manual de Usuario). En el detalle de cada RBD de **SEP**, justo debajo de «Remuneraciones (Subt. 21)», está el bloque **Honorarios (Subt. 21)**.
+*En esta primera entrega solo existe en SEP; las demás fuentes y Administración Central llegan en una PR posterior.*
+
+- **Una fila por boleta** («Registro de honorarios SEP»), como el registro de compras: cuenta, tipo de documento (solo los 5 de honorarios:
+  `BOLH`, `BHE`, `BOLHE`, `BPST`, `BPSTE`), N° de documento, Fecha de Documento, Fecha de Pago, descripción, RUT y nombre del prestador, Monto Gasto,
+  Monto Documento y **N° DC**. El formulario es el mismo para agregar, editar y duplicar; cada boleta se guarda por su id (`honorarios.{id}`) con
+  `merge`, así que dos personas editando boletas distintas del mismo RBD no se pisan.
+- **Solo el bruto de la boleta**: no hay retención ni líquido. Monto Gasto = Monto Documento salvo que se reparta una boleta entre varias cuentas
+  (entonces el Gasto es menor). Las boletas son siempre **positivas** (no hay notas de crédito).
+- **Cuentas**: solo las del catálogo de honorarios (36 cuentas del Plan de Cuentas 2026 cuyo recuadro «Documentos Habilitados» lista algún tipo de
+  honorarios, cada una con los tipos que acepta; `410803` solo acepta honorarios y `411801` solo BHE). Cuáles se pueden usar en una subvención lo
+  decide el Plan de Cuentas. El catálogo es un dato versionado (`data/honorarios_cuentas_2026.json`) que se regenera con
+  `scripts/extract_honorarios_cuentas.py` (ver `data/honorarios_cuentas_2026_verificacion.md`).
+- **Mes**: una boleta cuenta en el mes de su **Fecha de Documento**. La fila de solo lectura «Honorarios (Subt. 21)» del detalle por mes suma las boletas
+  de cada mes. Una boleta **sin fecha de documento válida o de una cuenta fuera del catálogo no suma** (se marca con un aviso en la tabla y en un resumen
+  sobre ella: no se descarta, se corrige o se borra a mano). Otros avisos **solo informan y no cambian ningún total**: fecha de documento o de pago de otro
+  año o fuera de orden, cuenta no habilitada para SEP en el Plan de Cuentas, tipo que no es de honorarios o que la cuenta no acepta, y monto no positivo.
+- **Honorarios (Proyección)**: tabla editable, una fila por cuenta, con los meses que faltan (igual que la proyección de Bienes y Servicios); siempre
+  cuenta como proyectado. Si el selector «Ver resumen hasta el mes» está en un mes anterior, se cortan boletas y proyección.
+- **Datos personales**: el RUT y el nombre del prestador los ven los correos autorizados (los mismos que acceden al panel).
+- **Compras antiguas con tipo de honorarios**: siguen sumando en Bienes y Servicios (las cifras no cambian) y muestran «⚠ muévelo a Honorarios»; las mueve
+  la persona a mano (no hay botón de migración): se carga la boleta en Honorarios y se borra la compra.
+- **Excel**: las hojas `HONORARIOS` (una fila por boleta, con su **ID**, el tipo como código y N° DC) y `HON_PROYECCION` (formato de `BYS_PROYECCION`). Al
+  importar, una fila con ID existente actualiza esa boleta; con ID vacío se crea con una clave calculada del contenido (volver a subir el archivo no
+  duplica); el Excel no borra nunca boletas. Las filas que no se pueden importar (RBD inexistente, cuenta fuera del catálogo, tipo no permitido, sin fecha,
+  monto ≤ 0, ID inválido) se listan en el resumen con hoja, fila y motivo. Un Excel antiguo sin estas hojas se importa igual. En el JSON de respaldo van
+  como `honorarios_por_rbd` y `hon_proyeccion_por_rbd`.
+- **Pendiente (PR-2)**: el CSV del Libro de Honorarios (formato y validaciones del manual) y sus botones. **No existe todavía**: el «⬇ CSV SEP» sigue
+  siendo solo de compras.
 
 ### Real vs. proyectado
 
@@ -377,6 +410,9 @@ Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o nar
   o es una estimación, así que cada RBD tiene su propio selector "Remuneraciones reales hasta:
   [mes]" — los meses hasta ahí se ven verdes, el resto naranjas, y siempre son editables. Se
   ajusta por establecimiento, a medida que se van confirmando los pagos reales de cada mes.
+- **Honorarios (Subt. 21, solo SEP)**: las boletas del «Registro de honorarios» siempre son reales (gasto ya documentado, en el mes de su Fecha de
+  Documento) y la «Honorarios (Proyección)» por cuenta siempre es proyectada y se SUMA a las boletas, igual que en Bienes y Servicios. En los chips
+  Real/Proyectado y en las tarjetas del Panel principal y de SEP hay una tarjeta «Gasto Honorarios» (Real / Proyectado / total).
 - **Bienes y Servicios**: las compras del "Registro de compras" siempre son reales — son gastos
   ya documentados, con proveedor y N° de documento. Para estimar meses que todavía no tienen
   compras cargadas, existe la sección **"Bienes y Servicios (Proyección) — por ítem"**: se puede
@@ -685,18 +721,25 @@ el catálogo SEP, la coherencia de Adm. Central y la revisión visual de las 8 p
   reportes (Preferente y Prioritario).
 - **Carrera Docente**: ingreso de uso exclusivo en remuneraciones; no se carga automáticamente,
   se completa a mano mes a mes.
-- **Gasto Remuneraciones (Subt. 21)** y **Gasto Bienes y Servicios (Subt. 22 / 29)**: se
+- **Gasto Remuneraciones (Subt. 21)**, **Gasto Honorarios (Subt. 21, boletas; solo SEP por ahora)** y **Gasto Bienes y Servicios (Subt. 22 / 29)**: se
   completan a mano en el panel; no vienen precargados desde ningún sistema.
 
 ## Regla 70/30
 
-- Meta remuneraciones = 70% de (Ingreso SEP Preferente + Prioritario) + 100% de Carrera Docente
+- Meta remuneraciones (personal) = 70% de (Ingreso SEP Preferente + Prioritario) + 100% de Carrera Docente
   (ese ingreso solo puede gastarse en remuneraciones).
 - Meta bienes y servicios = 30% de (Ingreso SEP Preferente + Prioritario) — Carrera Docente no
   cuenta para este 30%.
-- Saldo post Remuneraciones = meta remuneraciones − gasto real en remuneraciones.
-- Saldo final = (Ingreso SEP + Carrera Docente) − gasto remuneraciones − gasto bienes y
-  servicios.
+- **Honorarios cuentan del lado del personal (decisión del usuario, «opción B»).** Todos los honorarios de SEP (boletas + proyección) se suman a las
+  remuneraciones contra la meta del 70%: **Gasto Personal = Gasto Remuneraciones + Gasto Honorarios**. Se muestran en su propia columna/tarjeta/línea, pero
+  los encabezados dicen «% Ejec. Personal (Rem.+Hon.)». El 30% (B&S) no cambia. No se usan los 4 gastos manuales de personal ni hay indicador de 50%
+  de contrataciones ni tope de 10% de Administración Central SEP.
+- Saldo post Personal (`saldo_rem`) = meta remuneraciones (70%) − (gasto remuneraciones + gasto honorarios).
+- Saldo final = (Ingreso SEP + Carrera Docente) − gasto remuneraciones − gasto honorarios − gasto bienes y
+  servicios. Gasto Total = Remuneraciones + Honorarios + Bienes y Servicios.
+- **Un solo número en todas las vistas**: el gasto total y el saldo de SEP son idénticos en la pestaña SEP, el Panel principal (tarjeta, franja, serie mensual
+  y «Atención»), % Ejecución (SEP y Consolidado) y Reportes/Visualizador. Los honorarios de SEP entran en el Consolidado aunque esas vistas aún no tengan
+  columna o serie propia de Honorarios (llega en la PR posterior).
 
 ### Estado de una entidad: una sola regla (L-07 / L-08)
 
@@ -730,15 +773,14 @@ redondear ningún porcentaje**: los % que se muestran siguen redondeados a 1 dec
 
 La tabla tiene tres grupos de columnas de porcentaje:
 
-- **% Ejec. Remuneraciones / % Ejec. B&S** (fondo blanco): gasto / **meta** del 70% o 30%
-  respectivamente. 100% = gastó justo lo que la regla le permite. Pueden pasar de 100% (indican
+- **% Ejec. Personal (Rem.+Hon.) / % Ejec. B&S** (fondo blanco; en la tabla de SEP «% Ejec. Personal»): gasto de personal (remuneraciones + honorarios) / **meta** del 70%, y gasto de B&S / meta del 30%. 100% = gastó justo lo que la regla le permite. Pueden pasar de 100% (indican
   que ese RBD ya superó su tope) aunque el establecimiento gaste poco en términos absolutos, si
   su ingreso SEP también es bajo. Son solo informativos: no definen el Estado.
-- **% Rem. / Ingreso, % B&S / Ingreso** (fondo celeste claro, "% sobre Ingreso Total
+- **% Personal / Ingreso, % B&S / Ingreso** (fondo celeste claro, "% sobre Ingreso Total
   (informativo)"): gasto / **Ingreso Total** (SEP + Carrera Docente) — la fracción real del
   ingreso ya gastada, sin pasar por el filtro del 70/30. También son solo informativos.
 - **Saldo Final (Real+Proy) y % Ejec. Total (Real+Proy)** (fondo celeste oscuro y en negrita,
-  justo al lado de "Estado"): Ingreso Total − Gasto Total y (Gasto Remuneraciones + Gasto B&S) /
+  justo al lado de "Estado"): Ingreso Total − Gasto Total y (Gasto Remuneraciones + Gasto Honorarios + Gasto B&S) /
   Ingreso Total respectivamente — ambos ya incluyen tanto lo ejecutado como lo proyectado para lo
   que falta del año, así se ve cómo quedaría ese RBD si las proyecciones cargadas (Remuneraciones
   futuras y Bienes y Servicios Proyección) se cumplen tal cual. El Estado de cada RBD se lee con
@@ -770,12 +812,18 @@ firestore.rules       Reglas de seguridad de Firestore (pegar manualmente en Fir
 scripts/              Pipeline en Python usado para armar los datos que alimentan el panel
                        a partir de los Excel de origen (Estado_RBD_2026.xlsx, remuneraciones
                        SIGFE/CasChile, Liquidación Web Subvenciones, Carrera Docente/CPEIP), y
-                       extract_plan_cuentas.py (matriz del Plan de Cuentas 2026 desde el PDF).
+                       extract_plan_cuentas.py (matriz del Plan de Cuentas 2026 desde el PDF) y
+                       extract_honorarios_cuentas.py (catálogo de cuentas de honorarios; reinyecta el bloque
+                       de index.html con --inyectar y se comprueba con --check).
 data/                 plan_cuentas_2026.json (matriz de cuentas por subvención, dato normativo
-                       sin cifras) y plan_cuentas_2026_verificacion.md (cómo se verificó).
+                       sin cifras) y plan_cuentas_2026_verificacion.md (cómo se verificó);
+                       honorarios_cuentas_2026.json (36 cuentas que aceptan honorarios y sus tipos)
+                       y honorarios_cuentas_2026_verificacion.md (extracción y cotejo con la matriz).
+docs/                 honorarios_spec.md: especificación del Libro de Honorarios, decisiones del
+                       usuario y plan en 3 PR (PR-1 hecha: SEP; PR-2: CSV; PR-3: otras fuentes y analítica).
 tests/                Arnés de pruebas (Playwright + mock local de Firebase): specs, golden master
-                       y fixtures sintéticos (default, cierre, compras, estado). Ver tests/README.md.
-                       Se corre con `node tests/run.mjs` (≈ 12 min la suite completa).
+                       y fixtures sintéticos (default, cierre, compras, estado, honorarios). Ver tests/README.md.
+                       Se corre con `node tests/run.mjs` (≈ 15 min la suite completa).
 tests/e2e-real/       Arnés opcional contra el SDK real de Firestore y su emulador (ver tests/e2e-real/README.md).
 *.pdf (raíz)          Manuales oficiales de SUPEREDUC 2026 de referencia (Manual de Cuentas y capítulos del Manual de
                        Usuario de Rendición de Cuentas); el panel no los lee.
@@ -784,7 +832,7 @@ tests/e2e-real/       Arnés opcional contra el SDK real de Firestore y su emula
 Los scripts de `scripts/` esperan los Excel de origen en una carpeta `CARGA/` local (no
 incluida en este repositorio: son datos internos de SLEP Petorca). No se publican Excel, CSV
 ni JSON con cifras reales por establecimiento — solo el código, el dashboard ya armado y la
-matriz normativa del Plan de Cuentas (excepción puntual en `.gitignore`).
+matrices normativas del Plan de Cuentas y del catálogo de honorarios (excepciones puntuales en `.gitignore`).
 
 ## Firebase (acceso y sincronización en tiempo real)
 
@@ -865,14 +913,14 @@ donde se edita) refleja la verdad, usando `snapshot.metadata.hasPendingWrites` /
 ## Seguridad del texto libre y de los archivos exportados
 
 - **Escape de HTML.** Todo texto que escribe una persona, que llega de Firestore o que viene de un
-  Excel importado (descripción, nombre y RUT del proveedor, N° de documento, documento original,
+  Excel importado (descripción, nombre y RUT del proveedor o del prestador de honorarios, N° de documento, N° DC, documento original,
   conceptos de B&S y de proyección, correo de quien editó…) se inserta con un único helper
   (`escHtml`, que escapa `&`, `<`, `>`, las comillas dobles y simples y el acento grave) en tablas, modales, Reportes, % Ejecución e impresión/PDF.
   Un `&` o un `<` se ven tal cual, una sola vez escapados, y nada se interpreta como HTML (se cierra
   el XSS almacenado). Los `id`/`data-*` construidos con texto libre usan un identificador seguro
   (`idSeguro`) y los selectores no concatenan texto.
-- **Inyección de fórmulas en CSV/Excel.** En las columnas de **texto libre** (descripción, proveedor,
-  concepto) un texto que empieza con `=`, `+`, `-`, `@` (o tabulador/CR) se exporta con un
+- **Inyección de fórmulas en CSV/Excel.** En las columnas de **texto libre** (descripción, proveedor o prestador,
+  N° DC, concepto) un texto que empieza con `=`, `+`, `-`, `@` (o tabulador/CR) se exporta con un
   apóstrofo (`'`) delante para que Excel no lo evalúe como fórmula. Nunca se toca un monto, una fecha,
   un código, un RUT ni un N° de documento, y tampoco un texto que ya es un número (`-1500`). Al
   **importar** un Excel se quita ese único apóstrofo inicial, así que exportar y reimportar no altera

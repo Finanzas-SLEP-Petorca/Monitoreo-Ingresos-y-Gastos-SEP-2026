@@ -90,6 +90,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
      concepto cae siempre en la misma columna de arriba a abajo, y las 3 tarjetas propias de Total
      (sin Real/Proyectado) simplemente pasan a una segunda línea de esa misma grilla. */
   .kpi-row { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:8px; margin-bottom:14px; }
+  .kpi-row.kpi-row-real, .kpi-row.kpi-row-proy { grid-template-columns:repeat(6, minmax(0,1fr)); } /* Real y Proyectado llevan 6 tarjetas desde que existe «Gasto Honorarios» */
   /* % Ejecución de las fuentes distintas de SEP: 6 tarjetas (Rem/B&S/Total × Real y a diciembre) en 3 columnas. */
   .kpi-row.kpi-row-3 { grid-template-columns:repeat(3, minmax(0,1fr)); }
   @media (max-width:900px) {
@@ -261,11 +262,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   input.celda-input.celda-invalida { border-color:var(--status-critical); background:#fdecec; color:var(--status-critical); }
   input.celda-input::placeholder { color:#75716a; }
 
-  .compras-section { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
-  .compra-form-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:8px; margin:10px 0; align-items:end; }
+  .compras-section, .hon-section { margin-top:18px; padding-top:14px; border-top:1px solid var(--border); }
+  .compra-form-grid, .hon-form-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:8px; margin:10px 0; align-items:end; }
   .compra-field { display:flex; flex-direction:column; gap:3px; }
   .compra-field-label { font-size:10px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.02em; }
-  .compra-input { padding:6px 8px; border-radius:5px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); width:100%; box-sizing:border-box; }
+  .compra-input, .hon-input { padding:6px 8px; border-radius:5px; border:1px solid var(--baseline); font-size:12px; background:#fff; color:var(--text-primary); width:100%; box-sizing:border-box; }
   /* "Doc. original" solo sirve para notas de crédito/débito: con cualquier otro tipo de documento se ATENÚA (rótulo más suave y borde punteado),
      pero NO se deshabilita —sigue editable para no ocultar ni bloquear los valores que ya tienen las compras existentes—. Solo CSS (:has sobre la opción
      elegida): se actualiza también cuando el formulario se rellena por código (✏️ / ⧉ / limpiar). Sin :has() el navegador ignora la regla y el campo se ve normal. */
@@ -275,14 +276,16 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .compra-form-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .add-compra-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
   .add-compra-btn:hover { filter:brightness(.9); }
-  .compra-form-grid.editing .add-compra-btn { background:#b45309; border-color:#b45309; }
-  .compra-form-grid.editing { outline:2px solid #b45309; outline-offset:6px; border-radius:6px; }
-  .cancelar-edicion-btn { padding:6px 10px; border-radius:5px; border:1px solid var(--baseline); background:#fff; color:var(--text-secondary); font-size:12px; cursor:pointer; white-space:nowrap; }
-  .cancelar-edicion-btn:hover { background:var(--gridline); }
-  .cancelar-edicion-btn.hidden { display:none; }
+  .add-hon-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .add-hon-btn:hover { filter:brightness(.9); }
+  .compra-form-grid.editing .add-compra-btn, .hon-form-grid.editing .add-hon-btn { background:#b45309; border-color:#b45309; }
+  .compra-form-grid.editing, .hon-form-grid.editing { outline:2px solid #b45309; outline-offset:6px; border-radius:6px; }
+  .cancelar-edicion-btn, .cancelar-edicion-hon-btn { padding:6px 10px; border-radius:5px; border:1px solid var(--baseline); background:#fff; color:var(--text-secondary); font-size:12px; cursor:pointer; white-space:nowrap; }
+  .cancelar-edicion-btn:hover, .cancelar-edicion-hon-btn:hover { background:var(--gridline); }
+  .cancelar-edicion-btn.hidden, .cancelar-edicion-hon-btn.hidden { display:none; }
   .compras-scroll { overflow-x:auto; margin-top:8px; }
-  table.compras-table { min-width:1180px; table-layout:auto; }
-  table.compras-table th, table.compras-table td { white-space:nowrap; }
+  table.compras-table, table.hon-table { min-width:1180px; table-layout:auto; }
+  table.compras-table th, table.compras-table td, table.hon-table th, table.hon-table td { white-space:nowrap; }
   .compra-acciones-cell { display:flex; gap:2px; }
   table.detalle-table td.compra-acciones-cell { overflow:visible; } /* que el anillo de foco de ✏️ ⧉ 🗑 no lo recorte la celda (U-13) */
   .compra-del-btn, .compra-edit-btn, .compra-dup-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
@@ -295,13 +298,18 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   /* Avisos de fecha / cuenta de las compras (F-11 / L-05): marca por fila, resumen sobre la tabla y avisos en vivo del formulario (solo avisan, no impiden guardar). */
   .compra-aviso-fecha { display:inline-block; margin-left:6px; padding:0 6px; border-radius:9px; border:1px solid var(--tone-amber-border); background:var(--tone-amber-bg); color:var(--tone-amber-fg); font-size:11px; font-weight:600; cursor:help; }
   .compra-aviso-fecha.compra-aviso-cuenta { display:block; margin:2px 0 0; white-space:normal; border-radius:8px; } /* la 1.ª columna mide 210 px y recorta: la marca va en una 2.ª línea */
-  .compra-form-avisos { grid-column:1 / -1; }
-  .compra-form-avisos:empty { display:none; }
-  .compra-form-avisos .plan-nota { margin:2px 0; }
+  .compra-form-avisos, .hon-form-avisos { grid-column:1 / -1; }
+  .compra-form-avisos:empty, .hon-form-avisos:empty { display:none; }
+  .compra-form-avisos .plan-nota, .hon-form-avisos .plan-nota { margin:2px 0; }
+  .compra-aviso-tipo-hon { display:block; margin:2px 0 0; padding:0 6px; border-radius:8px; border:1px solid var(--tone-amber-border); background:var(--tone-amber-bg); color:var(--tone-amber-fg); font-size:11px; font-weight:600; cursor:help; width:max-content; }
   .detalle-sin-compras { color:var(--text-muted); font-style:italic; text-align:left !important; padding:10px 8px !important; }
 
-  .bysproy-add-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
-  .bysproy-add-row select.bysproy-add-select { width:auto; min-width:280px; flex:0 1 auto; }
+  .bysproy-add-row, .honproy-add-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  .bysproy-add-row select.bysproy-add-select, .honproy-add-row select.honproy-add-select { width:auto; min-width:280px; flex:0 1 auto; }
+  .add-honproy-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .add-honproy-btn:hover { filter:brightness(.9); }
+  .honproy-del-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
+  .honproy-del-btn:hover { opacity:.6; }
   .add-bysproy-btn { padding:6px 10px; border-radius:5px; border:1px solid #6b46c1; background:#6b46c1; color:#fff; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
   .add-bysproy-btn:hover { filter:brightness(.9); }
   .bysproy-del-btn { background:none; border:none; cursor:pointer; font-size:13px; padding:2px 6px; }
@@ -352,7 +360,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   @media print {
     @page { size: landscape; margin: 10mm 8mm; }
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
-    .table-controls, .corte-control, .legend-row, .sep-notas, footer, .expand-cell, .compra-form-grid, .bysproy-add-row, .col-acciones { display:none !important; }
+    .table-controls, .corte-control, .legend-row, .sep-notas, footer, .expand-cell, .compra-form-grid, .hon-form-grid, .bysproy-add-row, .honproy-add-row, .col-acciones { display:none !important; }
     /* Mes de cierre: en papel queda solo la línea de texto (sin selector, botón, aviso desplegable ni enlaces). */
     .cierre-admin, .cierre-aviso, .cierre-ayuda, .dash-cierre button { display:none !important; }
     .cierre-control { border:none; padding:0 0 6px; }
@@ -499,7 +507,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   }
 
   /* ---- DASHBOARD (Panel principal) ---- */
-  .dash { --chart-ing: var(--series-1); --chart-gas: var(--series-2); --chart-bys: #7c3aed; }
+  .dash { --chart-ing: var(--series-1); --chart-gas: var(--series-2); --chart-bys: #7c3aed; --chart-hon: #0e7490; }
   .dash-head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
   .dash-head h2 { margin:0; }
   .dash-sub { color:var(--text-muted); font-size:12.5px; margin:3px 0 0; max-width:760px; }
@@ -510,7 +518,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-chips button.active { background:var(--tone-blue-bg); color:var(--series-1); }
   .dash-pdf-btn { padding:7px 12px; border-radius:8px; border:1px solid #374151; background:#374151; color:#fff; font-size:12.5px; font-weight:600; cursor:pointer; }
   .dash-aviso { background:var(--tone-amber-bg); border:1px solid var(--tone-amber-border); color:var(--tone-amber-fg); border-radius:8px; padding:8px 12px; font-size:12.5px; margin-bottom:14px; }
-  .dash-strip { display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:12px; margin-bottom:22px; }
+  .dash-strip { display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); gap:12px; margin-bottom:22px; }
   .dash-tile { border-radius:12px; padding:12px 14px; border:1px solid var(--border); background:var(--surface-1); min-width:0; }
   .dash-tile .t-label { font-size:11.5px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.03em; }
   .dash-tile .t-value { font-size:clamp(15px, 1.45vw, 21px); font-weight:700; margin-top:4px; font-variant-numeric:tabular-nums; white-space:nowrap; }
@@ -569,6 +577,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-stack { display:flex; gap:2px; height:16px; min-width:0; }
   .dash-stack .seg { display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; color:#fff; min-width:0; overflow:hidden; white-space:nowrap; }
   .dash-stack .seg.rem { background:var(--chart-gas); border-radius:0; color:var(--text-primary); }
+  .dash-stack .seg.hon { background:var(--chart-hon); border-radius:0; }
   .dash-stack .seg.bys { background:var(--chart-bys); border-radius:0 4px 4px 0; }
   .dash-stack .seg.rem:last-child { border-radius:0 4px 4px 0; }
   .dash-stack .vacio { flex:1; background:var(--tone-gray-bg); border-radius:4px; color:var(--text-muted); font-size:10.5px; display:flex; align-items:center; padding-left:8px; }
@@ -892,7 +901,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="dash-panel">
           <div class="dash-panel-head">
             <h3>Composición del gasto</h3>
-            <div class="dash-leyenda"><span class="key"><span class="sw" style="background:var(--chart-gas)"></span>Remuneraciones</span><span class="key"><span class="sw" style="background:var(--chart-bys)"></span>Bienes y Servicios</span></div>
+            <div class="dash-leyenda"><span class="key"><span class="sw" style="background:var(--chart-gas)"></span>Remuneraciones</span><span class="key"><span class="sw" style="background:var(--chart-hon)"></span>Honorarios (Subt. 21)</span><span class="key"><span class="sw" style="background:var(--chart-bys)"></span>Bienes y Servicios</span></div>
           </div>
           <p class="dash-nota-chart">% del gasto de cada fuente. Clic en una fila para abrir la pestaña.</p>
           <div class="dash-bars" id="dashChartComp"></div>
@@ -963,7 +972,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <option value="superavit">Superávit</option>
         </select>
         <button id="downloadBtn" type="button">⬇ CSV</button>
-        <button id="downloadExcelBtn" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa (Ingreso, Remuneraciones, Compras) en el mismo formato que se puede volver a importar con &quot;Importar Excel&quot;">⬇ Excel</button>
+        <button id="downloadExcelBtn" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa (Ingreso, Remuneraciones, Honorarios, Compras) en el mismo formato que se puede volver a importar con &quot;Importar Excel&quot;">⬇ Excel</button>
         <button id="importExcelBtn" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
         <input type="file" id="importExcelInput" accept=".xlsx" style="display:none;">
         <button id="exportPdfBtn" type="button" style="background:#374151; border-color:#374151;" title="PDF general (solo el resumen, sin detalle por RBD)">🖨 Exportar PDF (general)</button>
@@ -981,9 +990,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <summary>ℹ️ Cómo se calculan estos % y qué muestra el resumen (notas)</summary>
         <span class="corte-legend">Las casillas de resumen de arriba y las casillas "a &lt;mes&gt;" de % Ejecución muestran los montos acumulados solo hasta este mes (el gráfico y la tabla de % Ejecución siguen mostrando el año completo). No afecta si un monto se ve <span class="swatch real"></span>Real o <span class="swatch proy"></span>Proyectado en el detalle de cada RBD — eso se marca aparte, en Ingreso/Remuneraciones/Compras/Proyección B&S —, ni cómo se rotula cada mes de % Ejecución (Real / Proy. / Mixto, según el corte real de cada RBD).</span>
         <div class="legend-row" style="margin-top:6px; margin-bottom:4px;">
-        <span><strong>% Ejec. Remuneraciones</strong>: gasto en remuneraciones / meta de remuneraciones de ese RBD (70% del Ingreso SEP + 100% de Carrera Docente, ya que ese ingreso solo puede usarse ahí). 100% = gastó justo la meta.</span>
+        <span><strong>% Ejec. Personal (Rem.+Hon.)</strong>: (gasto en remuneraciones + gasto en honorarios) / meta de personal de ese RBD (70% del Ingreso SEP + 100% de Carrera Docente, ya que ese ingreso solo puede usarse ahí). Los honorarios (Subt. 21, registrados por boleta) no son remuneración, pero cuentan del lado del personal: todos, en cualquier cuenta; <em>Gasto Rem.</em> y <em>Gasto Hon.</em> se muestran por separado. 100% = gastó justo la meta.</span>
         <span><strong>% Ejec. B&S</strong>: gasto Subt.22+29 / meta 30% del Ingreso SEP de ese RBD. 100% = gastó justo la meta.</span>
-        <span style="padding:1px 6px; border-radius:4px; background:#eef3f9;"><strong>% .../Ingreso</strong> (columnas con fondo celeste): NO es contra la meta 70/30, es gasto / Ingreso Total (SEP + Carrera Docente) — la fracción real del ingreso ya gastada, solo informativo.</span>
+        <span style="padding:1px 6px; border-radius:4px; background:#eef3f9;"><strong>% .../Ingreso</strong> (columnas con fondo celeste; "Personal" = Rem. + Hon.): NO es contra la meta 70/30, es gasto / Ingreso Total (SEP + Carrera Docente) — la fracción real del ingreso ya gastada, solo informativo.</span>
         <span style="padding:1px 6px; border-radius:4px; background:#dce7f5; font-weight:600;">Saldo Final y % Ejec. Total (ambos "Real+Proy"): ya incluyen tanto lo ya ejecutado como lo proyectado para lo que falta del año — así se ve cómo quedaría ese RBD si las proyecciones cargadas se cumplen tal cual. El Estado del RBD se decide con el saldo y el cociente exactos (no con el % redondeado que se ve): Déficit solo si el Saldo Final es negativo (gasto mayor que el ingreso; saldo $0 no es déficit), Riesgo si no es déficit y el % Ejec. Total es 90% o más, el resto Superávit.</span>
         </div>
       </details>
@@ -995,21 +1004,22 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <th data-key="rbd" rowspan="2">RBD</th>
               <th data-key="nombre" rowspan="2">Establecimiento</th>
               <th data-key="marco_anual_proy" class="num" rowspan="2" title="Ingreso SEP anual">Ingreso SEP anual</th>
-              <th class="th-group" colspan="3" title="Se mide contra la META del 70% del Ingreso SEP (+ Carrera Docente) — puede pasar de 100% aunque el gasto total del RBD sea bajo.">Remuneraciones — % sobre meta 70%</th>
+              <th class="th-group" colspan="4" title="Personal = Remuneraciones + Honorarios (Subt. 21). Se mide contra la META del 70% del Ingreso SEP (+ Carrera Docente) — puede pasar de 100% aunque el gasto total del RBD sea bajo.">Personal (Rem. + Hon.) — % sobre meta 70%</th>
               <th class="th-group" colspan="2" title="Se mide contra la META del 30% del Ingreso SEP.">Bienes y Servicios — % sobre meta 30%</th>
               <th class="th-group th-group-alt" colspan="2" title="Se mide contra el Ingreso SEP + Carrera Docente TOTAL (no contra la meta 70/30) — es la fracción real del ingreso que se ha gastado, no cuánto se ha usado del cupo asignado. Solo informativo.">% sobre Ingreso Total (informativo)</th>
-              <th data-key="saldo_total" class="num pct-ejec-total-final" rowspan="2" title="Ingreso Total (SEP + Carrera Docente) − Gasto Total, contando en ambos lo ya ejecutado MÁS lo cargado como proyección (Remuneraciones futuras y Bienes y Servicios Proyección) — es el saldo que quedaría si esas proyecciones se cumplen tal cual están cargadas.">Saldo Final (Real+Proy)</th>
-              <th data-key="pct_ejec_total" class="num pct-ejec-total-final" rowspan="2" title="(Gasto Rem. + Gasto B&S) / (Ingreso SEP + Carrera Docente) — ya incluye lo ejecutado + lo proyectado. El Estado se decide con el saldo y el cociente exactos (sin redondear): Déficit solo si el Saldo Final es negativo (saldo $0 no es déficit), Riesgo si no es déficit y este % es 90% o más, el resto Superávit.">% Ejec. Total (Real+Proy)</th>
+              <th data-key="saldo_total" class="num pct-ejec-total-final" rowspan="2" title="Ingreso Total (SEP + Carrera Docente) − Gasto Total, contando en ambos lo ya ejecutado MÁS lo cargado como proyección (Remuneraciones futuras, Honorarios y Bienes y Servicios Proyección) — es el saldo que quedaría si esas proyecciones se cumplen tal cual están cargadas.">Saldo Final (Real+Proy)</th>
+              <th data-key="pct_ejec_total" class="num pct-ejec-total-final" rowspan="2" title="(Gasto Rem. + Gasto Hon. + Gasto B&S) / (Ingreso SEP + Carrera Docente) — ya incluye lo ejecutado + lo proyectado. El Estado se decide con el saldo y el cociente exactos (sin redondear): Déficit solo si el Saldo Final es negativo (saldo $0 no es déficit), Riesgo si no es déficit y este % es 90% o más, el resto Superávit.">% Ejec. Total (Real+Proy)</th>
               <th data-key="estado" rowspan="2">Estado</th>
               <th class="col-acciones" rowspan="2" title="Análisis individual">Acciones</th>
             </tr>
             <tr class="th-row-2">
-              <th data-key="gasto_rem_anual_proy" class="num th-group" title="Gasto Remuneraciones">Gasto Rem.</th>
-              <th data-key="pct_ejec_rem" class="num th-group" title="% Ejec. Remuneraciones (sobre meta 70%)">% Ejec. Rem.</th>
-              <th data-key="saldo_rem" class="num th-group" title="Saldo post Remuneraciones">Saldo post Rem.</th>
+              <th data-key="gasto_rem_anual_proy" class="num th-group" title="Gasto Remuneraciones (solo la fila de remuneraciones)">Gasto Rem.</th>
+              <th data-key="gasto_hon" class="num th-group" title="Gasto Honorarios (Subt. 21): boletas + proyección. No es remuneración, pero cuenta del lado del personal (70%)">Gasto Hon.</th>
+              <th data-key="pct_ejec_rem" class="num th-group" title="% Ejec. Personal = (Remuneraciones + Honorarios) / meta 70%">% Ejec. Personal</th>
+              <th data-key="saldo_rem" class="num th-group" title="Saldo post Personal = meta 70% − (Remuneraciones + Honorarios)">Saldo post Personal</th>
               <th data-key="gasto_bys" class="num th-group" title="Gasto Bienes y Servicios (Subt. 22+29)">Gasto B&S</th>
               <th data-key="pct_ejec_bys" class="num th-group" title="% Ejec. B&S (sobre meta 30%)">% Ejec. B&S</th>
-              <th data-key="pct_rem_ing_total" class="num th-group th-group-alt" title="Gasto Remuneraciones / (Ingreso SEP + Carrera Docente)">% Rem. / Ingreso</th>
+              <th data-key="pct_rem_ing_total" class="num th-group th-group-alt" title="Gasto Personal (Remuneraciones + Honorarios) / (Ingreso SEP + Carrera Docente)">% Personal / Ingreso</th>
               <th data-key="pct_bys_ing_total" class="num th-group th-group-alt" title="Gasto B&S / (Ingreso SEP + Carrera Docente)">% B&S / Ingreso</th>
             </tr>
           </thead>
@@ -1211,7 +1221,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
                 <th>Corte</th>
                 <th class="num">Gasto Rem. (mes)</th>
                 <th class="num">Δ vs mes anterior</th>
-                <th class="num">% Ejec. Rem. acumulado</th>
+                <th class="num">Gasto Hon. (mes)</th>
+                <th class="num">% Ejec. Personal (Rem.+Hon.) acumulado</th>
                 <th class="num">Gasto B&amp;S (mes)</th>
                 <th class="num">Δ vs mes anterior</th>
                 <th class="num">% Ejec. B&amp;S acumulado</th>
@@ -1639,7 +1650,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
         <h4>3. Pestaña SEP</h4>
         <p>La tabla "Estado por RBD" muestra un establecimiento por fila: cuánto Ingreso SEP tiene, cuánto ha gastado
-        en Remuneraciones y en Bienes y Servicios, y si le sobra o le falta plata (columna <strong>Estado</strong>:
+        en Remuneraciones, en Honorarios y en Bienes y Servicios, y si le sobra o le falta plata (columna <strong>Estado</strong>:
         Superávit, Riesgo o Déficit). Haz clic en cualquier parte de una fila (el RBD, el nombre o la flechita ▸) para
         ver y editar el detalle de ese establecimiento.</p>
         <p>Arriba de la tabla hay tarjetas resumen (KPI) con el total de todos los establecimientos, separadas en tres
@@ -1657,6 +1668,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <ul>
           <li><strong>Ingreso SEP</strong> y <strong>Remuneraciones</strong>: se escriben directo en la celda del mes
           que corresponda, dentro del detalle del RBD.</li>
+          <li><strong>Honorarios (Subt. 21)</strong>: son Subtítulo 21 pero NO son remuneración, y van en su propio libro de SUPEREDUC.
+          Se registran <strong>por boleta</strong> en "Registro de honorarios" (justo debajo de Remuneraciones: cuenta, tipo de
+          boleta —BOLH, BHE, BOLHE, BPST o BPSTE—, N° y fechas, prestador, monto bruto y N° DC) y el panel suma solo cada mes según la
+          fecha de la boleta. Más arriba hay una fila de <strong>proyección</strong> por cuenta (se escribe en la celda y se suma a
+          las boletas). Los honorarios cuentan del lado del <strong>personal</strong> (el 70 %) junto con las remuneraciones, pero se
+          muestran en su propia línea. Las boletas de honorarios ya no se cargan como compra.</li>
           <li><strong>Bienes y Servicios (compras reales)</strong>: no se escribe un total a mano — se carga cada
           compra en "Registro de compras" (código de cuenta, tipo y N° de documento, fechas, proveedor, montos), y el
           panel arma solo el total de cada mes. También se puede cargar de a muchas con "⬆ Importar Excel".</li>
@@ -1670,7 +1687,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <h4>6. Real vs. Proyectado</h4>
         <p>Cada celda de mes se marca <span class="help-tag real">Real</span> (ya ejecutado, verde) o
         <span class="help-tag proy">Proyectado</span> (una estimación, naranja) según el tipo de dato — las compras
-        siempre son reales, la fila de proyección de B&S siempre es proyectada, y tanto los Ingresos como las
+        siempre son reales, las boletas de honorarios también, las filas de proyección (de B&S y de honorarios) siempre son proyectadas, y tanto los Ingresos como las
         Remuneraciones tienen un selector propio por establecimiento ("Ingresos reales hasta: [mes]" y
         "Remuneraciones reales hasta: [mes]") para marcar desde cuándo ya no son datos reales sino una estimación tuya.
         En la pestaña SEP, "Mes de cierre" es el mes hasta el que los datos son reales en todo el panel: es el corte por
@@ -1868,7 +1885,7 @@ function resumenRechazosImportacion() {
   const lineas = importRechazos.slice(0, 8);
   const extra = n > 8 ? [`… y ${n - 8} más`] : [];
   importRechazos.length = 0;
-  return [`⚠ ${n === 1 ? '1 fila NO se importó' : `${n} filas NO se importaron`} por tener un nombre inválido:`, ...lineas.map(l => '   · ' + l), ...extra];
+  return [`⚠ ${n === 1 ? '1 fila NO se importó' : `${n} filas NO se importaron`} por tener un dato inválido:`, ...lineas.map(l => '   · ' + l), ...extra];
 }
 
 const DATA = {"meses": ["202601", "202602", "202603", "202604", "202605", "202606", "202607"], "n_meses": 7, "ultimo_mes": "202607", "registros": [{"rbd": "1121", "nombre": "LICEO PULMAHUE DE LA LIGUA", "marco_anual_proy": 270239850, "gasto_rem_ytd": 86672138, "gasto_rem_anual_proy": 148580808, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 189167895, "meta_bys_30": 81071955, "saldo_rem": 40587087, "saldo_bys": 81071955, "saldo_total": 121659042, "pct_ejec_rem": 55.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 55.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1122", "nombre": "ESCUELA REPUBLICA DE VENEZUELA", "marco_anual_proy": 212215845, "gasto_rem_ytd": 75940645, "gasto_rem_anual_proy": 130183965, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 148551092, "meta_bys_30": 63664754, "saldo_rem": 18367126, "saldo_bys": 63664754, "saldo_total": 82031880, "pct_ejec_rem": 61.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 61.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1123", "nombre": "ESCUELA GABRIELA MISTRAL", "marco_anual_proy": 394028109, "gasto_rem_ytd": 211133787, "gasto_rem_anual_proy": 361943637, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 275819676, "meta_bys_30": 118208433, "saldo_rem": -86123961, "saldo_bys": 118208433, "saldo_total": 32084472, "pct_ejec_rem": 91.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 91.9, "anomalia": false, "estado": "riesgo"}, {"rbd": "1125", "nombre": "ESCUELA DIEGO PORTALES", "marco_anual_proy": 104816547, "gasto_rem_ytd": 63018834, "gasto_rem_anual_proy": 108032289, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 73371583, "meta_bys_30": 31444964, "saldo_rem": -34660706, "saldo_bys": 31444964, "saldo_total": -3215742, "pct_ejec_rem": 103.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 103.1, "anomalia": false, "estado": "deficit"}, {"rbd": "1128", "nombre": "ESCUELA COMUNIDADES DE VALLE HERMOSO", "marco_anual_proy": 217566609, "gasto_rem_ytd": 59149842, "gasto_rem_anual_proy": 101399727, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 152296626, "meta_bys_30": 65269983, "saldo_rem": 50896899, "saldo_bys": 65269983, "saldo_total": 116166882, "pct_ejec_rem": 46.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 46.6, "anomalia": false, "estado": "superavit"}, {"rbd": "1129", "nombre": "ESCUELA ANGEL MENAY", "marco_anual_proy": 13154286, "gasto_rem_ytd": 88804, "gasto_rem_anual_proy": 152234, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 9208000, "meta_bys_30": 3946286, "saldo_rem": 9055766, "saldo_bys": 3946286, "saldo_total": 13002052, "pct_ejec_rem": 1.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 1.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1130", "nombre": "ESC. BASICA LOS HORNOS DE HUAQUEN", "marco_anual_proy": 23345142, "gasto_rem_ytd": 4914027, "gasto_rem_anual_proy": 8424047, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 16341599, "meta_bys_30": 7003543, "saldo_rem": 7917552, "saldo_bys": 7003543, "saldo_total": 14921095, "pct_ejec_rem": 36.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 36.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1131", "nombre": "ESC. BASICA CASAS VIEJAS DE LONGOTOMA", "marco_anual_proy": 25972071, "gasto_rem_ytd": 1225978, "gasto_rem_anual_proy": 2101678, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 18180450, "meta_bys_30": 7791621, "saldo_rem": 16078772, "saldo_bys": 7791621, "saldo_total": 23870393, "pct_ejec_rem": 8.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 8.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1132", "nombre": "ESCUELA BASICA POZA VERDE", "marco_anual_proy": 119382231, "gasto_rem_ytd": 42648373, "gasto_rem_anual_proy": 73111498, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 83567562, "meta_bys_30": 35814669, "saldo_rem": 10456064, "saldo_bys": 35814669, "saldo_total": 46270733, "pct_ejec_rem": 61.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 61.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1133", "nombre": "ESC.BASICA LAS CASAS DE HUAQUEN", "marco_anual_proy": 56299875, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 39409912, "meta_bys_30": 16889962, "saldo_rem": 39409912, "saldo_bys": 16889962, "saldo_total": 56299875, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1134", "nombre": "CARMEN SANCHEZ ARAYA", "marco_anual_proy": 13242879, "gasto_rem_ytd": 1255469, "gasto_rem_anual_proy": 2152234, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 9270015, "meta_bys_30": 3972864, "saldo_rem": 7117781, "saldo_bys": 3972864, "saldo_total": 11090645, "pct_ejec_rem": 16.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 16.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1135", "nombre": "ESCUELA BASICA LOS MOLLES", "marco_anual_proy": 36892992, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 25825094, "meta_bys_30": 11067898, "saldo_rem": 25825094, "saldo_bys": 11067898, "saldo_total": 36892992, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1136", "nombre": "ESCUELA BASICA PUYANCON", "marco_anual_proy": 52685169, "gasto_rem_ytd": 16441350, "gasto_rem_anual_proy": 28185170, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 36879618, "meta_bys_30": 15805551, "saldo_rem": 8694448, "saldo_bys": 15805551, "saldo_total": 24499999, "pct_ejec_rem": 53.5, "pct_ejec_bys": 0.0, "pct_ejec_total": 53.5, "anomalia": false, "estado": "superavit"}, {"rbd": "1137", "nombre": "ESCUELA BASICA HORTENCIA POWELL S.", "marco_anual_proy": 15156849, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 10609794, "meta_bys_30": 4547055, "saldo_rem": 10609794, "saldo_bys": 4547055, "saldo_total": 15156849, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1139", "nombre": "ESCUELA MINISTRO GOMEZ MILLAS", "marco_anual_proy": 25154754, "gasto_rem_ytd": 7309329, "gasto_rem_anual_proy": 12530279, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 17608328, "meta_bys_30": 7546426, "saldo_rem": 5078049, "saldo_bys": 7546426, "saldo_total": 12624475, "pct_ejec_rem": 49.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 49.8, "anomalia": false, "estado": "superavit"}, {"rbd": "1140", "nombre": "ESCUELA BASICA CARLOS ARIZTIA RUIZ", "marco_anual_proy": 31981968, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 22387378, "meta_bys_30": 9594590, "saldo_rem": 22387378, "saldo_bys": 9594590, "saldo_total": 31981968, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1142", "nombre": "ESCUELA LA CANELA", "marco_anual_proy": 45674784, "gasto_rem_ytd": 11231690, "gasto_rem_anual_proy": 19254325, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 31972349, "meta_bys_30": 13702435, "saldo_rem": 12718024, "saldo_bys": 13702435, "saldo_total": 26420459, "pct_ejec_rem": 42.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 42.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1143", "nombre": "ESCUELA BASICA QUEBRADILLA", "marco_anual_proy": 20092098, "gasto_rem_ytd": 5264804, "gasto_rem_anual_proy": 9025379, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 14064469, "meta_bys_30": 6027629, "saldo_rem": 5039090, "saldo_bys": 6027629, "saldo_total": 11066719, "pct_ejec_rem": 44.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 44.9, "anomalia": false, "estado": "superavit"}, {"rbd": "1144", "nombre": "ESCUELA BASICA PICHICUY", "marco_anual_proy": 28797930, "gasto_rem_ytd": 12958897, "gasto_rem_anual_proy": 22215252, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 20158551, "meta_bys_30": 8639379, "saldo_rem": -2056701, "saldo_bys": 8639379, "saldo_total": 6582678, "pct_ejec_rem": 77.1, "pct_ejec_bys": 0.0, "pct_ejec_total": 77.1, "anomalia": false, "estado": "superavit"}, {"rbd": "1145", "nombre": "ESCUELA ENRIQUE DOLL ROJAS", "marco_anual_proy": 38794485, "gasto_rem_ytd": 30943154, "gasto_rem_anual_proy": 53045409, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 27156140, "meta_bys_30": 11638346, "saldo_rem": -25889270, "saldo_bys": 11638346, "saldo_total": -14250924, "pct_ejec_rem": 136.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 136.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1147", "nombre": "ESCUELA FERNANDO GARCIA OLDINI", "marco_anual_proy": 65926875, "gasto_rem_ytd": 45975426, "gasto_rem_anual_proy": 78815016, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 46148812, "meta_bys_30": 19778062, "saldo_rem": -32666204, "saldo_bys": 19778062, "saldo_total": -12888141, "pct_ejec_rem": 119.5, "pct_ejec_bys": 0.0, "pct_ejec_total": 119.5, "anomalia": false, "estado": "deficit"}, {"rbd": "1148", "nombre": "LICEO JOSE MANUEL BORGONO NUNEZ", "marco_anual_proy": 244341870, "gasto_rem_ytd": 167119000, "gasto_rem_anual_proy": 286489715, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 171039309, "meta_bys_30": 73302561, "saldo_rem": -115450406, "saldo_bys": 73302561, "saldo_total": -42147845, "pct_ejec_rem": 117.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 117.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1149", "nombre": "LICEO CORDILLERA", "marco_anual_proy": 91364085, "gasto_rem_ytd": 65934178, "gasto_rem_anual_proy": 113030018, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 63954859, "meta_bys_30": 27409226, "saldo_rem": -49075159, "saldo_bys": 27409226, "saldo_total": -21665933, "pct_ejec_rem": 123.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 123.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1150", "nombre": "ESCUELA BASICA NEFTALI REYES B.", "marco_anual_proy": 5465478, "gasto_rem_ytd": 2156107, "gasto_rem_anual_proy": 3696182, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3825835, "meta_bys_30": 1639643, "saldo_rem": 129653, "saldo_bys": 1639643, "saldo_total": 1769296, "pct_ejec_rem": 67.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 67.6, "anomalia": false, "estado": "superavit"}, {"rbd": "1151", "nombre": "ESCUELA BASICA VILLA SANTA ANA", "marco_anual_proy": 5659560, "gasto_rem_ytd": 3394488, "gasto_rem_anual_proy": 5819123, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3961692, "meta_bys_30": 1697868, "saldo_rem": -1857431, "saldo_bys": 1697868, "saldo_total": -159563, "pct_ejec_rem": 102.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 102.8, "anomalia": false, "estado": "deficit"}, {"rbd": "1152", "nombre": "ESCUELA EDUARDO FREI MONTALVA", "marco_anual_proy": 64225842, "gasto_rem_ytd": 47825199, "gasto_rem_anual_proy": 81986054, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 44958089, "meta_bys_30": 19267753, "saldo_rem": -37027965, "saldo_bys": 19267753, "saldo_total": -17760212, "pct_ejec_rem": 127.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 127.7, "anomalia": false, "estado": "deficit"}, {"rbd": "1153", "nombre": "ESCUELA BASICA EL CRUCERO", "marco_anual_proy": 2217225, "gasto_rem_ytd": 4198632, "gasto_rem_anual_proy": 7197657, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 1552058, "meta_bys_30": 665168, "saldo_rem": -5645600, "saldo_bys": 665168, "saldo_total": -4980432, "pct_ejec_rem": 324.6, "pct_ejec_bys": 0.0, "pct_ejec_total": 324.6, "anomalia": false, "estado": "deficit"}, {"rbd": "1156", "nombre": "ESCUELA BASICA G-24", "marco_anual_proy": 32441541, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 22709079, "meta_bys_30": 9732462, "saldo_rem": 22709079, "saldo_bys": 9732462, "saldo_total": 32441541, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1157", "nombre": "ESCUELA BASICA LOS ALAMOS EL SOBRANTE", "marco_anual_proy": 27211641, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 19048149, "meta_bys_30": 8163492, "saldo_rem": 19048149, "saldo_bys": 8163492, "saldo_total": 27211641, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1158", "nombre": "ESCUELA BASICA BENANCIO PEREZ", "marco_anual_proy": 4329315, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 3030520, "meta_bys_30": 1298794, "saldo_rem": 3030520, "saldo_bys": 1298794, "saldo_total": 4329315, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1160", "nombre": "ESCUELA HOGAR FRONTERIZA DE CHALACO", "marco_anual_proy": 9598803, "gasto_rem_ytd": 6896859, "gasto_rem_anual_proy": 11823189, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 6719162, "meta_bys_30": 2879641, "saldo_rem": -5104027, "saldo_bys": 2879641, "saldo_total": -2224386, "pct_ejec_rem": 123.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 123.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1161", "nombre": "ESCUELA BASICA PEDEGUA", "marco_anual_proy": 117441813, "gasto_rem_ytd": 65069793, "gasto_rem_anual_proy": 111548218, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 82209269, "meta_bys_30": 35232544, "saldo_rem": -29338949, "saldo_bys": 35232544, "saldo_total": 5893595, "pct_ejec_rem": 95.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 95.0, "anomalia": false, "estado": "riesgo"}, {"rbd": "1167", "nombre": "LICEO Y ESCUELA MUNICIPAL", "marco_anual_proy": 263010747, "gasto_rem_ytd": 126102032, "gasto_rem_anual_proy": 216174912, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 184107523, "meta_bys_30": 78903224, "saldo_rem": -32067389, "saldo_bys": 78903224, "saldo_total": 46835835, "pct_ejec_rem": 82.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 82.2, "anomalia": false, "estado": "superavit"}, {"rbd": "1168", "nombre": "ESCUELA HANS WENKE MENGERS", "marco_anual_proy": 225940344, "gasto_rem_ytd": 168576701, "gasto_rem_anual_proy": 288988631, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 158158241, "meta_bys_30": 67782103, "saldo_rem": -130830390, "saldo_bys": 67782103, "saldo_total": -63048287, "pct_ejec_rem": 127.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 127.9, "anomalia": false, "estado": "deficit"}, {"rbd": "1170", "nombre": "ESCUELA BASICA VALLE DE ARTIFICIO", "marco_anual_proy": 103718850, "gasto_rem_ytd": 61866791, "gasto_rem_anual_proy": 106057356, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 72603195, "meta_bys_30": 31115655, "saldo_rem": -33454161, "saldo_bys": 31115655, "saldo_total": -2338506, "pct_ejec_rem": 102.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 102.3, "anomalia": false, "estado": "deficit"}, {"rbd": "1171", "nombre": "ESCUELA BASICA LA FRONTERA DE ALICAHUE", "marco_anual_proy": 12236412, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 8565488, "meta_bys_30": 3670924, "saldo_rem": 8565488, "saldo_bys": 3670924, "saldo_total": 12236412, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1173", "nombre": "ESCUELA ESTER SILVA SOMARRIVA BARTOLILLO", "marco_anual_proy": 96988563, "gasto_rem_ytd": 38295537, "gasto_rem_anual_proy": 65649492, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 67891994, "meta_bys_30": 29096569, "saldo_rem": 2242502, "saldo_bys": 29096569, "saldo_total": 31339071, "pct_ejec_rem": 67.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 67.7, "anomalia": false, "estado": "superavit"}, {"rbd": "1174", "nombre": "ESCUELA BASICA SAN LORENZO", "marco_anual_proy": 66121950, "gasto_rem_ytd": 41219138, "gasto_rem_anual_proy": 70661378, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 46285365, "meta_bys_30": 19836585, "saldo_rem": -24376013, "saldo_bys": 19836585, "saldo_total": -4539428, "pct_ejec_rem": 106.9, "pct_ejec_bys": 0.0, "pct_ejec_total": 106.9, "anomalia": false, "estado": "deficit"}, {"rbd": "1176", "nombre": "ESCUELA PABLO NERUDA", "marco_anual_proy": 27015630, "gasto_rem_ytd": 25256264, "gasto_rem_anual_proy": 43296454, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 18910941, "meta_bys_30": 8104689, "saldo_rem": -24385513, "saldo_bys": 8104689, "saldo_total": -16280824, "pct_ejec_rem": 160.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 160.3, "anomalia": false, "estado": "deficit"}, {"rbd": "1178", "nombre": "ESCUELA BASICA LA VINA", "marco_anual_proy": 113782905, "gasto_rem_ytd": 54683674, "gasto_rem_anual_proy": 93743439, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 79648034, "meta_bys_30": 34134872, "saldo_rem": -14095406, "saldo_bys": 34134872, "saldo_total": 20039466, "pct_ejec_rem": 82.4, "pct_ejec_bys": 0.0, "pct_ejec_total": 82.4, "anomalia": false, "estado": "superavit"}, {"rbd": "1180", "nombre": "ESCUELA BASICA G-45", "marco_anual_proy": 158356164, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 110849315, "meta_bys_30": 47506849, "saldo_rem": 110849315, "saldo_bys": 47506849, "saldo_total": 158356164, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1181", "nombre": "ESCUELA BASICA LOS ANGELES", "marco_anual_proy": 8112729, "gasto_rem_ytd": 1941030, "gasto_rem_anual_proy": 3327480, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5678910, "meta_bys_30": 2433819, "saldo_rem": 2351430, "saldo_bys": 2433819, "saldo_total": 4785249, "pct_ejec_rem": 41.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 41.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1182", "nombre": "ESCUELA BASICA G-47", "marco_anual_proy": 6524547, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 4567183, "meta_bys_30": 1957364, "saldo_rem": 4567183, "saldo_bys": 1957364, "saldo_total": 6524547, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "1191", "nombre": "ESCUELA PAPUDO", "marco_anual_proy": 205102704, "gasto_rem_ytd": 51823168, "gasto_rem_anual_proy": 88839718, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 143571893, "meta_bys_30": 61530811, "saldo_rem": 54732175, "saldo_bys": 61530811, "saldo_total": 116262986, "pct_ejec_rem": 43.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 43.3, "anomalia": false, "estado": "superavit"}, {"rbd": "1192", "nombre": "ESCUELA RURAL PULLALLY", "marco_anual_proy": 232070370, "gasto_rem_ytd": 22607560, "gasto_rem_anual_proy": 38755815, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 162449259, "meta_bys_30": 69621111, "saldo_rem": 123693444, "saldo_bys": 69621111, "saldo_total": 193314555, "pct_ejec_rem": 16.7, "pct_ejec_bys": 0.0, "pct_ejec_total": 16.7, "anomalia": false, "estado": "superavit"}, {"rbd": "11199", "nombre": "COLEGIO LUIS CRUZ MARTINEZ", "marco_anual_proy": 398901426, "gasto_rem_ytd": 126212294, "gasto_rem_anual_proy": 216363934, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 279230998, "meta_bys_30": 119670428, "saldo_rem": 62867064, "saldo_bys": 119670428, "saldo_total": 182537492, "pct_ejec_rem": 54.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 54.2, "anomalia": false, "estado": "superavit"}, {"rbd": "11206", "nombre": "ESCUELA MUNICIPAL LAS PUERTAS", "marco_anual_proy": 7372701, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5160891, "meta_bys_30": 2211810, "saldo_rem": 5160891, "saldo_bys": 2211810, "saldo_total": 7372701, "pct_ejec_rem": 0.0, "pct_ejec_bys": 0.0, "pct_ejec_total": 0.0, "anomalia": false, "estado": "superavit"}, {"rbd": "12299", "nombre": "ESCUELA BASICA ANEXO PICHILEMU", "marco_anual_proy": 7292493, "gasto_rem_ytd": 268838, "gasto_rem_anual_proy": 460863, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 5104745, "meta_bys_30": 2187748, "saldo_rem": 4643882, "saldo_bys": 2187748, "saldo_total": 6831630, "pct_ejec_rem": 6.3, "pct_ejec_bys": 0.0, "pct_ejec_total": 6.3, "anomalia": false, "estado": "superavit"}, {"rbd": "12336", "nombre": "LICEO BICENTENARIO TECNICO PROFESIONAL DE MINERIA", "marco_anual_proy": 252228210, "gasto_rem_ytd": 127752393, "gasto_rem_anual_proy": 219004103, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 176559747, "meta_bys_30": 75668463, "saldo_rem": -42444356, "saldo_bys": 75668463, "saldo_total": 33224107, "pct_ejec_rem": 86.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 86.8, "anomalia": false, "estado": "superavit"}, {"rbd": "14479", "nombre": "ESCUELA BASICA MUNICIPAL ARAUCARIA", "marco_anual_proy": 239756457, "gasto_rem_ytd": 167482869, "gasto_rem_anual_proy": 287113489, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 167829520, "meta_bys_30": 71926937, "saldo_rem": -119283969, "saldo_bys": 71926937, "saldo_total": -47357032, "pct_ejec_rem": 119.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 119.8, "anomalia": false, "estado": "deficit"}, {"rbd": "40099", "nombre": "LICEO TECNICO PROFESIONAL PAPUDO", "marco_anual_proy": 102243084, "gasto_rem_ytd": 24938072, "gasto_rem_anual_proy": 42750982, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 71570159, "meta_bys_30": 30672925, "saldo_rem": 28819177, "saldo_bys": 30672925, "saldo_total": 59492102, "pct_ejec_rem": 41.8, "pct_ejec_bys": 0.0, "pct_ejec_total": 41.8, "anomalia": false, "estado": "superavit"}, {"rbd": "40242", "nombre": "COLEGIO BICENTENARIO", "marco_anual_proy": 145323090, "gasto_rem_ytd": 85771435, "gasto_rem_anual_proy": 147036745, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 101726163, "meta_bys_30": 43596927, "saldo_rem": -45310582, "saldo_bys": 43596927, "saldo_total": -1713655, "pct_ejec_rem": 101.2, "pct_ejec_bys": 0.0, "pct_ejec_total": 101.2, "anomalia": false, "estado": "deficit"}, {"rbd": "1120", "nombre": "CENTRO DE EDUCACION DE ADULTOS LA LIGUA", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}, {"rbd": "11196", "nombre": "CTRO.REC.ATENC.DIVERS.CRAD PAUL PERCY HARRIS", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}, {"rbd": "1126", "nombre": "ESCUELA ESPECIAL SOL NACIENTE", "marco_anual_proy": 0, "gasto_rem_ytd": 0, "gasto_rem_anual_proy": 0, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "meta_rem_70": 0, "meta_bys_30": 0, "saldo_rem": 0, "saldo_bys": 0, "saldo_total": 0, "pct_ejec_rem": 0, "pct_ejec_bys": 0, "pct_ejec_total": 0, "anomalia": false, "estado": "superavit", "sin_marco_sep": true}], "totales": {"marco_anual_proy": 5087817897, "gasto_rem_anual_proy": 3708967894, "gasto_subt22": 0, "gasto_subt29": 0, "gasto_bys": 0, "saldo_total": 1378850003, "n_deficit": 15, "n_riesgo": 2, "n_superavit": 35, "n_anomalias": 0}, "fuente_marco": {"tipo": "Estado_RBD_2026.xlsx (columna TOTAL SEP, monto anual directo); reemplazado por la hoja INGRESO de la carga manual si el RBD tiene override", "incluye_carrera_docente": false}, "fuente_carga_manual": {"archivo": "carga_manual/CARGA_MANUAL_SEP.xlsx", "fecha_carga": "2026-08-19 16:51", "n_rbd_ingreso_override": 52, "n_rbd_rem_override": 52}};
@@ -2268,6 +2285,58 @@ const CUENTAS_COMPRAS = PLAN_CUENTAS_2026.cuentas
     || { codigo, nombre: sinTildesPlan(nombre), subt: /^(4107|4118)/.test(codigo) ? '29' : '22' });
 const CUENTAS_COMPRAS_BY_CODIGO = {};
 CUENTAS_COMPRAS.forEach(c => { CUENTAS_COMPRAS_BY_CODIGO[c.codigo] = c; });
+// --- Cuentas que aceptan HONORARIOS (Libro de Honorarios, Cap. IV del Manual de Usuario): ver data/honorarios_cuentas_2026_verificacion.md ---
+// <honorarios-cuentas-2026:begin> — bloque generado por scripts/extract_honorarios_cuentas.py --inyectar (no editar a mano)
+// Cuentas del Plan 2026 que aceptan documentos de honorarios: [código, nombre, libro (H = solo Honorarios, CH = Compras y Honorarios), tipos de honorarios aceptados].
+const HONORARIOS_CUENTAS_2026 = {
+  tipos: [["BOLH", "Boleta de honorarios manual"], ["BHE", "Boleta de honorarios exenta"], ["BOLHE", "Boleta de honorarios electrónica"], ["BPST", "Boleta honorarios prestación de servicios a terceros"], ["BPSTE", "Boleta honorarios prestación de servicios a terceros electrónica"]],
+  cuentas: [
+  ["410304", "OTROS GASTOS EN PERSONAL", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410309", "SALA CUNA", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410501", "ASISTENCIA TÉCNICO PEDAGÓGICA EDUCATIVA (REGISTRO ATE)", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410502", "ACCIONES FORMATIVAS Y PERFECCIONAMIENTO DE RR.HH", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410503", "ACTIVIDADES PARA EL FORTALECIMIENTO DE LOS OBJETIVOS DE MEJORAMIENTO DE LA CALIDAD EDUCATIVA", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410607", "EVENTOS EDUCATIVOS Y CULTURALES", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410608", "EVALUACIÓN DIAGNÓSTICA", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["410801", "UNIFORMES Y VESTUARIO", "CH", "BOLH BHE BPST BPSTE"],
+  ["410802", "OTROS GASTOS ALUMNOS", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410803", "TALLERES EXTRAPROGRAMÁTICOS", "H", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410804", "CONTRATACIÓN DE APOYO DE ESPECIALISTAS", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410901", "TRANSPORTE ESCOLAR", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["410903", "REPRODUCCIÓN DE DOCUMENTOS", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410904", "ALIMENTACIÓN", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["410908", "PUBLICIDAD", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["410910", "OTROS GASTOS DE OPERACIÓN", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["410918", "TRASLADO DE ESTUDIANTES POR ACTIVIDAD ESCOLAR", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411101", "CONTRATACIÓN SERVICIOS DE ASEO Y JARDINERÍA", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411102", "CONTRATACIÓN SERVICIOS DE SEGURIDAD", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411103", "CONTRATACIÓN OTROS SERVICIOS EXTERNOS", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["411404", "MEJORAS ÚTILES Y NECESARIAS EN LOCAL ESCOLAR ARRENDADO", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411601", "MANTENIMIENTO Y REPARACIÓN DE INFRAESTRUCTURA", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411602", "CONSTRUCCIÓN DE INFRAESTRUCTURA (OBRA GRUESA)", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411603", "TERMINACIONES DE INFRAESTRUCTURA", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411604", "INSTALACIONES ELÉCTRICAS, ILUMINACIÓN Y SISTEMAS DE CALEFACCIÓN", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411605", "INSTALACIONES DE GAS", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411606", "INSTALACIONES DE AGUA", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411607", "ALCANTARILLADOS O POZOS SÉPTICOS", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411608", "CIERRES PERIMETRALES Y OBRAS COMPLEMENTARIAS", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411609", "SERVICIOS HIGIÉNICOS", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411610", "ELIMINACIÓN DE BARRERAS ARQUITÉCTONICAS DE MENOR ENVERGADURA", "CH", "BOLH BOLHE BPST BPSTE"],
+  ["411701", "MANTENCIÓN  Y REPARACIÓN DE BIENES MUEBLES", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["411702", "REPUESTOS, MANTENIMIENTO Y REPARACIÓN DE VEHÍCULOS", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["411703", "MANTENCIÓN Y REPARACIÓN DE EQUIPOS COMPUTACIONALES", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["411704", "MANTENCIÓN Y REPARACIÓN DE MOBILIARIO ESCOLAR", "CH", "BOLH BHE BOLHE BPST BPSTE"],
+  ["411801", "ADQUISICIÓN DE BIENES INMUEBLES", "CH", "BHE"],
+  ],
+};
+// <honorarios-cuentas-2026:end>
+// Catálogo de honorarios en estructuras de consulta. Qué cuenta se habilita en cada subvención NO se duplica aquí: sale de PLAN_CUENTAS_2026 (planNivelCuenta).
+const HON_TIPOS = HONORARIOS_CUENTAS_2026.tipos;                       // [[código, nombre]] de los 5 tipos del Libro de Honorarios (Cap. IV, Tabla 02)
+const HON_NOMBRE_TIPO = {};
+HON_TIPOS.forEach(([codigo, nombre]) => { HON_NOMBRE_TIPO[codigo] = nombre; });
+const HON_CUENTAS = HONORARIOS_CUENTAS_2026.cuentas.map(([codigo, nombre, libro, docs]) => ({ codigo, nombre, libro, soloHonorarios: libro === 'H', docs: docs.split(' ') }));
+const HON_CUENTAS_BY_CODIGO = {};
+HON_CUENTAS.forEach(c => { HON_CUENTAS_BY_CODIGO[c.codigo] = c; });
 // ITEMS_22/29 se mantienen (mismo nombre que antes) porque buildConceptoCatalog/sheetItemsAOA/
 // getConceptoSeries ya recorren estas listas de nombres para armar el Reporte y el Excel — ahora
 // son la lista fija de nombres oficiales en vez de una lista libre editable por el usuario.
@@ -2374,10 +2443,10 @@ let otrasFuentesRbdAbierto = null; // rbd (o "AC") cuyo detalle está abierto en
 // Tipos de documento válidos (Sección 12 del manual SUPEREDUC) — se ofrecen todos sin filtrar
 // por código de cuenta (la matriz completa código×tipo tiene ~50 filas y variar según el año;
 // quien carga la compra ya sabe qué documento corresponde a su caso).
+// Tipos del selector «Tipo de documento» del registro de COMPRAS (Cap. III, Tabla 02). Los 5 de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE) ya NO están aquí: solo se registran en
+// «Honorarios (Subt. 21)». Su nombre ↔ código sigue en TIPOS_DOCUMENTO_CODIGO para reconocer las compras antiguas que los traen (se avisa que hay que moverlas).
 const TIPOS_DOCUMENTO_SEP = [
   "Boleta", "Boleta exenta", "Boleta electrónica", "Boleta exenta electrónica",
-  "Boleta de honorarios manual", "Boleta de honorarios exenta", "Boleta de honorarios electrónica",
-  "Boleta honorarios prestación de servicios a terceros", "Boleta honorarios prestación de servicios a terceros electrónica",
   "Factura", "Factura exenta", "Factura electrónica", "Factura exenta electrónica",
   "Otro documento exento", "Finiquito", "Documento extranjero", "Nota de crédito", "Nota de débito",
 ];
@@ -2538,7 +2607,7 @@ const MOTIVOS_ADVERTENCIA_SUPEREDUC = {
   gastoMayor: 'monto gasto mayor que el monto del documento',
   descLarga: 'descripción de más de 100 caracteres (en el CSV se recorta a 100)',
   docOrig: 'nota de crédito/débito sin "Documento Original" con formato número-TIPO (p. ej. 123-FAC)',
-  honorarios: 'documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): SUPEREDUC los recibe en el Libro de Honorarios (Cap. IV), no en el de Compras',
+  honorarios: 'documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): no va en el Libro de Compras, muévelo al registro de Honorarios (SUPEREDUC lo recibe en el Libro de Honorarios, Cap. IV)',
 };
 // Función ÚNICA de normalización de una compra a los campos de la plantilla oficial; la usan los dos
 // exportadores (SEP y fuentes). `problemas` son claves de MOTIVOS_ADVERTENCIA_SUPEREDUC.
@@ -2707,8 +2776,8 @@ function esRealParaModo(modo, rbd, idx1based) {
     const hasta = (rem && rem.real_hasta_mes) || DATA.n_meses;
     return idx1based <= hasta;
   }
-  if (modo === 'bys_proy') return false;
-  return true; // 'item' (compras Subt.22/29) y cualquier otro caso
+  if (modo === 'bys_proy' || modo === 'hon_proy') return false;
+  return true; // 'item' (compras Subt.22/29), 'hon' (boletas de honorarios: reales por definición) y cualquier otro caso
 }
 
 // --- Ingreso SEP dividido en 3 (detalle editable) ---
@@ -2778,10 +2847,11 @@ function estadoTagHTML(r) {
 }
 function nombreTagsHTML(r) {
   let tags = '';
-  if (r.anomalia || r.compras_con_avisos > 0) {
+  if (r.anomalia || r.compras_con_avisos > 0 || r.hon_con_avisos > 0) {
     const motivos = [];
     if (r.anomalia) motivos.push('el gasto de Bienes y Servicios supera 3 veces el marco anual: posible error de imputación');
     if (r.compras_con_avisos > 0) motivos.push(`${r.compras_con_avisos} compra${r.compras_con_avisos === 1 ? '' : 's'} con avisos de fecha o de cuenta (se ven en el detalle del RBD)`);
+    if (r.hon_con_avisos > 0) motivos.push(`${r.hon_con_avisos} boleta${r.hon_con_avisos === 1 ? '' : 's'} de honorarios con avisos de fecha, cuenta o tipo (se ven en el detalle del RBD)`);
     tags += ` <span class="tag anomalia" title="${escHtml(motivos.join('; '))}">revisar</span>`;
   }
   if (r.alerta_sep_sin_marco) tags += ' <span class="tag alerta-sep">⚠ gasto SEP indebido</span>';
@@ -3017,6 +3087,183 @@ function idCompraParaImportar(idRaw, campos, compras, idx) {
 }
 function registrarCompraEnIndice(idx, id, campos) { idx.set(firmaContenidoCompra(campos), id); }
 
+// ============================================================================
+// ===== HONORARIOS (Subt. 21): registro POR BOLETA — modelo, cálculo y avisos (PR-1: SEP) =====
+// Los honorarios son Subtítulo 21 pero NO son remuneración (el Libro de Remuneraciones solo recibe contratos CPF/CI; los honorarios van en su propio
+// libro, Manual de Usuario Cap. IV). Se registran POR BOLETA, como las compras: un mapa por entidad `honorarios: { <id>: { codigo, tipoDocumento, nroDocumento,
+// fechaDocumento, fechaPago, descripcion, rutProveedor, nombreProveedor, montoGasto, montoDocumento, documentoContable? } }` (mismos campos que una compra, sin
+// `documentoOriginal`; `tipoDocumento` se guarda como CÓDIGO: BOLH, BHE, BOLHE, BPST o BPSTE) y una proyección mensual por cuenta `hon_proyeccion: { items: { <cuenta>:
+// { meses, total } } }` (patrón de `bys_proyeccion`, siempre "proyectada").
+//   · Solo monto BRUTO: Monto Gasto = Monto Documento salvo que la boleta se reparta (Monto Gasto menor). Sin retención ni líquido. Las boletas son gasto positivo.
+//   · El mes del gasto es el de la Fecha de Documento (igual que las compras); la Fecha de Pago no mueve el mes.
+//   · Las boletas son REALES por definición; la proyección es siempre PROYECTADA y se SUMA a las boletas (como B&S). El selector global «Ver resumen hasta el
+//     mes» corta ambas (suma ≤ mes).
+//   · 70/30 (decisión del usuario, "opción B"): TODO honorario cuenta del lado del personal (el 70 %) junto con las remuneraciones, pero se muestra en su
+//     propia línea y tarjeta: gasto_personal = gasto_rem + gasto_hon (cualquier cuenta); gasto_total = rem + hon + B&S. Ver recomputeRegistro.
+// Un "contexto" (ctxHonSep…) dice dónde viven las boletas de UNA entidad y qué columna del Plan de Cuentas la rige: las funciones de abajo y de la interfaz
+// (honFormHTML, honTablaHTML…) trabajan con el contexto y no con SEP en particular, para reusarlas en las demás fuentes (PR-3).
+// ============================================================================
+function ctxHonSep(rbd) {
+  return {
+    clave: 'sep', rbd: String(rbd), subvencion: 'SEP', colPlan: 'sep', etiqueta: 'RBD ' + rbd,
+    attrs: `data-rbd="${escHtml(rbd)}"`,        // atributos que llevan los botones para decir de qué entidad son
+    modalSel: '#modalBody',                    // contenedor del modal donde viven el formulario y la tabla
+    boletas: () => (CARGA_MANUAL.honorarios_por_rbd || {})[rbd] || {},
+    proyeccion: () => (CARGA_MANUAL.hon_proyeccion_por_rbd || {})[rbd] || null,
+    agregado: () => (CARGA_MANUAL.hon_agregado_por_rbd || {})[rbd] || null,
+  };
+}
+// Cuentas del catálogo habilitadas para la subvención del contexto (columna del Plan de Cuentas), en el orden del manual.
+function honCuentasHabilitadas(ctx) { return HON_CUENTAS.filter(c => planNivelCuenta(c.codigo, ctx.colPlan) > 0); }
+// 0 = no habilitada (o fuera del catálogo de honorarios), 1 = ✓, 2 = ✓ con ● (sujeta a exigencias de pertinencia).
+function honNivelCuenta(ctx, codigo) { return HON_CUENTAS_BY_CODIGO[codigo] ? planNivelCuenta(codigo, ctx.colPlan) : 0; }
+// Código del tipo de documento si es uno de los 5 de honorarios ('' si es otro o no existe). Acepta el código ("BOLHE") o el nombre del panel.
+function honCodigoTipo(tipo) {
+  const c = codigoTipoDocumentoSupereduc(tipo);
+  return CODIGOS_TIPO_HONORARIOS.has(c) ? c : '';
+}
+function honTipoPermitido(codigoCuenta, codigoTipo) {
+  const c = HON_CUENTAS_BY_CODIGO[codigoCuenta];
+  return !!(c && c.docs.includes(codigoTipo));
+}
+function honNombreTipo(codigoTipo) { return HON_NOMBRE_TIPO[codigoTipo] || codigoTipo; }
+// Boleta leída de Firestore (que no valida tipos) con los tipos que el panel espera: textos como texto y montos como número finito. El tipo siempre queda como
+// CÓDIGO (un nombre del panel se traduce; un valor raro se conserva para que se vea y se avise). No lleva `documentoOriginal` (es de notas de crédito/débito).
+function sanitizaHonorario(h) {
+  const tipoRaw = textoSeguro(h.tipoDocumento).trim();
+  const limpia = {
+    ...h,
+    codigo: textoSeguro(h.codigo),
+    tipoDocumento: honCodigoTipo(tipoRaw) || tipoRaw,
+    nroDocumento: textoSeguro(h.nroDocumento),
+    fechaDocumento: textoSeguro(h.fechaDocumento),
+    fechaPago: textoSeguro(h.fechaPago),
+    descripcion: textoSeguro(h.descripcion),
+    rutProveedor: textoSeguro(h.rutProveedor),
+    nombreProveedor: textoSeguro(h.nombreProveedor),
+    montoGasto: num(h.montoGasto),
+    montoDocumento: num(h.montoDocumento),
+  };
+  delete limpia.documentoOriginal;
+  if (h.documentoContable !== undefined) limpia.documentoContable = textoSeguro(h.documentoContable);
+  return limpia;
+}
+// QUÉ boletas entran en los totales (única regla; itemsFromHonorarios y los avisos la comparten): su cuenta está en el catálogo de honorarios y su Fecha
+// Documento empieza con aaaa-mm-dd con un mes que existe (cualquier año: solo se mira el mes, igual que las compras). La Fecha de Pago nunca se usa.
+function itemsFromHonorarios(mapa) {
+  const buckets = {};
+  Object.values(mapa || {}).forEach(h => {
+    if (!h || typeof h !== 'object') return;
+    const cat = HON_CUENTAS_BY_CODIGO[h.codigo];
+    const mes = mesFromFechaISO(h.fechaDocumento);
+    if (!cat || !mes) return;
+    if (!buckets[h.codigo]) buckets[h.codigo] = { codigo: h.codigo, item: cat.nombre, meses: mesesEnCero(), total: 0 };
+    buckets[h.codigo].meses[mes] += num(h.montoGasto);
+  });
+  const items = Object.values(buckets).sort((a, b) => a.codigo.localeCompare(b.codigo));
+  items.forEach(it => { it.total = MESES_CARGA.reduce((s, m) => s + it.meses[m], 0); });
+  return items;
+}
+// Agregado mensual (derivado, nunca se edita) de las boletas de una entidad: { rbd, nombre, items por cuenta, meses, total }.
+function honAgregadoDesdeBoletas(rbd, nombre, mapa) {
+  const items = itemsFromHonorarios(mapa);
+  const meses = mesesEnCero();
+  items.forEach(it => MESES_CARGA.forEach(m => { meses[m] += it.meses[m]; }));
+  return { rbd, nombre, items, meses, total: MESES_CARGA.reduce((s, m) => s + meses[m], 0) };
+}
+function recomputeHonDesdeBoletas(rbd) {
+  if (!CARGA_MANUAL.hon_agregado_por_rbd) CARGA_MANUAL.hon_agregado_por_rbd = {};
+  const reg = DATA.registros.find(r => r.rbd === rbd);
+  CARGA_MANUAL.hon_agregado_por_rbd[rbd] = honAgregadoDesdeBoletas(rbd, reg ? reg.nombre : rbd, (CARGA_MANUAL.honorarios_por_rbd || {})[rbd]);
+}
+// Proyección de honorarios por cuenta: misma forma y mismo recálculo que la de B&S (los ítems son { codigo, meses, total }).
+function ensureHonProyeccion(rbd) {
+  if (!CARGA_MANUAL.hon_proyeccion_por_rbd) CARGA_MANUAL.hon_proyeccion_por_rbd = {};
+  if (!CARGA_MANUAL.hon_proyeccion_por_rbd[rbd]) {
+    const reg = DATA.registros.find(r => r.rbd === rbd);
+    CARGA_MANUAL.hon_proyeccion_por_rbd[rbd] = { rbd, nombre: reg ? reg.nombre : rbd, items: [], meses: mesesEnCero(), total: 0 };
+  }
+  return CARGA_MANUAL.hon_proyeccion_por_rbd[rbd];
+}
+function nombreItemHonProyeccion(codigo) {
+  const c = HON_CUENTAS_BY_CODIGO[codigo];
+  return c ? `${c.codigo} · ${c.nombre}` : codigo;
+}
+// Avisos de UNA boleta: [{ clave, celda: 'cuenta'|'tipo'|'doc'|'pago'|'monto', texto, titulo, excluye }]. `excluye` = la boleta NO entra en ningún total. Las de
+// fecha y de cuenta fuera del catálogo son las mismas de las compras (avisosCompra); se agregan las propias de honorarios. Solo avisan: no cambian ningún total.
+function avisosHonorario(h, ctx) {
+  const out = [];
+  if (!h || typeof h !== 'object') return out;
+  avisosCompra(h, HON_CUENTAS_BY_CODIGO).forEach(a => out.push({ ...a, titulo: a.titulo.replace(/La compra/g, 'La boleta').replace(/la compra/g, 'la boleta') }));
+  const cuenta = HON_CUENTAS_BY_CODIGO[h.codigo];
+  if (cuenta && honNivelCuenta(ctx, h.codigo) === 0) {
+    out.push({ clave: 'cuentaNoHabilitada', celda: 'cuenta', excluye: false, texto: `⚠ cuenta no habilitada para ${ctx.subvencion}`,
+      titulo: `La cuenta ${h.codigo} no está habilitada para ${ctx.subvencion} en el Plan de Cuentas 2026: SUPEREDUC rechazaría la boleta. Se cuenta en los totales; reclasifícala.` });
+  }
+  const tipo = textoSeguro(h.tipoDocumento).trim();
+  const codTipo = honCodigoTipo(tipo);
+  if (!codTipo) {
+    out.push({ clave: 'tipoNoHonorarios', celda: 'tipo', excluye: false, texto: '⚠ no es un tipo de honorarios',
+      titulo: `El tipo de documento «${tipo || 'vacío'}» no es de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): el Libro de Honorarios de SUPEREDUC solo recibe esos 5.` });
+  } else if (cuenta && !honTipoPermitido(h.codigo, codTipo)) {
+    out.push({ clave: 'tipoNoPermitido', celda: 'tipo', excluye: false, texto: '⚠ tipo no permitido para la cuenta',
+      titulo: `La cuenta ${h.codigo} no acepta el tipo ${codTipo} (acepta: ${cuenta.docs.join(', ')}): SUPEREDUC rechazaría la boleta.` });
+  }
+  if (!(num(h.montoGasto) > 0)) {
+    out.push({ clave: 'montoNoPositivo', celda: 'monto', excluye: false, texto: '⚠ monto no positivo',
+      titulo: 'Las boletas de honorarios son gasto positivo: este monto es cero o negativo.' });
+  }
+  return out;
+}
+// Resumen de los avisos de un conjunto de boletas (mapa id → boleta): cuántas tienen avisos, cuántas (y cuánto) quedan fuera de los totales y cuántas por causa.
+function resumenAvisosHonorarios(mapa, ctx) {
+  const res = { n: 0, nExcluidas: 0, sinContabilizar: 0, porClave: {} };
+  Object.values(mapa || {}).forEach(h => {
+    const av = avisosHonorario(h, ctx);
+    if (!av.length) return;
+    res.n++;
+    new Set(av.map(a => a.clave)).forEach(k => { res.porClave[k] = (res.porClave[k] || 0) + 1; });
+    if (av.some(a => a.excluye)) { res.nExcluidas++; res.sinContabilizar += num(h.montoGasto); }
+  });
+  return res;
+}
+const ROTULO_CAUSA_AVISO_HON = {
+  fechaNoValida: 'con fecha no válida (no se contabiliza)',
+  fechaInexistente: 'con una fecha que no existe en el calendario',
+  fechaFuera: 'con fecha de documento fuera de 2026',
+  pagoFuera: 'con fecha de pago fuera de 2026',
+  cuentaNoReconocida: 'con una cuenta fuera del catálogo de honorarios (no se contabiliza)',
+  cuentaNoHabilitada: 'con una cuenta no habilitada para esta subvención',
+  tipoNoHonorarios: 'con un tipo de documento que no es de honorarios',
+  tipoNoPermitido: 'con un tipo de documento que su cuenta no acepta',
+  montoNoPositivo: 'con monto cero o negativo',
+};
+function resumenAvisosHonorariosHTML(res) {
+  if (!res || !res.n) return '';
+  const detalle = Object.keys(ROTULO_CAUSA_AVISO_HON).filter(k => res.porClave[k]).map(k => `${res.porClave[k]} ${ROTULO_CAUSA_AVISO_HON[k]}`).join(', ');
+  const sin = res.nExcluidas
+    ? `; ${fmtCLP(res.sinContabilizar)} sin contabilizar (${res.nExcluidas} boleta${res.nExcluidas === 1 ? '' : 's'} que no ${res.nExcluidas === 1 ? 'entra' : 'entran'} en ningún total)`
+    : '';
+  return `<div class="hon-avisos-resumen plan-nota plan-nota-aviso">⚠ ${res.n} boleta${res.n === 1 ? '' : 's'} con avisos${sin}. ${escHtml(detalle)}. Pasa el cursor sobre la marca ⚠ de cada fila para ver el detalle.</div>`;
+}
+// Meses en que hay boletas Y proyección de honorarios a la vez: se SUMAN, así que se avisa para que no se cuente dos veces lo que ya tiene boleta.
+function mesesHonConBoletasYProyeccion(boletasMeses, proyMeses) {
+  return MESES_CARGA.filter(m => num(boletasMeses && boletasMeses[m]) !== 0 && num(proyMeses && proyMeses[m]) !== 0);
+}
+// Compras antiguas con un tipo de documento de honorarios (ya no se registran como compra): se avisa que hay que moverlas al registro de Honorarios. NO es un aviso de
+// fecha/cuenta (no alimenta «Datos a revisar»): es solo una marca y un resumen; mientras no se muevan siguen sumando en Bienes y Servicios.
+const TEXTO_AVISO_TIPO_HON = '⚠ muévelo a Honorarios';
+const TITULO_AVISO_TIPO_HON = 'Este tipo de documento es de honorarios y ya no se registra como compra: muévelo al registro de Honorarios (Subt. 21). Mientras tanto sigue sumando en Bienes y Servicios.';
+function esCompraTipoHonorarios(c) { return !!c && typeof c === 'object' && CODIGOS_TIPO_HONORARIOS.has(codigoTipoDocumentoSupereduc(c.tipoDocumento)); }
+function marcaTipoHonorariosHTML(c) {
+  return esCompraTipoHonorarios(c) ? `<span class="compra-aviso-tipo-hon" title="${escHtml(TITULO_AVISO_TIPO_HON)}">${escHtml(TEXTO_AVISO_TIPO_HON)}</span>` : '';
+}
+function resumenTipoHonorariosEnComprasHTML(comprasMap) {
+  const n = Object.values(comprasMap || {}).filter(esCompraTipoHonorarios).length;
+  if (!n) return '';
+  return `<div class="compras-hon-resumen plan-nota plan-nota-aviso">⚠ ${n} compra${n === 1 ? '' : 's'} con un tipo de documento de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE): muévela${n === 1 ? '' : 's'} al registro de Honorarios (Subt. 21). Mientras tanto ${n === 1 ? 'sigue sumando' : 'siguen sumando'} en Bienes y Servicios.</div>`;
+}
+
 // Ingreso SEP, dividido en 3 filas (Preferente / Prioritario / Carrera Docente) por RBD.
 function ensureIngresoAgregado(rbd) {
   if (!CARGA_MANUAL.ingreso_items_por_rbd) CARGA_MANUAL.ingreso_items_por_rbd = {};
@@ -3209,9 +3456,10 @@ function splitRealProyMeses(meses, corte) {
   });
   return { real, proy };
 }
-function bloqueRealProy(ingreso, rem, bys) {
-  const gasto = rem + bys;
-  return { ingreso, rem, bys, gasto, saldo: ingreso - gasto };
+// `hon` (honorarios, Subt. 21) solo lo trae SEP por ahora (PR-1): si no se pasa, el bloque queda EXACTAMENTE igual que antes (sin la clave `hon`; las demás fuentes lo guardan en su respaldo JSON).
+function bloqueRealProy(ingreso, rem, bys, hon) {
+  const gasto = rem + (hon || 0) + bys;
+  return hon === undefined ? { ingreso, rem, bys, gasto, saldo: ingreso - gasto } : { ingreso, rem, hon, bys, gasto, saldo: ingreso - gasto };
 }
 function computeRealProyOtraFuente(of, fuenteKey) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey] || {};
@@ -3344,43 +3592,55 @@ function recomputeRegistro(r) {
   r.gasto_bys_proyectado = bysProy ? Math.round(bysProy.total) : 0;
   r.gasto_bys = r.gasto_subt22 + r.gasto_subt29 + r.gasto_bys_proyectado;
 
+  // Honorarios (Subt. 21): boletas (reales, por Fecha Documento) + proyección mensual (siempre proyectada), igual que B&S. Regla del usuario ("opción B" del 70/30): TODO
+  // honorario cuenta del lado del PERSONAL (el 70 %) junto con las remuneraciones, pero en su propia línea: gasto_personal = gasto_rem + gasto_hon (cualquier cuenta) y el total
+  // es rem + hon + B&S. `gasto_rem_anual_proy` queda SOLO con la fila de remuneraciones.
+  const honAg = CARGA_MANUAL.hon_agregado_por_rbd ? CARGA_MANUAL.hon_agregado_por_rbd[r.rbd] : null;
+  const honProy = CARGA_MANUAL.hon_proyeccion_por_rbd ? CARGA_MANUAL.hon_proyeccion_por_rbd[r.rbd] : null;
+  r.gasto_hon_real = honAg ? Math.round(honAg.total) : 0;
+  r.gasto_hon_proyectado = honProy ? Math.round(honProy.total) : 0;
+  r.gasto_hon = r.gasto_hon_real + r.gasto_hon_proyectado;
+  r.gasto_personal = r.gasto_rem_anual_proy + r.gasto_hon;
+
   // meta_rem_70 = 70% del Ingreso SEP (Preferente+Prioritario) + 100% de Carrera Docente,
   // ya que Carrera Docente solo puede gastarse en remuneraciones.
   r.meta_rem_70 = Math.round(0.70 * r.marco_anual_proy) + r.carrera_docente_anual;
   r.meta_bys_30 = Math.round(0.30 * r.marco_anual_proy);
-  r.saldo_rem = r.meta_rem_70 - r.gasto_rem_anual_proy;
+  r.saldo_rem = r.meta_rem_70 - r.gasto_personal;   // saldo del lado del personal (remuneraciones + honorarios) contra la meta del 70 %
   r.saldo_bys = r.meta_bys_30 - r.gasto_bys;
-  r.saldo_total = (r.marco_anual_proy + r.carrera_docente_anual) - r.gasto_rem_anual_proy - r.gasto_bys;
+  r.saldo_total = (r.marco_anual_proy + r.carrera_docente_anual) - r.gasto_personal - r.gasto_bys;
 
   // % Ejec. Remuneraciones y % Ejec. B&S se miden SIEMPRE contra su propia meta (70% y 30%
   // respectivamente) — igual que dice la leyenda de la tabla ("100% = gastó justo la meta").
   // Antes % Ejec. B&S se calculaba contra el marco TOTAL (no contra su meta del 30%), lo que
   // no coincidía con la barra de progreso de esa misma celda (que sí usaba la meta del 30%) ni
   // con la leyenda — dos números distintos mostrados uno junto al otro para el mismo dato.
-  r.pct_ejec_rem = r.meta_rem_70 ? Math.round((r.gasto_rem_anual_proy / r.meta_rem_70 * 100) * 10) / 10 : 0;
+  r.pct_ejec_rem = r.meta_rem_70 ? Math.round((r.gasto_personal / r.meta_rem_70 * 100) * 10) / 10 : 0; // % Ejec. Personal (Rem.+Hon.)
   r.pct_ejec_bys = r.meta_bys_30 ? Math.round((r.gasto_bys / r.meta_bys_30 * 100) * 10) / 10 : 0;
   const recursoTotal = r.marco_anual_proy + r.carrera_docente_anual;
-  r.pct_ejec_total = recursoTotal ? Math.round(((r.gasto_rem_anual_proy + r.gasto_bys) / recursoTotal * 100) * 10) / 10 : 0;
+  r.pct_ejec_total = recursoTotal ? Math.round(((r.gasto_personal + r.gasto_bys) / recursoTotal * 100) * 10) / 10 : 0;
 
   // % "sobre Ingreso Total": a diferencia de % Ejec. Rem./B&S (que miden contra la META del
   // 70%/30%, así que pueden pasar de 100% aunque el RBD gaste bien poco en total), estos miden
   // gasto / (Ingreso SEP + Carrera Docente) TOTAL — mismo denominador para Rem., B&S y el ya
-  // existente pct_ejec_total, así que Rem.+B&S = Total siempre. Son solo informativos.
-  r.pct_rem_ing_total = recursoTotal ? Math.round((r.gasto_rem_anual_proy / recursoTotal * 100) * 10) / 10 : 0;
+  // existente pct_ejec_total, así que Personal (Rem.+Hon.) + B&S = Total siempre. Son solo informativos.
+  r.pct_rem_ing_total = recursoTotal ? Math.round((r.gasto_personal / recursoTotal * 100) * 10) / 10 : 0;
   r.pct_bys_ing_total = recursoTotal ? Math.round((r.gasto_bys / recursoTotal * 100) * 10) / 10 : 0;
 
   // Estado (L-07): misma función que las fuentes, con los montos sin redondear (el % de arriba es solo lo que se muestra). Con Riesgo (≥ 90 %) solo en SEP.
-  r.estado = estadoDeEntidad(recursoTotal, r.gasto_rem_anual_proy + r.gasto_bys, true);
+  r.estado = estadoDeEntidad(recursoTotal, r.gasto_personal + r.gasto_bys, true);
   r.anomalia = r.marco_anual_proy > 0 && r.gasto_bys > 3 * r.marco_anual_proy;
   // Compras con avisos de fecha o de cuenta (F-11 / L-05): suman al "Datos a revisar" y a la marca "revisar" del RBD. Solo avisos: no cambian ningún total.
   r.compras_con_avisos = resumenAvisosCompras((CARGA_MANUAL.compras_por_rbd || {})[r.rbd], CUENTAS_SEP_BY_CODIGO).n;
+  // Boletas de honorarios con avisos (fecha, cuenta, tipo): también suman a "Datos a revisar" y a la marca "revisar" del RBD. Solo avisos: no cambian ningún total.
+  r.hon_con_avisos = resumenAvisosHonorarios((CARGA_MANUAL.honorarios_por_rbd || {})[r.rbd], ctxHonSep(r.rbd)).n;
 
   // Establecimientos SIN marco SEP asignado (r.sin_marco_sep, definido en DATA.registros) que
-  // de todas formas registran gasto SEP (remuneraciones, Subt.22/29 o Carrera Docente): esto es
+  // de todas formas registran gasto SEP (remuneraciones, honorarios, Subt.22/29 o Carrera Docente): esto es
   // siempre un error de imputación, nunca un caso normal, así que se marca aparte de
   // `anomalia` (que requiere marco > 0) para que la alerta se vea aunque no haya marco.
   r.alerta_sep_sin_marco = !!r.sin_marco_sep &&
-    (r.gasto_rem_anual_proy > 0 || r.gasto_bys > 0 || r.carrera_docente_anual > 0);
+    (r.gasto_rem_anual_proy > 0 || r.gasto_hon > 0 || r.gasto_bys > 0 || r.carrera_docente_anual > 0);
 }
 
 // Suma los meses 1..hasta (según el selector "Corte real / proyectado") de un objeto {MES: monto}.
@@ -3406,7 +3666,7 @@ function sumRealProyHastaMes(mesesObj, realHastaMes, hasta) {
 // año completo, para no reintroducir la confusión de tener dos vistas distintas en la tabla.
 function computeTotales() {
   const regs = DATA.registros;
-  let marco = 0, carreraDocente = 0, gastoRem = 0, gastoBys = 0;
+  let marco = 0, carreraDocente = 0, gastoRem = 0, gastoHon = 0, gastoBys = 0;
   regs.forEach(r => {
     const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
     const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
@@ -3417,13 +3677,19 @@ function computeTotales() {
     if (ag) ag.items.forEach(it => { gastoBys += sumHastaMes(it.meses, corteMesIdx); });
     const bysProy = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
     if (bysProy) gastoBys += sumHastaMes(bysProy.meses, corteMesIdx);
+    // Honorarios: boletas (reales) + proyección, cortadas igual que B&S (suma ≤ mes del selector «Ver resumen hasta el mes»).
+    const honAg = CARGA_MANUAL.hon_agregado_por_rbd ? CARGA_MANUAL.hon_agregado_por_rbd[r.rbd] : null;
+    if (honAg) gastoHon += sumHastaMes(honAg.meses, corteMesIdx);
+    const honProy = CARGA_MANUAL.hon_proyeccion_por_rbd ? CARGA_MANUAL.hon_proyeccion_por_rbd[r.rbd] : null;
+    if (honProy) gastoHon += sumHastaMes(honProy.meses, corteMesIdx);
   });
   return {
     marco_anual_proy: Math.round(marco),
     gasto_rem_anual_proy: Math.round(gastoRem),
+    gasto_hon: Math.round(gastoHon),
     gasto_bys: Math.round(gastoBys),
     carrera_docente_anual: Math.round(carreraDocente),
-    saldo_total: Math.round(marco + carreraDocente - gastoRem - gastoBys),
+    saldo_total: Math.round(marco + carreraDocente - gastoRem - gastoHon - gastoBys),
     // Entidades por Estado (L-07). El universo es el de las filas que tienen un Estado que mirar: los RBD con marco SEP y, además, los sin marco que
     // registraron gasto (recurso 0 y gasto > 0 = saldo negativo = Déficit; se ven con la alerta "⚠ Sin marco SEP"). Es la MISMA lista que el filtro de
     // la tabla (r.estado), el Panel principal y "Atención", así que todos coinciden.
@@ -3431,8 +3697,9 @@ function computeTotales() {
     n_riesgo: regs.filter(r => r.estado === 'riesgo').length,
     n_entidades_estado: regs.filter(r => !r.sin_marco_sep || r.alerta_sep_sin_marco).length,
     n_sin_marco_con_gasto: regs.filter(r => r.sin_marco_sep && r.alerta_sep_sin_marco).length,
-    n_anomalias: regs.filter(r => r.anomalia || r.compras_con_avisos > 0).length, // posible error de imputación O compras con avisos de fecha/cuenta
+    n_anomalias: regs.filter(r => r.anomalia || r.compras_con_avisos > 0 || r.hon_con_avisos > 0).length, // posible error de imputación O compras / boletas de honorarios con avisos de fecha/cuenta/tipo
     n_revisar_compras: regs.filter(r => r.compras_con_avisos > 0).length,          // de esos, los RBD con compras con avisos (para el texto de la tarjeta)
+    n_revisar_hon: regs.filter(r => r.hon_con_avisos > 0).length,                  // y los RBD con boletas de honorarios con avisos
     n_alertas_sep_sin_marco: regs.filter(r => r.alerta_sep_sin_marco).length,
   };
 }
@@ -3453,8 +3720,10 @@ function computeRealProyParaRbd(r) {
   const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
   const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
   const bysProyEntry = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
+  const honAgEntry = CARGA_MANUAL.hon_agregado_por_rbd ? CARGA_MANUAL.hon_agregado_por_rbd[r.rbd] : null;
+  const honProyEntry = CARGA_MANUAL.hon_proyeccion_por_rbd ? CARGA_MANUAL.hon_proyeccion_por_rbd[r.rbd] : null;
 
-  let ingresoReal = 0, ingresoProy = 0, carreraReal = 0, carreraProy = 0, remReal = 0, remProy = 0, bysReal = 0, bysProy = 0;
+  let ingresoReal = 0, ingresoProy = 0, carreraReal = 0, carreraProy = 0, remReal = 0, remProy = 0, honReal = 0, honProy = 0, bysReal = 0, bysProy = 0;
 
   const corteIng = corteIngresoRbd(r.rbd);
   ['Ingreso SEP Preferente', 'Ingreso SEP Prioritario'].forEach(nombre => {
@@ -3477,21 +3746,25 @@ function computeRealProyParaRbd(r) {
 
   if (ag) ag.items.forEach(it => { bysReal += sumHastaMes(it.meses, corteMesIdx); });
   if (bysProyEntry) bysProy += sumHastaMes(bysProyEntry.meses, corteMesIdx);
+  // Honorarios: las boletas son reales por definición; la proyección, siempre proyectada (ambas hasta el mes del selector).
+  if (honAgEntry) honReal += sumHastaMes(honAgEntry.meses, corteMesIdx);
+  if (honProyEntry) honProy += sumHastaMes(honProyEntry.meses, corteMesIdx);
 
   return {
     ingresoReal: Math.round(ingresoReal), ingresoProy: Math.round(ingresoProy),
     carreraReal: Math.round(carreraReal), carreraProy: Math.round(carreraProy),
     remReal: Math.round(remReal), remProy: Math.round(remProy),
+    honReal: Math.round(honReal), honProy: Math.round(honProy),
     bysReal: Math.round(bysReal), bysProy: Math.round(bysProy),
-    saldoReal: Math.round(ingresoReal + carreraReal - remReal - bysReal),
-    saldoProy: Math.round(ingresoProy + carreraProy - remProy - bysProy),
+    saldoReal: Math.round(ingresoReal + carreraReal - remReal - honReal - bysReal),
+    saldoProy: Math.round(ingresoProy + carreraProy - remProy - honProy - bysProy),
   };
 }
 
 // Suma computeRealProyParaRbd() de todos los RBD, para las dos primeras filas de tarjetas KPI
 // del resumen general.
 function computeTotalesRealProy() {
-  const acc = { ingresoReal:0, ingresoProy:0, carreraReal:0, carreraProy:0, remReal:0, remProy:0, bysReal:0, bysProy:0, saldoReal:0, saldoProy:0 };
+  const acc = { ingresoReal:0, ingresoProy:0, carreraReal:0, carreraProy:0, remReal:0, remProy:0, honReal:0, honProy:0, bysReal:0, bysProy:0, saldoReal:0, saldoProy:0 };
   DATA.registros.forEach(r => {
     const rp = computeRealProyParaRbd(r);
     Object.keys(acc).forEach(k => { acc[k] += rp[k]; });
@@ -3508,10 +3781,11 @@ function kpiCards(t) {
     { label: `Ingreso SEP (${hastaTxt})`, value: fmtCLP(t.marco_anual_proy), full: 'Preferente + Prioritario', tone: 'blue' },
     { label: 'Carrera Docente', value: fmtCLP(t.carrera_docente_anual), full: 'Uso exclusivo remuneraciones — se suma a su meta', tone: 'blue' },
     { label: `Gasto Remuneraciones (${hastaTxt})`, value: fmtCLP(t.gasto_rem_anual_proy), full: fmtPct(t.marco_anual_proy ? t.gasto_rem_anual_proy/t.marco_anual_proy*100 : 0)+' del marco (sin contar Carrera Docente)', tone: 'amber' },
+    { label: `Gasto Honorarios (${hastaTxt})`, value: fmtCLP(t.gasto_hon), full: 'Subt. 21 · boletas + proyección · cuenta del lado del personal (70 %)', tone: 'amber' },
     { label: `Gasto Bienes y Servicios (${hastaTxt})`, value: fmtCLP(t.gasto_bys), full: 'Subt 22 + Subt 29', tone: 'amber' },
-    { label: `Saldo (${hastaTxt})`, value: fmtCLP(t.saldo_total), full: 'Ingreso SEP (+ Carrera Docente) − gasto remuneraciones − gasto B&S, hasta ese mes', critical: t.saldo_total < 0, tone: t.saldo_total < 0 ? 'red' : 'green' },
+    { label: `Saldo (${hastaTxt})`, value: fmtCLP(t.saldo_total), full: 'Ingreso SEP (+ Carrera Docente) − gasto remuneraciones − gasto honorarios − gasto B&S, hasta ese mes', critical: t.saldo_total < 0, tone: t.saldo_total < 0 ? 'red' : 'green' },
     { label: 'RBD en déficit', value: t.n_deficit, full: (t.n_sin_marco_con_gasto ? `de ${t.n_entidades_estado} (${N_RBD_CON_MARCO} con marco SEP activo + ${t.n_sin_marco_con_gasto} sin marco con gasto SEP)` : 'de ' + N_RBD_CON_MARCO + ' con marco SEP activo') + ' (proyección año completo)', critical: t.n_deficit > 0, tone: t.n_deficit > 0 ? 'red' : 'gray' },
-    { label: 'Datos a revisar', value: t.n_anomalias, full: 'posible error de imputación' + (t.n_revisar_compras ? ` · incluye ${t.n_revisar_compras} RBD con avisos de fecha o cuenta en sus compras` : ''), critical: t.n_anomalias > 0, tone: t.n_anomalias > 0 ? 'red' : 'gray' },
+    { label: 'Datos a revisar', value: t.n_anomalias, full: 'posible error de imputación' + (t.n_revisar_compras ? ` · incluye ${t.n_revisar_compras} RBD con avisos de fecha o cuenta en sus compras` : '') + (t.n_revisar_hon ? ` · incluye ${t.n_revisar_hon} RBD con avisos en sus honorarios` : ''), critical: t.n_anomalias > 0, tone: t.n_anomalias > 0 ? 'red' : 'gray' },
     { label: '⚠ Gasto SEP sin marco', value: t.n_alertas_sep_sin_marco, full: `de ${N_RBD_SIN_MARCO} RBD sin marco SEP asignado — no deberían tener ningún gasto SEP`, critical: t.n_alertas_sep_sin_marco > 0, tone: t.n_alertas_sep_sin_marco > 0 ? 'red' : 'gray' },
   ];
 }
@@ -3521,6 +3795,7 @@ function kpiCardsReal(rp) {
     { label: 'Ingreso SEP (Real)', value: fmtCLP(rp.ingresoReal), full: 'Preferente + Prioritario hasta el corte "Ingresos reales hasta" de cada RBD', tone: 'blue' },
     { label: 'Carrera Docente (Real)', value: fmtCLP(rp.carreraReal), full: 'Ya ejecutado', tone: 'blue' },
     { label: 'Gasto Remuneraciones (Real)', value: fmtCLP(rp.remReal), full: 'Según el corte "reales hasta" de cada RBD', tone: 'amber' },
+    { label: 'Gasto Honorarios (Real)', value: fmtCLP(rp.honReal), full: 'Boletas de honorarios registradas (Subt. 21)', tone: 'amber' },
     { label: 'Gasto Bienes y Servicios (Real)', value: fmtCLP(rp.bysReal), full: 'Compras ya documentadas (Subt.22+29)', tone: 'amber' },
     { label: 'Saldo (Real)', value: fmtCLP(rp.saldoReal), full: 'Ingreso Real (+ Carrera Docente Real) − gasto Real', critical: rp.saldoReal < 0, tone: rp.saldoReal < 0 ? 'red' : 'green' },
   ];
@@ -3531,6 +3806,7 @@ function kpiCardsProy(rp) {
     { label: 'Ingreso SEP (Proyectado)', value: fmtCLP(rp.ingresoProy), full: 'Meses posteriores al corte "Ingresos reales hasta" de cada RBD — editable', tone: 'blue' },
     { label: 'Carrera Docente (Proyectado)', value: fmtCLP(rp.carreraProy), full: 'Meses aún no confirmados', tone: 'blue' },
     { label: 'Gasto Remuneraciones (Proyectado)', value: fmtCLP(rp.remProy), full: 'Meses posteriores al corte "reales hasta" de cada RBD', tone: 'amber' },
+    { label: 'Gasto Honorarios (Proyectado)', value: fmtCLP(rp.honProy), full: 'Fila "Honorarios (Proyección)" — se suma a las boletas reales', tone: 'amber' },
     { label: 'Gasto Bienes y Servicios (Proyectado)', value: fmtCLP(rp.bysProy), full: 'Fila "Bienes y Servicios (Proyección)" — se suma a las compras reales', tone: 'amber' },
     { label: 'Saldo (Proyectado)', value: fmtCLP(rp.saldoProy), full: 'Ingreso Proyectado (+ Carrera Docente Proyectada) − gasto Proyectado', critical: rp.saldoProy < 0, tone: rp.saldoProy < 0 ? 'red' : 'green' },
   ];
@@ -3547,6 +3823,7 @@ function renderKpis() {
   const t = computeTotales();
   DATA.totales.marco_anual_proy = t.marco_anual_proy;
   DATA.totales.gasto_rem_anual_proy = t.gasto_rem_anual_proy;
+  DATA.totales.gasto_hon = t.gasto_hon;
   DATA.totales.gasto_bys = t.gasto_bys;
   DATA.totales.saldo_total = t.saldo_total;
   DATA.totales.n_deficit = t.n_deficit;
@@ -3610,6 +3887,7 @@ function updateRowDOM(rbd) {
   row.querySelector('[data-field="nombre"]').innerHTML = `<span class="nombre-txt" title="${escHtml(r.nombre)}">${escHtml(r.nombre)}</span>${nombreTagsHTML(r)}`;
   row.querySelector('[data-field="marco_anual_proy"]').textContent = fmtCLP(r.marco_anual_proy);
   row.querySelector('[data-field="gasto_rem_anual_proy"]').textContent = fmtCLP(r.gasto_rem_anual_proy);
+  row.querySelector('[data-field="gasto_hon"]').textContent = fmtCLP(r.gasto_hon);
   row.querySelector('[data-field="gasto_bys"]').textContent = fmtCLP(r.gasto_bys);
   row.querySelector('[data-field="pct_ejec_rem"]').innerHTML = pctBarHTML(r.pct_ejec_rem);
   row.querySelector('[data-field="pct_ejec_bys"]').innerHTML = pctBarHTML(r.pct_ejec_bys);
@@ -3651,7 +3929,7 @@ function onCeldaInput(input) {
   const rbd = input.dataset.rbd, mes = input.dataset.mes;
   const val = leerMontoDeCelda(input);
   if (val === null) return; // texto no numérico: se rechaza sin tocar lo guardado
-  const modo = input.dataset.modo; // 'ingreso_item' | 'rem' | 'bys_proy'
+  const modo = input.dataset.modo; // 'ingreso_item' | 'rem' | 'bys_proy' | 'hon_proy'
   let totalCell;
   if (modo === 'ingreso_item') {
     const item = input.dataset.item;
@@ -3674,6 +3952,18 @@ function onCeldaInput(input) {
     const totalGeneralCell = document.getElementById(`bysproytotal-${rbd}`);
     if (totalGeneralCell) totalGeneralCell.textContent = fmtCLP(bp.total);
     scheduleRbdSave(rbd, { nombre: bp.nombre, bys_proyeccion: { items: { [codigo]: { meses: { [mes]: val }, total: it.total } } } });
+  } else if (modo === 'hon_proy') {
+    const codigo = input.dataset.codigo;
+    const hp = ensureHonProyeccion(rbd);
+    const it = ensureBysProyeccionItem(hp, codigo);
+    it.meses[mes] = val;
+    it.total = MESES_CARGA.reduce((s, m) => s + (it.meses[m] || 0), 0);
+    recomputeBysProyeccionAgregado(hp);
+    totalCell = document.getElementById(`honproyitemtotal-${rbd}-${idSeguro(codigo)}`);
+    if (totalCell) totalCell.textContent = fmtCLP(it.total);
+    const totalGeneralCell = document.getElementById(`honproytotal-${rbd}`);
+    if (totalGeneralCell) totalGeneralCell.textContent = fmtCLP(hp.total);
+    scheduleRbdSave(rbd, { nombre: hp.nombre, hon_proyeccion: { items: { [codigo]: { meses: { [mes]: val }, total: it.total } } } });
   } else {
     const simple = ensureSimple(rbd, 'rem_por_rbd');
     simple.meses[mes] = val;
@@ -3753,6 +4043,149 @@ function mesHeaderCellsHTML(modo, rbd) {
     const real = esRealParaModo(modo, rbd, idx);
     return `<th class="num ${real ? 'mes-real' : 'mes-proy'}">${m}<span class="mes-tag">${real ? 'Real' : 'Proy.'}</span></th>`;
   }).join('');
+}
+
+// ---- Interfaz de honorarios (bloque «Honorarios (Subt. 21)» del detalle de una entidad) ----
+// Cuentas del selector: las del catálogo de honorarios habilitadas para la subvención del contexto (SEP: las de su columna del Plan de Cuentas 2026).
+function honOptionsCuentas(ctx) {
+  return `<option value="">Cuenta…</option>` + honCuentasHabilitadas(ctx)
+    .map(c => `<option value="${c.codigo}">${c.codigo} · ${escHtml(c.nombre)}${c.soloHonorarios ? ' (solo honorarios)' : ''}</option>`).join('');
+}
+// Tipos del selector: los 5 de honorarios o, si ya hay una cuenta elegida, solo los que esa cuenta acepta.
+function honOptionsTipo(codigoCuenta, seleccionado) {
+  const cuenta = HON_CUENTAS_BY_CODIGO[codigoCuenta];
+  const codigos = cuenta ? cuenta.docs : HON_TIPOS.map(([c]) => c);
+  return `<option value="">Tipo de documento…</option>` + codigos
+    .map(c => `<option value="${c}"${c === seleccionado ? ' selected' : ''}>${escHtml(honNombreTipo(c))} (${c})</option>`).join('');
+}
+function honNombreBoleta(h, id) {
+  const cod = honCodigoTipo(h.tipoDocumento);
+  return [cod || h.tipoDocumento, h.nroDocumento ? 'N° ' + h.nroDocumento : '', h.fechaDocumento].filter(Boolean).join(' ') || ('cuenta ' + (h.codigo || id));
+}
+function honFilaHTML(ctx, id, h, printMode) {
+  const cat = HON_CUENTAS_BY_CODIGO[h.codigo];
+  const avisos = printMode ? [] : avisosHonorario(h, ctx); // marcas ⚠ (solo en pantalla: el PDF no las lleva)
+  const idAttr = escHtml(id);
+  const cod = honCodigoTipo(h.tipoDocumento);
+  const tipoTxt = cod ? honNombreTipo(cod) : (h.tipoDocumento || '');
+  const nombreBoleta = escHtml(honNombreBoleta(h, id));
+  return `<tr data-hon-id="${idAttr}">
+      <td>${escHtml(h.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}${insigniasAvisoHTML(avisos, 'cuenta')}</td>
+      <td${cod ? ` title="${escHtml(cod)}"` : ''}>${escHtml(tipoTxt)}${insigniasAvisoHTML(avisos, 'tipo')}</td>
+      <td>${escHtml(h.nroDocumento || '')}</td>
+      <td>${escHtml(h.fechaDocumento || '')}${insigniasAvisoHTML(avisos, 'doc')}</td>
+      <td>${escHtml(h.fechaPago || '')}${insigniasAvisoHTML(avisos, 'pago')}</td>
+      <td>${escHtml(h.descripcion || '')}</td>
+      <td>${escHtml(h.rutProveedor || '')}</td>
+      <td>${escHtml(h.nombreProveedor || '')}</td>
+      <td class="num">${fmtCLP(num(h.montoGasto))}${insigniasAvisoHTML(avisos, 'monto')}</td>
+      <td class="num">${fmtCLP(num(h.montoDocumento))}</td>
+      <td class="col-dc">${celdaDcHTML(h)}</td>
+      ${printMode ? '' : `<td class="compra-acciones-cell">
+        <button type="button" class="hon-edit-btn" ${ctx.attrs} data-hon-id="${idAttr}" title="Editar boleta de honorarios" aria-label="Editar honorario ${nombreBoleta}">✏️</button>
+        <button type="button" class="hon-dup-btn" ${ctx.attrs} data-hon-id="${idAttr}" title="Duplicar boleta de honorarios" aria-label="Duplicar honorario ${nombreBoleta}">⧉</button>
+        <button type="button" class="hon-del-btn" ${ctx.attrs} data-hon-id="${idAttr}" title="Eliminar boleta de honorarios" aria-label="Eliminar honorario ${nombreBoleta}">🗑</button>
+      </td>`}
+    </tr>`;
+}
+function honFormHTML(ctx) {
+  return `
+    <div class="hon-form-grid" ${ctx.attrs}>
+      <label class="compra-field"><span class="compra-field-label">Cuenta de honorarios</span><select class="hon-input" data-field="codigo">${honOptionsCuentas(ctx)}</select></label>
+      <label class="compra-field"><span class="compra-field-label">Tipo de documento (honorarios)</span><select class="hon-input" data-field="tipoDocumento">${honOptionsTipo('', '')}</select></label>
+      <label class="compra-field"><span class="compra-field-label">N° boleta</span><input type="text" class="hon-input" data-field="nroDocumento" autocomplete="off" placeholder="N° boleta"></label>
+      <label class="compra-field"><span class="compra-field-label">Fecha boleta</span><input type="date" class="hon-input" data-field="fechaDocumento" title="Fecha de emisión de la boleta: determina el mes del gasto"></label>
+      <label class="compra-field"><span class="compra-field-label">Fecha pago de la boleta</span><input type="date" class="hon-input" data-field="fechaPago" title="Fecha efectiva del pago (SUPEREDUC exige 2026)"></label>
+      <label class="compra-field"><span class="compra-field-label">Descripción de la boleta</span><input type="text" class="hon-input" data-field="descripcion" autocomplete="off" placeholder="Descripción del gasto"></label>
+      <label class="compra-field"><span class="compra-field-label">RUT del prestador</span><input type="text" class="hon-input" data-field="rutProveedor" autocomplete="off" placeholder="11111111-1"></label>
+      <label class="compra-field"><span class="compra-field-label">Nombre del prestador</span><input type="text" class="hon-input" data-field="nombreProveedor" autocomplete="off" placeholder="Nombre del prestador"></label>
+      <label class="compra-field"><span class="compra-field-label">Monto gasto de la boleta</span><input type="text" inputmode="numeric" class="hon-input" data-field="montoGasto" autocomplete="off" placeholder="Monto bruto" title="Monto bruto de la boleta que se imputa a este RBD (menor si la boleta se reparte)"></label>
+      <label class="compra-field"><span class="compra-field-label">Monto documento de la boleta</span><input type="text" inputmode="numeric" class="hon-input" data-field="montoDocumento" autocomplete="off" placeholder="= Monto gasto si se deja vacío" title="Valor total de la boleta (bruto). Vacío = igual al Monto gasto"></label>
+      <label class="compra-field compra-field-dc" title="${escHtml(AYUDA_DC)}"><span class="compra-field-label">N° DC de la boleta</span><input type="text" class="hon-input" data-field="documentoContable" maxlength="100" autocomplete="off" placeholder="p. ej. DC_344" title="${escHtml(AYUDA_DC)}"></label>
+      <span class="compra-form-actions">
+        <button type="button" class="add-hon-btn" ${ctx.attrs}>+ Agregar honorario</button>
+        <button type="button" class="cancelar-edicion-hon-btn hidden" ${ctx.attrs}>✕ Cancelar edición de honorario</button>
+      </span>
+      <div class="hon-form-avisos" aria-live="polite"></div>
+    </div>`;
+}
+function honTablaHTML(ctx, printMode) {
+  const boletas = ctx.boletas();
+  const filas = Object.entries(boletas)
+    .sort((a, b) => (b[1].fechaDocumento || '').localeCompare(a[1].fechaDocumento || ''))
+    .map(([id, h]) => honFilaHTML(ctx, id, h, printMode)).join('');
+  return `<div class="compras-scroll">
+        <table class="detalle-table hon-table">
+          <thead><tr><th>Cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prestador</th><th>Nombre prestador</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th>${printMode ? '' : '<th aria-label="Acciones de honorarios"></th>'}</tr></thead>
+          <tbody>${filas || `<tr><td colspan="${printMode ? 11 : 12}" class="detalle-sin-compras">Sin boletas de honorarios registradas todavía.</td></tr>`}</tbody>
+        </table>
+      </div>`;
+}
+// Fila mensual de solo lectura con la suma de las boletas por mes de Fecha Documento (siempre «real»).
+function honFilaRealHTML(ctx) {
+  const ag = ctx.agregado();
+  const cells = MESES_CARGA.map(m => { const v = ag ? ag.meses[m] : 0; return `<td class="num mes-real">${v ? fmtCLP(v) : '—'}</td>`; }).join('');
+  return `<table class="detalle-table">${DETALLE_COLGROUP}
+      <thead><tr><th>Honorarios (Subt. 21) — boletas</th>${mesHeaderCellsHTML('hon', ctx.rbd)}<th class="num">Total</th></tr></thead>
+      <tbody><tr><td class="item-label">Honorarios (Subt. 21)</td>${cells}<td class="num item-total" id="hontotal-${ctx.rbd}">${fmtCLP(ag ? ag.total : 0)}</td></tr></tbody>
+    </table>`;
+}
+// Proyección de honorarios por cuenta (siempre «proyectada»; se SUMA a las boletas): mismo patrón que «Bienes y Servicios (Proyección)».
+function honProyeccionHTML(ctx, printMode) {
+  const rbd = ctx.rbd;
+  const hp = ctx.proyeccion();
+  const itemsList = hp ? hp.items : [];
+  const total = hp ? hp.total : 0;
+  const filas = itemsList.map(it => {
+    const cells = MESES_CARGA.map(m => celdaInputHTML(rbd, 'hon_proy', m, it.meses[m] || 0, `data-codigo="${escHtml(it.codigo)}"`, printMode, 'Proyección honorarios ' + nombreItemHonProyeccion(it.codigo))).join('');
+    const delCell = printMode ? '' : `<td class="compra-acciones-cell" style="width:32px;"><button type="button" class="honproy-del-btn" ${ctx.attrs} data-codigo="${escHtml(it.codigo)}" title="Quitar cuenta de la proyección de honorarios" aria-label="Quitar cuenta de la proyección de honorarios: ${escHtml(nombreItemHonProyeccion(it.codigo))}">🗑</button></td>`;
+    return `<tr><td class="item-label">${escHtml(nombreItemHonProyeccion(it.codigo))}</td>${cells}<td class="num item-total" id="honproyitemtotal-${rbd}-${idSeguro(it.codigo)}">${fmtCLP(it.total)}</td>${delCell}</tr>`;
+  }).join('');
+  const filasHTML = filas || `<tr><td colspan="${printMode ? 14 : 15}" class="detalle-sin-compras">Sin cuentas de proyección de honorarios todavía${printMode ? '' : ' — elige una de la lista de abajo y agrégala'}.</td></tr>`;
+  const totalRow = itemsList.length
+    ? `<tr><td class="item-label"><strong>Total Honorarios (Proyección)</strong></td>${MESES_CARGA.map(() => '<td></td>').join('')}<td class="num item-total" id="honproytotal-${rbd}"><strong>${fmtCLP(total)}</strong></td>${printMode ? '' : '<td></td>'}</tr>`
+    : '';
+  const yaAgregados = new Set(itemsList.map(it => it.codigo));
+  const addRowHTML = printMode ? '' : `
+      <div class="honproy-add-row">
+        <select class="hon-input honproy-add-select" id="honproyAddSelect-${rbd}" aria-label="Cuenta de proyección de honorarios para agregar, ${escHtml(ctx.etiqueta)}">
+          <option value="">+ Elegir cuenta de proyección de honorarios…</option>
+          ${honCuentasHabilitadas(ctx).filter(c => !yaAgregados.has(c.codigo)).map(c => `<option value="${c.codigo}">${c.codigo} · ${escHtml(c.nombre)}</option>`).join('')}
+        </select>
+        <button type="button" class="add-honproy-btn" ${ctx.attrs}>+ Agregar cuenta</button>
+      </div>`;
+  const dobles = mesesHonConBoletasYProyeccion(ctx.agregado() && ctx.agregado().meses, hp && hp.meses);
+  const avisoDoble = dobles.length
+    ? `<div class="hon-aviso-doble plan-nota plan-nota-aviso">⚠ ${dobles.map(m => MESES_CARGA_TITLE[MESES_CARGA.indexOf(m)]).join(', ')}: hay boletas y también proyección de honorarios. Ambas se SUMAN; si la proyección ya se cumplió con una boleta, réstala de la proyección para no contarla dos veces.</div>`
+    : '';
+  return `<table class="detalle-table">${DETALLE_COLGROUP}
+      <thead><tr><th>Honorarios (Proyección) — por cuenta</th>${mesHeaderCellsHTML('hon_proy', rbd)}<th class="num">Total</th>${printMode ? '' : '<th aria-label="Acciones de la proyección de honorarios"></th>'}</tr></thead>
+      <tbody>${filasHTML}${totalRow}</tbody>
+    </table>${addRowHTML}${avisoDoble}`;
+}
+// Nota con las cuentas que aceptan honorarios en la subvención del contexto (según el Plan de Cuentas 2026).
+function honNotaPlanHTML(ctx) {
+  const hab = honCuentasHabilitadas(ctx);
+  const conPert = hab.filter(c => honNivelCuenta(ctx, c.codigo) === 2).length;
+  return `<div class="plan-nota">Plan de Cuentas SUPEREDUC 2026 · <strong>${escHtml(ctx.subvencion)}</strong>: ${hab.length} cuentas aceptan documentos de honorarios de ${HON_CUENTAS.length}${conPert ? ` (${conPert} sujetas a exigencias de pertinencia: PME, alumnos prioritarios y preferentes…)` : ''}. El tipo de documento depende de la cuenta (BOLH, BHE, BOLHE, BPST, BPSTE).</div>`;
+}
+// Bloque completo del detalle: fila de boletas, proyección y registro (formulario + tabla). Se inserta justo debajo de «Remuneraciones (Subt. 21)».
+function honSectionHTML(ctx, printMode) {
+  const resumen = printMode ? '' : resumenAvisosHonorariosHTML(resumenAvisosHonorarios(ctx.boletas(), ctx));
+  return `
+    <div class="hon-block" style="margin-top:14px;">
+      ${honFilaRealHTML(ctx)}
+      <div style="margin-top:8px;">${honProyeccionHTML(ctx, printMode)}</div>
+      <div class="hon-section">
+        <div class="detalle-header">
+          <strong>Registro de honorarios ${escHtml(ctx.subvencion)} (Subt. 21)</strong> — <span class="detalle-sub">una fila por boleta, con las columnas del Libro de Honorarios de SUPEREDUC (A–L); cada boleta se suma sola al mes de su Fecha Documento. Solo monto bruto. Los honorarios cuentan del lado del <strong>personal</strong> (el 70 %) junto con las remuneraciones, en su propia línea. <strong>N° DC</strong> es interno y no va en ningún CSV.</span>
+        </div>
+        ${printMode ? '' : honFormHTML(ctx)}
+        ${printMode ? '' : honNotaPlanHTML(ctx)}
+        ${resumen}
+        ${honTablaHTML(ctx, printMode)}
+      </div>
+    </div>`;
 }
 
 function buildDetalleHTML(rbd, printMode) {
@@ -3879,7 +4312,7 @@ function buildDetalleHTML(rbd, printMode) {
     const nombreCompra = escHtml([c.tipoDocumento, c.nroDocumento ? 'N° ' + c.nroDocumento : ''].filter(Boolean).join(' ') || ('cuenta ' + (c.codigo || id)));
     return `<tr data-compra-id="${idAttr}">
       <td>${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}${insigniasAvisoHTML(avisos, 'cuenta')}</td>
-      <td>${escHtml(c.tipoDocumento || '')}</td>
+      <td>${escHtml(c.tipoDocumento || '')}${printMode ? '' : marcaTipoHonorariosHTML(c)}</td>
       <td>${escHtml(c.nroDocumento || '')}</td>
       <td>${escHtml(c.fechaDocumento || '')}${insigniasAvisoHTML(avisos, 'doc')}</td>
       <td>${escHtml(c.fechaPago || '')}${insigniasAvisoHTML(avisos, 'pago')}</td>
@@ -3929,6 +4362,7 @@ function buildDetalleHTML(rbd, printMode) {
       </div>
       ${formHTML}
       ${printMode ? '' : resumenAvisosComprasHTML(resumenAvisosCompras(compras, CUENTAS_SEP_BY_CODIGO))}
+      ${printMode ? '' : resumenTipoHonorariosEnComprasHTML(compras)}
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
           <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th><th title="${escHtml(AYUDA_DOC_ORIGINAL)}">Doc. original</th>${printMode ? '' : '<th aria-label="Acciones"></th>'}</tr></thead>
@@ -3940,7 +4374,7 @@ function buildDetalleHTML(rbd, printMode) {
   return `
   <div class="detalle-wrap">
     <div class="detalle-header">
-      <strong>Detalle por mes — Ingreso, Remuneraciones y Bienes y Servicios (SEP)</strong> — <span class="detalle-sub">Ingreso y Remuneraciones se escriben directo en la celda; Bienes y Servicios (Subt.22/29) se carga como "Registro de compras" más abajo y su total mensual se calcula solo.</span>
+      <strong>Detalle por mes — Ingreso, Remuneraciones, Honorarios y Bienes y Servicios (SEP)</strong> — <span class="detalle-sub">Ingreso y Remuneraciones se escriben directo en la celda; Honorarios (Subt. 21) se carga como "Registro de honorarios" (una boleta por fila; la proyección sí se escribe en la celda) y Bienes y Servicios (Subt.22/29) como "Registro de compras" más abajo: su total mensual se calcula solo.</span>
     </div>
     ${registro && registro.sin_marco_sep ? `<div class="alerta-sep-banner">⚠ <strong>Este establecimiento NO tiene marco SEP asignado.</strong> ${registro.alerta_sep_sin_marco ? 'Sin embargo, registra gasto SEP en las celdas de abajo — esto es un error de imputación que debe corregirse o justificarse.' : 'No debería registrar ningún gasto SEP (remuneraciones, Subt.22/29 o Carrera Docente) en las celdas de abajo.'}</div>` : ''}
     <div class="detalle-empty">Los cambios que hagas aquí se guardan automáticamente y en tiempo real para todo el equipo (Firestore) — no hace falta descargar ni volver a cargar nada. El botón "Descargar carga (JSON)" de arriba sigue disponible solo como respaldo manual.</div>
@@ -3948,6 +4382,7 @@ function buildDetalleHTML(rbd, printMode) {
     <div class="detalle-scroll">
     ${filaIngresoItems()}
     <div style="margin-top:8px;">${filaSimple('rem_por_rbd', 'rem', 'Remuneraciones (Subt. 21)')}</div>
+    ${honSectionHTML(ctxHonSep(rbd), printMode)}
     <table class="detalle-table" style="margin-top:14px;">${DETALLE_COLGROUP}
       <thead><tr><th>Ítem (Subt. 22)</th>${mesHeaderCellsHTML('item', rbd)}<th class="num">Total</th></tr></thead>
       <tbody>${filaItems(ITEMS_22, '22')}</tbody>
@@ -3979,7 +4414,7 @@ function renderTable() {
   currentFilteredRows = rows;
   const tbody = document.getElementById('tableBody');
   if (!rows.length) {
-    tbody.innerHTML = `<tr class="table-empty-row"><td colspan="15">Ningún establecimiento coincide con el filtro/búsqueda actual.</td></tr>`;
+    tbody.innerHTML = `<tr class="table-empty-row"><td colspan="16">Ningún establecimiento coincide con el filtro/búsqueda actual.</td></tr>`;
   } else {
     tbody.innerHTML = rows.map(r => `
     <tr class="rbd-row${r.alerta_sep_sin_marco ? ' alerta-critica' : ''}" data-rbd="${escHtml(r.rbd)}">
@@ -3988,6 +4423,7 @@ function renderTable() {
       <td data-field="nombre" class="rbd-clickable" data-abrir-rbd="${escHtml(r.rbd)}"><span class="nombre-txt" title="${escHtml(r.nombre)}">${escHtml(r.nombre)}</span>${nombreTagsHTML(r)}</td>
       <td class="num" data-field="marco_anual_proy">${fmtCLP(r.marco_anual_proy)}</td>
       <td class="num" data-field="gasto_rem_anual_proy">${fmtCLP(r.gasto_rem_anual_proy)}</td>
+      <td class="num" data-field="gasto_hon">${fmtCLP(r.gasto_hon)}</td>
       <td class="num" data-field="pct_ejec_rem">${pctBarHTML(r.pct_ejec_rem)}</td>
       <td class="num" data-field="saldo_rem" style="color:${r.saldo_rem < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(r.saldo_rem)}</td>
       <td class="num" data-field="gasto_bys">${fmtCLP(r.gasto_bys)}</td>
@@ -4089,13 +4525,15 @@ function llenarFormularioCompra(campos) {
   if (!wrap) return;
   wrap.querySelectorAll('.compra-input').forEach(el => {
     const field = el.dataset.field;
-    el.value = campos[field] !== undefined && campos[field] !== null ? campos[field] : '';
+    const valor = campos[field] !== undefined && campos[field] !== null ? campos[field] : '';
+    // Una compra antigua con un tipo de honorarios ya no está en el selector: se agrega como opción marcada para no perder el tipo al guardar.
+    if (field === 'tipoDocumento') fijarValorSelect(el, String(valor), String(valor)); else el.value = valor;
   });
   actualizarAvisosFormularioCompra(wrap);
 }
 function resetFormularioCompraUI() {
   const wrap = document.querySelector('#modalBody .compra-form-grid');
-  if (wrap) { delete wrap.dataset.editingId; wrap.classList.remove('editing'); }
+  if (wrap) { delete wrap.dataset.editingId; wrap.classList.remove('editing'); wrap.querySelectorAll('option[data-legado]').forEach(o => o.remove()); }
   const btn = document.querySelector('#modalBody .add-compra-btn');
   if (btn) btn.textContent = '+ Agregar compra';
   const cancelBtn = document.querySelector('#modalBody .cancelar-edicion-btn');
@@ -4210,6 +4648,233 @@ async function eliminarBysProyeccionItem(rbd, codigo) {
     }, { merge: true });
   } catch (err) {
     alert('No se pudo quitar el ítem para el resto del equipo: ' + err.message);
+  }
+}
+
+// --- Registro de honorarios (formulario + tabla del detalle de SEP): agregar / editar / duplicar / eliminar una boleta y la proyección por cuenta. Misma mecánica que el
+// registro de compras (guardado por boleta con merge, sin pisar lo que otra persona edite en otra boleta del mismo RBD). ---
+function honGrid(ctx) { return document.querySelector(`${ctx.modalSel} .hon-form-grid`); }
+// Deja un <select> en `valor` aunque ese valor ya no sea una opción (un dato antiguo): se agrega una opción marcada para no perderlo al guardar.
+function fijarValorSelect(el, valor, etiqueta) {
+  el.querySelectorAll('option[data-legado]').forEach(o => o.remove());
+  el.value = valor;
+  if (valor && el.value !== valor) {
+    const o = document.createElement('option');
+    o.value = valor; o.textContent = `${etiqueta || valor} (no disponible para registros nuevos)`; o.dataset.legado = '1';
+    el.appendChild(o); el.value = valor;
+  }
+}
+// Campos del formulario tal como están escritos (montos todavía como texto).
+function leerCamposHon(ctx) {
+  const wrap = honGrid(ctx);
+  if (!wrap) return null;
+  const campos = {};
+  wrap.querySelectorAll('.hon-input').forEach(el => { campos[el.dataset.field] = (el.value || '').trim(); });
+  return campos;
+}
+// Valida y arma la boleta a guardar: { campos } o { error }. Los montos se leen con parseMontoCL (1500000, 1.500.000…); las boletas son gasto POSITIVO; un Monto documento vacío vale lo mismo que el Monto gasto.
+function armarBoletaHon(crudo) {
+  if (!crudo.codigo) return { error: 'Elige una cuenta de honorarios.' };
+  const tipo = honCodigoTipo(crudo.tipoDocumento);
+  if (!tipo) return { error: 'Elige el tipo de documento de honorarios (BOLH, BHE, BOLHE, BPST o BPSTE).' };
+  if (!honTipoPermitido(crudo.codigo, tipo)) {
+    const c = HON_CUENTAS_BY_CODIGO[crudo.codigo];
+    return { error: `La cuenta ${crudo.codigo} no acepta el tipo ${tipo}` + (c ? ` (acepta: ${c.docs.join(', ')}).` : ' porque no está en el catálogo de honorarios.') };
+  }
+  if (!crudo.fechaDocumento) return { error: 'Ingresa la fecha de la boleta — determina el mes al que se suma el gasto.' };
+  const mg = parseMontoCL(crudo.montoGasto);
+  if (!mg.ok) return { error: MONTO_AYUDA_INVALIDO };
+  if (!(mg.valor > 0)) return { error: 'Ingresa el monto del gasto (mayor que 0): las boletas de honorarios son gasto positivo.' };
+  const md = parseMontoCL(crudo.montoDocumento);
+  if (!md.ok) return { error: MONTO_AYUDA_INVALIDO };
+  if (md.valor < 0) return { error: 'El monto del documento no puede ser negativo.' };
+  return { campos: {
+    codigo: crudo.codigo, tipoDocumento: tipo, nroDocumento: crudo.nroDocumento, fechaDocumento: crudo.fechaDocumento, fechaPago: crudo.fechaPago,
+    descripcion: crudo.descripcion, rutProveedor: crudo.rutProveedor, nombreProveedor: crudo.nombreProveedor,
+    montoGasto: mg.valor, montoDocumento: md.valor > 0 ? md.valor : mg.valor, documentoContable: crudo.documentoContable,
+  } };
+}
+// Avisos en vivo del formulario, en la caja `.hon-form-avisos` DENTRO de la grilla (el reconciliador de los modales nunca toca la grilla): fechas, monto y tipo. NO impiden guardar.
+function avisosFormularioHon(grid) {
+  const valor = (f) => { const el = grid.querySelector(`.hon-input[data-field="${f}"]`); return el ? String(el.value || '') : ''; };
+  const incompleto = (f) => { const el = grid.querySelector(`.hon-input[data-field="${f}"]`); return !!(el && el.validity && el.validity.badInput); }; // fecha a medio teclear
+  const out = [];
+  const doc = valor('fechaDocumento'), pago = valor('fechaPago');
+  const dDoc = diagnosticoFechaCompra(doc), dPago = diagnosticoFechaCompra(pago);
+  const mes = (d) => MESES_CARGA_TITLE[MESES_CARGA.indexOf(d.mes)];
+  if (incompleto('fechaDocumento')) out.push({ texto: 'La fecha de la boleta está incompleta o no es válida: sin una fecha válida la boleta no se contabiliza en ningún mes.' });
+  else if (doc && dDoc.estado === 'noContabiliza') out.push({ texto: `La fecha de la boleta «${doc}» no es válida (formato aaaa-mm-dd): la boleta no se contabilizaría en ningún mes.` });
+  else if (doc && dDoc.estado === 'inexistente') out.push({ texto: `La fecha de la boleta ${doc} no existe en el calendario: se contaría en ${mes(dDoc)}, pero SUPEREDUC la rechazaría.` });
+  else if (doc && dDoc.estado === 'fueraAnio') out.push({ texto: `La fecha de la boleta (${doc}) está fuera de ${ANIO_PANEL}: el mes se toma sin considerar el año y se contaría en ${mes(dDoc)} de ${ANIO_PANEL}.` });
+  if (incompleto('fechaPago')) out.push({ texto: 'La fecha de pago está incompleta o no es válida.' });
+  else if (pago && (dPago.estado === 'noContabiliza' || dPago.estado === 'inexistente')) out.push({ texto: `La fecha de pago «${pago}» no es válida (formato aaaa-mm-dd).` });
+  else if (pago && dPago.estado === 'fueraAnio') out.push({ texto: `La fecha de pago (${pago}) está fuera de ${ANIO_PANEL}: SUPEREDUC exige fechas de pago de ${ANIO_PANEL}.` });
+  const fDoc = fechaSupereduc(doc), fPago = fechaSupereduc(pago);
+  if (doc && pago && fDoc.valida && fPago.valida && fPago.orden < fDoc.orden) out.push({ texto: 'La fecha de pago es anterior a la fecha de la boleta.' });
+  const mg = parseMontoCL(valor('montoGasto')), md = parseMontoCL(valor('montoDocumento'));
+  if (!mg.ok && mg.motivo !== 'incompleto') out.push({ texto: MONTO_AYUDA_INVALIDO.replace(' No se guardó.', '') });
+  else if (!md.ok && md.motivo !== 'incompleto') out.push({ texto: MONTO_AYUDA_INVALIDO.replace(' No se guardó.', '') });
+  else if (mg.ok && md.ok && md.valor > 0 && mg.valor > md.valor) out.push({ texto: 'El monto gasto es mayor que el monto del documento: SUPEREDUC no admite declarar más que el valor de la boleta.' });
+  return out;
+}
+function actualizarAvisosFormularioHon(grid) {
+  const caja = grid && grid.querySelector('.hon-form-avisos');
+  if (!caja) return;
+  const html = avisosFormularioHon(grid).map(a => `<div class="plan-nota plan-nota-aviso">⚠ ${escHtml(a.texto)}</div>`).join('');
+  if (caja.innerHTML !== html) caja.innerHTML = html;
+}
+// Al elegir la cuenta, el selector de tipo solo ofrece los que esa cuenta acepta (y conserva el elegido si sigue siendo válido).
+function actualizarTiposHonPorCuenta(grid) {
+  const selCuenta = grid.querySelector('select[data-field="codigo"]');
+  const selTipo = grid.querySelector('select[data-field="tipoDocumento"]');
+  if (!selCuenta || !selTipo) return;
+  const actual = selTipo.value;
+  selTipo.innerHTML = honOptionsTipo(selCuenta.value, '');
+  fijarValorSelect(selTipo, Array.from(selTipo.options).some(o => o.value === actual) ? actual : '', '');
+}
+function alCambiarFormularioHon(e) {
+  const el = e.target;
+  if (!(el && el.classList && el.classList.contains('hon-input'))) return;
+  const grid = el.closest('.hon-form-grid');
+  if (!grid) return; // el selector de proyección (.honproy-add-select) también es .hon-input pero no está en el formulario
+  if (e.type === 'change' && el.dataset.field === 'codigo') actualizarTiposHonPorCuenta(grid);
+  actualizarAvisosFormularioHon(grid);
+}
+function llenarFormularioHon(ctx, campos) {
+  const wrap = honGrid(ctx);
+  if (!wrap) return;
+  const get = (f) => (campos[f] !== undefined && campos[f] !== null) ? campos[f] : '';
+  const selCuenta = wrap.querySelector('select[data-field="codigo"]');
+  fijarValorSelect(selCuenta, String(get('codigo')), String(get('codigo')));
+  const selTipo = wrap.querySelector('select[data-field="tipoDocumento"]');
+  selTipo.innerHTML = honOptionsTipo(selCuenta.value, '');
+  fijarValorSelect(selTipo, honCodigoTipo(get('tipoDocumento')) || String(get('tipoDocumento')), String(get('tipoDocumento')));
+  wrap.querySelectorAll('.hon-input').forEach(el => {
+    const f = el.dataset.field;
+    if (f === 'codigo' || f === 'tipoDocumento') return;
+    el.value = (f === 'montoGasto' || f === 'montoDocumento') ? formatoMontoCelda(campos[f]) : String(get(f));
+  });
+  actualizarAvisosFormularioHon(wrap);
+}
+function resetFormularioHonUI(ctx) {
+  const wrap = honGrid(ctx);
+  if (wrap) { delete wrap.dataset.editingId; wrap.classList.remove('editing'); }
+  const btn = document.querySelector(`${ctx.modalSel} .add-hon-btn`);
+  if (btn) btn.textContent = '+ Agregar honorario';
+  const cancelBtn = document.querySelector(`${ctx.modalSel} .cancelar-edicion-hon-btn`);
+  if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+function iniciarEdicionHon(rbd, id) {
+  const ctx = ctxHonSep(rbd);
+  const campos = ctx.boletas()[id];
+  if (!campos) return;
+  llenarFormularioHon(ctx, campos);
+  const wrap = honGrid(ctx);
+  if (!wrap) return;
+  wrap.dataset.editingId = id;
+  wrap.classList.add('editing');
+  const btn = document.querySelector(`${ctx.modalSel} .add-hon-btn`);
+  if (btn) btn.textContent = '💾 Guardar cambios de honorario';
+  const cancelBtn = document.querySelector(`${ctx.modalSel} .cancelar-edicion-hon-btn`);
+  if (cancelBtn) cancelBtn.classList.remove('hidden');
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function duplicarHon(rbd, id) {
+  const ctx = ctxHonSep(rbd);
+  const campos = ctx.boletas()[id];
+  if (!campos) return;
+  resetFormularioHonUI(ctx);
+  llenarFormularioHon(ctx, campos);
+  honGrid(ctx)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function cancelarEdicionHon(ctx) {
+  resetFormularioHonUI(ctx);
+  const wrap = honGrid(ctx);
+  if (wrap) {
+    wrap.querySelectorAll('select.hon-input').forEach(el => { el.querySelectorAll('option[data-legado]').forEach(o => o.remove()); el.value = ''; });
+    wrap.querySelectorAll('input.hon-input').forEach(el => { el.value = ''; });
+    actualizarTiposHonPorCuenta(wrap);
+    actualizarAvisosFormularioHon(wrap);
+  }
+}
+// Si la boleta que se estaba editando desapareció (otra persona la borró), el formulario conserva lo escrito pero pasa a "boleta nueva".
+function revisarModoEdicionHon(rbd) {
+  const ctx = ctxHonSep(rbd);
+  const wrap = honGrid(ctx);
+  if (!wrap || !wrap.dataset.editingId) return;
+  if (!ctx.boletas()[wrap.dataset.editingId]) resetFormularioHonUI(ctx);
+}
+// Recalcula lo que depende de las boletas / la proyección de UNA entidad y repinta lo que se ve de inmediato (fila de la tabla SEP, tarjetas y detalle abierto).
+function honTrasCambio(rbd) {
+  recomputeHonDesdeBoletas(rbd);
+  const r = DATA.registros.find(x => x.rbd === rbd);
+  if (r) { recomputeRegistro(r); updateRowDOM(rbd); }
+  if (modalRbdAbierto === rbd) renderModalContenido();
+}
+function agregarHonorario(rbd) {
+  const ctx = ctxHonSep(rbd);
+  const crudo = leerCamposHon(ctx);
+  if (!crudo) return;
+  const { campos, error } = armarBoletaHon(crudo);
+  if (error) { alert(error); return; }
+  const wrap = honGrid(ctx);
+  const id = (wrap && wrap.dataset.editingId) || generarCompraId();
+  if (!CARGA_MANUAL.honorarios_por_rbd) CARGA_MANUAL.honorarios_por_rbd = {};
+  if (!CARGA_MANUAL.honorarios_por_rbd[rbd]) CARGA_MANUAL.honorarios_por_rbd[rbd] = {};
+  CARGA_MANUAL.honorarios_por_rbd[rbd][id] = campos;
+  honTrasCambio(rbd);
+  cancelarEdicionHon(ctx); // formulario limpio y fuera del modo edición (el modal ya no se reconstruye, así que se limpia a mano)
+  const reg = DATA.registros.find(x => x.rbd === rbd);
+  scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, honorarios: { [id]: campos } });
+  flushRbdSaveNow(rbd);
+}
+async function eliminarHonorario(rbd, id) {
+  if (!confirm('¿Eliminar esta boleta de honorarios? No se puede deshacer.')) return;
+  flushRbdSaveNow(rbd);
+  const ctx = ctxHonSep(rbd);
+  const wrap = honGrid(ctx);
+  if (wrap && wrap.dataset.editingId === id) cancelarEdicionHon(ctx); // se borra la boleta que se estaba editando
+  if (CARGA_MANUAL.honorarios_por_rbd && CARGA_MANUAL.honorarios_por_rbd[rbd]) delete CARGA_MANUAL.honorarios_por_rbd[rbd][id];
+  honTrasCambio(rbd);
+  if (!currentUser) return;
+  try {
+    await setDoc(doc(db, CARGA_COLLECTION, rbd), {
+      honorarios: { [id]: deleteField() },
+      lastModifiedBy: currentUser.email,
+      lastModifiedAt: serverTimestamp(),
+    }, { merge: true });
+  } catch (err) {
+    alert('No se pudo eliminar la boleta para el resto del equipo: ' + err.message);
+  }
+}
+// Proyección de honorarios por cuenta: igual que la de B&S, un ítem se puede agregar en $0 y completarse después mes a mes (se guarda al instante).
+function agregarHonProyeccionItem(rbd) {
+  const select = document.getElementById(`honproyAddSelect-${rbd}`);
+  if (!select || !select.value) { alert('Elige una cuenta de la lista antes de agregar.'); return; }
+  const codigo = select.value;
+  const hp = ensureHonProyeccion(rbd);
+  const it = ensureBysProyeccionItem(hp, codigo);
+  recomputeBysProyeccionAgregado(hp);
+  honTrasCambio(rbd);
+  scheduleRbdSave(rbd, { nombre: hp.nombre, hon_proyeccion: { items: { [codigo]: { meses: it.meses, total: it.total } } } });
+  flushRbdSaveNow(rbd);
+}
+async function eliminarHonProyeccionItem(rbd, codigo) {
+  if (!confirm('¿Quitar esta cuenta de la proyección de honorarios? No se puede deshacer.')) return;
+  flushRbdSaveNow(rbd);
+  const hp = ensureHonProyeccion(rbd);
+  hp.items = hp.items.filter(x => x.codigo !== codigo);
+  recomputeBysProyeccionAgregado(hp);
+  honTrasCambio(rbd);
+  if (!currentUser) return;
+  try {
+    await setDoc(doc(db, CARGA_COLLECTION, rbd), {
+      hon_proyeccion: { items: { [codigo]: deleteField() } },
+      lastModifiedBy: currentUser.email,
+      lastModifiedAt: serverTimestamp(),
+    }, { merge: true });
+  } catch (err) {
+    alert('No se pudo quitar la cuenta para el resto del equipo: ' + err.message);
   }
 }
 
@@ -4675,7 +5340,7 @@ document.addEventListener('keydown', (e) => {
 // formulario de compra (campos a medias y modo edición) se perdía. Por eso, con el modal ya abierto, el contenido se
 // RECONCILIA con el DOM existente (morphContenedor): los nodos que siguen existiendo se actualizan en su lugar,
 // una celda con foco no se toca (y sus ediciones sin confirmar se superponen en aplicarSnapshot, así que el valor
-// tecleado nunca retrocede), el formulario de compra (.compra-form-grid) nunca se toca, y solo se agregan/quitan
+// tecleado nunca retrocede), el formulario de compra (.compra-form-grid) y el de honorarios (.hon-form-grid) nunca se tocan, y solo se agregan/quitan
 // las filas que realmente aparecieron o desaparecieron. Los totales siguen calculándose siempre desde los
 // meses/ítems recibidos (ver aplicarSnapshot): lo que se reconcilia es el HTML que se construye con ellos.
 function claveMorph(n) {
@@ -4683,6 +5348,7 @@ function claveMorph(n) {
   if (n.id) return 'id:' + n.id;
   if (n.tagName === 'TR') {
     if (n.dataset.compraId !== undefined) return 'compra:' + n.dataset.compraId;
+    if (n.dataset.honId !== undefined) return 'hon:' + n.dataset.honId;
     const c = n.querySelector('input.celda-input[data-codigo], input.celda-input[data-concepto]');
     if (c) return 'fila:' + c.dataset.modo + ':' + (c.dataset.codigo !== undefined ? c.dataset.codigo : c.dataset.concepto);
   }
@@ -4719,7 +5385,7 @@ function morphHijos(viejo, nuevo, opts) {
 }
 function morphNodo(v, n, opts) {
   if (v.nodeType !== 1) { if (v.nodeValue !== n.nodeValue) v.nodeValue = n.nodeValue; return; }
-  if (v.matches('.compra-form-grid')) return; // lo que la persona está escribiendo en el formulario: nunca se toca
+  if (v.matches('.compra-form-grid, .hon-form-grid')) return; // lo que la persona está escribiendo en el formulario (de compras o de honorarios): nunca se toca
   if (v.tagName === 'INPUT' && v.classList.contains('celda-input')) {
     const nombre = n.getAttribute('aria-label'); // el nombre accesible (U-11) sí se mantiene al día; poner un atributo no mueve ni el foco ni el cursor
     if (nombre !== null && v.getAttribute('aria-label') !== nombre) v.setAttribute('aria-label', nombre);
@@ -4764,6 +5430,7 @@ function renderModalContenido(opts) {
   document.getElementById('modalSubtitle').innerHTML =
     `Ingreso SEP anual: <strong>${fmtCLP(r.marco_anual_proy)}</strong> · ` +
     `Gasto Remuneraciones: <strong>${fmtCLP(r.gasto_rem_anual_proy)}</strong> · ` +
+    `Gasto Honorarios: <strong>${fmtCLP(r.gasto_hon)}</strong> · ` +
     `Gasto B&S: <strong>${fmtCLP(r.gasto_bys)}</strong> · ` +
     `Saldo Final (Real+Proy): <strong>${fmtCLP(r.saldo_total)}</strong> · ${estadoTagHTML(r)}`;
 
@@ -4773,6 +5440,7 @@ function renderModalContenido(opts) {
     try { morphContenedor(modalBodyEl, buildDetalleHTML(rbd), opts); } // modal ya abierto: se reconcilia, no se reemplaza
     finally { modalMorphEnCurso = false; }
     revisarModoEdicionCompra(rbd);
+    revisarModoEdicionHon(rbd);
     return;
   }
   const activeEl = document.activeElement;
@@ -4876,12 +5544,28 @@ modalBodyEl.addEventListener('click', (e) => {
   if (addBysProyBtn) { agregarBysProyeccionItem(addBysProyBtn.getAttribute('data-rbd')); return; }
   const delBysProyBtn = e.target.closest('.bysproy-del-btn');
   if (delBysProyBtn) { eliminarBysProyeccionItem(delBysProyBtn.getAttribute('data-rbd'), delBysProyBtn.getAttribute('data-codigo')); return; }
+  // Honorarios (Subt. 21): registro por boleta y proyección por cuenta.
+  const addHonBtn = e.target.closest('.add-hon-btn');
+  if (addHonBtn) { agregarHonorario(addHonBtn.getAttribute('data-rbd')); return; }
+  const cancelHonBtn = e.target.closest('.cancelar-edicion-hon-btn');
+  if (cancelHonBtn) { cancelarEdicionHon(ctxHonSep(cancelHonBtn.getAttribute('data-rbd'))); return; }
+  const editHonBtn = e.target.closest('.hon-edit-btn');
+  if (editHonBtn) { iniciarEdicionHon(editHonBtn.getAttribute('data-rbd'), editHonBtn.getAttribute('data-hon-id')); return; }
+  const dupHonBtn = e.target.closest('.hon-dup-btn');
+  if (dupHonBtn) { duplicarHon(dupHonBtn.getAttribute('data-rbd'), dupHonBtn.getAttribute('data-hon-id')); return; }
+  const delHonBtn = e.target.closest('.hon-del-btn');
+  if (delHonBtn) { eliminarHonorario(delHonBtn.getAttribute('data-rbd'), delHonBtn.getAttribute('data-hon-id')); return; }
+  const addHonProyBtn = e.target.closest('.add-honproy-btn');
+  if (addHonProyBtn) { agregarHonProyeccionItem(addHonProyBtn.getAttribute('data-rbd')); return; }
+  const delHonProyBtn = e.target.closest('.honproy-del-btn');
+  if (delHonProyBtn) { eliminarHonProyeccionItem(delHonProyBtn.getAttribute('data-rbd'), delHonProyBtn.getAttribute('data-codigo')); return; }
 });
 modalBodyEl.addEventListener('beforeinput', bloquearTecleoNoNumerico);
 modalBodyEl.addEventListener('input', alCambiarFormularioCompra);
 modalBodyEl.addEventListener('change', alCambiarFormularioCompra);
 modalBodyEl.addEventListener('keyup', alCambiarFormularioCompra);    // una fecha a medio teclear no dispara "input" (su valor sigue vacío)
 modalBodyEl.addEventListener('focusout', alCambiarFormularioCompra);
+['input', 'change', 'keyup', 'focusout'].forEach(ev => modalBodyEl.addEventListener(ev, alCambiarFormularioHon)); // ídem para el formulario de honorarios
 modalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);
@@ -5134,7 +5818,7 @@ function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
   const avisos = avisosCompra(c, CUENTAS_COMPRAS_BY_CODIGO); // marcas ⚠ de fecha / cuenta
   return `<tr data-compra-id="${escHtml(id)}"${aviso ? ' class="compra-no-habilitada"' : ''}>
     <td>${aviso ? `<span class="compra-aviso" title="${escHtml(aviso)}">⚠</span> ` : ''}${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}${insigniasAvisoHTML(avisos, 'cuenta')}</td>
-    <td>${escHtml(c.tipoDocumento || '')}</td>
+    <td>${escHtml(c.tipoDocumento || '')}${marcaTipoHonorariosHTML(c)}</td>
     <td>${escHtml(c.nroDocumento || '')}</td>
     <td>${escHtml(c.fechaDocumento || '')}${insigniasAvisoHTML(avisos, 'doc')}</td>
     <td>${escHtml(c.fechaPago || '')}${insigniasAvisoHTML(avisos, 'pago')}</td>
@@ -5240,6 +5924,7 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
         <div class="compra-form-avisos" aria-live="polite"></div>
       </div>
       ${resumenAvisosComprasHTML(resumenAvisosCompras(compras, CUENTAS_COMPRAS_BY_CODIGO))}
+      ${resumenTipoHonorariosEnComprasHTML(compras)}
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
           <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th><th title="${escHtml(AYUDA_DOC_ORIGINAL)}">Doc. original</th><th aria-label="Acciones de la compra"></th></tr></thead>
@@ -6148,13 +6833,14 @@ const DASH_META = {
 function computeTotalesSepParaDashboard() {
   const t = computeTotales();
   const rp = computeTotalesRealProy();
-  const real = bloqueRealProy(rp.ingresoReal + rp.carreraReal, rp.remReal, rp.bysReal);
-  const proy = bloqueRealProy(rp.ingresoProy + rp.carreraProy, rp.remProy, rp.bysProy);
+  const real = bloqueRealProy(rp.ingresoReal + rp.carreraReal, rp.remReal, rp.bysReal, rp.honReal);
+  const proy = bloqueRealProy(rp.ingresoProy + rp.carreraProy, rp.remProy, rp.bysProy, rp.honProy);
   const total = {
     ingreso: t.marco_anual_proy + t.carrera_docente_anual,
     rem: t.gasto_rem_anual_proy,
+    hon: t.gasto_hon,   // honorarios (Subt. 21): van DENTRO del gasto total (y del saldo) de SEP en todas las vistas
     bys: t.gasto_bys,
-    gasto: t.gasto_rem_anual_proy + t.gasto_bys,
+    gasto: t.gasto_rem_anual_proy + t.gasto_hon + t.gasto_bys,
     saldo: t.saldo_total,
   };
   // Mismo universo y misma cuenta que la tarjeta "RBD en déficit" de la pestaña SEP (computeTotales): nEntidades = filas con Estado, nDeficit = r.estado 'deficit'.
@@ -6200,17 +6886,18 @@ function dashTile(label, value, sub, tone) {
 }
 
 function renderDashStrip(fuentes) {
-  const acc = { ingreso: 0, rem: 0, bys: 0, gasto: 0, saldo: 0 };
+  const acc = { ingreso: 0, rem: 0, hon: 0, bys: 0, gasto: 0, saldo: 0 };
   let nDef = 0, nEnt = 0;
   fuentes.forEach(f => {
     const b = f.t[dashVista];
-    Object.keys(acc).forEach(k => { acc[k] += b[k]; });
+    Object.keys(acc).forEach(k => { acc[k] += b[k] || 0; });
     nDef += f.t.nDeficit; nEnt += f.t.nEntidades;
   });
   const vistaTxt = DASH_VISTAS[dashVista];
   document.getElementById('dashStrip').innerHTML = [
     dashTile('Ingreso', fmtCLP(acc.ingreso), `SEP + 9 fuentes · ${vistaTxt}`, 'blue'),
     dashTile('Gasto Remuneraciones', fmtCLP(acc.rem), vistaTxt, 'amber'),
+    dashTile('Gasto Honorarios (Subt. 21)', fmtCLP(acc.hon), `por ahora solo SEP · ${vistaTxt}`, 'amber'),
     dashTile('Gasto Bienes y Servicios', fmtCLP(acc.bys), vistaTxt, 'amber'),
     dashTile('Gasto Total', fmtCLP(acc.gasto), vistaTxt, 'amber'),
     dashTile('Saldo consolidado', fmtCLP(acc.saldo), acc.saldo < 0 ? '▼ Déficit' : '▲ Superávit', acc.saldo < 0 ? 'red' : 'green'),
@@ -6234,7 +6921,7 @@ function renderDashCards(fuentes) {
     else if (pct === null) ejecHTML = '<div class="c-ejec" style="color:var(--status-critical)">Hay gasto pero no hay ingreso cargado</div>';
     else ejecHTML = `<div class="c-ejec"><div class="pct-line"><span>Ejecución (Gasto / Ingreso)</span><strong style="color:${dashColorEjec(pct)}">${fmtPct1(pct)}</strong></div><div class="dash-track"><div class="dash-fill" style="width:${Math.min(100, pct).toFixed(1)}%; background:${dashColorEjec(pct)}"></div></div></div>`;
     const sepNota = f.key === 'sep' && corteMesIdx < 12 ? ` · acumulado a ${MESES_CARGA_TITLE[corteMesIdx - 1]}` : '';
-    return `<div class="dash-card" role="link" tabindex="0" data-dash-tab="${f.tab}" data-fuente="${f.key}" data-ing="${b.ingreso}" data-rem="${b.rem}" data-bys="${b.bys}" data-gas="${b.gasto}" data-saldo="${b.saldo}" aria-label="${f.label}: saldo ${fmtCLP(b.saldo)}. Abrir pestaña">
+    return `<div class="dash-card" role="link" tabindex="0" data-dash-tab="${f.tab}" data-fuente="${f.key}" data-ing="${b.ingreso}" data-rem="${b.rem}" data-hon="${b.hon || 0}" data-bys="${b.bys}" data-gas="${b.gasto}" data-saldo="${b.saldo}" aria-label="${f.label}: saldo ${fmtCLP(b.saldo)}. Abrir pestaña">
       <div class="c-head"><div class="c-name" title="${f.label}"><span aria-hidden="true">${f.icono}</span><span>${f.corto}</span></div>${estadoHTML}</div>
       <div class="c-saldo-label">Saldo ${DASH_VISTAS[dashVista]}${sepNota}</div>
       <div class="c-saldo ${saldoCls}">${fmtCLP(b.saldo)}</div>
@@ -6321,14 +7008,14 @@ function renderDashComposicion(fuentes) {
     const b = f.t[dashVista];
     const row = document.createElement('div');
     row.className = 'dash-bar-row'; row.setAttribute('role', 'link'); row.tabIndex = 0; row.dataset.dashTab = f.tab; row.dataset.dashFuente = f.key;
-    row.setAttribute('aria-label', `${f.label}: remuneraciones ${fmtCLP(b.rem)}, bienes y servicios ${fmtCLP(b.bys)}`);
+    row.setAttribute('aria-label', `${f.label}: remuneraciones ${fmtCLP(b.rem)}, ${b.hon ? `honorarios ${fmtCLP(b.hon)}, ` : ''}bienes y servicios ${fmtCLP(b.bys)}`);
     const name = document.createElement('div'); name.className = 'b-name'; name.textContent = `${f.icono} ${f.corto}`; row.appendChild(name);
     const stack = document.createElement('div'); stack.className = 'dash-stack';
-    const remPos = Math.max(0, b.rem), bysPos = Math.max(0, b.bys), suma = remPos + bysPos;
+    const remPos = Math.max(0, b.rem), honPos = Math.max(0, b.hon || 0), bysPos = Math.max(0, b.bys), suma = remPos + honPos + bysPos;
     if (suma <= 0) {
       const v = document.createElement('div'); v.className = 'vacio'; v.textContent = 'sin gasto'; stack.appendChild(v);
     } else {
-      [['rem', remPos], ['bys', bysPos]].forEach(([tipo, v]) => {
+      [['rem', remPos], ['hon', honPos], ['bys', bysPos]].forEach(([tipo, v]) => {
         if (v <= 0) return;
         const share = v / suma * 100;
         const seg = document.createElement('div'); seg.className = 'seg ' + tipo; seg.style.flex = String(v); seg.dataset.dashSeg = tipo;
@@ -6337,18 +7024,19 @@ function renderDashComposicion(fuentes) {
       });
     }
     row.appendChild(stack);
-    const pRem = suma > 0 ? remPos / suma * 100 : 0, pBys = suma > 0 ? bysPos / suma * 100 : 0;
+    const pRem = suma > 0 ? remPos / suma * 100 : 0, pHon = suma > 0 ? honPos / suma * 100 : 0, pBys = suma > 0 ? bysPos / suma * 100 : 0;
     dashFilaInteractiva(row, f.label + ' · ' + DASH_VISTAS[dashVista], [
       { color: 'var(--chart-gas)', label: 'Remuneraciones', valor: `${fmtCLP(b.rem)} (${Math.round(pRem)}%)` },
+      ...(b.hon ? [{ color: 'var(--chart-hon)', label: 'Honorarios (Subt. 21)', valor: `${fmtCLP(b.hon)} (${Math.round(pHon)}%)` }] : []),
       { color: 'var(--chart-bys)', label: 'Bienes y Servicios', valor: `${fmtCLP(b.bys)} (${Math.round(pBys)}%)` },
     ], f.tab);
     host.appendChild(row);
   });
   // Vista de tabla (alternativa accesible a los dos gráficos de barras).
-  let html = '<table><thead><tr><th>Fuente</th><th>Ingreso</th><th>Remuneraciones</th><th>Bienes y Servicios</th><th>Gasto Total</th><th>Saldo</th><th>Gasto/Ingreso</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>Fuente</th><th>Ingreso</th><th>Remuneraciones</th><th>Honorarios (Subt. 21)</th><th>Bienes y Servicios</th><th>Gasto Total</th><th>Saldo</th><th>Gasto/Ingreso</th></tr></thead><tbody>';
   fuentes.forEach(f => {
     const b = f.t[dashVista]; const p = dashPct(b.gasto, b.ingreso);
-    html += `<tr><td>${f.corto}</td><td>${fmtCLP(b.ingreso)}</td><td>${fmtCLP(b.rem)}</td><td>${fmtCLP(b.bys)}</td><td>${fmtCLP(b.gasto)}</td><td>${fmtCLP(b.saldo)}</td><td>${p === null ? '—' : fmtPct1(p)}</td></tr>`;
+    html += `<tr><td>${f.corto}</td><td>${fmtCLP(b.ingreso)}</td><td>${fmtCLP(b.rem)}</td><td>${fmtCLP(b.hon || 0)}</td><td>${fmtCLP(b.bys)}</td><td>${fmtCLP(b.gasto)}</td><td>${fmtCLP(b.saldo)}</td><td>${p === null ? '—' : fmtPct1(p)}</td></tr>`;
   });
   document.getElementById('dashTablaFuentesBody').innerHTML = html + '</tbody></table>';
 }
@@ -6365,7 +7053,7 @@ function serieMensualVacia() { return { ing: new Array(12).fill(0), gas: new Arr
 // a una sola entidad. Devuelven los cortes "real hasta" de las entidades consideradas.
 function z12() { return new Array(12).fill(0); }
 function partesVacias() {
-  return { real: { ing: z12(), rem: z12(), bys: z12() }, proy: { ing: z12(), rem: z12(), bys: z12() } };
+  return { real: { ing: z12(), rem: z12(), hon: z12(), bys: z12() }, proy: { ing: z12(), rem: z12(), hon: z12(), bys: z12() } };
 }
 function partesMensualesOtraFuente(fuenteKey, out, entidadFiltro) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey];
@@ -6405,13 +7093,18 @@ function partesMensualesSep(out) {
     if (rem) { const hasta = corteRemRbd(r.rbd); MESES_CARGA.forEach((m, i) => { out[i + 1 <= hasta ? 'real' : 'proy'].rem[i] += Number(rem.meses[m]) || 0; }); }
     if (ag) ag.items.forEach(it => MESES_CARGA.forEach((m, i) => { out.real.bys[i] += Number(it.meses[m]) || 0; }));
     if (bp) MESES_CARGA.forEach((m, i) => { out.proy.bys[i] += Number(bp.meses[m]) || 0; });
+    // Honorarios (Subt. 21): boletas siempre reales (por mes de Fecha Documento) y proyección siempre proyectada.
+    const honAg = CARGA_MANUAL.hon_agregado_por_rbd ? CARGA_MANUAL.hon_agregado_por_rbd[r.rbd] : null;
+    const honPy = CARGA_MANUAL.hon_proyeccion_por_rbd ? CARGA_MANUAL.hon_proyeccion_por_rbd[r.rbd] : null;
+    if (honAg) MESES_CARGA.forEach((m, i) => { out.real.hon[i] += Number(honAg.meses[m]) || 0; });
+    if (honPy) MESES_CARGA.forEach((m, i) => { out.proy.hon[i] += Number(honPy.meses[m]) || 0; });
   });
   return cortes;
 }
 function sumarPartesASerie(p, out) {
   ['real', 'proy'].forEach(k => MESES_CARGA.forEach((_, i) => {
     out[k].ing[i] += p[k].ing[i];
-    out[k].gas[i] += p[k].rem[i] + p[k].bys[i];
+    out[k].gas[i] += p[k].rem[i] + p[k].hon[i] + p[k].bys[i];
   }));
 }
 function serieMensualOtraFuente(fuenteKey, out) {
@@ -6654,11 +7347,16 @@ function reporteLineasSep(sel) {
     const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
     const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
     const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
+    const honAg = CARGA_MANUAL.hon_agregado_por_rbd ? CARGA_MANUAL.hon_agregado_por_rbd[r.rbd] : null;
+    const honPy = CARGA_MANUAL.hon_proyeccion_por_rbd ? CARGA_MANUAL.hon_proyeccion_por_rbd[r.rbd] : null;
     ITEMS_INGRESO.forEach(nombre => {
       const it = ing ? ing.items.find(x => x.item === nombre) : null;
       if (it) vzSumar(mapa, { fuenteKey: 'sep', tipo: 'ingreso', grupo: 'ingreso', concepto: nombre }, it.meses, corteIngresoRbd(r.rbd));
     });
     if (rem) vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'rem', concepto: 'Remuneraciones' }, rem.meses, rem.real_hasta_mes || DATA.n_meses);
+    // Honorarios (Subt. 21): boletas por cuenta (siempre reales) y proyección por cuenta (siempre proyectada).
+    if (honAg) honAg.items.forEach(it => vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'hon', subt: '21', codigo: it.codigo, concepto: it.item }, it.meses, 'real'));
+    if (honPy) honPy.items.forEach(it => vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'hon_proy', subt: '21', codigo: it.codigo, concepto: (HON_CUENTAS_BY_CODIGO[it.codigo] || { nombre: it.codigo }).nombre }, it.meses, 'proy'));
     if (ag) ag.items.forEach(it => vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'bys', subt: it.subtitulo, codigo: it.codigo, concepto: it.item }, it.meses, 'real'));
     if (bp) bp.items.forEach(it => {
       const cat = CUENTAS_SEP_BY_CODIGO[it.codigo];
@@ -6710,12 +7408,14 @@ function reporteLineasSeleccion(fuentesSet, entidadesSet) {
 function vzSubcat(l) {
   if (l.tipo === 'ingreso') return 'Ingresos';
   if (l.grupo === 'rem') return 'Remuneraciones';
+  if (l.grupo === 'hon') return 'Honorarios (Subt. 21)';
+  if (l.grupo === 'hon_proy') return 'Honorarios — Proyección';
   if (l.grupo === 'bys') return `Bienes y Servicios — Subt. ${l.subt}`;
   if (l.grupo === 'bys_concepto') return 'Bienes y Servicios — por concepto (sin código)';
   return 'Bienes y Servicios — Proyección';
 }
 function vzEtiquetaLinea(l) {
-  if ((l.grupo === 'bys' || l.grupo === 'bys_proy') && l.codigo) return `${l.codigo} · ${l.concepto}`;
+  if ((l.grupo === 'bys' || l.grupo === 'bys_proy' || l.grupo === 'hon' || l.grupo === 'hon_proy') && l.codigo) return `${l.codigo} · ${l.concepto}`;
   return l.concepto;
 }
 function vzCmpLinea(a, b) {
@@ -6747,6 +7447,8 @@ function vzArbolPorFuente(tipo, lineas) {
         const grupo = ls.filter(filtro).sort(vzCmpLinea);
         if (grupo.length) hijos.push(vzPadre(vzNodo(`${id}|s:${clave}`, etiqueta), grupo.map(hoja)));
       };
+      sub('hon', 'Honorarios (Subt. 21)', l => l.grupo === 'hon');
+      sub('honproy', 'Honorarios — Proyección', l => l.grupo === 'hon_proy');
       sub('bys', 'Bienes y Servicios', l => l.grupo === 'bys' || l.grupo === 'bys_concepto');
       sub('proy', 'Bienes y Servicios — Proyección', l => l.grupo === 'bys_proy');
     }
@@ -6787,6 +7489,8 @@ function vzArbolPorCodigo(tipo, lineas) {
     const hijos = agrupar(grupo, claveFn, vzEtiquetaLinea, `gasto|s:${clave}`);
     roots.push(vzPadre(vzNodo(`gasto|s:${clave}`, etiqueta), hijos));
   };
+  subcat('hon', 'Honorarios (Subt. 21)', l => l.grupo === 'hon', l => l.codigo);
+  subcat('honproy', 'Honorarios — Proyección', l => l.grupo === 'hon_proy', l => l.codigo);
   subcat('bys22', 'Bienes y Servicios — Subt. 22', l => l.grupo === 'bys' && l.subt === '22', l => l.codigo);
   subcat('bys29', 'Bienes y Servicios — Subt. 29', l => l.grupo === 'bys' && l.subt === '29', l => l.codigo);
   subcat('byscon', 'Bienes y Servicios — por concepto (sin código)', l => l.grupo === 'bys_concepto', l => l.concepto.trim().toLowerCase());
@@ -6878,7 +7582,7 @@ function renderVisualizador() {
   document.getElementById('vzNota').innerHTML =
     `Cada mes se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span>, ` +
     `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectado</span> o mixto según el "Real hasta" de cada entidad ` +
-    `(SEP: ingreso real ${fraseCorteIngresoSep()}, remuneraciones según el corte de cada RBD; compras siempre reales; proyecciones siempre proyectadas). ` +
+    `(SEP: ingreso real ${fraseCorteIngresoSep()}, remuneraciones según el corte de cada RBD; boletas de honorarios y compras siempre reales; proyecciones siempre proyectadas). ` +
     `SEP se muestra con el año completo, sin depender del selector "Ver resumen hasta el mes".`;
 
   const sinSeleccion = !vzState.fuentes.size || !vzState.entidades.size;
@@ -7183,6 +7887,8 @@ function buildConceptoCatalog() {
     { key: 'ingreso|Ingreso SEP Prioritario', label: 'Ingreso SEP Prioritario' },
     { key: 'ingreso|Carrera Docente', label: 'Carrera Docente' },
     { key: 'rem', label: 'Remuneraciones (Subt. 21)' },
+    { key: 'hon', label: 'Honorarios (Subt. 21)' },
+    { key: 'hon_proy', label: 'Honorarios (Proyección) — total' },
     { key: 'bys_proy', label: 'Bienes y Servicios (Proyección) — total' },
   ];
   // El key sigue armado con el NOMBRE del ítem (no el código) porque así lo busca
@@ -7320,6 +8026,8 @@ function entidadAplicaConcepto(ent, concepto) {
 function modoParaConcepto(key) {
   if (key.startsWith('of|')) return 'of'; // las fuentes usan esRealParaConcepto (corte por entidad), no esRealParaModo
   if (key === 'rem') return 'rem';
+  if (key === 'hon') return 'hon';
+  if (key === 'hon_proy') return 'hon_proy';
   if (key === 'bys_proy' || key.startsWith('bys_proy_item|')) return 'bys_proy';
   if (key.startsWith('ingreso|')) return 'ingreso_item';
   return 'item'; // '22|...' / '29|...' (compras Subt.22/29)
@@ -7329,6 +8037,14 @@ function getConceptoSeries(rbd, key) {
   if (key.startsWith('of|')) return serieConceptoOF(rbd, key);
   if (key === 'rem') {
     const s = CARGA_MANUAL.rem_por_rbd[rbd];
+    return s ? s.meses : {};
+  }
+  if (key === 'hon') {
+    const s = CARGA_MANUAL.hon_agregado_por_rbd ? CARGA_MANUAL.hon_agregado_por_rbd[rbd] : null;
+    return s ? s.meses : {};
+  }
+  if (key === 'hon_proy') {
+    const s = CARGA_MANUAL.hon_proyeccion_por_rbd ? CARGA_MANUAL.hon_proyeccion_por_rbd[rbd] : null;
     return s ? s.meses : {};
   }
   if (key === 'bys_proy') {
@@ -7483,7 +8199,7 @@ function renderReporte() {
   document.getElementById('reporteCorteNota').innerHTML =
     `Cada celda se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span> o ` +
     `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
-    `(<b>SEP</b> — Ingreso: real ${fraseCorteIngresoSep()}; Remuneraciones: el corte propio de cada RBD; compras Subt.22/29: siempre reales; Bienes y Servicios Proyección: siempre proyectada) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
+    `(<b>SEP</b> — Ingreso: real ${fraseCorteIngresoSep()}; Remuneraciones: el corte propio de cada RBD; Honorarios (boletas) y compras Subt.22/29: siempre reales; Honorarios y Bienes y Servicios Proyección: siempre proyectadas) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
     `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (${fraseDefaultFuentes()}); B&S por código (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
     `Los subtotales de una fuente se colorean solo si todas las entidades coinciden. Un concepto solo genera filas para las entidades que le corresponden (RBD → SEP y fuentes por RBD; AC → fuentes por RBD; GESPARVU → JUNJI y Aporte Fiscal JUNJI).`;
 
@@ -7608,23 +8324,29 @@ function computeEjecucionSerie(rbdFiltro) {
   const corteMin = cortes.length ? Math.min(...cortes) : DATA.n_meses;
   const corteMax = cortes.length ? Math.max(...cortes) : DATA.n_meses;
 
-  let cumRem = 0, cumBys = 0;
+  let cumRem = 0, cumHon = 0, cumBys = 0;
   const serie = MESES_CARGA.map((mes, i) => {
-    let gastoRemMes = 0, gastoBysMes = 0;
+    let gastoRemMes = 0, gastoHonMes = 0, gastoBysMes = 0;
     regs.forEach(r => {
       const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
       if (rem) gastoRemMes += rem.meses[mes] || 0;
+      // Honorarios (Subt. 21): boletas + proyección. Cuentan del lado del personal (70 %): el % «de personal» acumula Rem. + Hon. contra la meta del 70 %.
+      const honAg = CARGA_MANUAL.hon_agregado_por_rbd ? CARGA_MANUAL.hon_agregado_por_rbd[r.rbd] : null;
+      if (honAg) gastoHonMes += honAg.meses[mes] || 0;
+      const honPy = CARGA_MANUAL.hon_proyeccion_por_rbd ? CARGA_MANUAL.hon_proyeccion_por_rbd[r.rbd] : null;
+      if (honPy) gastoHonMes += honPy.meses[mes] || 0;
       const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
       if (ag) ag.items.forEach(it => { gastoBysMes += it.meses[mes] || 0; });
       const bysProy = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
       if (bysProy) gastoBysMes += bysProy.meses[mes] || 0;
     });
     cumRem += gastoRemMes;
+    cumHon += gastoHonMes;
     cumBys += gastoBysMes;
     const tipo = tipoMesPorCortes(i + 1, corteMin, corteMax);
     return {
-      mes, idx: i + 1, tipo, esReal: tipo === 'real', gastoRemMes, gastoBysMes,
-      pctRemAcum: metaRemAnual ? (cumRem / metaRemAnual * 100) : 0,
+      mes, idx: i + 1, tipo, esReal: tipo === 'real', gastoRemMes, gastoHonMes, gastoBysMes,
+      pctRemAcum: metaRemAnual ? ((cumRem + cumHon) / metaRemAnual * 100) : 0,   // % Ejec. Personal (Rem.+Hon.) sobre la meta del 70 %
       pctBysAcum: metaBysAnual ? (cumBys / metaBysAnual * 100) : 0,
     };
   });
@@ -7681,25 +8403,28 @@ function computeEjecucionSerieFuente(fuenteKey, entidadFiltro) {
   const corteMax = cortes.length ? Math.max(...cortes) : DATA.n_meses;
   const ingresoAnual = sum(p.real.ing) + sum(p.proy.ing);
   const pct = v => (ingresoAnual > 0 ? (v / ingresoAnual) * 100 : null);
-  let cumRem = 0, cumBys = 0;
+  // Honorarios (Subt. 21): por ahora solo SEP los tiene (PR-1), así que solo cuentan en el Consolidado: van DENTRO del Total (para que cuadre con SEP y el Panel principal)
+  // pero sin columna ni serie propia (llegan con las demás fuentes, PR-3).
+  let cumRem = 0, cumHon = 0, cumBys = 0;
   const serie = MESES_CARGA.map((mes, i) => {
     const idx = i + 1;
     const ingresoMes = p.real.ing[i] + p.proy.ing[i];
     const gastoRemMes = p.real.rem[i] + p.proy.rem[i];
+    const gastoHonMes = p.real.hon[i] + p.proy.hon[i];
     const gastoBysMes = p.real.bys[i] + p.proy.bys[i];
-    cumRem += gastoRemMes; cumBys += gastoBysMes;
+    cumRem += gastoRemMes; cumHon += gastoHonMes; cumBys += gastoBysMes;
     const tipo = tipoMesPorCortes(idx, corteMin, corteMax);
     return {
-      mes, idx, tipo, esReal: tipo === 'real', ingresoMes, gastoRemMes, gastoBysMes,
-      pctRemAcum: pct(cumRem), pctBysAcum: pct(cumBys), pctTotalAcum: pct(cumRem + cumBys),
+      mes, idx, tipo, esReal: tipo === 'real', ingresoMes, gastoRemMes, gastoHonMes, gastoBysMes,
+      pctRemAcum: pct(cumRem), pctBysAcum: pct(cumBys), pctTotalAcum: pct(cumRem + cumHon + cumBys),
     };
   });
-  const realRem = sum(p.real.rem), realBys = sum(p.real.bys);
-  const totRem = realRem + sum(p.proy.rem), totBys = realBys + sum(p.proy.bys);
+  const realRem = sum(p.real.rem), realHon = sum(p.real.hon), realBys = sum(p.real.bys);
+  const totRem = realRem + sum(p.proy.rem), totHon = realHon + sum(p.proy.hon), totBys = realBys + sum(p.proy.bys);
   return {
     serie, ingresoAnual, corteMin, corteMax, nEntidades: cortes.length,
-    real: { rem: realRem, bys: realBys, total: realRem + realBys, pctRem: pct(realRem), pctBys: pct(realBys), pctTotal: pct(realRem + realBys) },
-    anual: { rem: totRem, bys: totBys, total: totRem + totBys, pctRem: pct(totRem), pctBys: pct(totBys), pctTotal: pct(totRem + totBys) },
+    real: { rem: realRem, hon: realHon, bys: realBys, total: realRem + realHon + realBys, pctRem: pct(realRem), pctBys: pct(realBys), pctTotal: pct(realRem + realHon + realBys) },
+    anual: { rem: totRem, hon: totHon, bys: totBys, total: totRem + totHon + totBys, pctRem: pct(totRem), pctBys: pct(totBys), pctTotal: pct(totRem + totHon + totBys) },
   };
 }
 
@@ -7711,7 +8436,7 @@ function ejecSyncControles() {
     b.classList.toggle('active', on);
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
-  document.getElementById('ejecLblRem').textContent = esSep ? 'Remuneraciones (Subt. 21)' : 'Remuneraciones';
+  document.getElementById('ejecLblRem').textContent = esSep ? 'Personal (Remuneraciones + Honorarios)' : 'Remuneraciones';
   document.getElementById('ejecLblBys').textContent = esSep ? 'Bienes y Servicios (22+29)' : 'Bienes y Servicios';
   document.getElementById('ejecToggleTotalWrap').hidden = esSep;
   document.getElementById('ejecKpiRow').classList.toggle('kpi-row-3', !esSep);
@@ -7853,6 +8578,12 @@ function ejecWireTooltip(wrap, chart, serie, htmlFor) {
 }
 
 function ejecPctTxt(v) { return v === null || v === undefined ? '—' : fmtPct(v); }
+// Consolidado con honorarios de SEP: el Total los incluye (cuadra con SEP y con el Panel principal) aunque esta vista aún no tiene columna ni serie de Honorarios.
+function conHonNota(r) {
+  return (r.real.hon !== 0 || r.anual.hon !== 0)
+    ? ` El Total incluye los honorarios (Subt. 21) de SEP — ${fmtCLP(r.real.hon)} reales y ${fmtCLP(r.anual.hon)} a diciembre —, que todavía no tienen columna ni serie propia en esta vista (llegarán con las demás fuentes).`
+    : '';
+}
 const EJEC_TIPO_TXT = { real: 'Real', proy: 'Proy.', mixto: 'Mixto' };
 
 function renderEjecucionFuente() {
@@ -7870,19 +8601,22 @@ function renderEjecucionFuente() {
   const baseTxt = key === 'consolidado'
     ? `Consolidado: suma SEP y las 9 fuentes (en SEP el ingreso es real ${fraseCorteIngresoSep()} y las remuneraciones hasta el corte de cada RBD). `
     : '';
+  const notaHon = conHonNota(r);
   document.getElementById('ejecCorteNota').textContent = sinIngreso
     ? `${baseTxt}Sin ingreso cargado para esta selección: el % de ejecución se calcula contra el Ingreso anual Total (Real+Proy) y no se puede calcular todavía.`
-    : `${baseTxt}Sin meta: el % se calcula contra el Ingreso anual Total (Real+Proy) de la selección (${fmtCLP(r.ingresoAnual)}). Corte real/proyectado: "Real hasta" de cada entidad — ${corteTxt}.`;
+    : `${baseTxt}Sin meta: el % se calcula contra el Ingreso anual Total (Real+Proy) de la selección (${fmtCLP(r.ingresoAnual)}). Corte real/proyectado: "Real hasta" de cada entidad — ${corteTxt}.${notaHon}`;
 
   const mk = (label, v, full) => ({ label, value: ejecPctTxt(v), full, critical: v !== null && v >= 100 });
   const base = sinIngreso ? 'Sin ingreso cargado' : null;
+  const conHon = r.real.hon !== 0 || r.anual.hon !== 0;           // solo el Consolidado, con los honorarios de SEP
+  const sumandos = conHon ? 'Rem. + Hon. + B&S' : 'Rem. + B&S';
   document.getElementById('ejecKpiRow').innerHTML = [
     mk('% Ejec. Remuneraciones — Real', r.real.pctRem, base || `Solo lo ejecutado (${fmtCLP(r.real.rem)}) sobre el Ingreso anual Total`),
     mk('% Ejec. B&S — Real', r.real.pctBys, base || `Solo lo ejecutado (${fmtCLP(r.real.bys)}) sobre el Ingreso anual Total`),
-    mk('% Ejec. Total — Real', r.real.pctTotal, base || `Rem. + B&S ejecutados (${fmtCLP(r.real.total)}) sobre el Ingreso anual Total`),
+    mk('% Ejec. Total — Real', r.real.pctTotal, base || `${sumandos} ejecutados (${fmtCLP(r.real.total)}) sobre el Ingreso anual Total`),
     mk('% Ejec. Remuneraciones — Real+Proy a diciembre', r.anual.pctRem, base || `Acumulado a diciembre incluyendo lo proyectado (${fmtCLP(r.anual.rem)})`),
     mk('% Ejec. B&S — Real+Proy a diciembre', r.anual.pctBys, base || `Acumulado a diciembre incluyendo lo proyectado (${fmtCLP(r.anual.bys)})`),
-    mk('% Ejec. Total — Real+Proy a diciembre', r.anual.pctTotal, base || `Rem. + B&S a diciembre (${fmtCLP(r.anual.total)}) sobre el Ingreso anual Total`),
+    mk('% Ejec. Total — Real+Proy a diciembre', r.anual.pctTotal, base || `${sumandos} a diciembre (${fmtCLP(r.anual.total)}) sobre el Ingreso anual Total`),
   ].map(k => `<div class="kpi-card${k.critical ? ' critical' : ''}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div></div>`).join('');
 
   const wrap = document.getElementById('ejecChartWrap');
@@ -7896,7 +8630,7 @@ function renderEjecucionFuente() {
       `<div class="tt-row">Ingreso del mes: <strong>${fmtCLP(m.ingresoMes)}</strong></div>` +
       (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Remuneraciones: <strong>${ejecPctTxt(m.pctRemAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes)} ese mes)</div>` : '') +
       (showBys ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-2)"></span>Bienes y Servicios: <strong>${ejecPctTxt(m.pctBysAcum)}</strong> acum. (${fmtCLP(m.gastoBysMes)} ese mes)</div>` : '') +
-      (showTotal ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-3)"></span>Total: <strong>${ejecPctTxt(m.pctTotalAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes + m.gastoBysMes)} ese mes)</div>` : ''));
+      (showTotal ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-3)"></span>Total: <strong>${ejecPctTxt(m.pctTotalAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes + m.gastoHonMes + m.gastoBysMes)} ese mes)</div>` : ''));
   }
 
   document.getElementById('ejecTbody').innerHTML = serie.map((m, i) => {
@@ -7937,8 +8671,8 @@ function renderEjecucion() {
     `Las casillas "a ${mesNom(corteMesIdx)}" acumulan hasta el mes elegido en "Ver resumen acumulado hasta el mes" de la pestaña SEP: ese selector no cambia qué meses son Real o Proyectados.`;
 
   document.getElementById('ejecKpiRow').innerHTML = [
-    { label: `% Ejec. Remuneraciones (a ${MESES_CARGA_TITLE[corteIdx - 1]})`, value: fmtPct(alCorte.pctRemAcum), full: 'Acumulado hasta el corte, sobre la meta anual (70% del Ingreso SEP + Carrera Docente)', critical: alCorte.pctRemAcum >= 100 },
-    { label: '% Ejec. Remuneraciones (proy. a diciembre)', value: fmtPct(anual.pctRemAcum), full: 'Acumulado a diciembre, incluyendo los meses aún proyectados', critical: anual.pctRemAcum >= 100 },
+    { label: `% Ejec. Personal (Rem.+Hon.) (a ${MESES_CARGA_TITLE[corteIdx - 1]})`, value: fmtPct(alCorte.pctRemAcum), full: 'Remuneraciones + Honorarios (Subt. 21) acumulados hasta el corte, sobre la meta anual (70% del Ingreso SEP + Carrera Docente)', critical: alCorte.pctRemAcum >= 100 },
+    { label: '% Ejec. Personal (Rem.+Hon.) (proy. a diciembre)', value: fmtPct(anual.pctRemAcum), full: 'Acumulado a diciembre, incluyendo los meses aún proyectados', critical: anual.pctRemAcum >= 100 },
     { label: `% Ejec. B&S (a ${MESES_CARGA_TITLE[corteIdx - 1]})`, value: fmtPct(alCorte.pctBysAcum), full: 'Acumulado hasta el corte, sobre la meta anual (30% del Ingreso SEP)', critical: alCorte.pctBysAcum >= 100 },
     { label: '% Ejec. B&S (proy. a diciembre)', value: fmtPct(anual.pctBysAcum), full: 'Acumulado a diciembre, incluyendo los meses aún proyectados', critical: anual.pctBysAcum >= 100 },
   ].map(k => `<div class="kpi-card${k.critical ? ' critical' : ''}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div></div>`).join('');
@@ -7949,7 +8683,7 @@ function renderEjecucion() {
 
   ejecWireTooltip(wrap, chart, serie, (m, idx) =>
     `<div class="tt-title">${MESES_CARGA_TITLE[idx]} · ${m.tipo === 'real' ? 'Real' : m.tipo === 'proy' ? 'Proyectado' : 'Mixto'}</div>` +
-    (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Remuneraciones: <strong>${fmtPct(m.pctRemAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes)} ese mes)</div>` : '') +
+    (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Personal (Rem.+Hon.): <strong>${fmtPct(m.pctRemAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes + m.gastoHonMes)} ese mes: ${fmtCLP(m.gastoRemMes)} rem. + ${fmtCLP(m.gastoHonMes)} hon.)</div>` : '') +
     (showBys ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-2)"></span>Bienes y Servicios: <strong>${fmtPct(m.pctBysAcum)}</strong> acum. (${fmtCLP(m.gastoBysMes)} ese mes)</div>` : ''));
 
   document.getElementById('ejecTbody').innerHTML = serie.map((m, i) => {
@@ -7959,6 +8693,7 @@ function renderEjecucion() {
       <td class="mes-${m.tipo}">${EJEC_TIPO_TXT[m.tipo]}</td>
       <td class="num">${fmtCLP(m.gastoRemMes)}</td>
       <td class="num">${deltaHTML(m.gastoRemMes, prev ? prev.gastoRemMes : undefined)}</td>
+      <td class="num">${fmtCLP(m.gastoHonMes)}</td>
       <td class="num">${fmtPct(m.pctRemAcum)}</td>
       <td class="num">${fmtCLP(m.gastoBysMes)}</td>
       <td class="num">${deltaHTML(m.gastoBysMes, prev ? prev.gastoBysMes : undefined)}</td>
@@ -7981,11 +8716,11 @@ function csvEscape(val) {
 // una fila de encabezados + una fila por RBD filtrado. La usan tanto "⬇ CSV" como
 // "⬇ Excel (resumen general)" para no mantener dos listas de columnas por separado.
 function resumenGeneralAOA() {
-  const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','% Ejec. Remuneraciones (meta = 70% SEP + Carrera Docente)','Saldo post Remuneraciones','Gasto Subt22','Gasto Subt29','Gasto B&S Proyección','Gasto B&S total','% Ejec. B&S (meta 30%)','% Rem. / Ingreso Total (informativo)','% B&S / Ingreso Total (informativo)','Saldo Final (Real+Proy)','% Ejec. Total (Real+Proy) — define Estado','Estado','Alerta'];
+  const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','Gasto Honorarios (Subt. 21; boletas + proyección)','% Ejec. Personal (Rem.+Hon.; meta = 70% SEP + Carrera Docente)','Saldo post Personal (Rem.+Hon.)','Gasto Subt22','Gasto Subt29','Gasto B&S Proyección','Gasto B&S total','% Ejec. B&S (meta 30%)','% Personal (Rem.+Hon.) / Ingreso Total (informativo)','% B&S / Ingreso Total (informativo)','Saldo Final (Real+Proy)','% Ejec. Total (Real+Proy) — define Estado','Estado','Alerta'];
   const rows = [headers];
   currentFilteredRows.forEach(r => {
-    const alerta = r.alerta_sep_sin_marco ? 'GASTO SEP SIN MARCO ASIGNADO' : ((r.anomalia || r.compras_con_avisos > 0) ? 'Revisar' : '');
-    rows.push([Number(r.rbd), r.nombre, r.marco_anual_proy, r.carrera_docente_anual, r.gasto_rem_anual_proy, r.pct_ejec_rem+'%', r.saldo_rem, r.gasto_subt22, r.gasto_subt29, r.gasto_bys_proyectado, r.gasto_bys, r.pct_ejec_bys+'%', r.pct_rem_ing_total+'%', r.pct_bys_ing_total+'%', r.saldo_total, r.pct_ejec_total+'%', estadoLabel[r.estado], alerta]);
+    const alerta = r.alerta_sep_sin_marco ? 'GASTO SEP SIN MARCO ASIGNADO' : ((r.anomalia || r.compras_con_avisos > 0 || r.hon_con_avisos > 0) ? 'Revisar' : '');
+    rows.push([Number(r.rbd), r.nombre, r.marco_anual_proy, r.carrera_docente_anual, r.gasto_rem_anual_proy, r.gasto_hon, r.pct_ejec_rem+'%', r.saldo_rem, r.gasto_subt22, r.gasto_subt29, r.gasto_bys_proyectado, r.gasto_bys, r.pct_ejec_bys+'%', r.pct_rem_ing_total+'%', r.pct_bys_ing_total+'%', r.saldo_total, r.pct_ejec_total+'%', estadoLabel[r.estado], alerta]);
   });
   return rows;
 }
@@ -8031,6 +8766,8 @@ document.getElementById('downloadCargaBtn').addEventListener('click', () => {
     rem_por_rbd: CARGA_MANUAL.rem_por_rbd,
     compras_por_rbd: CARGA_MANUAL.compras_por_rbd,
     bys_proyeccion_por_rbd: CARGA_MANUAL.bys_proyeccion_por_rbd,
+    honorarios_por_rbd: CARGA_MANUAL.honorarios_por_rbd,
+    hon_proyeccion_por_rbd: CARGA_MANUAL.hon_proyeccion_por_rbd,
     items_subt22: ITEMS_22,
     items_subt29: ITEMS_29,
   };
@@ -8170,6 +8907,8 @@ function buildCargaWorkbook(onlyRbd) {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetItemsAOA('29', CUENTAS_SEP_29, onlyRbd)), 'SUBT29');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetComprasAOA(onlyRbd)), 'COMPRAS');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysProyeccionAOA(onlyRbd)), 'BYS_PROYECCION');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetHonorariosAOA(onlyRbd)), 'HONORARIOS');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetHonProyeccionAOA(onlyRbd)), 'HON_PROYECCION');
   return wb;
 }
 
@@ -8189,7 +8928,7 @@ function buildSingleRbdPrintHTML(rbd) {
     <div class="detalle-header" style="margin-bottom:14px;">
       <strong style="font-size:16px;">Monitor SEP 70/30 — Análisis individual RBD ${escHtml(r.rbd)}</strong><br>
       <span>${escHtml(r.nombre)}</span><br>
-      <span class="detalle-sub">Regla 70% remuneraciones / 30% bienes y servicios sobre el Ingreso SEP anual — SLEP Petorca</span>
+      <span class="detalle-sub">Regla 70% personal (remuneraciones + honorarios) / 30% bienes y servicios sobre el Ingreso SEP anual — SLEP Petorca</span>
     </div>
     <div class="kpi-section-label">Real (ejecutado)</div>
     <div class="kpi-row kpi-row-real" style="margin-bottom:10px;">${kpiCardsHTML(kpiCardsReal(rp))}</div>
@@ -8198,19 +8937,20 @@ function buildSingleRbdPrintHTML(rbd) {
     <div class="kpi-section-label">Total (Real + Proyectado)</div>
     <table class="data-table" style="margin-bottom:10px;">
       <thead><tr>
-        <th class="num">Ingreso SEP anual</th><th class="num">Carrera Docente</th><th class="num">Gasto Remuneraciones</th>
-        <th class="num" title="Sobre meta 70%">% Ejec. Rem.</th><th class="num">Saldo post Rem.</th><th class="num">Gasto B&S</th>
+        <th class="num">Ingreso SEP anual</th><th class="num">Carrera Docente</th><th class="num">Gasto Remuneraciones</th><th class="num">Gasto Honorarios</th>
+        <th class="num" title="(Remuneraciones + Honorarios) sobre meta 70%">% Ejec. Personal</th><th class="num">Saldo post Personal</th><th class="num">Gasto B&S</th>
         <th class="num" title="Sobre meta 30%">% Ejec. B&S</th>
-        <th class="num pct-ing-total" title="Gasto Rem. / Ingreso Total (informativo)">% Rem./Ingreso</th>
+        <th class="num pct-ing-total" title="Gasto Personal (Rem.+Hon.) / Ingreso Total (informativo)">% Personal/Ingreso</th>
         <th class="num pct-ing-total" title="Gasto B&S / Ingreso Total (informativo)">% B&S/Ingreso</th>
         <th class="num pct-ejec-total-final" title="Ingreso Total − Gasto Total, contando en ambos lo ejecutado + lo proyectado">Saldo Final (Real+Proy)</th>
-        <th class="num pct-ejec-total-final" title="(Gasto Rem.+B&S) / Ingreso Total. El Estado se decide con el saldo y el cociente exactos (sin redondear): Déficit solo si el saldo es negativo, Riesgo si no es déficit y este % es 90% o más.">% Ejec. Total (Real+Proy)</th>
+        <th class="num pct-ejec-total-final" title="(Gasto Rem.+Hon.+B&S) / Ingreso Total. El Estado se decide con el saldo y el cociente exactos (sin redondear): Déficit solo si el saldo es negativo, Riesgo si no es déficit y este % es 90% o más.">% Ejec. Total (Real+Proy)</th>
         <th>Estado</th>
       </tr></thead>
       <tbody><tr>
         <td class="num">${fmtCLP(r.marco_anual_proy)}</td>
         <td class="num">${fmtCLP(r.carrera_docente_anual)}</td>
         <td class="num">${fmtCLP(r.gasto_rem_anual_proy)}</td>
+        <td class="num">${fmtCLP(r.gasto_hon)}</td>
         <td class="num">${fmtPct(r.pct_ejec_rem)}</td>
         <td class="num">${fmtCLP(r.saldo_rem)}</td>
         <td class="num">${fmtCLP(r.gasto_bys)}</td>
@@ -8369,6 +9109,123 @@ function importBysProyeccionSheet(ws) {
   return n;
 }
 
+// --- HONORARIOS: hoja de respaldo — una fila por boleta, con su ID (mismas columnas del Libro de Honorarios de SUPEREDUC A–L + N° DC). La columna ID permite reimportar el
+// mismo Excel sin duplicar: fila con ID existente = actualiza esa boleta; ID vacío = boleta nueva (clave determinista, ver idCompraParaImportar). El tipo va como CÓDIGO (BOLHE). ---
+function sheetHonorariosAOA(onlyRbd) {
+  const headers = ['ID', 'RBD', 'Establecimiento', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'N° DC'];
+  const rows = [headers];
+  registrosPara(onlyRbd).forEach(r => {
+    const boletas = (CARGA_MANUAL.honorarios_por_rbd || {})[r.rbd] || {};
+    Object.entries(boletas).forEach(([id, h]) => {
+      rows.push([id, Number(r.rbd), r.nombre, h.codigo || '', honCodigoTipo(h.tipoDocumento) || h.tipoDocumento || '', h.nroDocumento || '', h.fechaDocumento || '', h.fechaPago || '', neutralizaFormula(h.descripcion || ''), h.rutProveedor || '', neutralizaFormula(h.nombreProveedor || ''), Math.round(num(h.montoGasto)), Math.round(num(h.montoDocumento)), neutralizaFormula(textoSeguro(h.documentoContable))]);
+    });
+  });
+  return rows;
+}
+// HON_PROYECCION: mismo formato que BYS_PROYECCION (Codigo + Item + 12 meses), solo las cuentas que ya se agregaron por RBD.
+function sheetHonProyeccionAOA(onlyRbd) {
+  const headers = ['RBD', 'Establecimiento', 'Codigo', 'Item', ...MESES_CARGA_TITLE, 'Total Año'];
+  const rows = [headers];
+  registrosPara(onlyRbd).forEach(r => {
+    const hp = (CARGA_MANUAL.hon_proyeccion_por_rbd || {})[r.rbd];
+    (hp ? hp.items : []).forEach(it => {
+      const vals = MESES_CARGA.map(m => Math.round(it.meses[m] || 0));
+      rows.push([Number(r.rbd), r.nombre, it.codigo, nombreItemHonProyeccion(it.codigo), ...vals, Math.round(it.total)]);
+    });
+  });
+  return rows;
+}
+// Importar la hoja HONORARIOS. Cada fila que no se puede importar se informa con su motivo (rechazarFilaImportacion) y no se pierde en silencio. Una boleta ya cargada
+// que no viene en el archivo no se toca. El N° DC solo se escribe si el archivo trae la columna (un Excel antiguo sin ella no borra el que ya tenía la boleta).
+function importHonorariosSheet(ws) {
+  const rows = rowsFromSheet(ws);
+  const idxDc = indiceColumnaDc(rows[0]);
+  const indicesPorRbd = {};
+  const porRbd = {};
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[1] === undefined || row[1] === null || String(row[1]).trim() === '') continue;
+    const fila = i + 1;
+    const rbd = String(Math.trunc(Number(row[1])));
+    if (!DATA.registros.some(r => r.rbd === rbd)) { rechazarFilaImportacion('HONORARIOS', fila, `el RBD "${String(row[1]).trim()}" no existe en el panel`); continue; }
+    const codigoRaw = row[3];
+    const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
+    if (!HON_CUENTAS_BY_CODIGO[codigo]) { rechazarFilaImportacion('HONORARIOS', fila, `la cuenta "${codigo}" no acepta honorarios (no está en el catálogo de honorarios del Plan de Cuentas 2026)`); continue; }
+    const tipoRaw = String(row[4] || '').trim();
+    const tipo = honCodigoTipo(tipoRaw);
+    if (!tipo) { rechazarFilaImportacion('HONORARIOS', fila, `el tipo de documento "${tipoRaw}" no es de honorarios (BOLH, BHE, BOLHE, BPST, BPSTE)`); continue; }
+    if (!honTipoPermitido(codigo, tipo)) { rechazarFilaImportacion('HONORARIOS', fila, `la cuenta ${codigo} no acepta el tipo ${tipo}`); continue; }
+    const campos = {
+      codigo,
+      tipoDocumento: tipo,
+      nroDocumento: String(row[5] || '').trim(),
+      fechaDocumento: excelDateToISO(row[6]),
+      fechaPago: excelDateToISO(row[7]),
+      descripcion: String(row[8] || '').trim(),
+      rutProveedor: String(row[9] || '').trim(),
+      nombreProveedor: String(row[10] || '').trim(),
+      montoGasto: Number(row[11]) || 0,
+      montoDocumento: Number(row[12]) || 0,
+    };
+    if (!campos.fechaDocumento) { rechazarFilaImportacion('HONORARIOS', fila, 'falta la fecha del documento'); continue; }
+    if (!(campos.montoGasto > 0)) { rechazarFilaImportacion('HONORARIOS', fila, 'el monto gasto debe ser mayor que 0 (las boletas son gasto positivo)'); continue; }
+    if (!(campos.montoDocumento > 0)) campos.montoDocumento = campos.montoGasto;
+    const idExplicito = idCompraImportadoUsable(row[0]);
+    const errId = idExplicito ? validarClaveMapa(idExplicito, 'El ID de la boleta') : null;
+    if (errId) { rechazarFilaImportacion('HONORARIOS', fila, errId); continue; }
+    if (!CARGA_MANUAL.honorarios_por_rbd) CARGA_MANUAL.honorarios_por_rbd = {};
+    if (!CARGA_MANUAL.honorarios_por_rbd[rbd]) CARGA_MANUAL.honorarios_por_rbd[rbd] = {};
+    const boletasRbd = CARGA_MANUAL.honorarios_por_rbd[rbd];
+    const indice = indicesPorRbd[rbd] || (indicesPorRbd[rbd] = indiceComprasPorFirma(boletasRbd));
+    const id = idCompraParaImportar(row[0], campos, boletasRbd, indice);
+    const previa = boletasRbd[id];
+    aplicarDcImportado(campos, row, idxDc, previa);
+    boletasRbd[id] = (idxDc < 0 && previa && previa.documentoContable) ? { ...campos, documentoContable: previa.documentoContable } : campos;
+    registrarCompraEnIndice(indice, id, campos);
+    if (!porRbd[rbd]) porRbd[rbd] = {};
+    porRbd[rbd][id] = campos;
+    n++;
+  }
+  Object.keys(porRbd).forEach(rbd => {
+    recomputeHonDesdeBoletas(rbd);
+    const r = DATA.registros.find(x => x.rbd === rbd);
+    if (r) recomputeRegistro(r);
+    scheduleRbdSave(rbd, { nombre: r ? r.nombre : rbd, honorarios: porRbd[rbd] });
+  });
+  if (modalRbdAbierto && porRbd[modalRbdAbierto]) renderModalContenido();
+  return n;
+}
+// Importar la hoja HON_PROYECCION (mismo formato que BYS_PROYECCION). Una cuenta fuera del catálogo de honorarios se informa y se omite.
+function importHonProyeccionSheet(ws) {
+  const rows = rowsFromSheet(ws);
+  const porRbd = new Set();
+  let n = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (row[0] === undefined || row[0] === null || String(row[0]).trim() === '') continue;
+    const fila = i + 1;
+    const rbd = String(Math.trunc(Number(row[0])));
+    if (!DATA.registros.some(r => r.rbd === rbd)) { rechazarFilaImportacion('HON_PROYECCION', fila, `el RBD "${String(row[0]).trim()}" no existe en el panel`); continue; }
+    const codigoRaw = row[2];
+    const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
+    if (!HON_CUENTAS_BY_CODIGO[codigo]) { rechazarFilaImportacion('HON_PROYECCION', fila, `la cuenta "${codigo}" no acepta honorarios (no está en el catálogo de honorarios del Plan de Cuentas 2026)`); continue; }
+    const meses = {};
+    let total = 0;
+    MESES_CARGA.forEach((m, mi) => { const v = Number(row[4 + mi]) || 0; meses[m] = v; total += v; });
+    const hp = ensureHonProyeccion(rbd);
+    const it = ensureBysProyeccionItem(hp, codigo);
+    it.meses = meses;
+    it.total = Math.round(total);
+    recomputeBysProyeccionAgregado(hp);
+    scheduleRbdSave(rbd, { nombre: hp.nombre, hon_proyeccion: { items: { [codigo]: { meses, total: it.total } } } });
+    porRbd.add(rbd);
+    n++;
+  }
+  if (modalRbdAbierto && porRbd.has(modalRbdAbierto)) renderModalContenido();
+  return n;
+}
+
 // Excel guarda fechas como número de serie (días desde 1899-12-30) cuando la celda tiene
 // formato de fecha, y como texto en cualquier otro caso — rowsFromSheet no usa cellDates, así
 // que hay que convertir ambos casos a 'YYYY-MM-DD' a mano.
@@ -8457,6 +9314,9 @@ function importWorkbook(wb) {
   if (wb.Sheets['REMUNERACIONES']) resumen.push('REMUNERACIONES: ' + importSimpleSheet(wb.Sheets['REMUNERACIONES'], 'rem_por_rbd') + ' filas');
   if (wb.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importComprasSheet(wb.Sheets['COMPRAS']) + ' filas');
   if (wb.Sheets['BYS_PROYECCION']) resumen.push('BYS_PROYECCION: ' + importBysProyeccionSheet(wb.Sheets['BYS_PROYECCION']) + ' filas');
+  // Honorarios (hojas nuevas): un archivo antiguo que no las trae simplemente no las toca (no borra nada).
+  if (wb.Sheets['HONORARIOS']) resumen.push('HONORARIOS: ' + importHonorariosSheet(wb.Sheets['HONORARIOS']) + ' filas');
+  if (wb.Sheets['HON_PROYECCION']) resumen.push('HON_PROYECCION: ' + importHonProyeccionSheet(wb.Sheets['HON_PROYECCION']) + ' filas');
   // Subt.22/29 ya no se importan como hojas de montos mensuales — ahora se cargan como
   // compras (hoja COMPRAS, o el "Registro de compras" dentro del detalle de cada RBD), con su
   // propio código de cuenta y fecha de documento, así que una hoja "SUBT22"/"SUBT29" de un
@@ -8478,7 +9338,7 @@ document.getElementById('importExcelInput').addEventListener('change', (e) => {
       const wb = XLSX.read(evt.target.result, { type: 'array' });
       const resumen = importWorkbook(wb);
       if (resumen.length === 0) {
-        alert('El archivo no tiene ninguna hoja con los nombres esperados (INGRESO, REMUNERACIONES, COMPRAS). No se importó nada.');
+        alert('El archivo no tiene ninguna hoja con los nombres esperados (INGRESO, REMUNERACIONES, COMPRAS, HONORARIOS). No se importó nada.');
       } else {
         alert('Carga importada correctamente:\n' + resumen.join('\n') + '\n\nEl panel ya se actualizó con estos montos.');
       }
@@ -8958,6 +9818,7 @@ function reaplicarUltimoSnapshot() { if (ultimoSnapshotAplicado) aplicarSnapshot
 function aplicarSnapshot(snapshot) {
   ultimoSnapshotAplicado = snapshot;
   const nuevoAgregado = {}, nuevoIngreso = {}, nuevoRem = {}, nuevoCompras = {}, nuevoBysProyeccion = {};
+  const nuevoHonorarios = {}, nuevoHonAgregado = {}, nuevoHonProyeccion = {};
   const nuevoOtrasFuentes = {};
   const presentIds = new Set();
   const docsInvalidos = [];
@@ -9040,6 +9901,19 @@ function aplicarSnapshot(snapshot) {
       recomputeBysProyeccionAgregado(bp);
       nuevoBysProyeccion[rbd] = bp;
 
+      // Honorarios (Subt. 21): boletas (solo entradas que son objetos; textos como texto y montos como número) y proyección por cuenta. Una boleta dañada no rompe al resto.
+      const honRaw = {};
+      Object.entries(objetoPlano(data.honorarios)).forEach(([id, h]) => { if (h && typeof h === 'object' && !Array.isArray(h)) honRaw[id] = sanitizaHonorario(h); });
+      nuevoHonorarios[rbd] = honRaw;
+      nuevoHonAgregado[rbd] = honAgregadoDesdeBoletas(rbd, nombre, honRaw);
+      const honProyItemsRaw = objetoPlano(objetoPlano(data.hon_proyeccion).items);
+      const hp = { rbd, nombre, items: Object.keys(honProyItemsRaw).map(codigo => {
+        const meses = mesesNum(objetoPlano(honProyItemsRaw[codigo]).meses);
+        return { codigo, meses, total: MESES_CARGA.reduce((s, m) => s + meses[m], 0) };
+      }), meses: {}, total: 0 };
+      recomputeBysProyeccionAgregado(hp);
+      nuevoHonProyeccion[rbd] = hp;
+
       // Otras Fuentes: "AC" y los GESPARVU de JUNJI pasan por este mismo parseo aunque no estén en
       // DATA.registros — no tienen ingreso_items/rem/bys_proyeccion/compras de SEP (quedan en
       // blanco arriba, sin romper nada), pero sí pueden traer otras_fuentes igual que cualquier RBD.
@@ -9091,7 +9965,7 @@ function aplicarSnapshot(snapshot) {
       console.error('Documento con datos inválidos en Firestore, se omite:', rbd, err);
       docsInvalidos.push(rbd);
       // Descarta lo que alcanzó a armarse de este documento (nada a medias).
-      [nuevoAgregado, nuevoIngreso, nuevoRem, nuevoCompras, nuevoBysProyeccion, nuevoOtrasFuentes].forEach(o => { delete o[rbd]; });
+      [nuevoAgregado, nuevoIngreso, nuevoRem, nuevoCompras, nuevoBysProyeccion, nuevoHonorarios, nuevoHonAgregado, nuevoHonProyeccion, nuevoOtrasFuentes].forEach(o => { delete o[rbd]; });
     }
   });
 
@@ -9100,6 +9974,9 @@ function aplicarSnapshot(snapshot) {
   CARGA_MANUAL.rem_por_rbd = nuevoRem;
   CARGA_MANUAL.compras_por_rbd = nuevoCompras;
   CARGA_MANUAL.bys_proyeccion_por_rbd = nuevoBysProyeccion;
+  CARGA_MANUAL.honorarios_por_rbd = nuevoHonorarios;
+  CARGA_MANUAL.hon_agregado_por_rbd = nuevoHonAgregado;
+  CARGA_MANUAL.hon_proyeccion_por_rbd = nuevoHonProyeccion;
   CARGA_MANUAL.otras_fuentes_por_rbd = nuevoOtrasFuentes;
   aplicarMetaCierre(superponerEdicionesSinConfirmar(META_DOC_ID, metaData)); // antes de recalcular: el mes de cierre mueve el default de los ingresos
 

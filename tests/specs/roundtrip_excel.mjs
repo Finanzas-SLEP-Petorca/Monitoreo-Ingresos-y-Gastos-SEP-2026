@@ -68,7 +68,7 @@ await correrSpec('roundtrip_excel', async (t) => {
   const storeAntes = relevantes(await h.store());
   const comprasAntes = Object.values(storeAntes).reduce((n, d) => n + Object.keys(d.compras || {}).length, 0);
   const x1 = await exportar(h, () => page.click('#downloadExcelBtn'));
-  t.eq(x1.libro.orden, ['INGRESO', 'REMUNERACIONES', 'SUBT22', 'SUBT29', 'COMPRAS', 'BYS_PROYECCION'], 'SEP: el libro de carga trae las 6 hojas esperadas');
+  t.eq(x1.libro.orden, ['INGRESO', 'REMUNERACIONES', 'SUBT22', 'SUBT29', 'COMPRAS', 'BYS_PROYECCION', 'HONORARIOS', 'HON_PROYECCION'], 'SEP: el libro de carga trae las 8 hojas esperadas (las 6 de siempre + HONORARIOS y HON_PROYECCION)');
   t.eq(x1.libro.hojas.COMPRAS.length - 1, comprasAntes, 'SEP: la hoja COMPRAS trae una fila por compra del servidor');
   const filaEspecial = x1.libro.hojas.COMPRAS.find(r => r[0] === 'c1121_especial');
   t.ok(filaEspecial && filaEspecial[5] === 'A&B-<7>' && filaEspecial[8].includes('<b>Matemática</b>') && filaEspecial[10] === 'Editorial "El Tío" & Hijos <Ltda>', 'SEP: los caracteres especiales (& < > " \') viajan intactos al Excel', filaEspecial);
@@ -121,4 +121,34 @@ await correrSpec('roundtrip_excel', async (t) => {
 
   t.noErrores(h);
   await h.close();
+
+  // ================================================================ SEP con Honorarios (Subt. 21): hojas HONORARIOS y HON_PROYECCION
+  // Boletas que el panel puede crear y reimportar tal cual (las que no —cuenta fuera del catálogo, tipo que no es de honorarios, fecha dd/mm/aaaa— están en honorarios_excel).
+  {
+    const docs = JSON.parse(JSON.stringify(cargarFixture('honorarios').docs));
+    ['h1121_cuenta_x', 'h1121_tipo_fac', 'h1121_tipo_np', 'h1121_invalida'].forEach(id => { delete docs['1121'].honorarios[id]; });
+    const hh = await boot({ fixture: docs });
+    await clickTab(hh.page, 'SEP');
+    const tAntes = await textoDe(hh.page, '#tab-panel');
+    const sAntes = documentos(await hh.store());
+    const nHon = Object.values(sAntes).reduce((n, d) => n + Object.keys(d.honorarios || {}).length, 0);
+    const e1 = await exportar(hh, () => hh.page.click('#downloadExcelBtn'));
+    t.eq(e1.libro.hojas.HONORARIOS.length - 1, nHon, 'SEP + honorarios: la hoja HONORARIOS trae una fila por boleta del servidor');
+    t.eq(e1.libro.hojas.HON_PROYECCION.length - 1, 4, 'SEP + honorarios: HON_PROYECCION trae las 4 cuentas con proyección');
+    const m = await importar(hh, '#importExcelInput', e1);
+    t.ok(/^Carga importada correctamente/.test(m[0] || '') && /HONORARIOS: \d+ filas/.test(m[0] || '') && !/NO se import/.test(m[0] || ''), 'SEP + honorarios: la importación informa éxito, lista HONORARIOS y no rechaza ninguna fila', m);
+    t.eq(await textoDe(hh.page, '#tab-panel'), tAntes, 'SEP + honorarios: la pantalla queda idéntica tras reimportar');
+    const e2 = await exportar(hh, () => hh.page.click('#downloadExcelBtn'));
+    t.eq(igualLibros(e1.libro, e2.libro), null, 'SEP + honorarios: exportar → importar → exportar da exactamente las mismas hojas (también HONORARIOS y HON_PROYECCION)');
+    t.eq(primeraDiferencia(sAntes, documentos(await hh.store())), null, 'SEP + honorarios: los documentos del servidor quedan iguales (salvo ceros y auditoría)');
+    t.eq(Object.values(await hh.store()).reduce((n, d) => n + Object.keys(d.honorarios || {}).length, 0), nHon, 'SEP + honorarios: no se duplican boletas al reimportar');
+    const f1 = await exportar(hh, () => hh.page.click('#tableBody button.row-action-btn[data-action="excel"][data-rbd="1122"]'));
+    const mf = await importar(hh, '#importExcelInput', f1);
+    t.ok(/^Carga importada correctamente/.test(mf[0] || ''), 'SEP + honorarios: el Excel individual de un RBD se reimporta', mf);
+    const f2 = await exportar(hh, () => hh.page.click('#tableBody button.row-action-btn[data-action="excel"][data-rbd="1122"]'));
+    t.eq(igualLibros(f1.libro, f2.libro), null, 'SEP + honorarios: el Excel individual (RBD 1122) no cambia tras reimportarlo');
+    t.eq(primeraDiferencia(sAntes, documentos(await hh.store())), null, 'SEP + honorarios: tras el Excel individual los documentos siguen iguales');
+    t.noErrores(hh);
+    await hh.close();
+  }
 });

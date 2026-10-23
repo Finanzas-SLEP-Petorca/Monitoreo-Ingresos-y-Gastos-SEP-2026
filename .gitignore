@@ -11,6 +11,8 @@ carga_manual/
 !package.json
 # Dato de referencia normativo (matriz del Manual de Cuentas SUPEREDUC 2026), sin cifras por RBD.
 !data/plan_cuentas_2026.json
+# Ídem: cuentas del Plan 2026 que aceptan documentos de honorarios (Manual de Cuentas, recuadros «Documentos Habilitados»), sin cifras por RBD.
+!data/honorarios_cuentas_2026.json
 
 # Artefactos de trabajo / respaldos locales
 *_backup_*.html

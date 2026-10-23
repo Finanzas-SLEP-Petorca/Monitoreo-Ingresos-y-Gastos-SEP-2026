@@ -382,6 +382,87 @@ async function seccionCierre(h, R) {
   await R.descarga('cierre.exp.pers.sep.csv', () => page.click('#reporteCsvBtn'));
 }
 
+// Con el fixture "compras" (default + casos de la PR D1: notas de crédito/débito con el signo "equivocado" en Firestore, fechas de 2025 / con formato no reconocido / de pago
+// en 2027, una cuenta fuera del catálogo y una compra bajo la clave "0"): el signo normalizado en todas las vistas y exportaciones, los avisos de fecha/cuenta (marcas por
+// fila, resumen sobre la tabla, "Datos a revisar") y el ID "0" en el Excel. Las compras AGREGADAS son lo único que difiere de default.json (ver generate.mjs).
+async function seccionCompras(h, R) {
+  const { page } = h;
+  const fila = (rbd, accion) => `#tableBody button.row-action-btn[data-action="${accion}"][data-rbd="${rbd}"]`;
+  await abrirDetails(page, '#tab-dashboard');
+  for (const v of ['total', 'real', 'proy']) {
+    await page.click(`.dash-chips button[data-dash-vista="${v}"]`);
+    await R.vista(`compras.dashboard.${v}`, '#tab-dashboard');
+  }
+  await page.click('.dash-chips button[data-dash-vista="total"]');
+  await h.clickTab('SEP');
+  await R.vista('compras.sep', '#tab-panel');
+  for (const rbd of ['1121', '1122']) {
+    await page.click(`#tableBody td.rbd-clickable[data-abrir-rbd="${rbd}"]`);
+    await h.waitIdle();
+    await R.vista(`compras.modal.sep.${rbd}`, '#rbdModal');
+    if (rbd === '1121') { // el formulario con la ayuda de signo y los avisos de fecha en vivo
+      await page.selectOption('#modalBody .compra-input[data-field="tipoDocumento"]', 'Nota de crédito');
+      await page.fill('#modalBody .compra-input[data-field="fechaDocumento"]', '2025-12-30');
+      await page.fill('#modalBody .compra-input[data-field="fechaPago"]', '2025-12-01');
+      await R.vista('compras.modal.sep.1121.formulario-nc-2025', '#modalBody .compra-form-grid');
+      await page.selectOption('#modalBody .compra-input[data-field="tipoDocumento"]', '');
+      await page.fill('#modalBody .compra-input[data-field="fechaDocumento"]', '');
+      await page.fill('#modalBody .compra-input[data-field="fechaPago"]', '');
+    }
+    await page.keyboard.press('Escape');
+    await h.waitIdle();
+  }
+  await R.vista('compras.sep.1122-1120', '#tableBody tr[data-rbd="1122"], #tableBody tr[data-rbd="1120"]');
+  await h.clickTab('of-general');
+  await R.vista('compras.of.general.total', '#tab-of-general');
+  await abrirModalOtraFuente(h, R, 'general', '1121', 'compras.modal.of.general.1121');
+  await abrirModalOtraFuente(h, R, 'general', 'AC', 'compras.modal.of.general.AC');
+  await abrirModalOtraFuente(h, R, 'pie', '1121', 'compras.modal.of.pie.1121');
+  await h.clickTab('% Ejecución');
+  await R.vista('compras.ejec.sep.agregado', '#tab-ejecucion');
+  await setSelect(page, '#ejecRbdSelect', '1121');
+  await R.vista('compras.ejec.sep.1121', '#tab-ejecucion');
+  await setSelect(page, '#ejecRbdSelect', '');
+  await page.click('#ejecFuenteChips .of-chip[data-ejec-fuente="general"]');
+  await R.vista('compras.ejec.general', '#tab-ejecucion');
+  await page.click('#ejecFuenteChips .of-chip[data-ejec-fuente="consolidado"]');
+  await R.vista('compras.ejec.consolidado', '#tab-ejecucion');
+  await h.clickTab('Reportes');
+  await page.click('#vzFuentesNinguna');
+  await page.click('#vzFuenteChips [data-vz-fuente="sep"]');
+  await page.click('#vzFuenteChips [data-vz-fuente="general"]');
+  await page.click('#vzAgruparChips [data-vz-agrupar="codigo"]');
+  await page.click('#vzExpIng'); await page.click('#vzExpGas');
+  await R.vista('compras.rep.vz.por-codigo', SEL_VZ);
+  await R.descarga('compras.exp.vz.por-codigo.csv', () => page.click('#vzCsvBtn'));
+  await page.click('#vzLimpiarBtn');
+  await page.click('#reporteVistaChips [data-reporte-vista="personalizado"]');
+  await h.waitIdle();
+  const f = await configurarPersonalizado(h, R, {
+    entidades: ['1121', '1122'],
+    conceptos: ['22|BIBLIOTECAS, LIBROS Y REVISTAS', '22|MATERIAL Y RECURSOS DIDACTICOS'],
+    meses: ['MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'DICIEMBRE'],
+  });
+  R.dato('compras.rep.pers.faltantes', f);
+  await R.vista('compras.rep.pers', SEL_PERS);
+  await R.descarga('compras.exp.pers.csv', () => page.click('#reporteCsvBtn'));
+  await h.clickTab('SEP');
+  await R.descarga('compras.exp.sep.csv-compras', () => page.click('#downloadComprasSepBtn'));
+  await R.descarga('compras.exp.sep.excel-carga', () => page.click('#downloadExcelBtn'));
+  await R.descarga('compras.exp.sep.excel-resumen', () => page.click('#downloadResumenExcelBtn'));
+  await R.descarga('compras.exp.sep.json-carga', () => page.click('#downloadCargaBtn'));
+  await R.descarga('compras.exp.sep.fila.1121.xls', () => page.click(fila('1121', 'excel')));
+  await R.descarga('compras.exp.sep.fila.1121.csv', () => page.click(fila('1121', 'csvsep')));
+  await R.imprimir('compras.print.sep.fila.1121', () => page.click(fila('1121', 'pdf')));
+  await h.clickTab('of-general');
+  await R.descarga('compras.exp.of.general.csv-compras', () => page.click('#downloadComprasOFBtn-general'));
+  await R.descarga('compras.exp.of.general.excel', () => page.click('#downloadExcelOFBtn-general'));
+  await R.descarga('compras.exp.of.general.fila.AC.csv', () => page.click('#otrasFuentesTbody-general button.row-action-btn[data-action="csv"][data-rbd="AC"]'));
+  await R.imprimir('compras.print.of.general.fila.1121', () => page.click('#otrasFuentesTbody-general button.row-action-btn[data-action="pdf"][data-rbd="1121"]'));
+  await h.clickTab('of-pie');
+  await R.descarga('compras.exp.of.pie.csv-compras', () => page.click('#downloadComprasOFBtn-pie'));
+}
+
 export const SECCIONES = [
   { nombre: 'dashboard', fn: seccionEncabezadoYDashboard },
   { nombre: 'sep', fn: seccionSep },
@@ -391,6 +472,7 @@ export const SECCIONES = [
   { nombre: 'exports-sep', fn: seccionExportsSep },
   { nombre: 'exports-fuentes', fn: seccionExportsFuentes },
   { nombre: 'cierre', fixture: 'cierre', fn: seccionCierre },
+  { nombre: 'compras', fixture: 'compras', fn: seccionCompras },
 ];
 
 export async function capturar({ log = () => {}, solo = null, html = undefined } = {}) {

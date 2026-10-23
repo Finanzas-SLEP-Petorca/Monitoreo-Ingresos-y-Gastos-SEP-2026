@@ -6,6 +6,8 @@
 //                 tiene que verse exactamente como antes de existir el corte de ingresos (los ingresos de SEP son reales hasta DATA.n_meses = julio).
 //   cierre.json   default + mes de cierre global definido (septiembre) y cortes propios, para el golden master y los specs del corte de ingresos
 //                 (ver más abajo). Los MONTOS son los mismos que los de default.json: solo cambian los cortes Real/Proyectado.
+//   compras.json  default + casos de la PR de corrección de compras (L-03 signo de notas de crédito/débito, F-11/L-05 avisos de fecha y de cuenta, L-14 ID "0"):
+//                 compras AGREGADAS al final (sin consumir números aleatorios), así que todo lo que ya traía default.json queda igual.
 //
 // Entradas: tests/fixtures/rbds.json (ids/nombres públicos de los 55 RBD de DATA.registros y los 13 GESPARVU).
 // Las CIFRAS son sintéticas (PRNG con semilla fija por entidad): no hay montos reales de ningún RBD.
@@ -318,6 +320,44 @@ const docsCierre = JSON.parse(JSON.stringify(docs));
   docsCierre._meta = { ...docsCierre._meta, mes_cierre: 9, mes_cierre_por: EMAILS[0], mes_cierre_en: { __ts: Date.UTC(2026, 9, 20, 14, 30) } };
 }
 
+// ---------- variante "compras": casos de la PR D1 (signo de NC/ND, avisos de fecha/cuenta, ID "0") ----------
+// Se AGREGAN compras al final de las de default.json (sin tocar ninguna ni consumir números aleatorios): los RBD/entidades que no reciben casos
+// quedan igual y sus cifras del golden no cambian. Lo guardado en Firestore es lo que dejó la persona (con los signos "mal" a propósito).
+//   SEP / 1121   · c1121_nc_pos     nota de crédito guardada en POSITIVO (la lectura la normaliza a negativo: resta gasto de abril)
+//                · c1121_nd_neg     nota de débito guardada en NEGATIVO (se lee en positivo)
+//                · c1121_fac_neg    factura en negativo (se deja tal cual: no se inventan signos)
+//                · c1121_f2025      fecha de documento de 2025 ("⚠ fecha fuera de 2026"; se suma en diciembre por su mes)
+//                · c1121_invalida   fecha "10/03/2026" ("⚠ fecha no válida: no se contabiliza"; queda fuera de todo total)
+//                · c1121_pago27     fecha de pago de 2027 ("⚠ fecha fuera de 2026" en la fecha de pago; sí se suma)
+//                · c1121_cuenta_x   código de cuenta 999999 fuera del catálogo ("⚠ cuenta no reconocida: no se contabiliza")
+//                · "0"              compra bajo la clave "0" (rastro del bug antiguo que borra "Revisar duplicados"): el Excel la exporta con ID "0"
+//   SEP / 1122   · c1122_f2025      fecha de 2025 (un segundo RBD en "Datos a revisar")
+//   General / 1121 · ogx_nc_pos, ogx_f2025, ogx_invalida;  General / AC · ogx_ac_nc_pos, ogx_ac_nd_neg;  PIE / 1121 · opx_nc_pos
+const docsCompras = JSON.parse(JSON.stringify(docs));
+{
+  const base = { rutProveedor: '76.123.456-7', nombreProveedor: 'Librería Central Ltda.', documentoOriginal: '' };
+  const nota = { documentoOriginal: '1001-FACEL' };
+  const sep = docsCompras['1121'].compras;
+  sep.c1121_nc_pos = { ...base, ...nota, codigo: '410606', tipoDocumento: 'Nota de crédito', nroDocumento: '5001', fechaDocumento: '2026-04-10', fechaPago: '2026-04-15', descripcion: 'NC cargada en positivo', montoGasto: 150000, montoDocumento: 178500 };
+  sep.c1121_nd_neg = { ...base, ...nota, codigo: '410606', tipoDocumento: 'Nota de débito', nroDocumento: '5002', fechaDocumento: '2026-04-12', fechaPago: '2026-04-16', descripcion: 'ND cargada en negativo', montoGasto: -25000, montoDocumento: -29750 };
+  sep.c1121_fac_neg = { ...base, codigo: '410605', tipoDocumento: 'Factura', nroDocumento: '5003', fechaDocumento: '2026-04-14', fechaPago: '2026-04-18', descripcion: 'Factura en negativo (se deja como se digitó)', montoGasto: -12000, montoDocumento: -14280 };
+  sep.c1121_f2025 = { ...base, codigo: '410605', tipoDocumento: 'Factura', nroDocumento: '5004', fechaDocumento: '2025-12-30', fechaPago: '2026-01-05', descripcion: 'Fecha de documento de 2025', montoGasto: 80000, montoDocumento: 95200 };
+  sep.c1121_invalida = { ...base, codigo: '410605', tipoDocumento: 'Factura', nroDocumento: '5005', fechaDocumento: '10/03/2026', fechaPago: '2026-03-20', descripcion: 'Fecha con formato no reconocido', montoGasto: 45000, montoDocumento: 53550 };
+  sep.c1121_pago27 = { ...base, codigo: '410605', tipoDocumento: 'Factura', nroDocumento: '5006', fechaDocumento: '2026-06-10', fechaPago: '2027-01-05', descripcion: 'Pago en 2027', montoGasto: 30000, montoDocumento: 35700 };
+  sep.c1121_cuenta_x = { ...base, codigo: '999999', tipoDocumento: 'Factura', nroDocumento: '5007', fechaDocumento: '2026-05-05', fechaPago: '2026-05-10', descripcion: 'Cuenta fuera del catálogo', montoGasto: 60000, montoDocumento: 71400 };
+  sep['0'] = { ...base, codigo: '410606', tipoDocumento: 'Boleta', nroDocumento: 'S/N', fechaDocumento: '2026-05-20', fechaPago: '2026-05-20', descripcion: 'Rastro del bug antiguo: clave "0"', montoGasto: 5000, montoDocumento: 5000 };
+  docsCompras['1122'].compras = { ...(docsCompras['1122'].compras || {}),
+    c1122_f2025: { ...base, codigo: '410606', tipoDocumento: 'Factura', nroDocumento: '5101', fechaDocumento: '2025-11-20', fechaPago: '2025-12-01', descripcion: 'Fecha de documento de 2025', montoGasto: 20000, montoDocumento: 23800 } };
+  const gen1121 = docsCompras['1121'].otras_fuentes.general.compras;
+  gen1121.ogx_nc_pos = { ...base, ...nota, codigo: '410601', tipoDocumento: 'Nota de crédito', nroDocumento: '6001', fechaDocumento: '2026-04-08', fechaPago: '2026-04-12', descripcion: 'NC cargada en positivo (General)', montoGasto: 70000, montoDocumento: 83300 };
+  gen1121.ogx_f2025 = { ...base, codigo: '410601', tipoDocumento: 'Factura', nroDocumento: '6002', fechaDocumento: '2025-11-20', fechaPago: '2025-11-28', descripcion: 'Fecha de documento de 2025 (General)', montoGasto: 90000, montoDocumento: 107100 };
+  gen1121.ogx_invalida = { ...base, codigo: '410601', tipoDocumento: 'Factura', nroDocumento: '6003', fechaDocumento: 'abril 2026', fechaPago: '2026-04-30', descripcion: 'Fecha con formato no reconocido (General)', montoGasto: 33000, montoDocumento: 39270 };
+  const genAC = docsCompras.AC.otras_fuentes.general.compras;
+  genAC.ogx_ac_nc_pos = { ...base, ...nota, codigo: '410502', tipoDocumento: 'Nota de crédito', nroDocumento: '6101', fechaDocumento: '2026-05-06', fechaPago: '2026-05-10', descripcion: 'NC cargada en positivo (AC)', montoGasto: 400000, montoDocumento: 476000 };
+  genAC.ogx_ac_nd_neg = { ...base, ...nota, codigo: '410502', tipoDocumento: 'Nota de débito', nroDocumento: '6102', fechaDocumento: '2026-05-07', fechaPago: '2026-05-11', descripcion: 'ND cargada en negativo (AC)', montoGasto: -15000, montoDocumento: -17850 };
+  docsCompras['1121'].otras_fuentes.pie.compras.opx_nc_pos = { ...base, ...nota, codigo: '410917', tipoDocumento: 'Nota de crédito', nroDocumento: '6201', fechaDocumento: '2026-03-18', fechaPago: '2026-03-22', descripcion: 'NC cargada en positivo (PIE)', montoGasto: 55000, montoDocumento: 65450 };
+}
+
 // ---------- salida ----------
 function serializar(docsX, extra = {}) {
   const ids = Object.keys(docsX).sort();
@@ -333,6 +373,7 @@ function serializar(docsX, extra = {}) {
 const SALIDAS = [
   { archivo: SALIDA, ...serializar(docs) },
   { archivo: path.join(AQUI, 'cierre.json'), ...serializar(docsCierre, { variante: 'cierre' }) },
+  { archivo: path.join(AQUI, 'compras.json'), ...serializar(docsCompras, { variante: 'compras' }) },
 ];
 
 if (process.argv.includes('--check')) {

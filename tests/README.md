@@ -66,6 +66,12 @@ node tests/run.mjs                             # tu versión modificada contra e
 > `default` (sin mes de cierre ni cortes de ingresos) esa PR no cambia ninguna cifra del golden: solo agrega el marcado y el texto del selector del modal, del control de la pestaña SEP y de la línea del Panel
 > principal, y los textos que decían "hasta Julio" (ahora salen de los cortes reales). La sección nueva `cierre` del golden (fixture `cierre`) cubre el estado con mes de cierre y cortes propios.
 
+> **Desde la PR D1 (L-03 / L-14 / F-11 / L-05, corrección de compras)** `APP_HTML=@ca7a883` (el `index.html` de `main` justo antes de esa PR) FALLA a propósito en `compras_signo_nc`
+> (48 comprobaciones fallan: una nota de crédito guardada en positivo SUMABA gasto), `compras_id_cero` (24: reimportar un Excel con ID "0"/vacío duplicaba o colapsaba compras) y `compras_avisos_fecha`
+> (46: sin marcas ni resumen de fecha/cuenta, sin "Datos a revisar" por compras con avisos; las comprobaciones de totales por ítem y mes pasan igual con el `index.html` anterior: los totales no cambian). En el golden esa PR **no cambia ninguna cifra ni texto** de las vistas y exportaciones que ya existían
+> (el fixture `default` no tiene casos de signo ni de fecha): solo cambia el MARCADO de los 15 modales con formulario de compras (la caja vacía `.compra-form-avisos`, para los avisos en vivo) y
+> se agrega la sección `compras` (fixture `compras`, 33 entradas nuevas).
+
 ### Flujo recomendado para un cambio grande en `index.html`
 
 1. `node tests/run.mjs` en el árbol limpio → confirma que el arnés está sano (todo PASS).
@@ -93,6 +99,7 @@ tests/
     pdf-paginas.mjs       analizarPdf(buf): páginas y hojas en blanco de un PDF de Chromium, sin dependencias; textoPorPagina() usa pdftotext si existe
     pack.mjs              empaquetado (zlib) de listas largas del baseline
     corte.mjs             (specs del corte de ingresos) cálculo INDEPENDIENTE de lo esperado a partir de los documentos del fixture, corte efectivo, entidades con corte distinto al cierre
+    compras.mjs           (specs de compras) fixtureSinCompras(), compraBase(), libroXlsx() / importarLibro() (arma y sube un .xlsx por el <input type=file>), celdaItem(), montosFilaCompra()
     config.mjs            constantes (BASELINE_REF, correos de prueba, fecha congelada)
   mockfb/
     core.js               núcleo del mock (window.__mockfb): Firestore en memoria + Auth
@@ -100,6 +107,7 @@ tests/
   fixtures/
     generate.mjs          generador reproducible del fixture      rbds.json   ids/nombres públicos de los RBD y GESPARVU
     default.json          fixture generado (70 documentos)       cierre.json   variante con mes de cierre y cortes propios (ver abajo)
+                                                                  compras.json  variante con casos de signo de NC/ND, fechas con avisos e ID "0" (ver abajo)
   golden/
     capture.mjs           recorrido de todas las vistas y exportaciones     diff.mjs  comparación legible
     golden.mjs            CLI (comparar / --update)                         baseline.json  línea base (≈ 0,7 MB)
@@ -173,6 +181,11 @@ fijado por Wilson Rojas el 20/10/2026 14:30 UTC), la remuneración de TODOS los 
 que los de `default.json`: solo cambian los cortes Real/Proyectado. El aviso de entidades con corte distinto lista en él exactamente 8 filas. `default.json` NO trae mes de cierre ni cortes de ingresos (es el
 "estado inicial": el panel tiene que verse como antes de existir el corte).
 
+**`compras.json`** (también de `generate.mjs`; `--check` lo verifica) es `default.json` + compras **agregadas al final** (sin tocar ninguna ni consumir números aleatorios, así que todo lo que ya traía `default.json` queda igual):
+en SEP/1121 una nota de crédito guardada en POSITIVO (`c1121_nc_pos`), una nota de débito en NEGATIVO (`c1121_nd_neg`), una factura en negativo (`c1121_fac_neg`), una de fecha de 2025 (`c1121_f2025`), una con fecha
+`10/03/2026` que no entra en ningún total (`c1121_invalida`), una con pago en 2027 (`c1121_pago27`), una con cuenta `999999` fuera del catálogo (`c1121_cuenta_x`) y una compra bajo la clave `"0"` (rastro del bug antiguo);
+en SEP/1122 una de 2025; en General/1121 una NC positiva, una de 2025 y una con fecha `abril 2026`; en General/AC una NC positiva y una ND negativa; y en PIE/1121 una NC positiva.
+
 ## Golden master (`tests/golden/`)
 
 `capture.mjs` abre el panel con el fixture, recorre cada vista y guarda en `baseline.json`:
@@ -185,6 +198,9 @@ que los de `default.json`: solo cambian los cortes Real/Proyectado. El aviso de 
   libros Excel (hojas → filas con `XLSX.utils.sheet_to_json` dentro de la página; las hojas largas se guardan comprimidas), JSON de respaldo (hash por clave) y lo que
   se habría **impreso/PDF** (`window.print()` y `window.open()` se interceptan y se guarda el HTML imprimible).
 - **datos**: valores sueltos (p. ej. a qué pestaña lleva una tarjeta).
+- Sección **`compras`** (fixture `compras`, entradas `compras.*`): Panel principal (3 vistas), pestaña SEP (KPI con "Datos a revisar" = 2, marcas "revisar"), modales de SEP 1121 (todas las marcas ⚠, el resumen "N compras con avisos;
+  $X sin contabilizar", NC/ND con el signo normalizado y el formulario con la ayuda de signo y los avisos de fecha en vivo) y 1122, General (pestaña y modales 1121 y AC) y PIE 1121, % Ejecución (SEP agregado y 1121, General, consolidado),
+  Visualizador por código (SEP + General) y Reporte personalizado con sus CSV, y las exportaciones: CSV de compras SEP/General/PIE, Excel de carga de SEP (con la fila de ID `0`) y de General, resumen, JSON, fila 1121 (XLS/CSV/PDF).
 - Sección **`cierre`** (fixture `cierre`, entradas `cierre.*`): Panel principal (3 vistas), pestaña SEP con el control del mes de cierre y el aviso abierto, modales de 4 RBD (corte propio ≠ cierre, = cierre,
   diciembre y sin corte propio), JSON de respaldo, PDF de dos filas, % Ejecución consolidado, Visualizador (SEP) y Reporte personalizado de ingresos con sus CSV.
 
@@ -235,6 +251,9 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `n_dc` | campo propio "N° DC" (`documentoContable`, Documento Contable interno) en las compras: formulario (rótulo, ayuda, 100 caracteres, junto a Doc. original) y tabla (columna siempre visible) de SEP y de General / PIE / Mantención / Pro-Retención y la entidad AC; guardado (el write lleva `documentoContable` en el mapa de la compra, `merge:true`, sin tocar `documentoOriginal`), ✏️ / ⧉ / 🗑; "Doc. original (NC/ND)" se atenúa pero NO se deshabilita; escape XSS (escrito y derivado); regla de detección del DC legado (`DC_344`, `DC-33`, `dc 12`, `DC_22 - No hay PME` sí; `123-FAC`, `DCX`, `Folio DC_3` no) y su visualización derivada en cursiva; botón admin "Migrar DC (n)" (oculto para quien no es admin, contador solo si n > 0, confirmación con el conteo, valor completo, `batch.set` con merge, lotes de ≤ 400 operaciones con 450 documentos sintéticos, idempotente, el contador sigue a los cambios remotos); CSV SUPEREDUC idéntico con y sin N° DC (sin la columna, 13 campos), un DC legado no sale como Documento Original y cuenta como `docOrig` en el aviso; Excel (columna "N° DC", `neutralizaFormula`, exportar → importar → exportar sin alterar datos, edición/limpieza desde el Excel, archivo antiguo sin la columna no borra N° DC) en SEP y fuentes; XLS/PDF/CSV por fila |
 | `corte_ingresos` | L-01: selector "Ingresos reales hasta" por RBD en el modal de SEP (etiqueta, ubicación y clase igual que Remuneraciones; nota "por defecto / sigue el mes de cierre / corte propio"), guardado (`ingreso_real_hasta_mes` entero 1–12 en el documento del RBD, `merge:true`, solo ese campo + nombre + auditoría), color/etiqueta Real/Proy. de encabezados y celdas, y su efecto en KPI y Saldo Real de SEP, tarjeta SEP y serie mensual del Panel principal, Visualizador, Reporte personalizado (colores por celda; el subtotal solo se colorea donde los RBD coinciden), % Ejecución consolidado, PDF de la fila y respaldo JSON; cálculo esperado independiente desde el fixture; el ingreso anual no cambia; corte efectivo propio > mes de cierre > `DATA.n_meses` (cierre que se mueve por cambio remoto, `mes_cierre` ausente / `null` / `0` / `13` / `"x"` / `7.5`…); valores dañados del corte propio tolerados; sin cambio de cifras definiendo el cierre (o el corte de todos) en julio; recarga y cambios remotos |
 | `mes_cierre_global` | mes de cierre global (`_meta`): control en SEP solo lectura para quien no es admin (aun forzando eventos no escribe), selector y botón solo para admin; guarda con `merge` sin pisar `items_22`/`items_29` (`mes_cierre`, `mes_cierre_por`, `mes_cierre_en` = `serverTimestamp`); cambiar el selector no toca cortes explícitos; indicador rojo / Reintentar con un rechazo; mención en el Panel principal; aviso de cortes distintos (lista, enlace "Abrir detalle", singular, se actualiza con cambios remotos, desaparece, solo con cierre definido); "Aplicar a todas las entidades" (confirmación con el conteo por origen, cancelar no escribe, payload exacto por documento, ningún otro campo cambia, un solo lote ≤ 400 operaciones, idempotente) con el fixture `cierre` y con `default`; lotes y reintento con un tope de operaciones reducido en una copia del HTML (4 lotes, uno rechazado, el reintento envía solo ese); `_meta` ausente / vacío / dañado / que lanza al leerse; auditoría dañada y HTML en `mes_cierre_por` sin inyección; la siembra y los RBD faltantes nunca escriben `_meta` |
+| `compras_signo_nc` | L-03: nota de crédito en negativo, nota de débito en positivo, otros tipos como se digitaron, en todo el flujo. Lectura de Firestore sin escribir (NC guardada en positivo se ve negativa; el valor guardado no cambia hasta editar), ítem/mes, KPI, tabla, Panel principal, Visualizador y Reporte personalizado restan la NC; ayuda del formulario ("Las notas de crédito se registran con monto negativo; se ajusta automáticamente"); agregar / editar / duplicar en SEP y General (el write lleva el signo correcto); CSV de SUPEREDUC y Excel; exportar → reimportar → exportar sin duplicados y con los signos corregidos; importar un Excel con NC positiva / ND negativa / factura negativa / NC sin ID con el tipo "nota de credito"; y equivalencia: los mismos datos con el signo equivocado o con el correcto se ven idénticos en 10 vistas |
+| `compras_id_cero` | L-14, en el importador de SEP y en el de General: 3 compras distintas con ID "0" / "" / 0 dan 3 compras con clave `imp-…` (nada queda en la clave "0"); reimportar el mismo archivo (2 veces y en una sesión nueva) no duplica y deja las mismas claves; un Excel exportado con la fila "0" junto a su copia con ID real no crea compras y no toca la entrada "0"; filas idénticas sin ID = una compra y filas que difieren en la descripción = dos; compra existente idéntica con otro ID se actualiza en su sitio (recibe el N° DC) y una distinta no se pisa; una compra editada después de importarla no se pisa al reimportar (queda aparte con `-2`, sin crecer); "00", "undefined" y espacios cuentan como sin ID y un ID real se respeta; la herramienta "Revisar duplicados" sigue ahí |
+| `compras_avisos_fecha` | F-11 / L-05, SOLO avisos: 15 compras (SEP y General) con fecha 2025/2027, día inexistente, mes 13/00, `10/03/2026`, `10-03-2026`, `2026-3-5`, vacía, `marzo`, pago en 2027 y cuenta fuera del catálogo; los totales por ítem y mes son los de siempre (se fija QUÉ entra y QUÉ no); marca por fila con `title`, resumen "N compras con avisos; $X sin contabilizar", "Datos a revisar" (+ marca "revisar" del RBD), el CSV y el PDF por fila sin marcas; formulario con validación en vivo (año ≠ 2026, pago anterior al documento, fecha a medio teclear) que NO impide guardar, y al corregir la fecha desaparecen; fixture limpio sin ningún aviso; las fuentes no tienen "Datos a revisar" |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Bugs conocidos: `known-bug` vs `enforced`

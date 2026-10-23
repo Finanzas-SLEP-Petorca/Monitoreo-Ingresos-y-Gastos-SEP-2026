@@ -231,6 +231,62 @@ las mismas reglas que el resto de la compra (editar ✏️, duplicar ⧉, elimin
 - N° DC es texto libre: se escapa siempre con `escHtml` y, en Excel, `neutralizaFormula` le antepone un apóstrofo si
   empieza con `=`, `+`, `-`, `@` (al importar se quita).
 
+**Signo de las notas de crédito y de débito.** SUPEREDUC espera la nota de **crédito en negativo**, así que el signo ya no
+depende de lo que escriba la persona: una **nota de crédito** (`NOTACRE`) siempre tiene `montoGasto` y `montoDocumento`
+**negativos** (−|monto|), una **nota de débito** (`NOTADEB`) siempre **positivos** (+|monto|) y cualquier otro tipo se deja
+**como se digitó** (una factura en negativo sigue en negativo; no se inventan signos). Una nota de crédito cargada en
+positivo ya no suma gasto: lo resta. La regla se aplica en todo el flujo con las mismas funciones (`signoDeTipoDocumento`,
+`montoGastoCompra` / `montoDocumentoCompra`, `conSignoDeNota`):
+- **Lectura de Firestore** (`sanitizaCompra`): el signo se normaliza **en memoria**, así que tabla, cálculos y exportaciones
+  ven siempre el signo correcto aunque en Firestore haya una NC guardada en positivo. Leer **no escribe nada**: el valor
+  guardado se corrige solo la próxima vez que se edite esa compra (✏️ → "💾 Guardar cambios") o se vuelva a importar.
+- **Formulario** (SEP y las 4 fuentes con compras, al agregar, editar y duplicar): se guarda ya normalizado. Con el tipo
+  "Nota de crédito" / "Nota de débito" el formulario muestra una ayuda ("Las notas de crédito se registran con monto negativo;
+  se ajusta automáticamente").
+- **Importar Excel** (hoja COMPRAS de SEP y de las fuentes): igual, fila por fila.
+- **Cálculos y vistas**: `itemsFromCompras` (y por lo tanto el ítem/mes de cada RBD, Real/Proyectado, KPI, Visualizador, Reporte
+  personalizado, Panel principal y % Ejecución) suma `montoGastoCompra(c)`; las tablas de compras, el CSV de SUPEREDUC y los
+  Excel/PDF por fila muestran el valor normalizado. La comprobación "monto gasto mayor que el documento" del aviso previo al
+  CSV sigue comparando en **valor absoluto**.
+
+**Importar sin duplicar: ID vacío o "0".** En la hoja COMPRAS, una fila con un **ID real** actualiza esa compra. Un ID **vacío**
+(la celda vacía llega como el número `0`), `0`, `"0"`, `"00"`, `"undefined"`, `"NaN"`, `"#N/A"`, `-` o solo espacios **cuenta como
+sin ID**: antes cada importación inventaba un ID nuevo (reimportar el mismo archivo duplicaba todas las compras) o, con el texto
+`"0"`, todas las filas de un RBD colapsaban en una sola compra con la clave `"0"`. Ahora la compra recibe una **clave determinista
+según su contenido** (`imp-<hash de 53 bits>`), de modo que reimportar el mismo archivo da las mismas claves (también en otra
+sesión o al otro día) y compras distintas nunca se pisan. La **composición** (`firmaContenidoCompra`): código de cuenta + tipo de
+documento (por código SUPEREDUC) + N° de documento + fecha documento + fecha pago + monto gasto y monto documento (ya con el signo
+por tipo y redondeados a pesos, como los exporta el Excel) + RUT normalizado + descripción + nombre del proveedor (sin mayúsculas ni
+espacios repetidos). Se incluyen descripción y proveedor porque dos boletas sin N° ni RUT del mismo día y monto pero de cosas
+distintas son compras distintas; **no** entran N° DC ni Documento Original (anotaciones que pueden completarse después sin que la
+compra deje de ser la misma). Decisiones: (1) filas **idénticas** sin ID (en el mismo archivo, o iguales a una compra ya guardada con
+cualquier ID real) se tratan como **una sola** compra: la fila actualiza esa compra en vez de crear otra; si difieren en algo de lo
+anterior, son compras distintas; (2) una compra guardada bajo la clave `"0"` (rastro del bug antiguo) nunca se une a una fila sin
+ID: la fila se une a su copia con ID real o recibe una clave `imp-…` — esa entrada no se toca (la limpia la herramienta admin
+"Revisar duplicados (ID "0")", que no cambió); (3) si la clave `imp-…` la ocupa **otra** compra (colisión de hash, o una compra que
+se editó después de importarla), la fila nueva usa `imp-…-2`, `-3`… y no pisa nada. Aplica al importador de SEP y al de las fuentes
+con compras.
+
+**Avisos de fecha y de gasto "sin contabilizar" (solo avisos: no cambian ningún total).** El mes de un gasto se cuenta por la
+**Fecha Documento** (no por la Fecha Pago). `itemsFromCompras` solo mira el mes de esa fecha, así que:
+- **Quedan EXCLUIDAS de todos los totales** (por ítem, por mes, Real/Proyectado, Visualizador, Reportes, Panel principal, % Ejecución):
+  (1) una compra cuyo **código de cuenta no está en el catálogo** (SEP: cuentas Subt. 22/29 de SEP; fuentes: plan de cuentas 2026), y
+  (2) una compra cuya **Fecha Documento no empieza con `aaaa-mm-dd`** (`10/03/2026`, `10-03-2026`, `2026-3-5`, `marzo`, vacía) **o cuyo mes
+  no existe** (`2026-13-01`, `2026-00-10`).
+- **SÍ entran**, por su mes y **sin mirar el año**: `2025-12-30` (se suma en diciembre), `2027-01-15` (en enero), un día que no existe
+  (`2026-02-31`, `2026-04-99`) y cualquier texto detrás de la fecha (`2026-05-10T00:00:00`). La Fecha Pago nunca se usa. Una compra
+  con cuenta no habilitada para la subvención (⚠ del plan de cuentas) también entra: solo se marca.
+- **Formulario** (SEP y fuentes): validación en vivo de las fechas (formato; "la fecha está fuera de 2026" si el año ≠ 2026; fecha de
+  pago anterior a la del documento). **No impide guardar**, solo avisa.
+- **Tabla de compras** (SEP y fuentes, no en los PDF): insignia por fila con `title` explicativo — "⚠ fecha fuera de 2026" (fecha
+  de documento o de pago de otro año), "⚠ fecha no válida: no se contabiliza" (formato no reconocido o mes inexistente), "⚠ fecha no válida"
+  (día que no existe: sí se cuenta) y "⚠ cuenta no reconocida: no se contabiliza" — y un resumen sobre la tabla: "N compras con avisos;
+  $X sin contabilizar" (X es el monto neto, con el signo por tipo, de las compras que quedaron fuera de los totales).
+- **"Datos a revisar"** (SEP) suma los RBD con compras con avisos a los de siempre (gasto B&S > 3 × el marco = "posible error de
+  imputación"); la tarjeta aclara cuántos RBD se agregaron por esta causa, la fila del RBD muestra la marca "revisar" (con su motivo en el
+  `title`) y la columna "Alerta" del Excel/CSV de resumen dice "Revisar". Las fuentes no tienen un contador "Datos a revisar": ahí los
+  avisos se ven en las filas y en el resumen del registro de compras.
+
 A diferencia de una planilla o de una sesión de navegador aislada, cada cambio (edición de celda,
 compra agregada o eliminada) se guarda solo (con un pequeño retraso de ~400ms tras dejar de
 escribir, o al instante al agregar/eliminar una compra o salir de una celda) en una base de datos
@@ -260,10 +316,12 @@ Si tienes muchas compras para cargar de una sola vez, no hace falta escribirlas 
 formulario: el botón "⬇ Excel" incluye una hoja **COMPRAS** (una fila por compra, con las mismas
 columnas del formulario — RBD, Código, Tipo y N° de documento, Fecha Documento, Fecha Pago,
 Descripción, Proveedor, Montos, Documento original, N° DC — más una columna **ID**). Puedes editar esa
-hoja o pegar filas nuevas y volver a subirla con "⬆ Importar Excel": las filas con **ID vacío** se
-cargan como compras nuevas, y las filas con un **ID ya existente** (el que trae el propio Excel
-exportado) actualizan esa misma compra en vez de duplicarla — por eso conviene exportar primero,
-editar sobre esa base y volver a importar, en vez de partir de un Excel armado desde cero. Las
+hoja o pegar filas nuevas y volver a subirla con "⬆ Importar Excel": las filas con **ID vacío (o `0`)**
+se cargan como compras nuevas —con una clave calculada según su contenido, así que volver a subir el
+mismo archivo no las duplica (ver arriba "Importar sin duplicar")—, y las filas con un **ID ya existente**
+(el que trae el propio Excel exportado) actualizan esa misma compra en vez de duplicarla — por eso
+conviene exportar primero, editar sobre esa base y volver a importar, en vez de partir de un Excel armado
+desde cero. Las notas de crédito/débito se normalizan al importar (NC en negativo, ND en positivo). Las
 fechas se pueden escribir como texto (`2026-03-15`) o como fecha de Excel, ambas se reconocen al
 importar.
 

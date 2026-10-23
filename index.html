@@ -1402,10 +1402,10 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="panel">
         <div class="detalle-empty">JUNJI es un proceso independiente de SUPEREDUC: se sigue como Ingreso vs. Gasto,
         sin techo ni meta 70/30 — el Estado es Superávit o Déficit: Déficit si el saldo acumulado es negativo <strong>o</strong> si el saldo de
-        Operación para Bienes y Servicios (ingreso de Operación − gasto de B&S) es negativo, porque Homologación y Carrera Docente solo pueden pagar
-        Remuneraciones. Las filas son los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
+        Operación para Bienes y Servicios (ingreso de Operación − gasto de B&S) es negativo, porque Homologación, Carrera Docente y el Bono Desempeño
+        Laboral (BDL) solo pueden pagar Remuneraciones. Las filas son los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
         <div class="table-controls">
-          <button id="downloadExcelOFBtn-junji" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de JUNJI (3 líneas de Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
+          <button id="downloadExcelOFBtn-junji" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de JUNJI (4 líneas de Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
           <input type="file" id="importExcelOFInput-junji" accept=".xlsx" style="display:none;">
           <button id="exportPdfOFBtn-junji" type="button" style="background:#374151; border-color:#374151;">🖨 Exportar PDF</button>
@@ -1704,7 +1704,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         Saldo Final es negativo (gastó más de lo que tiene; un saldo exacto de $0 no es déficit), <strong>Riesgo</strong> si no es
         déficit y el gasto es el 90% o más del ingreso, y <strong>Superávit</strong> en cualquier otro caso. En las demás fuentes el
         Estado es solo Superávit o Déficit (Déficit = saldo negativo); en JUNJI también es Déficit si el saldo de Operación para
-        Bienes y Servicios es negativo (esos gastos no se pueden pagar con Homologación ni Carrera Docente).</p>
+        Bienes y Servicios es negativo (esos gastos no se pueden pagar con Homologación, Carrera Docente ni BDL).</p>
 
         <h4>8. Pestaña "Reportes"</h4>
         <p>Tiene dos vistas. El <strong>Visualizador</strong> (la que se abre por defecto) consolida todas las fuentes
@@ -2352,8 +2352,8 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 // binario, y luego `incomeShape` además decidía el universo de entidades — dejó de alcanzar al
 // agregar los Aportes Fiscales Extraordinarios, que combinan ingreso de 1 línea con universo
 // GESPARVU en el caso del de JUNJI):
-//   - incomeShape: 'single' (1 línea `ingreso`) | 'junji3' (3 líneas — Operación, Homologación,
-//     Carrera Docente — hoy solo JUNJI). Solo decide cuántas líneas de ingreso hay (y si aplica
+//   - incomeShape: 'single' (1 línea `ingreso`) | 'junji3' (4 líneas — Operación, Homologación,
+//     Carrera Docente y Bono Desempeño Laboral (BDL) — hoy solo JUNJI). Solo decide cuántas líneas de ingreso hay (y si aplica
 //     el "Saldo Operación disponible para B&S"); ya NO determina el universo de entidades.
 //   - universo: 'rbd_ac' (los RBD de DATA.registros + la fila fija "AC") | 'gesparvu' (los 13
 //     GESPARVU de GESPARVU_REGISTROS, sin AC) | 'rbd_ac_gesparvu' (los tres: RBD + AC + los 13
@@ -3409,8 +3409,8 @@ function ensureOtraFuente(rbd, fuenteKey) {
   if (!CARGA_MANUAL.otras_fuentes_por_rbd[rbd]) CARGA_MANUAL.otras_fuentes_por_rbd[rbd] = {};
   if (!CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey]) {
     const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey] || {};
-    // JUNJI (incomeShape:'junji3'): 3 líneas de ingreso (Operación financia Remuneraciones Y B&S;
-    // Homologación y Carrera Docente financian SOLO Remuneraciones — ver saldo_operacion_bys en
+    // JUNJI (incomeShape:'junji3'): 4 líneas de ingreso (Operación financia Remuneraciones Y B&S;
+    // Homologación, Carrera Docente y Bono Desempeño Laboral (BDL) financian SOLO Remuneraciones — ver saldo_operacion_bys en
     // recomputeOtraFuente). El resto (incomeShape:'single') usa 1 sola línea de ingreso.
     // bysMode:'concepto' (JUNJI/FAEP/FIGA/Aportes): sin código de cuenta SUPEREDUC ni registro de
     // compras con documento/proveedor, porque ninguna es parte de ese sistema de rendición.
@@ -3425,6 +3425,7 @@ function ensureOtraFuente(rbd, fuenteKey) {
       entry.ingreso_operacion = { meses: mesesEnCero(), total: 0 };
       entry.ingreso_homologacion = { meses: mesesEnCero(), total: 0 };
       entry.ingreso_carrera_docente = { meses: mesesEnCero(), total: 0 };
+      entry.ingreso_bdl = { meses: mesesEnCero(), total: 0 };
       entry.saldo_operacion_bys = 0;
     } else {
       entry.ingreso = { meses: mesesEnCero(), total: 0 };
@@ -3488,7 +3489,7 @@ function computeRealProyOtraFuente(of, fuenteKey) {
   const fuente = FUENTES_OTRAS_BY_KEY[fuenteKey] || {};
   const corte = realHastaMesOtraFuente(of);
   const lineasIngreso = fuente.incomeShape === 'junji3'
-    ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente]
+    ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente, of.ingreso_bdl]
     : [of.ingreso];
   let ingReal = 0, ingProy = 0;
   lineasIngreso.forEach(l => { const s = splitRealProyMeses(l && l.meses, corte); ingReal += s.real; ingProy += s.proy; });
@@ -3527,8 +3528,9 @@ function recomputeOtraFuente(rbd, fuenteKey) {
 // Causas por las que una entidad de una fuente está en Déficit (vacío = no lo está). Es LA definición del Estado de las fuentes (L-07 / L-08):
 //   · 'saldo'          el saldo total (ingreso − gasto, Real+Proy) es negativo: misma función que SEP (estadoDeEntidad, sin el nivel Riesgo).
 //   · 'operacion_bys'  (L-08, solo fuentes con líneas de ingreso restringidas: `incomeShape:'junji3'`, hoy JUNJI) Operación puede financiar Bienes y
-//                      Servicios y Remuneraciones; Homologación y Carrera Docente financian SOLO Remuneraciones (decisión de negocio), así que B&S no
-//                      puede pagarse con ellas: si B&S supera a Operación, `saldo_operacion_bys` es negativo y hay Déficit aunque el saldo total sea ≥ 0.
+//                      Servicios y Remuneraciones; Homologación, Carrera Docente y Bono Desempeño Laboral (BDL) financian SOLO Remuneraciones (decisión de negocio),
+//                      así que B&S no puede pagarse con ellas: si B&S supera a Operación, `saldo_operacion_bys` es negativo y hay Déficit aunque el saldo total sea ≥ 0.
+//                      El BDL entra al ingreso total (y al saldo y al Real/Proyectado) pero NO a `saldo_operacion_bys`, que sigue siendo Ingreso Operación − B&S.
 // No se guarda en `of` (el respaldo JSON vuelca `of` completo y no debe cambiar de forma): se deriva de sus montos.
 function causasDeficitOtraFuente(of, fuente) {
   const causas = [];
@@ -3543,7 +3545,7 @@ function causaEstadoOtraFuente(of, fuenteKey) {
   const saldo = c.includes('saldo'), op = c.includes('operacion_bys');
   if (!saldo && !op) return { corto: '', largo: '' };
   const largoSaldo = `el saldo total es negativo (${fmtCLP(of.saldo)})`;
-  const largoOp = `el saldo de Operación para Bienes y Servicios es negativo (${fmtCLP(of.saldo_operacion_bys)}): B&S no puede pagarse con Homologación ni Carrera Docente, que financian solo Remuneraciones`;
+  const largoOp = `el saldo de Operación para Bienes y Servicios es negativo (${fmtCLP(of.saldo_operacion_bys)}): B&S no puede pagarse con Homologación, Carrera Docente ni BDL, que financian solo Remuneraciones`;
   return {
     corto: op ? (saldo ? 'Saldo total y saldo Operación para B&S negativos' : 'Saldo Operación para B&S negativo') : '',
     largo: 'Déficit: ' + (saldo && op ? `${largoSaldo}; además ${largoOp}` : (op ? largoOp : largoSaldo)) + '.',
@@ -6021,11 +6023,12 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
 
   let headerHTML, tablasMesesHTML;
   if (fuente.incomeShape === 'junji3') {
-    headerHTML = `<strong>Ingresos ${fuenteLabel}</strong> — <span class="detalle-sub">Operación financia Remuneraciones y Bienes y Servicios; Homologación y Carrera Docente financian solo Remuneraciones.</span>`;
+    headerHTML = `<strong>Ingresos ${fuenteLabel}</strong> — <span class="detalle-sub">Operación financia Remuneraciones y Bienes y Servicios; Homologación, Carrera Docente y BDL financian solo Remuneraciones.</span>`;
     tablasMesesHTML = `
     ${otrasFuentesTablaMes('Ingreso Operación', rbd, fuenteKey, 'of_ingreso_operacion', of.ingreso_operacion, `oftotal-${rbd}-${fuenteKey}-of_ingreso_operacion`)}
     ${otrasFuentesTablaMes('Ingreso Homologación', rbd, fuenteKey, 'of_ingreso_homologacion', of.ingreso_homologacion, `oftotal-${rbd}-${fuenteKey}-of_ingreso_homologacion`)}
     ${otrasFuentesTablaMes('Ingreso Carrera Docente', rbd, fuenteKey, 'of_ingreso_carrera_docente', of.ingreso_carrera_docente, `oftotal-${rbd}-${fuenteKey}-of_ingreso_carrera_docente`)}
+    ${otrasFuentesTablaMes('Ingreso Bono Desempeño Laboral (BDL)', rbd, fuenteKey, 'of_ingreso_bdl', of.ingreso_bdl, `oftotal-${rbd}-${fuenteKey}-of_ingreso_bdl`)}
     ${otrasFuentesTablaMes('Gasto Remuneraciones', rbd, fuenteKey, 'of_gasto_rem', of.gasto_rem, `oftotal-${rbd}-${fuenteKey}-of_gasto_rem`)}`;
   } else {
     const bysSubtitle = compras
@@ -6106,7 +6109,7 @@ function renderOtrasFuentesModalContenido(opts) {
 }
 
 // Mapa modo -> nombre del campo en el objeto "of" / en Firestore. Cubre tanto la forma "simple"
-// (ingreso, gasto_rem) como la de JUNJI (3 líneas de ingreso + gasto_rem) — un ítem de B&S por
+// (ingreso, gasto_rem) como la de JUNJI (4 líneas de ingreso + gasto_rem) — un ítem de B&S por
 // concepto de JUNJI ('of_bys_item') se maneja aparte porque no tiene un campo fijo, vive dentro
 // del array bys_items.
 const OTRA_FUENTE_MODO_CAMPO = {
@@ -6115,6 +6118,7 @@ const OTRA_FUENTE_MODO_CAMPO = {
   of_ingreso_operacion: 'ingreso_operacion',
   of_ingreso_homologacion: 'ingreso_homologacion',
   of_ingreso_carrera_docente: 'ingreso_carrera_docente',
+  of_ingreso_bdl: 'ingreso_bdl',
 };
 function onOtraFuenteCeldaInput(input) {
   const rbd = input.dataset.rbd, fuenteKey = input.dataset.fuente, mes = input.dataset.mes, modo = input.dataset.modo;
@@ -6387,7 +6391,7 @@ function descargarCargaOtraFuente(fuenteKey) {
   alert('Descargado. Esto es solo un respaldo manual — los cambios ya quedaron guardados automáticamente en tiempo real para todo el equipo.');
 }
 
-// --- Excel (export): una hoja por línea mensual (Ingreso o, en JUNJI, sus 3 líneas +
+// --- Excel (export): una hoja por línea mensual (Ingreso o, en JUNJI, sus 4 líneas +
 // Remuneraciones) y una hoja de detalle para Bienes y Servicios (compras con código, en las 4
 // fuentes simples; ítems por concepto libre, en JUNJI) — mismo criterio de sheetSimpleAOA/
 // sheetComprasAOA de SEP, pero sin el valor "Item" en blanco (acá no aplica: cada hoja es una
@@ -6445,6 +6449,7 @@ function buildOtraFuenteCargaWorkbook(fuenteKey, onlyRbd) {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_operacion', onlyRbd)), 'ING_OPERACION');
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_homologacion', onlyRbd)), 'ING_HOMOLOGACION');
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_carrera_docente', onlyRbd)), 'ING_CARRERA_DOCENTE');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso_bdl', onlyRbd)), 'ING_BDL');
   } else {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteSimpleAOA(fuenteKey, 'ingreso', onlyRbd)), 'INGRESO');
   }
@@ -6609,6 +6614,7 @@ function importOtraFuenteWorkbook(wbIn, fuenteKey) {
     if (wbIn.Sheets['ING_OPERACION']) resumen.push('ING_OPERACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_OPERACION'], fuenteKey, 'ingreso_operacion') + ' filas');
     if (wbIn.Sheets['ING_HOMOLOGACION']) resumen.push('ING_HOMOLOGACION: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_HOMOLOGACION'], fuenteKey, 'ingreso_homologacion') + ' filas');
     if (wbIn.Sheets['ING_CARRERA_DOCENTE']) resumen.push('ING_CARRERA_DOCENTE: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_CARRERA_DOCENTE'], fuenteKey, 'ingreso_carrera_docente') + ' filas');
+    if (wbIn.Sheets['ING_BDL']) resumen.push('ING_BDL: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['ING_BDL'], fuenteKey, 'ingreso_bdl') + ' filas'); // un Excel anterior al BDL no trae la hoja: se importa igual y no toca el BDL guardado
   } else {
     if (wbIn.Sheets['INGRESO']) resumen.push('INGRESO: ' + importOtraFuenteSimpleSheet(wbIn.Sheets['INGRESO'], fuenteKey, 'ingreso') + ' filas');
   }
@@ -6664,13 +6670,14 @@ function csvDetalleMensualOtraFuenteLines(fuenteKey, rbd) {
   const of = recomputeOtraFuente(rbd, fuenteKey);
   const corte = realHastaMesOtraFuente(of);
   const tipoPorCorte = corte >= 12 ? 'Real' : `Mixto (Real hasta ${MESES_CARGA_ABREV[corte - 1]})`;
-  const fila = (linea, tipo, obj) => [linea, tipo, ...MESES_CARGA.map(m => Math.round((obj.meses && obj.meses[m]) || 0)), Math.round(obj.total || 0)];
+  const fila = (linea, tipo, obj) => { obj = obj || {}; return [linea, tipo, ...MESES_CARGA.map(m => Math.round((obj.meses && obj.meses[m]) || 0)), Math.round(obj.total || 0)]; };
   const lines = [['Linea', 'Tipo', ...MESES_CARGA_TITLE, 'Total'].map(csvEscape).join(';')];
   const push = (cols) => lines.push(cols.map(csvEscape).join(';'));
   if (fuente.incomeShape === 'junji3') {
     push(fila('Ingreso Operación', tipoPorCorte, of.ingreso_operacion));
     push(fila('Ingreso Homologación', tipoPorCorte, of.ingreso_homologacion));
     push(fila('Ingreso Carrera Docente', tipoPorCorte, of.ingreso_carrera_docente));
+    push(fila('Ingreso Bono Desempeño Laboral (BDL)', tipoPorCorte, of.ingreso_bdl));
   } else {
     push(fila('Ingreso', tipoPorCorte, of.ingreso));
   }
@@ -6735,7 +6742,7 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
     return kpiCardsHTML(cards);
   };
   const tablasIngreso = fuente.incomeShape === 'junji3'
-    ? [['Ingreso Operación', of.ingreso_operacion], ['Ingreso Homologación', of.ingreso_homologacion], ['Ingreso Carrera Docente', of.ingreso_carrera_docente]]
+    ? [['Ingreso Operación', of.ingreso_operacion], ['Ingreso Homologación', of.ingreso_homologacion], ['Ingreso Carrera Docente', of.ingreso_carrera_docente], ['Ingreso Bono Desempeño Laboral (BDL)', of.ingreso_bdl]]
     : [['Ingreso', of.ingreso]];
   let bysHTML;
   if (fuente.bysMode === 'compras') {
@@ -7093,7 +7100,7 @@ function partesMensualesOtraFuente(fuenteKey, out, entidadFiltro) {
       const k = siempre || (i + 1 <= corte ? 'real' : 'proy');
       out[k][tipo][i] += v;
     });
-    const lineasIng = fuente.incomeShape === 'junji3' ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente] : [of.ingreso];
+    const lineasIng = fuente.incomeShape === 'junji3' ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente, of.ingreso_bdl] : [of.ingreso];
     lineasIng.forEach(l => sumar(l && l.meses, 'ing'));
     sumar(of.gasto_rem && of.gasto_rem.meses, 'rem');
     if (fuente.bysMode === 'compras') {
@@ -7403,7 +7410,7 @@ function reporteLineasOtraFuente(fuenteKey, sel) {
     const of = recomputeOtraFuente(r.rbd, fuenteKey);
     const corte = realHastaMesOtraFuente(of);
     const lineasIng = f.incomeShape === 'junji3'
-      ? [['Ingreso Operación', of.ingreso_operacion], ['Ingreso Homologación', of.ingreso_homologacion], ['Ingreso Carrera Docente', of.ingreso_carrera_docente]]
+      ? [['Ingreso Operación', of.ingreso_operacion], ['Ingreso Homologación', of.ingreso_homologacion], ['Ingreso Carrera Docente', of.ingreso_carrera_docente], ['Ingreso Bono Desempeño Laboral (BDL)', of.ingreso_bdl]]
       : [['Ingreso', of.ingreso]];
     lineasIng.forEach(([nombre, l]) => vzSumar(mapa, { fuenteKey, tipo: 'ingreso', grupo: 'ingreso', concepto: nombre }, l && l.meses, corte));
     vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'rem', concepto: 'Remuneraciones' }, of.gasto_rem && of.gasto_rem.meses, corte);
@@ -7964,6 +7971,7 @@ function reporteConceptosFuente(f) {
     add('ingreso_operacion', 'Ingreso Operación');
     add('ingreso_homologacion', 'Ingreso Homologación');
     add('ingreso_carrera_docente', 'Ingreso Carrera Docente');
+    add('ingreso_bdl', 'Ingreso Bono Desempeño Laboral (BDL)');
   } else add('ingreso', 'Ingreso');
   add('rem', 'Remuneraciones');
   add('bys_total', 'Bienes y Servicios — total (Real+Proy)');
@@ -7997,6 +8005,7 @@ function serieConceptoOF(rbd, key) {
     case 'ingreso_operacion': return of.ingreso_operacion ? of.ingreso_operacion.meses : {};
     case 'ingreso_homologacion': return of.ingreso_homologacion ? of.ingreso_homologacion.meses : {};
     case 'ingreso_carrera_docente': return of.ingreso_carrera_docente ? of.ingreso_carrera_docente.meses : {};
+    case 'ingreso_bdl': return of.ingreso_bdl ? of.ingreso_bdl.meses : {};
     case 'rem': return of.gasto_rem ? of.gasto_rem.meses : {};
     case 'bys_total': return sumaItemsMeses([...items, ...proy]);
     case 'bys_proy': return sumaItemsMeses(proy);
@@ -9953,9 +9962,11 @@ function aplicarSnapshot(snapshot) {
           const mOperacion = mesesDesde(raw, 'ingreso_operacion');
           const mHomologacion = mesesDesde(raw, 'ingreso_homologacion');
           const mCarreraDocente = mesesDesde(raw, 'ingreso_carrera_docente');
+          const mBdl = mesesDesde(raw, 'ingreso_bdl'); // BDL (Bono Desempeño Laboral): un documento anterior a esta línea no lo trae → ceros, sin escribir nada; un valor dañado también vale ceros
           entry.ingreso_operacion = { meses: mOperacion, total: totalDeMeses(mOperacion) };
           entry.ingreso_homologacion = { meses: mHomologacion, total: totalDeMeses(mHomologacion) };
           entry.ingreso_carrera_docente = { meses: mCarreraDocente, total: totalDeMeses(mCarreraDocente) };
+          entry.ingreso_bdl = { meses: mBdl, total: totalDeMeses(mBdl) };
           entry.saldo_operacion_bys = 0;
         } else {
           const mIngreso = mesesDesde(raw, 'ingreso');

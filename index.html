@@ -1441,8 +1441,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="panel">
         <div class="detalle-empty">FAEP no es parte del sistema de rendición de cuentas de SUPEREDUC (excluido
         explícitamente desde el periodo 2024 por el dictamen N°67 de 2023): se sigue como Ingreso vs. Gasto, sin
-        techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Incluye una fila
-        fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento puntual.</div>
+        techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Las filas son los RBD de
+        establecimientos, una fila fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento
+        puntual, y los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, que también tienen ingresos y gastos de FAEP.</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-faep" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de FAEP (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-faep" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1454,7 +1455,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <table class="data-table" id="otrasFuentesTable-faep">
             <thead>
               <tr>
-                <th>RBD</th>
+                <th title="RBD del establecimiento, «AC» (Administración Central) o código GESPARVU del jardín infantil">RBD / GESPARVU</th>
                 <th>Nombre</th>
                 <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
                 <th class="num">Ingreso</th>
@@ -1480,8 +1481,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <div class="panel">
         <div class="detalle-empty">FIGA no aparece en ningún manual de SUPEREDUC revisado (no es parte de ese
         sistema de rendición): se sigue como Ingreso vs. Gasto, sin techo ni meta 70/30 — el Estado solo indica si
-        el saldo acumulado es Superávit o Déficit. Incluye una fila fija "AC — Administración Central" para gasto
-        del sostenedor que no es de un establecimiento puntual.</div>
+        el saldo acumulado es Superávit o Déficit. Las filas son los RBD de establecimientos, una fila fija "AC — Administración
+        Central" para gasto del sostenedor que no es de un establecimiento puntual, y los 13 GESPARVU (jardín infantil / sala
+        cuna) de SLEP Petorca, que también tienen ingresos y gastos de FIGA.</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-figa" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de FIGA (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-figa" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1493,7 +1495,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <table class="data-table" id="otrasFuentesTable-figa">
             <thead>
               <tr>
-                <th>RBD</th>
+                <th title="RBD del establecimiento, «AC» (Administración Central) o código GESPARVU del jardín infantil">RBD / GESPARVU</th>
                 <th>Nombre</th>
                 <th title="Corte Real/Proyectado de la entidad: los meses hasta ese mes son Real">Real hasta</th>
                 <th class="num">Ingreso</th>
@@ -1658,8 +1660,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         en el título de cada una para mostrarla u ocultarla.</p>
 
         <h4>4. Pestañas de las otras fuentes de financiamiento</h4>
-        <p>Cada fuente tiene su propia pestaña, con una fila por entidad (RBD, "AC" para Administración Central, o los
-        GESPARVU en las fuentes JUNJI), las mismas tarjetas Real / Proyectado / Total y el control "Real hasta el mes".
+        <p>Cada fuente tiene su propia pestaña, con una fila por entidad (RBD, "AC" para Administración Central, o GESPARVU, los
+        jardines infantiles: JUNJI y Aporte Fiscal JUNJI solo los jardines; FAEP y FIGA, los RBD, AC y los jardines), las mismas tarjetas Real / Proyectado / Total y el control "Real hasta el mes".
         A diferencia de SEP no tienen meta 70/30: el Estado solo indica Superávit o Déficit (Déficit = saldo negativo; en JUNJI también si el saldo de Operación para B&S es negativo). Cada fila trae botones
         para descargar su Excel (⬇ XLS), su CSV y su PDF individual (🖨), y arriba hay botones para importar y
         exportar toda la fuente.</p>
@@ -2354,8 +2356,10 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 //     Carrera Docente — hoy solo JUNJI). Solo decide cuántas líneas de ingreso hay (y si aplica
 //     el "Saldo Operación disponible para B&S"); ya NO determina el universo de entidades.
 //   - universo: 'rbd_ac' (los RBD de DATA.registros + la fila fija "AC") | 'gesparvu' (los 13
-//     GESPARVU de GESPARVU_REGISTROS, sin AC) — qué filas lista la pestaña de esa fuente y de qué
-//     fuentes participa cada entidad (ver filasDeUniverso / recomputeTodasOtrasFuentes).
+//     GESPARVU de GESPARVU_REGISTROS, sin AC) | 'rbd_ac_gesparvu' (los tres: RBD + AC + los 13
+//     GESPARVU; hoy FAEP y FIGA, que también tienen ingresos y gastos en los jardines infantiles)
+//     — qué filas lista la pestaña de esa fuente y de qué fuentes participa cada entidad (ver
+//     filasDeUniverso / universoIncluyeTipo / recomputeTodasOtrasFuentes).
 //   - bysMode: 'compras' (registro de compras con código de cuenta SUPEREDUC + documento/
 //     proveedor) | 'concepto' (ítems de Bienes y Servicios por concepto libre, sin código ni
 //     documento — para fuentes que no son parte del sistema de rendición de SUPEREDUC).
@@ -2378,8 +2382,8 @@ const FUENTES_OTRAS = [
   { key: 'mantenimiento', label: 'Subv. Mantención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'MANTENIMIENTO', colPlan: 'mantenimiento' },
   { key: 'prorretencion', label: 'Subv. Pro-Retención', incomeShape: 'single', bysMode: 'compras', universo: 'rbd_ac', codigoSupereduc: 'PRORETENCION', colPlan: 'proretencion' },
   { key: 'junji', label: 'JUNJI', incomeShape: 'junji3', bysMode: 'concepto', universo: 'gesparvu', codigoSupereduc: null },
-  { key: 'faep', label: 'FAEP', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
-  { key: 'figa', label: 'FIGA', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
+  { key: 'faep', label: 'FAEP', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac_gesparvu', codigoSupereduc: null },
+  { key: 'figa', label: 'FIGA', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac_gesparvu', codigoSupereduc: null },
   { key: 'aporte_educ', label: 'Aporte Fiscal Extraord. Educación', incomeShape: 'single', bysMode: 'concepto', universo: 'rbd_ac', codigoSupereduc: null },
   { key: 'aporte_junji', label: 'Aporte Fiscal Extraord. JUNJI', incomeShape: 'single', bysMode: 'concepto', universo: 'gesparvu', codigoSupereduc: null },
 ];
@@ -2410,7 +2414,7 @@ function planAdmitePersonal(col) {
 // Fila fija adicional, fuera de DATA.registros: gasto a nivel del sostenedor (Administración
 // Central) y no de un establecimiento puntual. Mismo documento Firestore (sep_carga_rbd/AC) y
 // mismo shape que cualquier RBD — solo que no participa del universo SEP (Panel principal,
-// Reportes de SEP), únicamente de esta pestaña. No aplica a las fuentes con universo:'gesparvu' (ver GESPARVU_REGISTROS).
+// Reportes de SEP), únicamente de esta pestaña. No aplica a las fuentes con universo:'gesparvu' (ver GESPARVU_REGISTROS); en las 'rbd_ac_gesparvu' (FAEP, FIGA) es una fila más, antes de los jardines.
 const AC_PSEUDO_RBD = { rbd: 'AC', nombre: 'Administración Central' };
 // JUNJI es un proceso independiente de SUPEREDUC (no aparece en ninguno de los manuales
 // SUPEREDUC revisados): sus ingresos se rinden por GESPARVU (jardín infantil / sala cuna), no
@@ -2432,8 +2436,27 @@ const GESPARVU_REGISTROS = [
   { rbd: '5404003', nombre: 'MIS PRIMEROS PASOS', comuna: 'Petorca' },
   { rbd: '5404002', nombre: 'MUNDO DE PEQUES', comuna: 'Petorca' },
 ];
+// Tipos de entidad que componen cada universo: 'rbd' (establecimiento de DATA.registros), 'ac' (la fila fija AC) y 'gesparvu' (jardín infantil / sala cuna).
+const UNIVERSO_TIPOS = {
+  rbd_ac: ['rbd', 'ac'],
+  gesparvu: ['gesparvu'],
+  rbd_ac_gesparvu: ['rbd', 'ac', 'gesparvu'],
+};
+const GESPARVU_CODIGOS = new Set(GESPARVU_REGISTROS.map(g => g.rbd));
+// Tipo de una entidad por su código (id del documento): un código de GESPARVU es 'gesparvu', "AC" es 'ac' y cualquier otro es un 'rbd'. Es lo que decide el rótulo
+// ("GESPARVU 5402002" / "RBD 1121"), no la fuente en la que se la mira (FAEP y FIGA mezclan RBD, AC y jardines en una misma lista).
+function tipoEntidadDeRbd(rbd) {
+  return GESPARVU_CODIGOS.has(rbd) ? 'gesparvu' : (rbd === AC_PSEUDO_RBD.rbd ? 'ac' : 'rbd');
+}
+function universoIncluyeTipo(universo, tipo) {
+  return (UNIVERSO_TIPOS[universo] || UNIVERSO_TIPOS.rbd_ac).includes(tipo);
+}
+// Orden de las filas: los RBD (en el orden de DATA.registros), luego AC y luego los GESPARVU (en el orden de GESPARVU_REGISTROS, el mismo que ya usa JUNJI): se
+// conserva el orden de cada lista que ya existía y los jardines (la entidad nueva) quedan al final, sin alterar dónde caen los RBD ni AC en FAEP / FIGA.
 function filasDeUniverso(universo) {
-  return universo === 'gesparvu' ? GESPARVU_REGISTROS : [...DATA.registros, AC_PSEUDO_RBD];
+  if (universo === 'gesparvu') return GESPARVU_REGISTROS;
+  const rbdAc = [...DATA.registros, AC_PSEUDO_RBD];
+  return universo === 'rbd_ac_gesparvu' ? [...rbdAc, ...GESPARVU_REGISTROS] : rbdAc;
 }
 function filasOtrasFuentes(fuenteKey) {
   return filasDeUniverso(FUENTES_OTRAS_BY_KEY[fuenteKey].universo);
@@ -3526,7 +3549,7 @@ function causaEstadoOtraFuente(of, fuenteKey) {
     largo: 'Déficit: ' + (saldo && op ? `${largoSaldo}; además ${largoOp}` : (op ? largoOp : largoSaldo)) + '.',
   };
 }
-// Suma of.rp de todas las entidades de la fuente (RBD+AC o GESPARVU según su universo): lo
+// Suma of.rp de todas las entidades de la fuente (RBD+AC, GESPARVU o los tres según su universo): lo
 // consumen las tarjetas KPI de cada pestaña y, más adelante, el Dashboard / % Ejecución /
 // Reportes. Devuelve { real, proy, total } (cada uno { ingreso, rem, bys, gasto, saldo }) más
 // nEntidades / nDeficit / nSuperavit (según el saldo Total).
@@ -3542,13 +3565,13 @@ function computeTotalesOtraFuente(fuenteKey) {
   return acc;
 }
 function recomputeTodasOtrasFuentes(rbd) {
-  // Cada entidad solo participa de las fuentes de su propio universo: un GESPARVU únicamente de
-  // las fuentes universo:'gesparvu' (JUNJI y Aporte Fiscal JUNJI), un RBD/AC únicamente de las
-  // universo:'rbd_ac' — evita crear entradas vacías cruzadas (ej. un RBD de SEP con un bucket
+  // Cada entidad solo participa de las fuentes cuyo universo incluye su tipo: un GESPARVU de las fuentes
+  // universo:'gesparvu' (JUNJI y Aporte Fiscal JUNJI) y de las 'rbd_ac_gesparvu' (FAEP y FIGA), un RBD/AC de las
+  // 'rbd_ac' y de las 'rbd_ac_gesparvu' — evita crear entradas vacías cruzadas (ej. un RBD de SEP con un bucket
   // "junji" que nunca se va a mostrar).
-  const esGesparvu = GESPARVU_REGISTROS.some(g => g.rbd === rbd);
+  const tipo = tipoEntidadDeRbd(rbd);
   FUENTES_OTRAS.forEach(f => {
-    if (esGesparvu !== (f.universo === 'gesparvu')) return;
+    if (!universoIncluyeTipo(f.universo, tipo)) return;
     if (f.bysMode === 'compras') recomputeItemsOtraFuenteDesdeCompras(rbd, f.key);
     else recomputeOtraFuenteBysItemsAgregado(ensureOtraFuente(rbd, f.key));
     recomputeOtraFuente(rbd, f.key);
@@ -6036,9 +6059,11 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
   </div>`;
 }
 
+// Rótulo de la entidad: lo decide su TIPO (AC / jardín GESPARVU / RBD), no la fuente (FAEP y FIGA tienen las tres clases de entidad). `fuenteKey` se conserva en la firma por los llamadores.
 function otrasFuentesTituloEntidad(r, fuenteKey) {
-  if (r.rbd === 'AC') return 'Administración Central';
-  if (FUENTES_OTRAS_BY_KEY[fuenteKey].universo === 'gesparvu') return 'GESPARVU ' + r.rbd;
+  const tipo = tipoEntidadDeRbd(r.rbd);
+  if (tipo === 'ac') return 'Administración Central';
+  if (tipo === 'gesparvu') return 'GESPARVU ' + r.rbd;
   return 'RBD ' + r.rbd;
 }
 // Factorizado aparte de renderOtrasFuentesModalContenido (que reconstruye todo el modal, con el
@@ -6297,8 +6322,8 @@ document.addEventListener('keydown', (e) => {
 // toca ni se reutiliza directo.
 // ============================================================================
 
-// Igual que registrosPara(onlyRbd) de SEP, pero devuelve el universo de ESTA fuente (RBD+AC o
-// los 13 GESPARVU de JUNJI) ordenado — sirve de base a todos los exportadores de abajo.
+// Igual que registrosPara(onlyRbd) de SEP, pero devuelve el universo de ESTA fuente (RBD+AC, los 13
+// GESPARVU de JUNJI, o RBD+AC+GESPARVU en FAEP y FIGA) ordenado — sirve de base a todos los exportadores de abajo.
 function rbdCellValue(rbd) { return /^\d+$/.test(rbd) ? Number(rbd) : rbd; }
 
 // Igual que registrosPara(onlyRbd) de SEP: el universo de la fuente, o solo una entidad si se pide
@@ -7731,7 +7756,7 @@ function vzSincronizarChecks() {
 function vzConstruirControles() {
   document.getElementById('vzFuenteChips').innerHTML = VZ_FUENTES.map(f =>
     `<button type="button" class="vz-chip active" data-vz-fuente="${f.key}" aria-pressed="true" title="${escHtml(f.label)}">${f.icono} ${escHtml(f.corto)}</button>`).join('');
-  const grupos = [['rbd', 'Establecimientos (RBD)'], ['ac', 'Administración Central'], ['gesparvu', 'GESPARVU (JUNJI)']];
+  const grupos = [['rbd', 'Establecimientos (RBD)'], ['ac', 'Administración Central'], ['gesparvu', 'GESPARVU (jardines infantiles)']];
   document.getElementById('vzEntList').innerHTML = grupos.map(([t, titulo]) =>
     `<div class="vz-ent-titulo">${titulo}</div>` + VZ_ENTIDADES.filter(e => e.tipo === t).map(e =>
       `<label class="check-row" data-vz-q="${escHtml((e.id + ' ' + e.nombre).toLowerCase())}"><input type="checkbox" data-vz-ent="${escHtml(e.id)}" checked> ${escHtml(e.id)} — ${escHtml(e.nombre)}</label>`
@@ -8016,7 +8041,7 @@ function esRealParaConcepto(rbd, key, idx1based) {
 function entidadAplicaConcepto(ent, concepto) {
   if (concepto.fuente === 'sep') return ent.tipo === 'rbd';
   const f = FUENTES_OTRAS_BY_KEY[concepto.fuente];
-  return f.universo === 'gesparvu' ? ent.tipo === 'gesparvu' : (ent.tipo === 'rbd' || ent.tipo === 'ac');
+  return universoIncluyeTipo(f.universo, ent.tipo);
 }
 
 // A qué regla real/proyectado (ver esRealParaModo) corresponde cada tipo de concepto del
@@ -8091,7 +8116,7 @@ function renderReportFilters() {
   const entFiltradas = VZ_ENTIDADES.filter(e =>
     !rbdSearch || e.id.toLowerCase().includes(rbdSearch) || e.nombre.toLowerCase().includes(rbdSearch)
   );
-  const gruposEnt = [['rbd', 'Establecimientos (RBD)'], ['ac', 'Administración Central'], ['gesparvu', 'GESPARVU (JUNJI)']];
+  const gruposEnt = [['rbd', 'Establecimientos (RBD)'], ['ac', 'Administración Central'], ['gesparvu', 'GESPARVU (jardines infantiles)']];
   rbdListEl.innerHTML = entFiltradas.length ? gruposEnt.map(([t, titulo]) => {
     const es = entFiltradas.filter(e => e.tipo === t);
     return es.length ? `<div class="vz-ent-titulo">${titulo}</div>` + es.map(e => `
@@ -8201,7 +8226,7 @@ function renderReporte() {
     `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
     `(<b>SEP</b> — Ingreso: real ${fraseCorteIngresoSep()}; Remuneraciones: el corte propio de cada RBD; Honorarios (boletas) y compras Subt.22/29: siempre reales; Honorarios y Bienes y Servicios Proyección: siempre proyectadas) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
     `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (${fraseDefaultFuentes()}); B&S por código (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
-    `Los subtotales de una fuente se colorean solo si todas las entidades coinciden. Un concepto solo genera filas para las entidades que le corresponden (RBD → SEP y fuentes por RBD; AC → fuentes por RBD; GESPARVU → JUNJI y Aporte Fiscal JUNJI).`;
+    `Los subtotales de una fuente se colorean solo si todas las entidades coinciden. Un concepto solo genera filas para las entidades que le corresponden (RBD → SEP y las fuentes por RBD, incluidas FAEP y FIGA; AC → las fuentes por RBD, sin SEP; GESPARVU → JUNJI, Aporte Fiscal JUNJI, FAEP y FIGA).`;
 
   const tbody = document.getElementById('reporteTbody');
 

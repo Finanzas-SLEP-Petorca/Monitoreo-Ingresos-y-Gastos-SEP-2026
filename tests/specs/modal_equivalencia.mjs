@@ -50,6 +50,7 @@ await correrSpec('modal_equivalencia', async (t) => {
   await abrirSep();
   let ok = 0;
   const PASOS_SEP = 40;
+  const opsHon = [];
   for (let i = 0; i < PASOS_SEP; i++) {
     const op = pick(['addCompra', 'delCompra', 'editCompra', 'addBys', 'delBys', 'ingreso', 'rem', 'corte', 'addHon', 'delHon', 'editHon', 'addHonProy', 'delHonProy', 'editHonProy']);
     const n = Math.floor(rnd() * 1000);
@@ -72,10 +73,17 @@ await correrSpec('modal_equivalencia', async (t) => {
       delHonProy: `if (d.hon_proyeccion && d.hon_proyeccion.items) delete d.hon_proyeccion.items['${pick(['410803', '410304', '410501'])}'];`,
       editHonProy: `const ks = Object.keys((d.hon_proyeccion && d.hon_proyeccion.items) || {}); if (ks.length) d.hon_proyeccion.items[ks[${n} % ks.length]].meses.${mes} = ${n * 5};`,
     }[op];
+    if (/Hon/.test(op)) opsHon.push(op);
     await h.remoto('1121', cuerpo);
     if (await comparar('#modalBody', reabrirSep, `SEP paso ${i} (${op})`)) ok++;
   }
   t.eq(ok, PASOS_SEP, `SEP: tras ${PASOS_SEP} cambios remotos aleatorios (compras, boletas de honorarios, proyecciones, ingresos y cortes) el modal reconciliado es idéntico al reconstruido desde cero`);
+  // El bloque «Honorarios (Subt. 21)» está en el modal y sus filas son EXACTAMENTE las boletas del documento (que el reconciliador y la reconstrucción coincidan no basta: ambos podrían omitir el bloque).
+  await h.remoto('1121', "d.honorarios = d.honorarios || {}; d.honorarios['hFinal'] = { codigo: '410803', tipoDocumento: 'BOLHE', nroDocumento: 'F-1', fechaDocumento: '2026-05-05', fechaPago: '2026-05-06', descripcion: 'Boleta final', rutProveedor: '1-9', nombreProveedor: 'Final', montoGasto: 12345, montoDocumento: 12345 };");
+  if (await comparar('#modalBody', reabrirSep, 'SEP paso final (boleta fija)')) ok++;
+  const boletasDoc = Object.keys((await h.store())['sep_carga_rbd/1121'].honorarios || {}).sort();
+  t.ok(opsHon.length >= 8 && boletasDoc.includes('hFinal'), 'SEP: la secuencia incluyó cambios de honorarios (alta, baja y edición de boletas y de proyección) y la boleta final está en el documento', { opsHon: opsHon.length, boletas: boletasDoc.length });
+  t.eq(await page.evaluate(() => Array.from(document.querySelectorAll('#modalBody table.hon-table tbody tr[data-hon-id]')).map(tr => tr.dataset.honId).sort()), boletasDoc, 'SEP: las filas del registro de honorarios del modal son las boletas del documento');
   await page.keyboard.press('Escape'); await h.waitIdle();
 
   // ============================================================ Fuentes: General (compras + proyección por concepto) y FAEP (conceptos)

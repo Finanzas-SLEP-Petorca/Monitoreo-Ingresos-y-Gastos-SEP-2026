@@ -111,9 +111,20 @@ await correrSpec('estado_unico', async (t) => {
   const idsAtencion = D.items.map(i => `${i.fkey || i.fuente}:${i.rbd}`);
   t.ok(idsAtencion.every(k => deficitarias.slice(0, 8).some(d => `${d.fkey}:${d.rbd}` === k)), 'cada entidad de Atención está entre las 8 en déficit más negativas');
   // Vistas Real / Proyectado: el saldo de esa vista (la misma regla: negativo; $0 no cuenta). Las 8 listadas son todas negativas.
+  // Evolución mensual consolidada (tabla "Ver datos en tabla"): su fila Total cuadra con la franja consolidada (Ingreso y Gasto Total) en las 3 vistas (afirmación del README).
+  const cuadraSerie = () => page.evaluate(() => {
+    const tiles = {}; document.querySelectorAll('#dashStrip .dash-tile').forEach(x => { tiles[x.querySelector('.t-label').textContent.trim()] = x.querySelector('.t-value').textContent.trim(); });
+    const fila = Array.from(document.querySelectorAll('#dashTablaMesBody tbody tr')).pop();
+    const c = fila ? Array.from(fila.children).map(x => x.textContent.trim()) : [];
+    return { franja: [tiles['Ingreso'], tiles['Gasto Total']], serie: [c[1], c[2]] };
+  });
+  let cs = await cuadraSerie();
+  t.eq(cs.serie, cs.franja, 'vista Total: el total de la evolución mensual = franja (Ingreso y Gasto Total) → ' + cs.franja.join(' / '));
   for (const v of ['real', 'proy']) {
     await page.click(`.dash-chips button[data-dash-vista="${v}"]`);
     await h.waitIdle();
+    cs = await cuadraSerie();
+    t.eq(cs.serie, cs.franja, `vista ${v}: el total de la evolución mensual = franja → ` + cs.franja.join(' / '));
     const Dv = await leerDashboard(page);
     t.ok(Dv.items.every(i => /^▼ -\$/.test(i.saldo)), `Atención en la vista ${v}: solo saldos negativos`);
     t.ok(/en total\./.test(Dv.nota), `Atención en la vista ${v}: el texto dice "N en total"`);

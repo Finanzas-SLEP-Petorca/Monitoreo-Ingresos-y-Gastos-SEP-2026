@@ -28,6 +28,7 @@ const SPECS = [
   { id: '07', archivo: '07_documento_envenenado.mjs', titulo: 'Documento envenenado (PR #56)', esperado: { tree: 'BUG', '@069f9dd': 'BUG', '@baseline': 'FAIL' }, tambien: ['@baseline'] },
   { id: '08', archivo: '08_reglas_reales.mjs', titulo: 'firestore.rules reales', esperado: { tree: 'PASS', '@069f9dd': 'PASS' } },
   { id: '09', archivo: '09_multi_pestana.mjs', titulo: 'Dos pestañas (IndexedDB)', esperado: { tree: 'PASS', '@069f9dd': 'FAIL' } },
+  { id: '10', archivo: '10_mes_cierre.mjs', titulo: 'Mes de cierre global y "Aplicar a todas"', esperado: { tree: 'PASS', '@069f9dd': 'FAIL' } },
 ];
 
 const args = process.argv.slice(2);

@@ -335,6 +335,53 @@ async function seccionExportsFuentes(h, R) {
   await R.descarga('exp.of.mantenimiento.fila.1121.csv', () => page.click(fila('mantenimiento', '1121', 'csv')));
 }
 
+// Con el fixture "cierre" (mes de cierre = septiembre en _meta; cortes propios de ingresos en 1121 → agosto, 1122 → septiembre y 1123 → diciembre; casi todas las
+// remuneraciones y "Real hasta" de las fuentes en septiembre, salvo 8 entidades): el corte Real/Proyectado de los ingresos de SEP y el control del mes de cierre.
+// Los montos son los de default.json; solo cambian los cortes. En default.json (sin mes de cierre ni cortes de ingresos) las vistas son las de siempre.
+async function seccionCierre(h, R) {
+  const { page } = h;
+  await abrirDetails(page, '#tab-dashboard');
+  for (const v of ['total', 'real', 'proy']) {
+    await page.click(`.dash-chips button[data-dash-vista="${v}"]`);
+    await R.vista(`cierre.dashboard.${v}`, '#tab-dashboard');
+  }
+  await page.click('.dash-chips button[data-dash-vista="total"]');
+  await h.clickTab('SEP');
+  await page.evaluate(() => { document.getElementById('cierreAviso').open = true; });
+  await R.vista('cierre.sep', '#tab-panel');
+  for (const rbd of ['1121', '1122', '1123', '1128']) {
+    await page.click(`#tableBody td.rbd-clickable[data-abrir-rbd="${rbd}"]`);
+    await h.waitIdle();
+    await R.vista(`cierre.modal.sep.${rbd}`, '#rbdModal');
+    await page.keyboard.press('Escape');
+    await h.waitIdle();
+  }
+  await R.descarga('cierre.exp.sep.json-carga', () => page.click('#downloadCargaBtn'));
+  await R.imprimir('cierre.print.sep.fila.1121', () => page.click('#tableBody button.row-action-btn[data-action="pdf"][data-rbd="1121"]'));
+  await R.imprimir('cierre.print.sep.fila.1128', () => page.click('#tableBody button.row-action-btn[data-action="pdf"][data-rbd="1128"]'));
+  await h.clickTab('% Ejecución');
+  await page.click('#ejecFuenteChips .of-chip[data-ejec-fuente="consolidado"]');
+  await R.vista('cierre.ejec.consolidado', '#tab-ejecucion');
+  await h.clickTab('Reportes');
+  await R.vista('cierre.rep.vz.default', SEL_VZ);
+  await page.click('#vzFuentesNinguna');
+  await page.click('#vzFuenteChips [data-vz-fuente="sep"]');
+  await page.click('#vzExpIng'); await page.click('#vzExpGas');
+  await R.vista('cierre.rep.vz.sep', SEL_VZ);
+  await R.descarga('cierre.exp.vz.sep.csv', () => page.click('#vzCsvBtn'));
+  await page.click('#vzLimpiarBtn');
+  await page.click('#reporteVistaChips [data-reporte-vista="personalizado"]');
+  await h.waitIdle();
+  const f = await configurarPersonalizado(h, R, {
+    entidades: ['1121', '1122', '1123', '1128'],
+    conceptos: ['ingreso|Ingreso SEP Preferente', 'ingreso|Ingreso SEP Prioritario', 'rem'],
+    meses: ['JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'],
+  });
+  R.dato('cierre.rep.pers.sep.faltantes', f);
+  await R.vista('cierre.rep.pers.sep', SEL_PERS);
+  await R.descarga('cierre.exp.pers.sep.csv', () => page.click('#reporteCsvBtn'));
+}
+
 export const SECCIONES = [
   { nombre: 'dashboard', fn: seccionEncabezadoYDashboard },
   { nombre: 'sep', fn: seccionSep },
@@ -343,6 +390,7 @@ export const SECCIONES = [
   { nombre: 'reportes', fn: seccionReportes },
   { nombre: 'exports-sep', fn: seccionExportsSep },
   { nombre: 'exports-fuentes', fn: seccionExportsFuentes },
+  { nombre: 'cierre', fixture: 'cierre', fn: seccionCierre },
 ];
 
 export async function capturar({ log = () => {}, solo = null, html = undefined } = {}) {
@@ -350,7 +398,7 @@ export async function capturar({ log = () => {}, solo = null, html = undefined }
   for (const s of SECCIONES) {
     if (solo && !solo.includes(s.nombre)) continue;
     const t0 = Date.now();
-    const h = await boot({ fixture: 'default', html });
+    const h = await boot({ fixture: s.fixture || 'default', html });
     try {
       const R = crearRegistrador(res, h);
       await s.fn(h, R);

@@ -28,6 +28,7 @@ export async function ejecutarGolden({ update = false, full = false, solo = null
   const origen = resolverAppHtml();
   const htmlSha1 = sha1(fs.readFileSync(origen.ruta));
   const fixtureSha1 = sha1(fs.readFileSync(path.join(TESTS_DIR, 'fixtures', 'default.json')));
+  const fixtureCierreSha1 = sha1(fs.readFileSync(path.join(TESTS_DIR, 'fixtures', 'cierre.json')));
   log(`Golden master sobre: ${origen.etiqueta}`);
   const t0 = Date.now();
   const res = await capturar({ log, solo });
@@ -48,6 +49,7 @@ export async function ejecutarGolden({ update = false, full = false, solo = null
       html_bajo_prueba: origen.etiqueta,
       html_sha1: htmlSha1,
       fixture_sha1: fixtureSha1,
+      fixture_cierre_sha1: fixtureCierreSha1,
       fixture: cargarFixture('default').meta,
       playwright: await versionPlaywright(),
       node: process.version,
@@ -66,6 +68,9 @@ export async function ejecutarGolden({ update = false, full = false, solo = null
   if (!existe) { log('\nFALLA: no existe tests/golden/baseline.json. Genéralo con: APP_HTML=@baseline node tests/run.mjs golden --update'); return { ok: false }; }
   if (previo.meta && previo.meta.fixture_sha1 && previo.meta.fixture_sha1 !== fixtureSha1) {
     log('\nAVISO: el fixture (tests/fixtures/default.json) cambió desde que se generó el baseline; las diferencias pueden venir del fixture. Regenera el baseline si fue intencional.');
+  }
+  if (previo.meta && previo.meta.fixture_cierre_sha1 && previo.meta.fixture_cierre_sha1 !== fixtureCierreSha1) {
+    log('\nAVISO: el fixture (tests/fixtures/cierre.json) cambió desde que se generó el baseline; las diferencias de la sección "cierre" pueden venir del fixture. Regenera el baseline si fue intencional.');
   }
   if (previo.meta && previo.meta.html_sha1 !== htmlSha1) log(`(El HTML bajo prueba es distinto del usado para generar el baseline: ${previo.meta.html_bajo_prueba})`);
   let base = previo;

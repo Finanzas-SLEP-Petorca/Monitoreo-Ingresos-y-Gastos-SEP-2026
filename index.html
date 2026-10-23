@@ -210,6 +210,29 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .rem-corte-control { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary); margin:6px 0 2px; }
   .rem-corte-control select { padding:3px 6px; border-radius:5px; border:1px solid var(--baseline); font-size:11px; background:#fff; color:var(--text-primary); }
   .rem-corte-control-print { font-size:11px; color:var(--text-secondary); margin:6px 0 2px; }
+  .rem-corte-control .corte-origen { color:var(--text-muted); font-style:italic; }
+  /* Mes de cierre global (pestaña SEP) + aviso de entidades con corte distinto; el Panel principal muestra solo una línea de texto. */
+  .cierre-control { background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin:0 0 12px; font-size:12.5px; color:var(--text-secondary); }
+  .cierre-fila { display:flex; align-items:center; gap:8px 12px; flex-wrap:wrap; }
+  .cierre-fila .cierre-etiqueta { font-weight:700; color:var(--text-primary); }
+  .cierre-fila .cierre-valor { color:var(--series-1); font-size:14px; }
+  .cierre-fila .cierre-meta { color:var(--text-muted); font-size:11.5px; }
+  .cierre-admin { display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .cierre-admin label { font-weight:600; }
+  .cierre-admin select { padding:5px 8px; border-radius:6px; border:1px solid var(--baseline); font-size:12.5px; background:var(--surface-1); color:var(--text-primary); }
+  .cierre-admin button { padding:6px 12px; border-radius:6px; border:1px solid var(--series-1); background:var(--series-1); color:#fff; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .cierre-admin button:disabled { opacity:.55; cursor:not-allowed; }
+  .cierre-ayuda { margin:6px 0 0; color:var(--text-muted); font-size:11.5px; max-width:900px; }
+  .cierre-aviso { margin-top:8px; background:var(--tone-amber-bg); border:1px solid var(--tone-amber-border); border-radius:8px; color:var(--tone-amber-fg); }
+  .cierre-aviso > summary { cursor:pointer; padding:7px 12px; font-weight:700; }
+  .cierre-lista { max-height:240px; overflow:auto; padding:0 12px 10px; }
+  .cierre-lista table { border-collapse:collapse; width:100%; font-size:12px; color:var(--text-primary); }
+  .cierre-lista th, .cierre-lista td { text-align:left; padding:3px 8px 3px 0; border-bottom:1px solid var(--tone-amber-border); white-space:nowrap; }
+  .cierre-lista th { color:var(--tone-amber-fg); font-weight:700; }
+  .cierre-lista button { background:none; border:none; padding:0; color:var(--tone-blue-fg); text-decoration:underline; cursor:pointer; font-size:12px; }
+  .dash-cierre { margin:6px 0 0; font-size:12.5px; color:var(--text-muted); }
+  .dash-cierre strong { color:var(--text-primary); }
+  .dash-cierre button { background:none; border:none; padding:0; margin-left:4px; color:var(--tone-blue-fg); text-decoration:underline; cursor:pointer; font-size:12.5px; }
   table.detalle-table { border-collapse:collapse; font-size:11px; width:1330px; min-width:1330px; table-layout:fixed; }
   table.detalle-table th { background:#eef2f7; color:var(--text-secondary); font-weight:600; text-align:left; padding:5px 7px; border:1px solid var(--gridline); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   table.detalle-table th.mes-real, table.detalle-table th.mes-proy { white-space:normal; overflow:visible; text-overflow:clip; text-align:center; line-height:1.25; }
@@ -321,6 +344,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
     @page { size: landscape; margin: 10mm 8mm; }
     * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
     .table-controls, .corte-control, .legend-row, .sep-notas, footer, .expand-cell, .compra-form-grid, .bysproy-add-row, .col-acciones { display:none !important; }
+    /* Mes de cierre: en papel queda solo la línea de texto (sin selector, botón, aviso desplegable ni enlaces). */
+    .cierre-admin, .cierre-aviso, .cierre-ayuda, .dash-cierre button { display:none !important; }
+    .cierre-control { border:none; padding:0 0 6px; }
     /* html también: su fondo gris (--page-plane) se propaga al lienzo y asomaba como un bloque gris al final de la última página; la altura
        100% de html/body no tiene sentido al paginar (U-15). */
     html, body, .wrap, .page-plane { background:#fff !important; }
@@ -829,6 +855,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div>
           <h2>Panel principal — resumen por fuente de financiamiento</h2>
           <p class="dash-sub" id="dashNota">Cargando datos…</p>
+          <p class="dash-cierre" id="dashCierre"></p>
         </div>
         <div class="dash-controls">
           <div class="dash-chips" role="group" aria-label="Vista de las cifras">
@@ -886,6 +913,24 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 
   <div id="tab-panel" class="tab-content hidden" role="tabpanel" aria-labelledby="tabbtn-panel">
   <div class="panel-sep-head"><h2 style="margin:0 0 4px;">🎓 SEP — Subvención Escolar Preferencial</h2><p class="dash-sub" style="margin:0 0 12px;">Monitoreo por establecimiento (RBD) con la regla 70% remuneraciones / 30% bienes y servicios.</p></div>
+
+  <div class="cierre-control" id="cierreControl" role="group" aria-label="Mes de cierre del panel">
+    <div class="cierre-fila">
+      <span class="cierre-etiqueta">📅 Mes de cierre:</span>
+      <strong class="cierre-valor" id="cierreMesTexto">—</strong>
+      <span class="cierre-meta" id="cierreMeta"></span>
+      <span class="cierre-admin hidden" id="cierreAdmin">
+        <label for="cierreMesSelect">Cambiar a:</label>
+        <select id="cierreMesSelect"></select>
+        <button type="button" id="cierreAplicarBtn" title="Fija el mes de cierre como corte Real/Proyectado de los ingresos y remuneraciones de SEP y de las 9 fuentes, en todas las entidades. Pide confirmación y muestra cuántas cambian.">Aplicar a todas las entidades</button>
+      </span>
+    </div>
+    <details class="cierre-aviso hidden" id="cierreAviso">
+      <summary id="cierreAvisoResumen"></summary>
+      <div class="cierre-lista" id="cierreAvisoLista" tabindex="0" role="region" aria-label="Entidades con corte distinto al mes de cierre (tabla con desplazamiento)"></div>
+    </details>
+    <p class="cierre-ayuda" id="cierreAyuda"></p>
+  </div>
 
   <button type="button" class="kpi-section-label" data-section="real" onclick="toggleKpiSection('real')"><span class="kpi-toggle-icon">▾</span> Real (ejecutado)</button>
   <div class="kpi-row kpi-row-real" id="kpiRowReal"></div>
@@ -1614,9 +1659,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <h4>6. Real vs. Proyectado</h4>
         <p>Cada celda de mes se marca <span class="help-tag real">Real</span> (ya ejecutado, verde) o
         <span class="help-tag proy">Proyectado</span> (una estimación, naranja) según el tipo de dato — las compras
-        siempre son reales, la fila de proyección de B&S siempre es proyectada, y Remuneraciones tiene un selector
-        propio por establecimiento ("Remuneraciones reales hasta: [mes]") para marcar desde cuándo ya no son datos
-        reales sino una estimación tuya.</p>
+        siempre son reales, la fila de proyección de B&S siempre es proyectada, y tanto los Ingresos como las
+        Remuneraciones tienen un selector propio por establecimiento ("Ingresos reales hasta: [mes]" y
+        "Remuneraciones reales hasta: [mes]") para marcar desde cuándo ya no son datos reales sino una estimación tuya.
+        En la pestaña SEP, "Mes de cierre" es el mes hasta el que los datos son reales en todo el panel: es el corte por
+        defecto de los ingresos de SEP y, si alguna entidad tiene otro corte, un aviso lo señala. Solo un administrador
+        puede cambiarlo y fijarlo de una vez en todas las entidades ("Aplicar a todas las entidades").</p>
 
         <h4>7. Qué significan "Saldo Final (Real+Proy)" y "% Ejec. Total (Real+Proy)" (SEP)</h4>
         <p>Estas dos columnas, destacadas en <span class="help-tag final">celeste</span> justo al lado de "Estado",
@@ -2528,15 +2576,68 @@ function mesEsReal(idx1based) { return idx1based <= corteMesIdx; }
 // su propia regla, independiente del selector de arriba (antes las 4 tablas del detalle
 // compartían un único corte global, así que no reflejaban si CADA RBD tenía datos reales
 // distintos, y mover el corte a Diciembre por defecto las pintaba todas "reales" de golpe).
-//  - 'ingreso_item': fijo, viene de la fuente real (Liquidación Web Mineduc) hasta DATA.n_meses;
-//    de ahí en adelante es la proyección editable (promedio de esos meses reales).
+//  - 'ingreso_item': por RBD, igual que Remuneraciones (corte propio `ingreso_real_hasta_mes`); si el RBD no
+//    tiene corte propio, el mes de cierre global (documento _meta) y, si tampoco está definido, DATA.n_meses (el último
+//    mes con datos reales de la Liquidación Web Mineduc). Ver corteIngresoRbd(). De ahí en adelante es la proyección
+//    editable (promedio de esos meses reales).
 //  - 'rem': por RBD — cada RBD tiene su propio corte "reales hasta" (rem.real_hasta_mes),
 //    porque no hay ninguna fuente automática que diga si una remuneración ya es real.
 //  - 'item' (compras Subt.22/29): siempre real — una compra siempre es un gasto ya documentado.
 //  - 'bys_proy' (proyección de Bienes y Servicios): siempre proyectado — es, por definición, una
 //    estimación aparte de las compras reales, que se suma a ellas (nunca las reemplaza).
+// ---- Corte Real/Proyectado de los INGRESOS de SEP + mes de cierre global (hallazgo L-01) ----
+// Antes el ingreso de SEP era "real" hasta DATA.n_meses (fijo, julio) mientras Remuneraciones tenía corte propio por RBD:
+// el Saldo Real mezclaba períodos. Ahora cada RBD tiene `ingreso_real_hasta_mes` (entero 1–12, campo raíz de su documento) y
+// existe un mes de cierre global (documento `_meta`: mes_cierre / mes_cierre_por / mes_cierre_en) que mueve el default.
+// Corte efectivo del ingreso de un RBD:  corte propio  >  mes de cierre global (si está definido)  >  DATA.n_meses.
+// Sin ninguno de los dos el resultado es el de siempre (DATA.n_meses): las cifras no cambian hasta que alguien define algo.
+let mesCierreGlobal = null; // entero 1–12 o null = sin definir (se lee de `_meta` en aplicarSnapshot)
+let mesCierrePor = '';      // correo de quien lo fijó (texto; solo informativo)
+let mesCierreEn = null;     // Date del último cambio (solo informativo)
+// Un corte válido es un entero 1–12; todo lo demás (ausente, null, texto, 0, 13, 7.5) es "sin corte" y devuelve 0.
+function mesCorteValido(v) {
+  const n = num(v);
+  return (Number.isInteger(n) && n >= 1 && n <= 12) ? n : 0;
+}
+// Corte propio del ingreso de un RBD (0 = no tiene). `ing` es CARGA_MANUAL.ingreso_items_por_rbd[rbd].
+function corteIngresoPropio(ing) { return ing ? mesCorteValido(ing.real_hasta_mes) : 0; }
+function corteIngresoRbd(rbd) {
+  const ing = CARGA_MANUAL.ingreso_items_por_rbd ? CARGA_MANUAL.ingreso_items_por_rbd[rbd] : null;
+  return corteIngresoPropio(ing) || mesCierreGlobal || DATA.n_meses;
+}
+// Corte de Remuneraciones de un RBD (el de siempre: su propio `rem.real_hasta_mes` o DATA.n_meses).
+function corteRemRbd(rbd) {
+  const rem = CARGA_MANUAL.rem_por_rbd ? CARGA_MANUAL.rem_por_rbd[rbd] : null;
+  return (rem && rem.real_hasta_mes) || DATA.n_meses;
+}
+// Frases de los textos de ayuda (nada de "hasta Julio" fijo): el corte REAL de los ingresos de SEP. Si todos los RBD coinciden es
+// "hasta Septiembre"; si alguno tiene un corte propio distinto, "entre Julio y Septiembre (corte propio de cada RBD)".
+function fraseCorteIngresoSep() {
+  const cortes = DATA.registros.map(r => corteIngresoRbd(r.rbd));
+  if (!cortes.length) return `hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}`;
+  const min = Math.min(...cortes), max = Math.max(...cortes);
+  return min === max
+    ? `hasta ${MESES_CARGA_TITLE[min - 1]}`
+    : `entre ${MESES_CARGA_TITLE[min - 1]} y ${MESES_CARGA_TITLE[max - 1]} (corte propio de cada RBD)`;
+}
+// El "por defecto" de las FUENTES (y de Remuneraciones) sigue siendo DATA.n_meses: el mes de cierre solo mueve el default de los ingresos de
+// SEP y se aplica a esas entidades con "Aplicar a todas las entidades". Si el cierre está definido y es otro, la frase lo aclara.
+function fraseDefaultFuentes() {
+  const base = `por defecto ${MESES_CARGA_TITLE[DATA.n_meses - 1]}`;
+  return (mesCierreGlobal && mesCierreGlobal !== DATA.n_meses)
+    ? `${base}; el mes de cierre es ${MESES_CARGA_TITLE[mesCierreGlobal - 1]}, se aplica con "Aplicar a todas las entidades"`
+    : base;
+}
+// Nota corta junto al selector "Ingresos reales hasta": de dónde sale el corte que se está mostrando.
+function notaOrigenCorteIngreso(rbd) {
+  const ing = CARGA_MANUAL.ingreso_items_por_rbd ? CARGA_MANUAL.ingreso_items_por_rbd[rbd] : null;
+  const propio = corteIngresoPropio(ing);
+  if (!propio) return mesCierreGlobal ? 'sigue el mes de cierre' : 'por defecto';
+  if (mesCierreGlobal && propio !== mesCierreGlobal) return `corte propio, distinto al mes de cierre (${MESES_CARGA_TITLE[mesCierreGlobal - 1]})`;
+  return 'corte propio';
+}
 function esRealParaModo(modo, rbd, idx1based) {
-  if (modo === 'ingreso_item') return idx1based <= DATA.n_meses;
+  if (modo === 'ingreso_item') return idx1based <= corteIngresoRbd(rbd);
   if (modo === 'rem') {
     const rem = CARGA_MANUAL.rem_por_rbd[rbd];
     const hasta = (rem && rem.real_hasta_mes) || DATA.n_meses;
@@ -3054,9 +3155,9 @@ function ingresoItemSumHasta(ing, itemName) {
 
 // Desglosa el Ingreso/Carrera Docente/Remuneraciones/B&S de UN RBD en su parte Real y su parte
 // Proyectada — mismo criterio que el coloreado del detalle: Ingreso y Carrera Docente usan el
-// corte fijo DATA.n_meses (la fuente real de Mineduc); Remuneraciones usa el corte propio del
-// RBD (rem.real_hasta_mes); Bienes y Servicios no depende de ningún mes — las compras siempre
-// son reales y la fila "Proyección" siempre es proyectada. Lo usan tanto las tarjetas KPI del
+// corte de ingresos del RBD (corteIngresoRbd: propio > mes de cierre global > DATA.n_meses);
+// Remuneraciones usa el corte propio del RBD (rem.real_hasta_mes); Bienes y Servicios no depende
+// de ningún mes — las compras siempre son reales y la fila "Proyección" siempre es proyectada. Lo usan tanto las tarjetas KPI del
 // resumen general (sumando todos los RBD) como el PDF individual de un RBD.
 function computeRealProyParaRbd(r) {
   const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
@@ -3066,15 +3167,16 @@ function computeRealProyParaRbd(r) {
 
   let ingresoReal = 0, ingresoProy = 0, carreraReal = 0, carreraProy = 0, remReal = 0, remProy = 0, bysReal = 0, bysProy = 0;
 
+  const corteIng = corteIngresoRbd(r.rbd);
   ['Ingreso SEP Preferente', 'Ingreso SEP Prioritario'].forEach(nombre => {
     const it = ing ? ing.items.find(x => x.item === nombre) : null;
     if (!it) return;
-    const { real, proy } = sumRealProyHastaMes(it.meses, DATA.n_meses, corteMesIdx);
+    const { real, proy } = sumRealProyHastaMes(it.meses, corteIng, corteMesIdx);
     ingresoReal += real; ingresoProy += proy;
   });
   const itCarrera = ing ? ing.items.find(x => x.item === 'Carrera Docente') : null;
   if (itCarrera) {
-    const { real, proy } = sumRealProyHastaMes(itCarrera.meses, DATA.n_meses, corteMesIdx);
+    const { real, proy } = sumRealProyHastaMes(itCarrera.meses, corteIng, corteMesIdx);
     carreraReal += real; carreraProy += proy;
   }
 
@@ -3306,6 +3408,30 @@ function onRemRealHastaChange(select) {
 }
 window.onRemRealHastaChange = onRemRealHastaChange;
 
+// Corte Real/Proyectado de los INGRESOS de un RBD (selector "Ingresos reales hasta" del detalle). Se guarda en el documento del RBD
+// como `ingreso_real_hasta_mes` (campo raíz, entero 1–12), igual que `rem.real_hasta_mes`. Cambia el color/etiqueta de las columnas de la
+// tabla de ingresos y todas las cifras Real/Proyectado de ingreso de ese RBD (KPI, dashboard, Visualizador, Reportes, % Ejecución).
+function onIngRealHastaChange(select) {
+  const rbd = select.dataset.rbd;
+  const hasta = mesCorteValido(select.value);
+  if (!hasta) return;
+  const ing = ensureIngresoAgregado(rbd);
+  ing.real_hasta_mes = hasta;
+  scheduleRbdSave(rbd, { nombre: ing.nombre, ingreso_real_hasta_mes: hasta });
+  flushRbdSaveNow(rbd);
+  refrescarVistasPorCortes();
+}
+window.onIngRealHastaChange = onIngRealHastaChange;
+// Repinta lo que depende de los cortes Real/Proyectado (tras cambiar un corte o el mes de cierre) sin esperar el eco de Firestore: KPI,
+// tabla y modal de SEP, Panel principal, % Ejecución, Visualizador (si se está viendo) y el control del mes de cierre.
+function refrescarVistasPorCortes() {
+  renderKpis();
+  renderTable(); // también repinta Reporte personalizado, % Ejecución y el modal abierto
+  renderDashboard();
+  if (!document.getElementById('tab-reportes').classList.contains('hidden')) renderVisualizador();
+  renderControlCierre();
+}
+
 // <colgroup> compartido por las 4 tablas del detalle, para que todas queden con el mismo
 // ancho de columnas (el reclamo de que "los cuadros están dispares en forma").
 const DETALLE_COLGROUP = `<colgroup><col style="width:210px;">${MESES_CARGA.map(() => '<col style="width:84px;">').join('')}<col style="width:112px;"></colgroup>`;
@@ -3429,7 +3555,19 @@ function buildDetalleHTML(rbd, printMode) {
       }).join('');
       return `<tr><td class="item-label">${itemName}</td>${cells}<td class="num item-total" id="ingresoitemtotal-${rbd}-${idx}">${fmtCLP(total)}</td></tr>`;
     }).join('');
-    return `<table class="detalle-table">${DETALLE_COLGROUP}
+    // Corte propio de ingresos de ESTE RBD (misma apariencia y lugar que "Remuneraciones reales hasta"). Si el RBD no tiene corte propio el
+    // selector muestra el efectivo (mes de cierre global o DATA.n_meses) y una nota lo dice. En el PDF (printMode) va como texto simple.
+    const hastaIng = corteIngresoRbd(rbd);
+    const realHastaIngControl = printMode
+      ? `<div class="rem-corte-control-print">Ingresos reales hasta: <strong>${MESES_CARGA_TITLE[hastaIng - 1]}</strong></div>`
+      : `<div class="ing-corte-control rem-corte-control">
+        <label for="ingRealHasta-${rbd}">Ingresos reales hasta:</label>
+        <select id="ingRealHasta-${rbd}" data-rbd="${rbd}" onchange="onIngRealHastaChange(this)">
+          ${MESES_CARGA_TITLE.map((mt, i) => `<option value="${i+1}" ${hastaIng === i+1 ? 'selected' : ''}>${mt}</option>`).join('')}
+        </select>
+        <span class="corte-origen">${escHtml(notaOrigenCorteIngreso(rbd))}</span>
+      </div>`;
+    return `${realHastaIngControl}<table class="detalle-table">${DETALLE_COLGROUP}
       <thead><tr><th>Ingreso SEP (detalle)</th>${mesHeaderCellsHTML('ingreso_item', rbd)}<th class="num">Total</th></tr></thead>
       <tbody>${filas}</tbody>
     </table>`;
@@ -3528,7 +3666,7 @@ function buildDetalleHTML(rbd, printMode) {
     <div style="margin-top:8px;">${bysProyeccionSectionHTML()}</div>
     ${comprasSectionHTML()}
     </div>
-    <div class="detalle-note">Ingreso SEP se divide en 3 filas — Preferente y Prioritario traen enero a julio reales (Liquidación Web Subvenciones Mineduc, por RBD) y agosto a diciembre parten como proyección editable (promedio de esos 7 meses); Carrera Docente parte en $0 y la completas tú mes a mes. Carrera Docente es de uso exclusivo en remuneraciones, así que se suma completa a la meta de remuneraciones (no al 30% de B&S). Remuneraciones parte en $0 en todos los meses — cárgala tú mes a mes, y el selector "reales hasta" de esa fila marca desde qué mes son solo una proyección tuya (no afecta ningún cálculo, es solo para que se vea claro). El total de "Preferente"+"Prioritario" alimenta "Ingreso SEP anual". Bienes y Servicios (Gasto B&S) = compras reales (Subt.22+Subt.29, siempre reales, se cargan como "Registro de compras" más abajo) + "Bienes y Servicios (Proyección)": puedes agregar cualquier cantidad de ítems (elegidos de la misma lista de cuentas que las compras) con su propia proyección mensual, siempre proyectada, que se SUMA al total de compras de cada mes (no lo reemplaza) — sirve para estimar gasto de meses que todavía no tienen compras documentadas, ya clasificado por ítem.</div>
+    <div class="detalle-note">Ingreso SEP se divide en 3 filas — Preferente y Prioritario traen enero a julio reales (Liquidación Web Subvenciones Mineduc, por RBD) y agosto a diciembre parten como proyección editable (promedio de esos 7 meses); el selector "Ingresos reales hasta" (arriba de la tabla de ingresos) marca hasta qué mes el ingreso se considera Real — por defecto, el mes de cierre de la pestaña SEP — y de ahí en adelante es proyección; Carrera Docente parte en $0 y la completas tú mes a mes. Carrera Docente es de uso exclusivo en remuneraciones, así que se suma completa a la meta de remuneraciones (no al 30% de B&S). Remuneraciones parte en $0 en todos los meses — cárgala tú mes a mes, y el selector "reales hasta" de esa fila marca desde qué mes son solo una proyección tuya (no afecta ningún cálculo, es solo para que se vea claro). El total de "Preferente"+"Prioritario" alimenta "Ingreso SEP anual". Bienes y Servicios (Gasto B&S) = compras reales (Subt.22+Subt.29, siempre reales, se cargan como "Registro de compras" más abajo) + "Bienes y Servicios (Proyección)": puedes agregar cualquier cantidad de ítems (elegidos de la misma lista de cuentas que las compras) con su propia proyección mensual, siempre proyectada, que se SUMA al total de compras de cada mes (no lo reemplaza) — sirve para estimar gasto de meses que todavía no tienen compras documentadas, ya clasificado por ítem.</div>
   </div>`;
 }
 
@@ -3910,6 +4048,220 @@ async function migrarDcDesdeDocOriginal() {
   }
 }
 document.getElementById('migrarDcBtn').addEventListener('click', migrarDcDesdeDocOriginal);
+
+// ============================================================================
+// ============== MES DE CIERRE GLOBAL (documento `_meta`) + "Aplicar a todas las entidades" ==============
+// El mes de cierre es el mes hasta el que los datos son Real en todo el panel (hoy Septiembre; pasa a Octubre cuando termina el pago de
+// remuneraciones de octubre). Se guarda en el documento `sep_carga_rbd/_meta` (campos `mes_cierre` 1–12, `mes_cierre_por`, `mes_cierre_en`) con
+// merge, así que NO pisa `items_22` / `items_29` que ese documento ya pudiera traer. Un `_meta` sin el campo, o con un valor dañado, equivale a
+// "sin definir" y el panel se comporta exactamente como antes (los ingresos de SEP usan DATA.n_meses).
+//   · Cambiar el selector solo mueve el default de los INGRESOS de SEP sin corte propio (ver corteIngresoRbd) y el aviso; no toca ningún corte
+//     explícito de una entidad.
+//   · "Aplicar a todas las entidades" (solo ADMIN_EMAILS) sí los fija: `ingreso_real_hasta_mes` y `rem.real_hasta_mes` de SEP y
+//     `otras_fuentes.{fuente}.real_hasta_mes` de las 9 fuentes, en writeBatch de ≤ 400 operaciones, igual que "Migrar DC".
+// ⚠ RESTRICCIÓN SOLO EN EL CLIENTE: quien esté en ADMIN_EMAILS es el único que ve y puede usar el selector y el botón, pero las reglas de Firestore
+// (firestore.rules, compartido con otras apps) NO distinguen administradores: cualquier correo autorizado podría escribir `_meta` con otro cliente.
+// ============================================================================
+let cierreCargado = false; // ¿ya se leyó `_meta` (primer snapshot)? Antes no se sabe si hay un mes de cierre y los controles quedan inactivos.
+function aplicarMetaCierre(meta) {
+  const m = objetoPlano(meta);
+  const mes = mesCorteValido(m.mes_cierre);
+  mesCierreGlobal = mes || null;
+  mesCierrePor = mes ? textoSeguro(m.mes_cierre_por) : '';
+  mesCierreEn = null;
+  if (mes && m.mes_cierre_en) {
+    try {
+      const v = m.mes_cierre_en;
+      const t = (v && typeof v.toDate === 'function') ? v.toDate() : new Date(v);
+      if (!isNaN(t.getTime())) mesCierreEn = t;
+    } catch (err) { /* fecha ilegible: solo se omite la nota de quién y cuándo */ }
+  }
+  cierreCargado = true;
+}
+function esAdminActual() { return !!currentUser && ADMIN_EMAILS.includes(currentUser.email); }
+function nombreMesCorte(n) { return MESES_CARGA_TITLE[n - 1] || String(n); }
+
+// Corte efectivo de cada entidad × origen: SEP (ingresos y remuneraciones de cada RBD) y las 9 fuentes ("Real hasta" de cada entidad).
+function cortesPorEntidad() {
+  const filas = [];
+  DATA.registros.forEach(r => {
+    const base = { rbd: r.rbd, nombre: r.nombre, titulo: 'RBD ' + r.rbd, fkey: 'sep', tab: 'panel' };
+    filas.push({ ...base, origen: 'sep_ingreso', etiqueta: 'SEP — Ingresos', etiquetaLarga: 'SEP — Ingresos', corte: corteIngresoRbd(r.rbd) });
+    filas.push({ ...base, origen: 'sep_rem', etiqueta: 'SEP — Remuneraciones', etiquetaLarga: 'SEP — Remuneraciones', corte: corteRemRbd(r.rbd) });
+  });
+  FUENTES_OTRAS.forEach(f => {
+    filasOtrasFuentes(f.key).forEach(r => {
+      filas.push({
+        rbd: r.rbd, nombre: r.nombre, titulo: otrasFuentesTituloEntidad(r, f.key), fkey: f.key, tab: 'of-' + f.key, origen: f.key,
+        etiqueta: DASH_META[f.key].corto, etiquetaLarga: f.label, corte: realHastaMesOtraFuente(ofDeEntidad(r.rbd, f.key)),
+      });
+    });
+  });
+  return filas;
+}
+// Las que NO coinciden con el mes de cierre (vacío si no hay mes de cierre definido: sin cierre no hay con qué comparar).
+function cortesDistintosAlCierre() {
+  return mesCierreGlobal ? cortesPorEntidad().filter(f => f.corte !== mesCierreGlobal) : [];
+}
+function textoAvisoCierre(n) {
+  return `⚠ ${n} ${n === 1 ? 'entidad con corte distinto' : 'entidades con corte distinto'} al cierre global`;
+}
+
+let cierreListaDistintas = []; // las filas del aviso tal como están pintadas (el clic en "Abrir detalle" las busca por posición)
+let cierreListaHtml = '';
+function renderControlCierre() {
+  const ctl = document.getElementById('cierreControl');
+  if (!ctl) return;
+  const esAdmin = esAdminActual();
+  const txt = document.getElementById('cierreMesTexto');
+  const meta = document.getElementById('cierreMeta');
+  if (!cierreCargado) {
+    txt.textContent = '—'; meta.textContent = '';
+  } else if (mesCierreGlobal) {
+    txt.textContent = nombreMesCorte(mesCierreGlobal);
+    const quien = mesCierrePor ? getNameFromEmail(mesCierrePor) : '';
+    meta.textContent = (quien || mesCierreEn)
+      ? `(fijado${quien ? ' por ' + quien : ''}${mesCierreEn ? ' ' + formatFechaHoraChile(mesCierreEn) : ''})`
+      : '';
+  } else {
+    txt.textContent = 'sin definir';
+    meta.textContent = `(los ingresos de SEP usan ${nombreMesCorte(DATA.n_meses)}, el último mes con datos reales de Mineduc)`;
+  }
+  // Solo ADMIN_EMAILS ve el selector y el botón; el resto lo ve como texto de solo lectura (ver el aviso de seguridad más arriba).
+  document.getElementById('cierreAdmin').classList.toggle('hidden', !esAdmin);
+  const sel = document.getElementById('cierreMesSelect');
+  const btn = document.getElementById('cierreAplicarBtn');
+  sel.disabled = !cierreCargado;
+  btn.disabled = !cierreCargado || !mesCierreGlobal;
+  if (document.activeElement !== sel) sel.value = mesCierreGlobal ? String(mesCierreGlobal) : '';
+  // Aviso de entidades con corte distinto al cierre (visible para todos; desaparece si todo coincide; solo con mes de cierre definido).
+  const distintas = cierreCargado ? cortesDistintosAlCierre() : [];
+  const aviso = document.getElementById('cierreAviso');
+  aviso.classList.toggle('hidden', !distintas.length);
+  const resumen = document.getElementById('cierreAvisoResumen');
+  const textoResumen = distintas.length ? `${textoAvisoCierre(distintas.length)} (${nombreMesCorte(mesCierreGlobal)})` : '';
+  if (resumen.textContent !== textoResumen) resumen.textContent = textoResumen;
+  cierreListaDistintas = distintas;
+  const lista = document.getElementById('cierreAvisoLista');
+  const html = !distintas.length ? '' :
+    `<table><thead><tr><th scope="col">Entidad</th><th scope="col">Fuente</th><th scope="col">Corte actual</th><th scope="col">Detalle</th></tr></thead><tbody>` +
+    distintas.map((f, i) => `<tr><td>${escHtml(f.titulo)} — ${escHtml(f.nombre)}</td><td>${escHtml(f.etiqueta)}</td><td>${escHtml(nombreMesCorte(f.corte))}</td>` +
+      `<td><button type="button" data-cierre-abrir="${i}" aria-label="Abrir el detalle de ${escHtml(f.titulo)}, ${escHtml(f.etiqueta)} (corte actual: ${escHtml(nombreMesCorte(f.corte))})">Abrir detalle</button></td></tr>`).join('') +
+    `</tbody></table>`;
+  if (html !== cierreListaHtml) { // sin repintar si no cambió: así no se pierde el desplazamiento ni el foco de la lista abierta
+    const top = lista.scrollTop;
+    lista.innerHTML = html;
+    lista.scrollTop = top;
+    cierreListaHtml = html;
+  }
+  document.getElementById('cierreAyuda').textContent =
+    'El mes de cierre es el corte Real/Proyectado por defecto de los ingresos de SEP (cada RBD puede tener el suyo en su detalle). Remuneraciones y las fuentes conservan su propio corte; ' +
+    'solo un administrador puede cambiar el mes de cierre y fijarlo de una vez en todas las entidades.';
+}
+// Mención de solo lectura en el Panel principal.
+function renderDashCierre() {
+  const el = document.getElementById('dashCierre');
+  if (!el) return;
+  if (!cierreCargado) { el.textContent = ''; return; }
+  const n = cortesDistintosAlCierre().length;
+  el.innerHTML = (mesCierreGlobal
+    ? `📅 Mes de cierre: <strong>${escHtml(nombreMesCorte(mesCierreGlobal))}</strong>`
+    : `📅 Mes de cierre: <strong>sin definir</strong> (los ingresos de SEP usan ${escHtml(nombreMesCorte(DATA.n_meses))})`) +
+    (n ? ` · ${escHtml(textoAvisoCierre(n))} <button type="button" onclick="irAPestana('panel')">Ver en la pestaña SEP</button>` : '');
+}
+
+// Selector del mes de cierre (solo admin). Guarda en `_meta` con merge (mes_cierre, mes_cierre_por; mes_cierre_en lo pone flushRbdSave con la hora del servidor).
+function cambiarMesCierre(valor) {
+  if (!esAdminActual()) {
+    alert('Esta herramienta de mantenimiento está restringida a Wilson Rojas.');
+    renderControlCierre();
+    return;
+  }
+  const mes = mesCorteValido(valor);
+  if (!mes || mes === mesCierreGlobal) { renderControlCierre(); return; }
+  mesCierreGlobal = mes; mesCierrePor = currentUser.email; mesCierreEn = new Date();
+  scheduleRbdSave(META_DOC_ID, { mes_cierre: mes, mes_cierre_por: currentUser.email });
+  flushRbdSaveNow(META_DOC_ID);
+  refrescarVistasPorCortes();
+}
+
+// Documentos a escribir: { rbd: { nombre, ingreso_real_hasta_mes?, rem?: {real_hasta_mes}, otras_fuentes?: { fuente: {real_hasta_mes} } } }, solo con los campos que cambian.
+function payloadsAplicarCierre(cambios, mes) {
+  const porDoc = {};
+  cambios.forEach(c => {
+    const p = porDoc[c.rbd] || (porDoc[c.rbd] = { nombre: c.nombre });
+    if (c.origen === 'sep_ingreso') p.ingreso_real_hasta_mes = mes;
+    else if (c.origen === 'sep_rem') p.rem = { ...(p.rem || {}), real_hasta_mes: mes };
+    else p.otras_fuentes = { ...(p.otras_fuentes || {}), [c.origen]: { real_hasta_mes: mes } };
+  });
+  return porDoc;
+}
+async function aplicarCierreATodasLasEntidades() {
+  if (!esAdminActual()) {
+    alert('Esta herramienta de mantenimiento está restringida a Wilson Rojas.');
+    return;
+  }
+  const mes = mesCierreGlobal;
+  if (!mes) {
+    alert('Primero elige el mes de cierre (selector "Cambiar a"): sin mes de cierre no hay corte que aplicar.');
+    return;
+  }
+  const mesTxt = nombreMesCorte(mes);
+  const cambios = cortesDistintosAlCierre();
+  if (!cambios.length) {
+    alert(`Todas las entidades ya tienen el corte en ${mesTxt}: no hay nada que cambiar.`);
+    return;
+  }
+  const porOrigen = new Map();
+  cambios.forEach(c => porOrigen.set(c.etiquetaLarga, (porOrigen.get(c.etiquetaLarga) || 0) + 1));
+  const detalle = Array.from(porOrigen.entries()).map(([k, n]) => `  • ${k}: ${n}`).join('\n');
+  const porDoc = payloadsAplicarCierre(cambios, mes);
+  const rbds = Object.keys(porDoc);
+  const ok = confirm(
+    `Se fijará ${mesTxt} como corte Real/Proyectado en ${cambios.length} ${cambios.length === 1 ? 'entidad' : 'entidades'} (${rbds.length} ${rbds.length === 1 ? 'documento' : 'documentos'}):\n\n${detalle}\n\n` +
+    `En ellas, los meses hasta ${mesTxt} pasan a Real y los posteriores a Proyectado. No se modifica ningún monto ni otro dato, y lo que ya está en ${mesTxt} no se toca. ` +
+    `Es seguro repetirlo.\n\n¿Aplicar ${mesTxt} a estas ${cambios.length} entidades?`
+  );
+  if (!ok) return;
+  flushTodasEdicionesPendientes(); // lo que alguien tecleó hace un instante (p. ej. otro corte) sale antes y este lote queda como lo último
+  // Pantalla: el cambio se ve de inmediato (el eco de Firestore trae lo mismo).
+  cambios.forEach(c => {
+    if (c.origen === 'sep_ingreso') ensureIngresoAgregado(c.rbd).real_hasta_mes = mes;
+    else if (c.origen === 'sep_rem') ensureSimple(c.rbd, 'rem_por_rbd').real_hasta_mes = mes;
+    else { ensureOtraFuente(c.rbd, c.origen).real_hasta_mes = mes; recomputeOtraFuente(c.rbd, c.origen); }
+  });
+  refrescarVistasPorCortes();
+  renderOtrasFuentesTable();
+  if (otrasFuentesRbdAbierto) renderOtrasFuentesModalContenido();
+  // Guardado: un set con merge por documento, en lotes de a lo más MAX_OPERACIONES_POR_LOTE operaciones (cada documento cuenta 2: el set y el serverTimestamp).
+  const docsPorLote = Math.max(1, Math.floor(MAX_OPERACIONES_POR_LOTE / OPERACIONES_POR_DOCUMENTO));
+  try {
+    const lotes = [];
+    for (let i = 0; i < rbds.length; i += docsPorLote) {
+      const batch = writeBatch(db);
+      rbds.slice(i, i + docsPorLote).forEach(rbd => {
+        batch.set(doc(db, CARGA_COLLECTION, rbd), { ...porDoc[rbd], lastModifiedBy: currentUser.email, lastModifiedAt: serverTimestamp() }, { merge: true });
+      });
+      lotes.push(batch.commit());
+    }
+    await Promise.all(lotes);
+    alert(`Listo: se fijó ${mesTxt} como corte en ${cambios.length} ${cambios.length === 1 ? 'entidad' : 'entidades'} (${rbds.length} ${rbds.length === 1 ? 'documento' : 'documentos'}).`);
+  } catch (err) {
+    alert('No se pudo guardar el corte para el resto del equipo: ' + err.message + '\nPuedes repetir "Aplicar a todas las entidades": solo reintenta lo que falte.');
+  }
+}
+(function montarControlCierre() {
+  const sel = document.getElementById('cierreMesSelect');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Elegir mes…</option>' + MESES_CARGA_TITLE.map((m, i) => `<option value="${i + 1}">${m}</option>`).join('');
+  sel.addEventListener('change', () => cambiarMesCierre(sel.value));
+  document.getElementById('cierreAplicarBtn').addEventListener('click', aplicarCierreATodasLasEntidades);
+  document.getElementById('cierreAvisoLista').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-cierre-abrir]');
+    const f = b && cierreListaDistintas[Number(b.getAttribute('data-cierre-abrir'))];
+    if (f) abrirEntidadDesdeDashboard({ fkey: f.fkey, tab: f.tab, rbd: f.rbd });
+  });
+})();
 const tableBodyEl = document.getElementById('tableBody');
 tableBodyEl.addEventListener('click', (e) => {
   const rowBtn = e.target.closest('.row-action-btn');
@@ -5643,8 +5995,8 @@ function renderDashComposicion(fuentes) {
 
 // ---- Evolución mensual consolidada: se arma mes a mes con las mismas reglas real/proyectado
 // que ya usan las pestañas (corte "Real hasta" por entidad en las fuentes; en SEP, Ingreso real
-// hasta DATA.n_meses y Remuneraciones hasta el corte de cada RBD; compras siempre reales; la
-// proyección de B&S siempre proyectada). Es la serie enero–diciembre completa: no depende del
+// hasta el corte de ingresos de cada RBD (propio > mes de cierre > DATA.n_meses) y Remuneraciones hasta el corte de
+// cada RBD; compras siempre reales; la proyección de B&S siempre proyectada). Es la serie enero–diciembre completa: no depende del
 // selector "Ver resumen hasta el mes" de SEP. ---
 function serieMensualVacia() { return { ing: new Array(12).fill(0), gas: new Array(12).fill(0) }; }
 // Partes mensuales (ingreso / remuneraciones / B&S, cada una separada en real y proyectado) de una
@@ -5681,13 +6033,15 @@ function partesMensualesOtraFuente(fuenteKey, out, entidadFiltro) {
   return cortes;
 }
 function partesMensualesSep(out) {
-  const cortes = [DATA.n_meses];
+  const cortes = [];
   DATA.registros.forEach(r => {
+    const corteIng = corteIngresoRbd(r.rbd);
+    cortes.push(corteIng);
     const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
     const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
     const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
     const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
-    if (ing) ing.items.forEach(it => MESES_CARGA.forEach((m, i) => { out[i + 1 <= DATA.n_meses ? 'real' : 'proy'].ing[i] += Number(it.meses[m]) || 0; }));
+    if (ing) ing.items.forEach(it => MESES_CARGA.forEach((m, i) => { out[i + 1 <= corteIng ? 'real' : 'proy'].ing[i] += Number(it.meses[m]) || 0; }));
     if (rem) { const hasta = rem.real_hasta_mes || DATA.n_meses; cortes.push(hasta); MESES_CARGA.forEach((m, i) => { out[i + 1 <= hasta ? 'real' : 'proy'].rem[i] += Number(rem.meses[m]) || 0; }); }
     if (ag) ag.items.forEach(it => MESES_CARGA.forEach((m, i) => { out.real.bys[i] += Number(it.meses[m]) || 0; }));
     if (bp) MESES_CARGA.forEach((m, i) => { out.proy.bys[i] += Number(bp.meses[m]) || 0; });
@@ -5842,7 +6196,8 @@ function renderDashboard() {
   const hayAlgo = fuentes.some(f => f.t.total.ingreso !== 0 || f.t.total.gasto !== 0);
   document.getElementById('dashAviso').innerHTML = hayAlgo ? '' : '<div class="dash-aviso">Todavía no hay datos cargados en SEP ni en las fuentes de financiamiento. Elige una pestaña y carga ingresos y gastos para ver el resumen.</div>';
   document.getElementById('dashNota').textContent =
-    `Cifras en vista ${DASH_VISTAS[dashVista]}. SEP: acumulado hasta ${MESES_CARGA_TITLE[corteMesIdx - 1]} (selector de la pestaña SEP). Fuentes: "Real hasta" propio de cada entidad (por defecto ${MESES_CARGA_TITLE[DATA.n_meses - 1]}). Saldo consolidado: ${fmtCLP(acc.saldo)}.`;
+    `Cifras en vista ${DASH_VISTAS[dashVista]}. SEP: acumulado hasta ${MESES_CARGA_TITLE[corteMesIdx - 1]} (selector de la pestaña SEP). Fuentes: "Real hasta" propio de cada entidad (${fraseDefaultFuentes()}). Saldo consolidado: ${fmtCLP(acc.saldo)}.`;
+  renderDashCierre();
   document.querySelectorAll('.dash-chips button').forEach(b => b.classList.toggle('active', b.dataset.dashVista === dashVista));
   renderDashCards(fuentes);
   renderDashComparativo(fuentes);
@@ -5876,7 +6231,7 @@ window.addEventListener('resize', () => {
 // mensual. Todo se arma a partir de "líneas" (reporteLineasPorFuente): una línea = un concepto de una
 // fuente, sumado sobre las entidades seleccionadas, con sus 12 meses separados en Real y Proyectado
 // según las MISMAS reglas que usa cada pestaña (corte "Real hasta" de cada entidad en las fuentes;
-// en SEP: ingreso real hasta DATA.n_meses, remuneraciones según rem.real_hasta_mes de cada RBD,
+// en SEP: ingreso real hasta el corte de ingresos de cada RBD (propio > mes de cierre > DATA.n_meses), remuneraciones según rem.real_hasta_mes de cada RBD,
 // compras siempre reales y proyección de B&S siempre proyectada). SEP se muestra con el año completo:
 // no depende del selector "Ver resumen hasta el mes" de su pestaña (con el corte por defecto —
 // diciembre— las cifras coinciden exactamente con las del dashboard y las tarjetas KPI).
@@ -5929,7 +6284,7 @@ function reporteLineasSep(sel) {
     const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
     ITEMS_INGRESO.forEach(nombre => {
       const it = ing ? ing.items.find(x => x.item === nombre) : null;
-      if (it) vzSumar(mapa, { fuenteKey: 'sep', tipo: 'ingreso', grupo: 'ingreso', concepto: nombre }, it.meses, DATA.n_meses);
+      if (it) vzSumar(mapa, { fuenteKey: 'sep', tipo: 'ingreso', grupo: 'ingreso', concepto: nombre }, it.meses, corteIngresoRbd(r.rbd));
     });
     if (rem) vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'rem', concepto: 'Remuneraciones' }, rem.meses, rem.real_hasta_mes || DATA.n_meses);
     if (ag) ag.items.forEach(it => vzSumar(mapa, { fuenteKey: 'sep', tipo: 'gasto', grupo: 'bys', subt: it.subtitulo, codigo: it.codigo, concepto: it.item }, it.meses, 'real'));
@@ -6151,7 +6506,7 @@ function renderVisualizador() {
   document.getElementById('vzNota').innerHTML =
     `Cada mes se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span>, ` +
     `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectado</span> o mixto según el "Real hasta" de cada entidad ` +
-    `(SEP: ingreso real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}, remuneraciones según el corte de cada RBD; compras siempre reales; proyecciones siempre proyectadas). ` +
+    `(SEP: ingreso real ${fraseCorteIngresoSep()}, remuneraciones según el corte de cada RBD; compras siempre reales; proyecciones siempre proyectadas). ` +
     `SEP se muestra con el año completo, sin depender del selector "Ver resumen hasta el mes".`;
 
   const sinSeleccion = !vzState.fuentes.size || !vzState.entidades.size;
@@ -6588,8 +6943,8 @@ function entidadAplicaConcepto(ent, concepto) {
 
 // A qué regla real/proyectado (ver esRealParaModo) corresponde cada tipo de concepto del
 // reporte — la usa renderReporte() para colorear cada celda según si ese mes es real o
-// proyectado para ESE RBD y ESE concepto en particular (Remuneraciones varía por RBD, el resto
-// es igual para todos).
+// proyectado para ESE RBD y ESE concepto en particular (Remuneraciones e Ingresos varían por RBD,
+// el resto es igual para todos).
 function modoParaConcepto(key) {
   if (key.startsWith('of|')) return 'of'; // las fuentes usan esRealParaConcepto (corte por entidad), no esRealParaModo
   if (key === 'rem') return 'rem';
@@ -6756,8 +7111,8 @@ function renderReporte() {
   document.getElementById('reporteCorteNota').innerHTML =
     `Cada celda se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span> o ` +
     `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
-    `(<b>SEP</b> — Ingreso: real hasta ${MESES_CARGA_TITLE[DATA.n_meses - 1]}; Remuneraciones: el corte propio de cada RBD; compras Subt.22/29: siempre reales; Bienes y Servicios Proyección: siempre proyectada) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
-    `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (por defecto ${MESES_CARGA_TITLE[DATA.n_meses - 1]}); B&S por código (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
+    `(<b>SEP</b> — Ingreso: real ${fraseCorteIngresoSep()}; Remuneraciones: el corte propio de cada RBD; compras Subt.22/29: siempre reales; Bienes y Servicios Proyección: siempre proyectada) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
+    `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (${fraseDefaultFuentes()}); B&S por código (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
     `Los subtotales de una fuente se colorean solo si todas las entidades coinciden. Un concepto solo genera filas para las entidades que le corresponden (RBD → SEP y fuentes por RBD; AC → fuentes por RBD; GESPARVU → JUNJI y Aporte Fiscal JUNJI).`;
 
   const tbody = document.getElementById('reporteTbody');
@@ -6787,16 +7142,21 @@ function renderReporte() {
     rows.push(...filasConcepto);
     if (ents.length > 1) {
       // SEP — 'rem' varía por RBD (cada uno tiene su propio corte "reales hasta"), así que un
-      // subtotal mezcla RBD con cortes distintos y no se colorea; los demás modos de SEP (ingreso,
-      // item, bys_proy) son iguales para todos los RBD y se colorean con uno de referencia.
+      // subtotal mezcla RBD con cortes distintos y no se colorea; 'ingreso_item' también tiene corte
+      // propio por RBD (ingreso_real_hasta_mes), así que se colorea solo si TODOS coinciden en ese mes
+      // (sin cambio mientras nadie defina un corte propio); los demás modos de SEP (item, bys_proy)
+      // son iguales para todos los RBD y se colorean con uno de referencia.
       // Fuentes — el subtotal se colorea solo si TODAS las entidades coinciden en ese mes
       // (mismo real/proyectado, sin celdas mixtas); si no, queda sin color.
+      const flagsCoinciden = () => mesesSel.map((m, i) => {
+        const f0 = filasConcepto[0].realFlags[i];
+        return (f0 !== null && filasConcepto.every(r => r.realFlags[i] === f0)) ? f0 : null;
+      });
       const realFlagsSubtotal = esSep
-        ? (modo === 'rem' ? mesesSel.map(() => null) : mesesSel.map(m => esRealParaModo(modo, ents[0].id, MESES_CARGA.indexOf(m) + 1)))
-        : mesesSel.map((m, i) => {
-            const f0 = filasConcepto[0].realFlags[i];
-            return (f0 !== null && filasConcepto.every(r => r.realFlags[i] === f0)) ? f0 : null;
-          });
+        ? (modo === 'rem' ? mesesSel.map(() => null)
+          : modo === 'ingreso_item' ? flagsCoinciden()
+          : mesesSel.map(m => esRealParaModo(modo, ents[0].id, MESES_CARGA.indexOf(m) + 1)))
+        : flagsCoinciden();
       rows.push({ rbd: '', nombre: '', concepto: `Subtotal — ${c.label}`, valores: subtotales, realFlags: realFlagsSubtotal, total: subtotales.reduce((s, v) => s + v, 0), esSubtotal: true });
     }
   });
@@ -7128,7 +7488,7 @@ function renderEjecucionFuente() {
   const mesNom = i => MESES_CARGA_TITLE[i - 1];
   const corteTxt = r.corteMin === r.corteMax ? `hasta ${mesNom(r.corteMin)}` : `entre ${mesNom(r.corteMin)} y ${mesNom(r.corteMax)} (cortes distintos entre entidades)`;
   const baseTxt = key === 'consolidado'
-    ? `Consolidado: suma SEP y las 9 fuentes (en SEP el ingreso es real hasta ${mesNom(DATA.n_meses)} y las remuneraciones hasta el corte de cada RBD). `
+    ? `Consolidado: suma SEP y las 9 fuentes (en SEP el ingreso es real ${fraseCorteIngresoSep()} y las remuneraciones hasta el corte de cada RBD). `
     : '';
   document.getElementById('ejecCorteNota').textContent = sinIngreso
     ? `${baseTxt}Sin ingreso cargado para esta selección: el % de ejecución se calcula contra el Ingreso anual Total (Real+Proy) y no se puede calcular todavía.`
@@ -7923,11 +8283,13 @@ function codigoDeError(err) { return String((err && err.code) || '').replace(/^f
 function esErrorTransitorio(err) { return CODIGOS_ERROR_TRANSITORIO.includes(codigoDeError(err)); }
 function retardoReintentoMs(n) { return Math.min(30000, 2000 * Math.pow(2, Math.max(0, n - 1))); } // 2 s, 4 s, 8 s, 16 s, 30 s, 30 s…
 
-// Cuántos cambios hay en un payload parcial: cada mes escrito de una celda, cada compra, cada corte "real hasta mes".
+// Cuántos cambios hay en un payload parcial: cada mes escrito de una celda, cada compra, cada corte "real hasta mes" (de remuneraciones,
+// de ingresos o de una fuente) y el mes de cierre.
+const CLAVES_CORTE = ['real_hasta_mes', 'ingreso_real_hasta_mes', 'mes_cierre'];
 function contarCambios(payload) {
   let n = 0;
   const rec = (v, clave) => {
-    if (!v || typeof v !== 'object' || Array.isArray(v)) { if (clave === 'real_hasta_mes') n++; return; }
+    if (!v || typeof v !== 'object' || Array.isArray(v)) { if (CLAVES_CORTE.includes(clave)) n++; return; }
     if (clave === 'compras') { n += Object.keys(v).length; return; }
     if (clave === 'meses') { const vals = Object.values(v); n += vals.some(x => x) ? vals.length : 1; return; }
     Object.keys(v).forEach(k => rec(v[k], k));
@@ -8210,6 +8572,7 @@ function aplicarSnapshot(snapshot) {
   const presentIds = new Set();
   const docsInvalidos = [];
   let latestAt = null, latestEmail = null;
+  let metaData = {}; // contenido del documento `_meta` (vacío si no vino en el snapshot)
 
   // Los documentos del snapshot + los RBD con ediciones sin confirmar que aún no existen en él (un cambio en una
   // entidad cuyo documento todavía no se crea no debe desaparecer de la pantalla).
@@ -8223,7 +8586,12 @@ function aplicarSnapshot(snapshot) {
     // El id se registra ANTES de leer el contenido: un documento dañado igual "existe", y nunca
     // debe tratarse como faltante (ensureRbdsFaltantes) ni recrearse encima.
     if (d.real) presentIds.add(d.id);
-    if (d.id === META_DOC_ID) return;
+    if (d.id === META_DOC_ID) {
+      // `_meta` no es un RBD: de ahí solo se lee el mes de cierre global (lo demás —items_22/items_29— sigue ignorado). Un `_meta` ilegible o con
+      // valores raros nunca rompe nada: el mes de cierre simplemente queda "sin definir".
+      try { metaData = { ...objetoPlano(d.data()) }; } catch (err) { metaData = {}; }
+      return;
+    }
 
     const rbd = d.id;
     // Firestore no valida tipos: un documento con un valor nulo, de otro tipo o no numérico (editado
@@ -8252,7 +8620,10 @@ function aplicarSnapshot(snapshot) {
         const total = MESES_CARGA.reduce((s, m) => s + meses[m], 0);
         return { item: textoSeguro(it.item), meses, total };
       });
-      nuevoIngreso[rbd] = { rbd, nombre, items: ingItems };
+      // Corte propio de ingresos (`ingreso_real_hasta_mes`, entero 1–12): solo se guarda en memoria si es válido, así un documento sin el campo (o
+      // con un valor dañado) queda exactamente como antes y el respaldo JSON no gana una clave nueva.
+      const ingPropio = mesCorteValido(data.ingreso_real_hasta_mes);
+      nuevoIngreso[rbd] = { rbd, nombre, items: ingItems, ...(ingPropio ? { real_hasta_mes: ingPropio } : {}) };
 
       const remRaw = objetoPlano(data.rem);
       const remMeses = mesesNum(remRaw.meses);
@@ -8340,6 +8711,7 @@ function aplicarSnapshot(snapshot) {
   CARGA_MANUAL.compras_por_rbd = nuevoCompras;
   CARGA_MANUAL.bys_proyeccion_por_rbd = nuevoBysProyeccion;
   CARGA_MANUAL.otras_fuentes_por_rbd = nuevoOtrasFuentes;
+  aplicarMetaCierre(superponerEdicionesSinConfirmar(META_DOC_ID, metaData)); // antes de recalcular: el mes de cierre mueve el default de los ingresos
 
   DATA.registros.forEach(recomputeRegistro);
   filasDeUniverso('rbd_ac').forEach(r => recomputeTodasOtrasFuentes(r.rbd));
@@ -8354,6 +8726,7 @@ function aplicarSnapshot(snapshot) {
   renderDashboard();
   if (!document.getElementById('tab-reportes').classList.contains('hidden')) renderVisualizador();
   actualizarBotonMigrarDc(); // el contador "(n)" sigue a los datos (cambios propios y de otras personas)
+  renderControlCierre();     // mes de cierre + aviso de entidades con corte distinto (también sigue a los cambios remotos)
 
   syncEstado.docsInvalidos = docsInvalidos;
   syncEstado.ultimaEdicion = latestEmail && latestAt ? { email: latestEmail, at: latestAt } : null;
@@ -8532,7 +8905,8 @@ const errorRetenido = {};      // rbd -> código del último error permanente de
 const reintentosEscritura = {};
 let escriturasEnVuelo = 0;
 let ultimoErrorPermanente = '';
-const sinAuditoria = (payload) => { const o = { ...payload }; delete o.lastModifiedBy; delete o.lastModifiedAt; return o; };
+// `mes_cierre_en` (hora del servidor del mes de cierre) también es auditoría: lo agrega flushRbdSave en cada envío, nunca se reintenta ni se superpone.
+const sinAuditoria = (payload) => { const o = { ...payload }; delete o.lastModifiedBy; delete o.lastModifiedAt; delete o.mes_cierre_en; return o; };
 
 async function flushRbdSave(rbd, { manual = false } = {}) {
   clearTimeout(pendingTimers[rbd]);
@@ -8548,6 +8922,7 @@ async function flushRbdSave(rbd, { manual = false } = {}) {
   if (!payload) return;
   payload.lastModifiedBy = currentUser.email;
   payload.lastModifiedAt = serverTimestamp();
+  if (rbd === META_DOC_ID && payload.mes_cierre !== undefined) payload.mes_cierre_en = serverTimestamp(); // cuándo se fijó el mes de cierre (hora del servidor)
   const copiaEnVuelo = JSON.parse(JSON.stringify(sinAuditoria(payload)));   // lo que viaja, para superponerlo mientras el SDK no lo refleje
   (enVuelo[rbd] = enVuelo[rbd] || []).push(copiaEnVuelo);
   escriturasEnVuelo++;

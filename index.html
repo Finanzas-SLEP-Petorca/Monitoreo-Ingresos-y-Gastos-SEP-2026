@@ -291,6 +291,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .compra-aviso { color:var(--tone-amber-fg); font-weight:700; cursor:help; }
   /* Avisos de fecha / cuenta de las compras (F-11 / L-05): marca por fila, resumen sobre la tabla y avisos en vivo del formulario (solo avisan, no impiden guardar). */
   .compra-aviso-fecha { display:inline-block; margin-left:6px; padding:0 6px; border-radius:9px; border:1px solid var(--tone-amber-border); background:var(--tone-amber-bg); color:var(--tone-amber-fg); font-size:11px; font-weight:600; cursor:help; }
+  .compra-aviso-fecha.compra-aviso-cuenta { display:block; margin:2px 0 0; white-space:normal; border-radius:8px; } /* la 1.ª columna mide 210 px y recorta: la marca va en una 2.ª línea */
   .compra-form-avisos { grid-column:1 / -1; }
   .compra-form-avisos:empty { display:none; }
   .compra-form-avisos .plan-nota { margin:2px 0; }
@@ -2892,7 +2893,7 @@ function resumenAvisosComprasHTML(res) {
 function insigniasAvisoHTML(avisos, celda) {
   const porTexto = new Map();
   avisos.filter(a => a.celda === celda).forEach(a => porTexto.set(a.texto, (porTexto.get(a.texto) || []).concat(a.titulo)));
-  return Array.from(porTexto, ([texto, titulos]) => ` <span class="compra-aviso-fecha" title="${escHtml(titulos.join(' '))}">${escHtml(texto)}</span>`).join('');
+  return Array.from(porTexto, ([texto, titulos]) => ` <span class="compra-aviso-fecha${celda === 'cuenta' ? ' compra-aviso-cuenta' : ''}" title="${escHtml(titulos.join(' '))}">${escHtml(texto)}</span>`).join('');
 }
 function recomputeItemsDesdeCompras(rbd) {
   const ag = ensureAgregado(rbd);

@@ -2944,11 +2944,12 @@ function hashTexto53(str) {
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
   return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36).padStart(11, '0');
 }
-// Índice firma → ID de las compras ya cargadas de una entidad (la primera con cada contenido).
+// Índice firma → ID de las compras ya cargadas de una entidad (la primera con cada contenido). Las compras guardadas bajo una clave NO usable (la
+// "0" que dejó el bug antiguo) no entran: una fila sin ID nunca se une a esa copia corrupta (si hay otra con el mismo contenido y un ID real, se une a esa).
 function indiceComprasPorFirma(compras) {
   const idx = new Map();
   Object.entries(compras || {}).forEach(([id, c]) => {
-    if (!c || typeof c !== 'object') return;
+    if (!c || typeof c !== 'object' || !idCompraImportadoUsable(id)) return;
     const f = firmaContenidoCompra(c);
     if (!idx.has(f)) idx.set(f, id);
   });
@@ -4802,6 +4803,8 @@ modalBodyEl.addEventListener('click', (e) => {
 modalBodyEl.addEventListener('beforeinput', bloquearTecleoNoNumerico);
 modalBodyEl.addEventListener('input', alCambiarFormularioCompra);
 modalBodyEl.addEventListener('change', alCambiarFormularioCompra);
+modalBodyEl.addEventListener('keyup', alCambiarFormularioCompra);    // una fecha a medio teclear no dispara "input" (su valor sigue vacío)
+modalBodyEl.addEventListener('focusout', alCambiarFormularioCompra);
 modalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);
@@ -5503,6 +5506,8 @@ otrasFuentesModalBodyEl.addEventListener('change', (e) => {
 otrasFuentesModalBodyEl.addEventListener('beforeinput', bloquearTecleoNoNumerico);
 otrasFuentesModalBodyEl.addEventListener('input', alCambiarFormularioCompra);
 otrasFuentesModalBodyEl.addEventListener('change', alCambiarFormularioCompra);
+otrasFuentesModalBodyEl.addEventListener('keyup', alCambiarFormularioCompra);
+otrasFuentesModalBodyEl.addEventListener('focusout', alCambiarFormularioCompra);
 otrasFuentesModalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);

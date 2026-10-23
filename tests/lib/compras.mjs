@@ -48,6 +48,7 @@ export async function importarLibro(h, inputSelector, buffer, nombre = 'carga.xl
   const antes = h.dialogs.length;
   await h.page.setInputFiles(inputSelector, { name: nombre, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer });
   for (let i = 0; i < 200 && h.dialogs.length === antes; i++) await h.page.waitForTimeout(50); // el alert llega tras leer el archivo
+  await h.page.waitForTimeout(700); // el guardado de una importación es con debounce (~400 ms): se espera a que salga el write
   await h.flushWrites();
   await h.waitIdle();
   return h.dialogs.slice(antes).map(d => d.message);

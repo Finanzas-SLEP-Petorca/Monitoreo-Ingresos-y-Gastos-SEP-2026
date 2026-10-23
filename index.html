@@ -289,6 +289,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .plan-nota.plan-nota-aviso { background:var(--tone-amber-bg); border-color:var(--tone-amber-border); color:var(--tone-amber-fg); }
   .compra-no-habilitada td { background:var(--tone-amber-bg); }
   .compra-aviso { color:var(--tone-amber-fg); font-weight:700; cursor:help; }
+  /* Avisos de fecha / cuenta de las compras (F-11 / L-05): marca por fila, resumen sobre la tabla y avisos en vivo del formulario (solo avisan, no impiden guardar). */
+  .compra-aviso-fecha { display:inline-block; margin-left:6px; padding:0 6px; border-radius:9px; border:1px solid var(--tone-amber-border); background:var(--tone-amber-bg); color:var(--tone-amber-fg); font-size:11px; font-weight:600; cursor:help; }
+  .compra-form-avisos { grid-column:1 / -1; }
+  .compra-form-avisos:empty { display:none; }
+  .compra-form-avisos .plan-nota { margin:2px 0; }
   .detalle-sin-compras { color:var(--text-muted); font-style:italic; text-align:left !important; padding:10px 8px !important; }
 
   .bysproy-add-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
@@ -2394,6 +2399,34 @@ function codigoTipoDocumentoSupereduc(tipo) {
   if (CODIGOS_TIPO_OFICIALES.has(mayus)) return mayus;
   return CODIGO_POR_NOMBRE_TIPO.get(claveTipoDocumento(t)) || '';
 }
+// ----------------------------------------------------------------------------
+// Signo de las notas de crédito / débito (hallazgo L-03). Antes el signo dependía de lo que escribiera la persona: una nota de crédito
+// cargada en positivo SUMABA gasto en vez de restarlo. SUPEREDUC espera la nota de CRÉDITO en NEGATIVO. Regla única, aplicada en TODO
+// el flujo (lectura de Firestore → sanitizaCompra; formulario; importadores de Excel; cálculos; tablas; CSV/Excel/PDF):
+//   · Nota de crédito (NOTACRE): montoGasto y montoDocumento SIEMPRE negativos (−|monto|).
+//   · Nota de débito (NOTADEB): SIEMPRE positivos (+|monto|).
+//   · Cualquier otro tipo: se deja como se digitó (una factura en negativo sigue en negativo; no se inventan signos).
+// Un documento de Firestore con una NC guardada en positivo se normaliza EN MEMORIA al leerlo (el valor guardado se corrige solo la próxima vez
+// que se edite esa compra). Las funciones son idempotentes: aplicarlas dos veces da lo mismo.
+// ----------------------------------------------------------------------------
+function signoDeTipoDocumento(tipo) {
+  const cod = codigoTipoDocumentoSupereduc(tipo);
+  return cod === 'NOTACRE' ? -1 : (cod === 'NOTADEB' ? 1 : 0);
+}
+function montoConSignoDeTipo(tipo, monto) {
+  const m = num(monto);
+  const s = signoDeTipoDocumento(tipo);
+  if (s === 0) return m;
+  return m === 0 ? 0 : s * Math.abs(m);
+}
+// Monto de gasto / de documento de una compra con el signo que le corresponde por su tipo: lo ÚNICO que debe leer cualquier cálculo,
+// tabla o exportación (nunca `c.montoGasto` a secas).
+function montoGastoCompra(c) { return montoConSignoDeTipo(c && c.tipoDocumento, c && c.montoGasto); }
+function montoDocumentoCompra(c) { return montoConSignoDeTipo(c && c.tipoDocumento, c && c.montoDocumento); }
+// Copia de `campos` con los dos montos normalizados (formulario e importadores, antes de guardar).
+function conSignoDeNota(campos) {
+  return { ...campos, montoGasto: montoGastoCompra(campos), montoDocumento: montoDocumentoCompra(campos) };
+}
 // 'aaaa-mm-dd' (como guarda el panel) o 'dd-mm-aaaa' → { texto: 'dd-mm-aaaa', valida, anio, orden }.
 // Una fecha que no existe (31-02) o con otro formato queda tal cual y valida:false.
 function fechaSupereduc(valor) {
@@ -2510,8 +2543,9 @@ function normalizaFilaCompraSupereduc(c) {
     if (fDoc.valida && fPago.orden < fDoc.orden) problemas.push('pagoAntes');
   }
   // En valor absoluto: una nota de crédito se guarda en negativo (-200.000 contra -238.000 del documento)
-  // y no debe marcarse como "gasto mayor que el documento".
-  if (Math.abs(num(c.montoGasto)) > Math.abs(num(c.montoDocumento))) problemas.push('gastoMayor');
+  // y no debe marcarse como "gasto mayor que el documento". Los montos salen con el signo de su tipo (NC negativa, ND positiva).
+  const montoGasto = montoGastoCompra(c), montoDocumento = montoDocumentoCompra(c);
+  if (Math.abs(montoGasto) > Math.abs(montoDocumento)) problemas.push('gastoMayor');
   if (descripcionCompleta.length > 100) problemas.push('descLarga');
   if (!docOrig.ok) problemas.push('docOrig');
   if (CODIGOS_TIPO_HONORARIOS.has(codigoTipo)) problemas.push('honorarios');
@@ -2521,6 +2555,7 @@ function normalizaFilaCompraSupereduc(c) {
     fechaPago: fPago.texto,
     descripcion: descripcionCompleta.slice(0, 100).trim(),
     rut: rutSupereduc(c.rutProveedor),
+    montoGasto, montoDocumento,
     documentoOriginal: docOrig.texto,
     problemas,
   };
@@ -2537,7 +2572,7 @@ function construirCsvComprasSupereduc(entradas) {
     lines.push([
       csvEscape(rbd), csvEscape(subvencion), csvEscape(compra.codigo), csvEscape(n.tipo), csvEscape(compra.nroDocumento),
       csvEscape(n.fechaDocumento), csvEscape(n.fechaPago), csvTexto(n.descripcion), csvEscape(n.rut), csvTexto(compra.nombreProveedor),
-      csvEscape(compra.montoGasto), csvEscape(compra.montoDocumento), csvEscape(n.documentoOriginal),
+      csvEscape(n.montoGasto), csvEscape(n.montoDocumento), csvEscape(n.documentoOriginal),
     ].join(';'));
     diag.filas++;
     if (n.problemas.length) {
@@ -2697,7 +2732,12 @@ function estadoTagHTML(r) {
 }
 function nombreTagsHTML(r) {
   let tags = '';
-  if (r.anomalia) tags += ' <span class="tag anomalia">revisar</span>';
+  if (r.anomalia || r.compras_con_avisos > 0) {
+    const motivos = [];
+    if (r.anomalia) motivos.push('el gasto de Bienes y Servicios supera 3 veces el marco anual: posible error de imputación');
+    if (r.compras_con_avisos > 0) motivos.push(`${r.compras_con_avisos} compra${r.compras_con_avisos === 1 ? '' : 's'} con avisos de fecha o de cuenta (se ven en el detalle del RBD)`);
+    tags += ` <span class="tag anomalia" title="${escHtml(motivos.join('; '))}">revisar</span>`;
+  }
   if (r.alerta_sep_sin_marco) tags += ' <span class="tag alerta-sep">⚠ gasto SEP indebido</span>';
   return tags;
 }
@@ -2734,23 +2774,125 @@ function mesFromFechaISO(fecha) {
   if (!m) return null;
   return MESES_CARGA[Number(m[2]) - 1] || null;
 }
+// QUÉ compras entran en los totales (única regla; itemsFromCompras y los avisos de abajo la comparten). Una compra se EXCLUYE de todo total
+// (por ítem, por mes, Real/Proyectado, Visualizador, Reportes, Panel principal, % Ejecución) cuando:
+//   1. su código de cuenta no está en el catálogo (SEP: Subt. 22/29 de SEP; fuentes: plan de cuentas 2026), o
+//   2. su Fecha Documento no empieza con aaaa-mm-dd (p. ej. "10/03/2026", "2026-3-5", "10-03-2026", vacía, "marzo") o su mes no existe
+//      ("2026-13-01", "2026-00-10").
+// En cambio SÍ entran: cualquier año (2025, 2027, 9999: solo se mira el mes, ignorando el año), un día inexistente ("2026-02-31", "2026-04-99") y
+// cualquier texto detrás de la fecha. La Fecha Pago nunca se usa en los totales. Los totales NO cambiaron: esto solo se avisa (ver avisosCompra).
+function mesDeCompraEnTotales(c, catalogo) {
+  return { cat: catalogo[c.codigo] || null, mes: mesFromFechaISO(c.fechaDocumento) };
+}
 function itemsFromCompras(comprasMap, catalogo = CUENTAS_SEP_BY_CODIGO) {
   const buckets = {};
   Object.values(comprasMap || {}).forEach(c => {
     if (!c || typeof c !== 'object') return;
-    const cat = catalogo[c.codigo];
-    const mes = mesFromFechaISO(c.fechaDocumento);
+    const { cat, mes } = mesDeCompraEnTotales(c, catalogo);
     if (!cat || !mes) return;
     if (!buckets[c.codigo]) {
       const meses = {};
       MESES_CARGA.forEach(m => meses[m] = 0);
       buckets[c.codigo] = { subtitulo: cat.subt, item: cat.nombre, codigo: c.codigo, meses, total: 0 };
     }
-    buckets[c.codigo].meses[mes] += num(c.montoGasto);
+    buckets[c.codigo].meses[mes] += montoGastoCompra(c); // con el signo de su tipo: la nota de crédito RESTA (L-03)
   });
   const items = Object.values(buckets);
   items.forEach(it => { it.total = MESES_CARGA.reduce((s, m) => s + it.meses[m], 0); });
   return items;
+}
+
+// ---- Avisos de fecha y de gasto "sin contabilizar" (F-11 / L-05): SOLO avisos, no cambian ningún total ----
+// El año del panel: una fecha de otro año se suma igual (se mira el mes) pero se avisa; SUPEREDUC solo recibe fechas de 2026.
+const ANIO_PANEL = 2026;
+// Qué pasa con una fecha de compra en los totales: { estado, mes, f }.
+//   'vacia'       sin fecha                                         → no se contabiliza
+//   'noContabiliza' no empieza con aaaa-mm-dd o su mes no existe     → no se contabiliza
+//   'inexistente' día que no existe en el calendario (2026-02-31)    → se contabiliza (por su mes) pero SUPEREDUC la rechaza
+//   'fueraAnio'   fecha real de otro año (2025-12-30)                → se contabiliza en el mismo mes de 2026
+//   'ok'
+function diagnosticoFechaCompra(valor) {
+  const s = textoSeguro(valor).trim();
+  if (!s) return { estado: 'vacia', mes: null, f: null };
+  const mes = mesFromFechaISO(s);
+  if (!mes) return { estado: 'noContabiliza', mes: null, f: null };
+  const f = fechaSupereduc(s);
+  if (!f.valida) return { estado: 'inexistente', mes, f };
+  if (f.anio !== ANIO_PANEL) return { estado: 'fueraAnio', mes, f };
+  return { estado: 'ok', mes, f };
+}
+const TEXTO_AVISO_FECHA_FUERA = '⚠ fecha fuera de 2026';
+const TEXTO_AVISO_FECHA_INVALIDA_EXCLUIDA = '⚠ fecha no válida: no se contabiliza';
+const TEXTO_AVISO_FECHA_INVALIDA = '⚠ fecha no válida';
+const TEXTO_AVISO_CUENTA_EXCLUIDA = '⚠ cuenta no reconocida: no se contabiliza';
+// Avisos de UNA compra: [{ clave, celda: 'doc'|'pago'|'cuenta', texto, titulo, excluye }]. `excluye` = la compra NO entra en ningún total.
+function avisosCompra(c, catalogo) {
+  const out = [];
+  if (!c || typeof c !== 'object') return out;
+  const { cat } = mesDeCompraEnTotales(c, catalogo);
+  const d = diagnosticoFechaCompra(c.fechaDocumento);
+  const vDoc = textoSeguro(c.fechaDocumento).trim();
+  if (d.estado === 'vacia' || d.estado === 'noContabiliza') {
+    out.push({ clave: 'fechaNoValida', celda: 'doc', excluye: true, texto: TEXTO_AVISO_FECHA_INVALIDA_EXCLUIDA,
+      titulo: d.estado === 'vacia'
+        ? 'La compra no tiene fecha de documento: no entra en ningún total (ni por ítem ni por mes) hasta que la completes.'
+        : `La fecha de documento «${vDoc}» no tiene el formato aaaa-mm-dd (o su mes no existe): la compra NO entra en ningún total (ni por ítem ni por mes) hasta que la corrijas.` });
+  } else if (d.estado === 'inexistente') {
+    out.push({ clave: 'fechaInexistente', celda: 'doc', excluye: false, texto: TEXTO_AVISO_FECHA_INVALIDA,
+      titulo: `La fecha de documento ${vDoc} no existe en el calendario. Se cuenta en ${MESES_CARGA_TITLE[MESES_CARGA.indexOf(d.mes)]} (los totales solo miran el mes), pero SUPEREDUC la rechazaría.` });
+  } else if (d.estado === 'fueraAnio') {
+    out.push({ clave: 'fechaFuera', celda: 'doc', excluye: false, texto: TEXTO_AVISO_FECHA_FUERA,
+      titulo: `La fecha de documento (${vDoc}) está fuera de ${ANIO_PANEL}. Los totales solo miran el mes y la suman en ${MESES_CARGA_TITLE[MESES_CARGA.indexOf(d.mes)]} de ${ANIO_PANEL}: revisa si corresponde.` });
+  }
+  const vPago = textoSeguro(c.fechaPago).trim();
+  if (vPago) {
+    const f = fechaSupereduc(vPago);
+    if (f.valida && f.anio !== ANIO_PANEL) {
+      out.push({ clave: 'pagoFuera', celda: 'pago', excluye: false, texto: TEXTO_AVISO_FECHA_FUERA,
+        titulo: `La fecha de pago (${vPago}) está fuera de ${ANIO_PANEL}: SUPEREDUC exige fechas de pago entre el 01-01-${ANIO_PANEL} y el 31-12-${ANIO_PANEL}. No cambia los totales.` });
+    }
+  }
+  if (!cat) {
+    out.push({ clave: 'cuentaNoReconocida', celda: 'cuenta', excluye: true, texto: TEXTO_AVISO_CUENTA_EXCLUIDA,
+      titulo: `El código de cuenta «${textoSeguro(c.codigo)}» no está en el catálogo de cuentas de este registro: la compra NO entra en ningún total hasta que se reclasifique.` });
+  }
+  return out;
+}
+// Resumen de los avisos de un conjunto de compras (mapa id → compra): cuántas compras tienen avisos, cuántas (y cuánto, NETO con el signo de
+// su tipo) quedan fuera de los totales y cuántas por cada causa.
+function resumenAvisosCompras(comprasMap, catalogo) {
+  const res = { n: 0, nExcluidas: 0, sinContabilizar: 0, porClave: {} };
+  Object.values(comprasMap || {}).forEach(c => {
+    const av = avisosCompra(c, catalogo);
+    if (!av.length) return;
+    res.n++;
+    new Set(av.map(a => a.clave)).forEach(k => { res.porClave[k] = (res.porClave[k] || 0) + 1; });
+    if (av.some(a => a.excluye)) { res.nExcluidas++; res.sinContabilizar += montoGastoCompra(c); }
+  });
+  return res;
+}
+const ROTULO_CAUSA_AVISO = {
+  fechaNoValida: ['con fecha no válida (no se contabiliza)', 'con fecha no válida (no se contabilizan)'],
+  fechaInexistente: ['con una fecha que no existe en el calendario', 'con una fecha que no existe en el calendario'],
+  fechaFuera: ['con fecha de documento fuera de 2026', 'con fecha de documento fuera de 2026'],
+  pagoFuera: ['con fecha de pago fuera de 2026', 'con fecha de pago fuera de 2026'],
+  cuentaNoReconocida: ['con una cuenta no reconocida (no se contabiliza)', 'con una cuenta no reconocida (no se contabilizan)'],
+};
+// Resumen sobre la tabla de compras de un RBD / entidad ('' si ninguna compra tiene avisos).
+function resumenAvisosComprasHTML(res) {
+  if (!res || !res.n) return '';
+  const detalle = Object.keys(ROTULO_CAUSA_AVISO).filter(k => res.porClave[k])
+    .map(k => `${res.porClave[k]} ${ROTULO_CAUSA_AVISO[k][res.porClave[k] === 1 ? 0 : 1]}`).join(', ');
+  const sin = res.nExcluidas
+    ? `; ${fmtCLP(res.sinContabilizar)} sin contabilizar (${res.nExcluidas} compra${res.nExcluidas === 1 ? '' : 's'} que no ${res.nExcluidas === 1 ? 'entra' : 'entran'} en ningún total)`
+    : '';
+  return `<div class="compras-avisos-resumen plan-nota plan-nota-aviso">⚠ ${res.n} compra${res.n === 1 ? '' : 's'} con avisos${sin}. ${escHtml(detalle)}. Pasa el cursor sobre la marca ⚠ de cada fila para ver el detalle.</div>`;
+}
+// Marcas ⚠ de una fila de la tabla de compras, de la celda `celda` ('doc' | 'pago' | 'cuenta'): una por texto distinto, con el detalle en `title`.
+function insigniasAvisoHTML(avisos, celda) {
+  const porTexto = new Map();
+  avisos.filter(a => a.celda === celda).forEach(a => porTexto.set(a.texto, (porTexto.get(a.texto) || []).concat(a.titulo)));
+  return Array.from(porTexto, ([texto, titulos]) => ` <span class="compra-aviso-fecha" title="${escHtml(titulos.join(' '))}">${escHtml(texto)}</span>`).join('');
 }
 function recomputeItemsDesdeCompras(rbd) {
   const ag = ensureAgregado(rbd);
@@ -2760,6 +2902,73 @@ function recomputeItemsDesdeCompras(rbd) {
 function generarCompraId() {
   return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
+
+// ---- ID de las compras que se importan desde Excel (hallazgo L-14) ----
+// La columna ID del Excel de respaldo permite reimportar sin duplicar: fila con ID real = actualiza esa compra. El problema eran los IDs
+// "no usables": una celda vacía llega como el número 0 y un Excel exportado puede traer el texto "0". Con un ID vacío cada importación
+// inventaba un ID nuevo (reimportar el mismo archivo duplicaba todas las compras) y con "0" todas las filas de un RBD colapsaban en una sola
+// compra con la clave "0" (se perdían compras y quedaba el rastro que borra "Revisar duplicados (ID "0")"). Ahora un ID no usable cuenta como
+// SIN ID y la compra recibe una clave DETERMINISTA calculada con su contenido: reimportar el mismo archivo da las mismas claves (idempotente).
+//
+// Composición de la clave (firmaContenidoCompra): código de cuenta + tipo de documento (por código SUPEREDUC) + N° documento + fecha documento +
+// fecha pago + monto gasto + monto documento (los dos con el signo de su tipo y redondeados a pesos, como los exporta el Excel) + RUT normalizado
+// + descripción + nombre del proveedor (sin mayúsculas ni espacios repetidos). Se incluyen descripción y proveedor aunque el Excel no los pida como
+// identidad porque dos boletas sin N° ni RUT del mismo día y monto, pero de cosas distintas, son compras distintas y no deben pisarse. NO entran
+// N° DC ni Documento Original (anotaciones que pueden completarse después sin que la compra deje de ser la misma).
+// Decisión sobre idénticas: si dos filas ID-less del archivo (o una fila y una compra ya guardada, con cualquier ID) tienen EXACTAMENTE el mismo
+// contenido se tratan como UNA sola compra; si difieren en algo de lo anterior, son compras distintas.
+const PREFIJO_ID_COMPRA_IMPORTADA = 'imp-';
+const RE_ID_COMPRA_NO_USABLE = /^(0+|undefined|null|nan|#n\/a|#ref!|#value!|-+)$/i;
+// El ID de una celda del Excel como texto, o '' si no es usable (vacío, espacios, 0 / "0" / "00", "undefined", "NaN", "#N/A", "-"…).
+function idCompraImportadoUsable(idRaw) {
+  if (idRaw === undefined || idRaw === null) return '';
+  const t = String(idRaw).trim();
+  return (t === '' || RE_ID_COMPRA_NO_USABLE.test(t)) ? '' : t;
+}
+function firmaContenidoCompra(c) {
+  const t = (v) => textoSeguro(v).normalize('NFC').replace(/\s+/g, ' ').trim().toLowerCase();
+  const tipo = codigoTipoDocumentoSupereduc(c.tipoDocumento) || t(c.tipoDocumento);
+  return JSON.stringify([
+    textoSeguro(c.codigo).trim(), tipo, t(c.nroDocumento), textoSeguro(c.fechaDocumento).trim(), textoSeguro(c.fechaPago).trim(),
+    Math.round(montoGastoCompra(c)), Math.round(montoDocumentoCompra(c)), rutSupereduc(c.rutProveedor).toUpperCase(), t(c.descripcion), t(c.nombreProveedor),
+  ]);
+}
+// Hash de 53 bits (cyrb53) de un texto, en base 36 de 11 caracteres.
+function hashTexto53(str) {
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36).padStart(11, '0');
+}
+// Índice firma → ID de las compras ya cargadas de una entidad (la primera con cada contenido).
+function indiceComprasPorFirma(compras) {
+  const idx = new Map();
+  Object.entries(compras || {}).forEach(([id, c]) => {
+    if (!c || typeof c !== 'object') return;
+    const f = firmaContenidoCompra(c);
+    if (!idx.has(f)) idx.set(f, id);
+  });
+  return idx;
+}
+// ID con el que se guarda la fila de un Excel: el que trae (si es usable) o, si no, el de la compra idéntica que ya existe, o la clave
+// determinista de su contenido ("imp-<hash>"; si esa clave la ocupa OTRA compra —colisión de hash o una compra editada después de importarla— se
+// prueba "imp-<hash>-2", "-3"… para no pisarla). `compras` = mapa actual de la entidad; `idx` = su índice (se mantiene al día con `registrarCompraEnIndice`).
+function idCompraParaImportar(idRaw, campos, compras, idx) {
+  const usable = idCompraImportadoUsable(idRaw);
+  if (usable) return usable;
+  const firma = firmaContenidoCompra(campos);
+  const existente = idx.get(firma);
+  if (existente !== undefined && compras[existente] && firmaContenidoCompra(compras[existente]) === firma) return existente;
+  const base = PREFIJO_ID_COMPRA_IMPORTADA + hashTexto53(firma);
+  let id = base, n = 1;
+  while (compras[id] && firmaContenidoCompra(compras[id]) !== firma) id = base + '-' + (++n);
+  return id;
+}
+function registrarCompraEnIndice(idx, id, campos) { idx.set(firmaContenidoCompra(campos), id); }
 
 // Ingreso SEP, dividido en 3 filas (Preferente / Prioritario / Carrera Docente) por RBD.
 function ensureIngresoAgregado(rbd) {
@@ -3092,6 +3301,8 @@ function recomputeRegistro(r) {
   else if (r.pct_ejec_total >= 90) r.estado = 'riesgo';
   else r.estado = 'superavit';
   r.anomalia = r.marco_anual_proy > 0 && r.gasto_bys > 3 * r.marco_anual_proy;
+  // Compras con avisos de fecha o de cuenta (F-11 / L-05): suman al "Datos a revisar" y a la marca "revisar" del RBD. Solo avisos: no cambian ningún total.
+  r.compras_con_avisos = resumenAvisosCompras((CARGA_MANUAL.compras_por_rbd || {})[r.rbd], CUENTAS_SEP_BY_CODIGO).n;
 
   // Establecimientos SIN marco SEP asignado (r.sin_marco_sep, definido en DATA.registros) que
   // de todas formas registran gasto SEP (remuneraciones, Subt.22/29 o Carrera Docente): esto es
@@ -3143,7 +3354,8 @@ function computeTotales() {
     carrera_docente_anual: Math.round(carreraDocente),
     saldo_total: Math.round(marco + carreraDocente - gastoRem - gastoBys),
     n_deficit: regs.filter(r => r.estado === 'deficit').length,
-    n_anomalias: regs.filter(r => r.anomalia).length,
+    n_anomalias: regs.filter(r => r.anomalia || r.compras_con_avisos > 0).length, // posible error de imputación O compras con avisos de fecha/cuenta
+    n_revisar_compras: regs.filter(r => r.compras_con_avisos > 0).length,          // de esos, los RBD con compras con avisos (para el texto de la tarjeta)
     n_alertas_sep_sin_marco: regs.filter(r => r.alerta_sep_sin_marco).length,
   };
 }
@@ -3222,7 +3434,7 @@ function kpiCards(t) {
     { label: `Gasto Bienes y Servicios (${hastaTxt})`, value: fmtCLP(t.gasto_bys), full: 'Subt 22 + Subt 29', tone: 'amber' },
     { label: `Saldo (${hastaTxt})`, value: fmtCLP(t.saldo_total), full: 'Ingreso SEP (+ Carrera Docente) − gasto remuneraciones − gasto B&S, hasta ese mes', critical: t.saldo_total < 0, tone: t.saldo_total < 0 ? 'red' : 'green' },
     { label: 'RBD en déficit', value: t.n_deficit, full: 'de ' + N_RBD_CON_MARCO + ' con marco SEP activo (proyección año completo)', critical: t.n_deficit > 0, tone: t.n_deficit > 0 ? 'red' : 'gray' },
-    { label: 'Datos a revisar', value: t.n_anomalias, full: 'posible error de imputación', critical: t.n_anomalias > 0, tone: t.n_anomalias > 0 ? 'red' : 'gray' },
+    { label: 'Datos a revisar', value: t.n_anomalias, full: 'posible error de imputación' + (t.n_revisar_compras ? ` · incluye ${t.n_revisar_compras} RBD con avisos de fecha o cuenta en sus compras` : ''), critical: t.n_anomalias > 0, tone: t.n_anomalias > 0 ? 'red' : 'gray' },
     { label: '⚠ Gasto SEP sin marco', value: t.n_alertas_sep_sin_marco, full: `de ${N_RBD_SIN_MARCO} RBD sin marco SEP asignado — no deberían tener ningún gasto SEP`, critical: t.n_alertas_sep_sin_marco > 0, tone: t.n_alertas_sep_sin_marco > 0 ? 'red' : 'gray' },
   ];
 }
@@ -3584,19 +3796,20 @@ function buildDetalleHTML(rbd, printMode) {
   }
   function filaCompra(id, c) {
     const cat = CUENTAS_SEP_BY_CODIGO[c.codigo];
+    const avisos = printMode ? [] : avisosCompra(c, CUENTAS_SEP_BY_CODIGO); // marcas ⚠ de fecha / cuenta (solo en pantalla: el PDF no cambia)
     const idAttr = escHtml(id);
     const nombreCompra = escHtml([c.tipoDocumento, c.nroDocumento ? 'N° ' + c.nroDocumento : ''].filter(Boolean).join(' ') || ('cuenta ' + (c.codigo || id)));
     return `<tr data-compra-id="${idAttr}">
-      <td>${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}</td>
+      <td>${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}${insigniasAvisoHTML(avisos, 'cuenta')}</td>
       <td>${escHtml(c.tipoDocumento || '')}</td>
       <td>${escHtml(c.nroDocumento || '')}</td>
-      <td>${escHtml(c.fechaDocumento || '')}</td>
-      <td>${escHtml(c.fechaPago || '')}</td>
+      <td>${escHtml(c.fechaDocumento || '')}${insigniasAvisoHTML(avisos, 'doc')}</td>
+      <td>${escHtml(c.fechaPago || '')}${insigniasAvisoHTML(avisos, 'pago')}</td>
       <td>${escHtml(c.descripcion || '')}</td>
       <td>${escHtml(c.rutProveedor || '')}</td>
       <td>${escHtml(c.nombreProveedor || '')}</td>
-      <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
-      <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
+      <td class="num">${fmtCLP(montoGastoCompra(c))}</td>
+      <td class="num">${fmtCLP(montoDocumentoCompra(c))}</td>
       <td class="col-dc">${celdaDcHTML(c)}</td>
       <td>${escHtml(c.documentoOriginal || '')}</td>
       ${printMode ? '' : `<td class="compra-acciones-cell">
@@ -3629,6 +3842,7 @@ function buildDetalleHTML(rbd, printMode) {
         <button type="button" class="add-compra-btn" data-rbd="${rbd}">+ Agregar compra</button>
         <button type="button" class="cancelar-edicion-btn hidden" data-rbd="${rbd}">✕ Cancelar edición</button>
       </span>
+      <div class="compra-form-avisos" aria-live="polite"></div>
     </div>`;
     return `
     <div class="compras-section">
@@ -3636,6 +3850,7 @@ function buildDetalleHTML(rbd, printMode) {
         <strong>Registro de compras SEP (Subt. 22 y 29)</strong> — <span class="detalle-sub">mismos campos que exige SUPEREDUC al cargar los gastos; cada compra se suma sola al ítem y mes que le corresponda según su Fecha Documento. <strong>N° DC</strong> es interno (${escHtml(AYUDA_DC)}) y no va en el CSV de SUPEREDUC; <strong>Doc. original</strong> es solo para notas de crédito/débito.</span>
       </div>
       ${formHTML}
+      ${printMode ? '' : resumenAvisosComprasHTML(resumenAvisosCompras(compras, CUENTAS_SEP_BY_CODIGO))}
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
           <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th><th title="${escHtml(AYUDA_DOC_ORIGINAL)}">Doc. original</th>${printMode ? '' : '<th aria-label="Acciones"></th>'}</tr></thead>
@@ -3752,6 +3967,41 @@ function leerCamposCompra() {
   });
   return campos;
 }
+// Avisos en vivo del formulario de compras (SEP y fuentes), en la caja `.compra-form-avisos` DENTRO de la grilla (el reconciliador de los modales
+// nunca toca la grilla, así que lo que se muestra aquí no se pierde con un cambio remoto): la ayuda del signo de las notas de crédito/débito y la
+// validación de las fechas (formato, año distinto de 2026, pago anterior al documento). NO impide guardar: solo avisa.
+function avisosFormularioCompra(grid) {
+  const campo = (f) => grid.querySelector(`.compra-input[data-field="${f}"]`);
+  const valor = (f) => { const el = campo(f); return el ? String(el.value || '') : ''; };
+  const incompleto = (f) => { const el = campo(f); return !!(el && el.validity && el.validity.badInput); }; // fecha a medio teclear: value queda vacío
+  const out = [];
+  const signo = signoDeTipoDocumento(valor('tipoDocumento'));
+  if (signo < 0) out.push({ info: true, texto: 'Las notas de crédito se registran con monto negativo; se ajusta automáticamente.' });
+  if (signo > 0) out.push({ info: true, texto: 'Las notas de débito se registran con monto positivo; se ajusta automáticamente.' });
+  const doc = valor('fechaDocumento'), pago = valor('fechaPago');
+  const dDoc = diagnosticoFechaCompra(doc), dPago = diagnosticoFechaCompra(pago);
+  if (incompleto('fechaDocumento')) out.push({ texto: 'La fecha de documento está incompleta o no es válida: sin una fecha válida la compra no se contabiliza en ningún mes.' });
+  else if (doc && (dDoc.estado === 'noContabiliza')) out.push({ texto: `La fecha de documento «${doc}» no es válida (formato aaaa-mm-dd): la compra no se contabilizaría en ningún mes.` });
+  else if (doc && dDoc.estado === 'inexistente') out.push({ texto: `La fecha de documento ${doc} no existe en el calendario: se contaría en ${MESES_CARGA_TITLE[MESES_CARGA.indexOf(dDoc.mes)]}, pero SUPEREDUC la rechazaría.` });
+  else if (doc && dDoc.estado === 'fueraAnio') out.push({ texto: `La fecha de documento (${doc}) está fuera de ${ANIO_PANEL}: el mes se toma sin considerar el año y se contaría en ${MESES_CARGA_TITLE[MESES_CARGA.indexOf(dDoc.mes)]} de ${ANIO_PANEL}.` });
+  if (incompleto('fechaPago')) out.push({ texto: 'La fecha de pago está incompleta o no es válida.' });
+  else if (pago && (dPago.estado === 'noContabiliza' || dPago.estado === 'inexistente')) out.push({ texto: `La fecha de pago «${pago}» no es válida (formato aaaa-mm-dd).` });
+  else if (pago && dPago.estado === 'fueraAnio') out.push({ texto: `La fecha de pago (${pago}) está fuera de ${ANIO_PANEL}: SUPEREDUC exige fechas de pago de ${ANIO_PANEL}.` });
+  const fDoc = fechaSupereduc(doc), fPago = fechaSupereduc(pago);
+  if (doc && pago && fDoc.valida && fPago.valida && fPago.orden < fDoc.orden) out.push({ texto: 'La fecha de pago es anterior a la fecha del documento.' });
+  return out;
+}
+function actualizarAvisosFormularioCompra(grid) {
+  const caja = grid && grid.querySelector('.compra-form-avisos');
+  if (!caja) return;
+  const html = avisosFormularioCompra(grid)
+    .map(a => `<div class="plan-nota${a.info ? '' : ' plan-nota-aviso'}">${a.info ? 'ℹ ' : '⚠ '}${escHtml(a.texto)}</div>`).join('');
+  if (caja.innerHTML !== html) caja.innerHTML = html;
+}
+function alCambiarFormularioCompra(e) {
+  const el = e.target;
+  if (el && el.classList && el.classList.contains('compra-input')) actualizarAvisosFormularioCompra(el.closest('.compra-form-grid'));
+}
 // El formulario sirve para tres acciones: agregar una compra nueva, editar una existente
 // (el botón ✏️ de su fila la carga en el formulario y marca data-editing-id) o duplicarla (el
 // botón ⧉ carga los mismos datos pero SIN marcar data-editing-id, así que al enviar el
@@ -3763,6 +4013,7 @@ function llenarFormularioCompra(campos) {
     const field = el.dataset.field;
     el.value = campos[field] !== undefined && campos[field] !== null ? campos[field] : '';
   });
+  actualizarAvisosFormularioCompra(wrap);
 }
 function resetFormularioCompraUI() {
   const wrap = document.querySelector('#modalBody .compra-form-grid');
@@ -3796,10 +4047,12 @@ function duplicarCompra(rbd, compraId) {
 function cancelarEdicionCompra() {
   resetFormularioCompraUI();
   document.querySelectorAll('#modalBody .compra-input').forEach(el => { el.value = ''; });
+  actualizarAvisosFormularioCompra(document.querySelector('#modalBody .compra-form-grid'));
 }
 function agregarCompra(rbd) {
-  const campos = leerCamposCompra();
-  if (!campos) return;
+  const leidos = leerCamposCompra();
+  if (!leidos) return;
+  const campos = conSignoDeNota(leidos); // L-03: nota de crédito siempre en negativo, nota de débito en positivo, el resto como se digitó
   if (!campos.codigo) { alert('Elige un código de cuenta.'); return; }
   if (!campos.fechaDocumento) { alert('Ingresa la fecha del documento — determina el mes al que se suma la compra.'); return; }
   if (!campos.montoGasto) { alert('Ingresa el monto del gasto.'); return; }
@@ -4547,6 +4800,8 @@ modalBodyEl.addEventListener('click', (e) => {
   if (delBysProyBtn) { eliminarBysProyeccionItem(delBysProyBtn.getAttribute('data-rbd'), delBysProyBtn.getAttribute('data-codigo')); return; }
 });
 modalBodyEl.addEventListener('beforeinput', bloquearTecleoNoNumerico);
+modalBodyEl.addEventListener('input', alCambiarFormularioCompra);
+modalBodyEl.addEventListener('change', alCambiarFormularioCompra);
 modalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);
@@ -4789,17 +5044,18 @@ function avisoCodigoNoHabilitado(fuenteKey, rbd, codigo) {
 function otrasFuentesFilaCompra(rbd, fuenteKey, id, c) {
   const cat = CUENTAS_COMPRAS_BY_CODIGO[c.codigo];
   const aviso = avisoCodigoNoHabilitado(fuenteKey, rbd, c.codigo);
+  const avisos = avisosCompra(c, CUENTAS_COMPRAS_BY_CODIGO); // marcas ⚠ de fecha / cuenta
   return `<tr data-compra-id="${escHtml(id)}"${aviso ? ' class="compra-no-habilitada"' : ''}>
-    <td>${aviso ? `<span class="compra-aviso" title="${escHtml(aviso)}">⚠</span> ` : ''}${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}</td>
+    <td>${aviso ? `<span class="compra-aviso" title="${escHtml(aviso)}">⚠</span> ` : ''}${escHtml(c.codigo)}${cat ? ` · ${escHtml(cat.nombre)}` : ''}${insigniasAvisoHTML(avisos, 'cuenta')}</td>
     <td>${escHtml(c.tipoDocumento || '')}</td>
     <td>${escHtml(c.nroDocumento || '')}</td>
-    <td>${escHtml(c.fechaDocumento || '')}</td>
-    <td>${escHtml(c.fechaPago || '')}</td>
+    <td>${escHtml(c.fechaDocumento || '')}${insigniasAvisoHTML(avisos, 'doc')}</td>
+    <td>${escHtml(c.fechaPago || '')}${insigniasAvisoHTML(avisos, 'pago')}</td>
     <td>${escHtml(c.descripcion || '')}</td>
     <td>${escHtml(c.rutProveedor || '')}</td>
     <td>${escHtml(c.nombreProveedor || '')}</td>
-    <td class="num">${fmtCLP(c.montoGasto || 0)}</td>
-    <td class="num">${fmtCLP(c.montoDocumento || 0)}</td>
+    <td class="num">${fmtCLP(montoGastoCompra(c))}</td>
+    <td class="num">${fmtCLP(montoDocumentoCompra(c))}</td>
     <td class="col-dc">${celdaDcHTML(c)}</td>
     <td>${escHtml(c.documentoOriginal || '')}</td>
     <td class="compra-acciones-cell">
@@ -4894,7 +5150,9 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
         <span class="compra-form-actions">
           <button type="button" class="add-compra-btn of-add-compra-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}">+ Agregar compra</button>
         </span>
+        <div class="compra-form-avisos" aria-live="polite"></div>
       </div>
+      ${resumenAvisosComprasHTML(resumenAvisosCompras(compras, CUENTAS_COMPRAS_BY_CODIGO))}
       <div class="compras-scroll">
         <table class="detalle-table compras-table">
           <thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th><th title="${escHtml(AYUDA_DOC_ORIGINAL)}">Doc. original</th><th aria-label="Acciones de la compra"></th></tr></thead>
@@ -5182,7 +5440,8 @@ function leerCamposCompraOtraFuente() {
   return campos;
 }
 function agregarCompraOtraFuente(rbd, fuenteKey) {
-  const campos = leerCamposCompraOtraFuente();
+  const leidos = leerCamposCompraOtraFuente();
+  const campos = leidos && conSignoDeNota(leidos); // L-03: nota de crédito siempre en negativo, nota de débito en positivo, el resto como se digitó
   if (!campos || !campos.codigo || !campos.fechaDocumento || !campos.montoGasto) {
     alert('Completa al menos código de cuenta, fecha de documento y monto gasto antes de agregar.');
     return;
@@ -5200,6 +5459,7 @@ function agregarCompraOtraFuente(rbd, fuenteKey) {
   renderOtrasFuentesTable();
   if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
   document.querySelectorAll('#otrasFuentesModalBody .compra-form-grid .of-compra-input').forEach(el => { el.value = ''; }); // formulario limpio (el modal ya no se reconstruye)
+  actualizarAvisosFormularioCompra(document.querySelector('#otrasFuentesModalBody .compra-form-grid'));
   const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
   scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { compras: { [id]: campos } } } });
   flushRbdSaveNow(rbd);
@@ -5241,6 +5501,8 @@ otrasFuentesModalBodyEl.addEventListener('change', (e) => {
   if (sel) cambiarCorteOtraFuente(sel.dataset.rbd, sel.dataset.fuente, Number(sel.value));
 });
 otrasFuentesModalBodyEl.addEventListener('beforeinput', bloquearTecleoNoNumerico);
+otrasFuentesModalBodyEl.addEventListener('input', alCambiarFormularioCompra);
+otrasFuentesModalBodyEl.addEventListener('change', alCambiarFormularioCompra);
 otrasFuentesModalBodyEl.addEventListener('focusout', (e) => {
   if (e.target.classList && e.target.classList.contains('celda-input')) {
     flushRbdSaveNow(e.target.dataset.rbd);
@@ -5350,7 +5612,7 @@ function sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd) {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const compras = (of && of.compras) || {};
     Object.entries(compras).forEach(([id, c]) => {
-      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
+      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(montoGastoCompra(c)), Math.round(montoDocumentoCompra(c)), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
     });
   });
   return rows;
@@ -5434,6 +5696,7 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
   const rows = rowsFromSheet(ws);
   const idxDc = indiceColumnaDc(rows[0]); // N° DC: -1 en un Excel antiguo (sin la columna) → no se toca el N° DC que ya tenga la compra
   const porRbd = {};
+  const indicesPorRbd = {}; // entidad → índice firma→ID de sus compras (ver idCompraParaImportar)
   let n = 0, noHabilitadas = 0;
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
@@ -5458,14 +5721,20 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
       documentoOriginal: String(row[13] || '').trim(),
     };
     if (!campos.fechaDocumento || !campos.montoGasto) continue;
-    const idRaw = row[0];
-    const id = (idRaw !== undefined && idRaw !== null && idRaw !== 0 && String(idRaw).trim() !== '') ? String(idRaw).trim() : generarCompraId();
-    const errId = validarClaveMapa(id, 'El ID de la compra');
+    // L-03: nota de crédito siempre en negativo, nota de débito en positivo, el resto como viene en el archivo.
+    campos.montoGasto = montoGastoCompra(campos);
+    campos.montoDocumento = montoDocumentoCompra(campos);
+    const idExplicito = idCompraImportadoUsable(row[0]); // '' si la celda ID está vacía / es 0 / "0"…
+    const errId = idExplicito ? validarClaveMapa(idExplicito, 'El ID de la compra') : null; // la clave generada ("imp-…") siempre es válida
     if (errId) { rechazarFilaImportacion('COMPRAS', i + 1, errId); continue; }
+    // L-14: un ID no usable (vacío, 0, "0"…) cuenta como SIN ID → clave determinista según el contenido (ver idCompraParaImportar).
     const of = ensureOtraFuente(rbd, fuenteKey);
+    const indice = indicesPorRbd[rbd] || (indicesPorRbd[rbd] = indiceComprasPorFirma(of.compras));
+    const id = idCompraParaImportar(row[0], campos, of.compras, indice);
     const previa = of.compras[id];
     aplicarDcImportado(campos, row, idxDc, previa);
     of.compras[id] = (idxDc < 0 && previa && previa.documentoContable) ? { ...campos, documentoContable: previa.documentoContable } : campos;
+    registrarCompraEnIndice(indice, id, campos);
     if (!porRbd[rbd]) porRbd[rbd] = {};
     porRbd[rbd][id] = campos;
     n++;
@@ -5675,7 +5944,7 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
     const filasCompras = compras.map(c => {
       const cat = CUENTAS_COMPRAS_BY_CODIGO[c.codigo];
       const marca = nivelCuentaOtraFuente(fuenteKey, rbd, c.codigo) === 0 ? '⚠ ' : '';
-      return `<tr><td>${marca}${escHtml(c.codigo)}${cat ? ' · ' + escHtml(cat.nombre) : ''}</td><td>${escHtml(c.tipoDocumento)}</td><td>${escHtml(c.nroDocumento)}</td><td>${escHtml(c.fechaDocumento)}</td><td>${escHtml(c.fechaPago)}</td><td>${escHtml(c.descripcion)}</td><td>${escHtml(c.rutProveedor)}</td><td>${escHtml(c.nombreProveedor)}</td><td class="num">${fmtCLP(c.montoGasto || 0)}</td><td class="num">${fmtCLP(c.montoDocumento || 0)}</td><td class="col-dc">${celdaDcHTML(c)}</td><td>${escHtml(c.documentoOriginal)}</td></tr>`;
+      return `<tr><td>${marca}${escHtml(c.codigo)}${cat ? ' · ' + escHtml(cat.nombre) : ''}</td><td>${escHtml(c.tipoDocumento)}</td><td>${escHtml(c.nroDocumento)}</td><td>${escHtml(c.fechaDocumento)}</td><td>${escHtml(c.fechaPago)}</td><td>${escHtml(c.descripcion)}</td><td>${escHtml(c.rutProveedor)}</td><td>${escHtml(c.nombreProveedor)}</td><td class="num">${fmtCLP(montoGastoCompra(c))}</td><td class="num">${fmtCLP(montoDocumentoCompra(c))}</td><td class="col-dc">${celdaDcHTML(c)}</td><td>${escHtml(c.documentoOriginal)}</td></tr>`;
     }).join('') || `<tr><td colspan="12" class="detalle-sin-compras">Sin compras registradas.</td></tr>`;
     bysHTML = `
       ${tablaMesesEstaticaHTML('Bienes y Servicios — compras (Real)', (of.bys_items || []).map(it => ({ label: `${it.codigo} · ${it.item}`, obj: it })), 12, false)}
@@ -7600,7 +7869,7 @@ function resumenGeneralAOA() {
   const headers = ['RBD','Establecimiento','Ingreso SEP anual (Preferente+Prioritario)','Carrera Docente anual (manual)','Gasto Remuneraciones (proy anual)','% Ejec. Remuneraciones (meta = 70% SEP + Carrera Docente)','Saldo post Remuneraciones','Gasto Subt22','Gasto Subt29','Gasto B&S Proyección','Gasto B&S total','% Ejec. B&S (meta 30%)','% Rem. / Ingreso Total (informativo)','% B&S / Ingreso Total (informativo)','Saldo Final (Real+Proy)','% Ejec. Total (Real+Proy) — define Estado','Estado','Alerta'];
   const rows = [headers];
   currentFilteredRows.forEach(r => {
-    const alerta = r.alerta_sep_sin_marco ? 'GASTO SEP SIN MARCO ASIGNADO' : (r.anomalia ? 'Revisar' : '');
+    const alerta = r.alerta_sep_sin_marco ? 'GASTO SEP SIN MARCO ASIGNADO' : ((r.anomalia || r.compras_con_avisos > 0) ? 'Revisar' : '');
     rows.push([Number(r.rbd), r.nombre, r.marco_anual_proy, r.carrera_docente_anual, r.gasto_rem_anual_proy, r.pct_ejec_rem+'%', r.saldo_rem, r.gasto_subt22, r.gasto_subt29, r.gasto_bys_proyectado, r.gasto_bys, r.pct_ejec_bys+'%', r.pct_rem_ing_total+'%', r.pct_bys_ing_total+'%', r.saldo_total, r.pct_ejec_total+'%', estadoLabel[r.estado], alerta]);
   });
   return rows;
@@ -7772,7 +8041,7 @@ function sheetComprasAOA(onlyRbd) {
   registrosPara(onlyRbd).forEach(r => {
     const compras = (CARGA_MANUAL.compras_por_rbd || {})[r.rbd] || {};
     Object.entries(compras).forEach(([id, c]) => {
-      rows.push([id, Number(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(c.montoGasto || 0), Math.round(c.montoDocumento || 0), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
+      rows.push([id, Number(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(montoGastoCompra(c)), Math.round(montoDocumentoCompra(c)), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
     });
   });
   return rows;
@@ -8009,6 +8278,7 @@ function importComprasSheet(ws) {
   const rows = rowsFromSheet(ws);
   const idxDc = indiceColumnaDc(rows[0]); // N° DC: -1 en un Excel antiguo (sin la columna) → no se toca el N° DC que ya tenga la compra
   const porRbd = {};
+  const indicesPorRbd = {}; // RBD → índice firma→ID de sus compras (ver idCompraParaImportar)
   let n = 0;
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
@@ -8031,21 +8301,25 @@ function importComprasSheet(ws) {
       documentoOriginal: String(row[13] || '').trim(),
     };
     if (!campos.fechaDocumento || !campos.montoGasto) continue;
-    // rowsFromSheet lee con defval:0, así que una celda ID vacía llega como el número 0 (no
-    // como '' ni undefined) — hay que tratar ese 0 como "sin ID" igual que una celda realmente
-    // vacía, si no, todas las filas nuevas de un mismo RBD colisionan en la clave "0" y se
-    // pisan entre sí, dejando solo la última compra de cada RBD (bug real: con un Excel de
-    // carga masiva de cientos de filas nuevas, esto botaba silenciosamente casi todas).
-    const idRaw = row[0];
-    const id = (idRaw !== undefined && idRaw !== null && idRaw !== 0 && String(idRaw).trim() !== '') ? String(idRaw).trim() : generarCompraId();
-    const errId = validarClaveMapa(id, 'El ID de la compra');
+    // L-03: nota de crédito siempre en negativo, nota de débito en positivo, el resto como viene en el archivo.
+    campos.montoGasto = montoGastoCompra(campos);
+    campos.montoDocumento = montoDocumentoCompra(campos);
+    const idExplicito = idCompraImportadoUsable(row[0]); // '' si la celda ID está vacía / es 0 / "0"…
+    const errId = idExplicito ? validarClaveMapa(idExplicito, 'El ID de la compra') : null; // la clave generada ("imp-…") siempre es válida
     if (errId) { rechazarFilaImportacion('COMPRAS', i + 1, errId); continue; }
     if (!CARGA_MANUAL.compras_por_rbd) CARGA_MANUAL.compras_por_rbd = {};
     if (!CARGA_MANUAL.compras_por_rbd[rbd]) CARGA_MANUAL.compras_por_rbd[rbd] = {};
-    const previa = CARGA_MANUAL.compras_por_rbd[rbd][id];
+    // L-14: rowsFromSheet lee con defval:0, así que una celda ID vacía llega como el número 0 (y un Excel exportado puede traer el texto "0"):
+    // un ID no usable cuenta como SIN ID y la compra recibe una clave determinista según su contenido (ver idCompraParaImportar). Antes se
+    // inventaba un ID nuevo en cada importación (reimportar duplicaba todo) o todas las filas "0" de un RBD colapsaban en una sola compra.
+    const comprasRbd = CARGA_MANUAL.compras_por_rbd[rbd];
+    const indice = indicesPorRbd[rbd] || (indicesPorRbd[rbd] = indiceComprasPorFirma(comprasRbd));
+    const id = idCompraParaImportar(row[0], campos, comprasRbd, indice);
+    const previa = comprasRbd[id];
     aplicarDcImportado(campos, row, idxDc, previa);
     // Sin columna N° DC en el archivo, lo que ya tiene la compra se conserva (en Firestore el merge no lo toca; aquí tampoco se pierde).
-    CARGA_MANUAL.compras_por_rbd[rbd][id] = (idxDc < 0 && previa && previa.documentoContable) ? { ...campos, documentoContable: previa.documentoContable } : campos;
+    comprasRbd[id] = (idxDc < 0 && previa && previa.documentoContable) ? { ...campos, documentoContable: previa.documentoContable } : campos;
+    registrarCompraEnIndice(indice, id, campos);
     if (!porRbd[rbd]) porRbd[rbd] = {};
     porRbd[rbd][id] = campos;
     n++;
@@ -8738,12 +9012,13 @@ function aplicarSnapshot(snapshot) {
 }
 
 // Copia una compra leída de Firestore con los tipos que el panel espera (textos como texto, montos
-// como número finito); conserva cualquier otro campo.
+// como número finito con el signo de su tipo de documento); conserva cualquier otro campo.
 function sanitizaCompra(c) {
+  const tipoDocumento = textoSeguro(c.tipoDocumento);
   const limpia = {
     ...c,
     codigo: textoSeguro(c.codigo),
-    tipoDocumento: textoSeguro(c.tipoDocumento),
+    tipoDocumento,
     nroDocumento: textoSeguro(c.nroDocumento),
     fechaDocumento: textoSeguro(c.fechaDocumento),
     fechaPago: textoSeguro(c.fechaPago),
@@ -8751,8 +9026,10 @@ function sanitizaCompra(c) {
     rutProveedor: textoSeguro(c.rutProveedor),
     nombreProveedor: textoSeguro(c.nombreProveedor),
     documentoOriginal: textoSeguro(c.documentoOriginal),
-    montoGasto: num(c.montoGasto),
-    montoDocumento: num(c.montoDocumento),
+    // Signo por tipo (L-03): una nota de crédito guardada en positivo se lee en negativo (y una nota de débito en negativo, en positivo), así que
+    // tabla, cálculos y exportaciones ven siempre el signo correcto; lo guardado en Firestore se corrige la próxima vez que se edite la compra.
+    montoGasto: montoConSignoDeTipo(tipoDocumento, c.montoGasto),
+    montoDocumento: montoConSignoDeTipo(tipoDocumento, c.montoDocumento),
   };
   // N° DC: solo si la compra lo trae (así una compra sin el campo no gana una clave nueva en respaldos ni en comparaciones).
   if (c.documentoContable !== undefined) limpia.documentoContable = textoSeguro(c.documentoContable);

@@ -21,7 +21,7 @@ node tests/specs/persistencia.mjs        # un spec directamente (sin la tabla)
 ```
 
 Código de salida: `0` si todo es PASS o KNOWN_BUG; `1` si algo FALLA.
-Duración: ≈ 6–7 min la suite completa (golden ≈ 50 s; los specs más largos son `escritura_modal_tecleo`, `seguridad_xss`, `modal_equivalencia` y `sync_estado`). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
+Duración: ≈ 12 min la suite completa (golden ≈ 70 s; los specs más largos son `n_dc`, `escritura_modal_tecleo`, `a11y_contraste`, `corte_ingresos`, `modal_equivalencia`, `sync_estado`, `seguridad_xss` y `mes_cierre_global`). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
 
 ### Qué HTML se prueba (`APP_HTML`)
 
@@ -72,6 +72,13 @@ node tests/run.mjs                             # tu versión modificada contra e
 > (el fixture `default` no tiene casos de signo ni de fecha): solo cambia el MARCADO de los 15 modales con formulario de compras (la caja vacía `.compra-form-avisos`, para los avisos en vivo) y
 > se agrega la sección `compras` (fixture `compras`, 33 entradas nuevas).
 
+> **Desde la PR D2 (L-07 / L-08 / L-09, consistencia del Estado y rótulos)** `APP_HTML=@3d5b041` (el `index.html` de `main` justo antes de esa PR) FALLA a propósito en `estado_unico`, `estado_junji`
+> y `ejecucion_rotulos` (y en el golden): es la prueba de que detectan los defectos originales (SEP decidía el Estado con el % redondeado: 99,996 % salía Déficit con saldo positivo, un 100 % exacto con saldo $0 también, recurso $0
+> con gasto salía Superávit; JUNJI ignoraba el saldo de Operación para B&S; % Ejecución de SEP rotulaba "Real" todo mes ≤ el selector "hasta el mes", o sea los 12 por defecto). Con el fixture `default` esa PR no cambia ninguna cifra
+> monetaria: en el golden solo cambian (1) el Estado del RBD sin marco SEP con gasto (1120: recurso $0, gasto $901.000 → Déficit; antes Superávit) y, por eso, los conteos "RBD en déficit" / "Entidades en déficit" / "N de M entidades en déficit"
+> de SEP y del Panel principal (3 → 4, 10 → 11 y "de 52" → "de 53"), (2) los textos de ayuda del Estado y de "Atención" y la causa de JUNJI, (3) en % Ejecución de SEP la columna "Corte" (Real / Mixto / Proy. según los cortes reales), la nota y la línea
+> "Corte" del gráfico, y (4) en JUNJI la nota del saldo de Operación; se agrega la sección `estado` (fixture `estado`, 30 entradas nuevas).
+
 ### Flujo recomendado para un cambio grande en `index.html`
 
 1. `node tests/run.mjs` en el árbol limpio → confirma que el arnés está sano (todo PASS).
@@ -99,6 +106,8 @@ tests/
     pdf-paginas.mjs       analizarPdf(buf): páginas y hojas en blanco de un PDF de Chromium, sin dependencias; textoPorPagina() usa pdftotext si existe
     pack.mjs              empaquetado (zlib) de listas largas del baseline
     corte.mjs             (specs del corte de ingresos) cálculo INDEPENDIENTE de lo esperado a partir de los documentos del fixture, corte efectivo, entidades con corte distinto al cierre
+    estado.mjs            (specs del Estado) oráculo INDEPENDIENTE (BigInt, sin compartir ni el redondeo ni el punto flotante de index.html): Estado esperado de cada RBD de SEP y de cada entidad de las 9 fuentes
+                          (incl. el saldo de Operación para B&S de JUNJI) desde los documentos del fixture, y lectores de lo que muestran la tabla SEP (filas y filtro), las tablas de las fuentes, las tarjetas KPI y el Panel principal
     compras.mjs           (specs de compras) fixtureSinCompras(), compraBase(), libroXlsx() / importarLibro() (arma y sube un .xlsx por el <input type=file>), celdaItem(), montosFilaCompra()
     config.mjs            constantes (BASELINE_REF, correos de prueba, fecha congelada)
   mockfb/
@@ -108,6 +117,7 @@ tests/
     generate.mjs          generador reproducible del fixture      rbds.json   ids/nombres públicos de los RBD y GESPARVU
     default.json          fixture generado (70 documentos)       cierre.json   variante con mes de cierre y cortes propios (ver abajo)
                                                                   compras.json  variante con casos de signo de NC/ND, fechas con avisos e ID "0" (ver abajo)
+                                                                  estado.json   variante con los casos de borde del Estado de SEP y de las fuentes, y de JUNJI (ver abajo)
   golden/
     capture.mjs           recorrido de todas las vistas y exportaciones     diff.mjs  comparación legible
     golden.mjs            CLI (comparar / --update)                         baseline.json  línea base (≈ 0,7 MB)
@@ -186,6 +196,13 @@ en SEP/1121 una nota de crédito guardada en POSITIVO (`c1121_nc_pos`), una nota
 `10/03/2026` que no entra en ningún total (`c1121_invalida`), una con pago en 2027 (`c1121_pago27`), una con cuenta `999999` fuera del catálogo (`c1121_cuenta_x`) y una compra bajo la clave `"0"` (rastro del bug antiguo);
 en SEP/1122 una de 2025; en General/1121 una NC positiva, una de 2025 y una con fecha `abril 2026`; en General/AC una NC positiva y una ND negativa; y en PIE/1121 una NC positiva.
 
+**`estado.json`** (también de `generate.mjs`; `--check` lo verifica) es `default.json` con casos de borde del Estado (PR D2), en pesos enteros y todos en enero para que el recurso y el gasto sean exactos. SEP (recurso = Preferente + Prioritario + Carrera Docente):
+1130 saldo $0 (100,0 %) → Riesgo; 1131 gasto 9.999.600 de 10.000.000 (99,996 %, se muestra 100,0 %) → Riesgo; 1132 saldo -$1 → Déficit; 1133 89,999 % (se muestra 90,0 %) → Superávit; 1134 90,000 % → Riesgo; 1135 recurso 0 sin gasto → Superávit;
+1136 recurso 0 con gasto 500.000 → Déficit; 1137 con Carrera Docente (recurso 12.000.000, gasto 12.000.000) → Riesgo; 1139 95 % con proyección de B&S → Riesgo; 1140 50 % → Superávit; y el RBD sin marco 1120 (compra del fixture, gasto $901.000) → Déficit.
+Fuentes de una línea: FAEP 1130 saldo $0 → Superávit, 1131 -$1 → Déficit, 1132 99,996 % → Superávit, 1133 ingreso 0 con gasto → Déficit, 1134 nada → Superávit; Subvención General 1130 saldo $0 → Superávit, 1131 -$1 → Déficit. JUNJI (GESPARVU, saldo y saldo de
+Operación − B&S): 5402002 +500.000 / -500.000 → Déficit solo por Operación; 5402004 -1.000.000 / +1.500.000 → solo por el saldo total; 5401006 -1.200.000 / -200.000 → ambas; 5401007 $0 / $0 → Superávit; 5401005 +999.999 / -$1 → Déficit solo por Operación;
+y Aporte Fiscal JUNJI 5401004 con B&S = 90 % de su única línea → Superávit. El resto de las entidades conserva las cifras de `default.json`.
+
 ## Golden master (`tests/golden/`)
 
 `capture.mjs` abre el panel con el fixture, recorre cada vista y guarda en `baseline.json`:
@@ -201,6 +218,8 @@ en SEP/1122 una de 2025; en General/1121 una NC positiva, una de 2025 y una con 
 - Sección **`compras`** (fixture `compras`, entradas `compras.*`): Panel principal (3 vistas), pestaña SEP (KPI con "Datos a revisar" = 2, marcas "revisar"), modales de SEP 1121 (todas las marcas ⚠, el resumen "N compras con avisos;
   $X sin contabilizar", NC/ND con el signo normalizado y el formulario con la ayuda de signo y los avisos de fecha en vivo) y 1122, General (pestaña y modales 1121 y AC) y PIE 1121, % Ejecución (SEP agregado y 1121, General, consolidado),
   Visualizador por código (SEP + General) y Reporte personalizado con sus CSV, y las exportaciones: CSV de compras SEP/General/PIE, Excel de carga de SEP (con la fila de ID `0`) y de General, resumen, JSON, fila 1121 (XLS/CSV/PDF).
+- Sección **`estado`** (fixture `estado`, entradas `estado.*`): Panel principal (3 vistas), pestaña SEP (sin filtro y con cada filtro de Estado, búsqueda), modales de SEP 1131 y 1136, las pestañas FAEP, General, JUNJI y Aporte JUNJI, los modales de JUNJI
+  (5402002, 5402004, 5401006, 5401005, 5401007) y de FAEP 1131, CSV y Excel de resumen, PDF general y por fila, CSV de detalle (JUNJI y FAEP) y PDF de JUNJI, y % Ejecución de SEP (agregado y 1130).
 - Sección **`cierre`** (fixture `cierre`, entradas `cierre.*`): Panel principal (3 vistas), pestaña SEP con el control del mes de cierre y el aviso abierto, modales de 4 RBD (corte propio ≠ cierre, = cierre,
   diciembre y sin corte propio), JSON de respaldo, PDF de dos filas, % Ejecución consolidado, Visualizador (SEP) y Reporte personalizado de ingresos con sus CSV.
 
@@ -254,6 +273,9 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `compras_signo_nc` | L-03: nota de crédito en negativo, nota de débito en positivo, otros tipos como se digitaron, en todo el flujo. Lectura de Firestore sin escribir (NC guardada en positivo se ve negativa; el valor guardado no cambia hasta editar), ítem/mes, KPI, tabla, Panel principal, Visualizador y Reporte personalizado restan la NC; ayuda del formulario ("Las notas de crédito se registran con monto negativo; se ajusta automáticamente"); agregar / editar / duplicar en SEP y General (el write lleva el signo correcto); CSV de SUPEREDUC y Excel; exportar → reimportar → exportar sin duplicados y con los signos corregidos; importar un Excel con NC positiva / ND negativa / factura negativa / NC sin ID con el tipo "nota de credito"; y equivalencia: los mismos datos con el signo equivocado o con el correcto se ven idénticos en 10 vistas |
 | `compras_id_cero` | L-14, en el importador de SEP y en el de General: 3 compras distintas con ID "0" / "" / 0 dan 3 compras con clave `imp-…` (nada queda en la clave "0"); reimportar el mismo archivo (2 veces y en una sesión nueva) no duplica y deja las mismas claves; un Excel exportado con la fila "0" junto a su copia con ID real no crea compras y no toca la entrada "0"; filas idénticas sin ID = una compra y filas que difieren en la descripción = dos; compra existente idéntica con otro ID se actualiza en su sitio (recibe el N° DC) y una distinta no se pisa; una compra editada después de importarla no se pisa al reimportar (queda aparte con `-2`, sin crecer); "00", "undefined" y espacios cuentan como sin ID y un ID real se respeta; la herramienta "Revisar duplicados" sigue ahí |
 | `compras_avisos_fecha` | F-11 / L-05, SOLO avisos: 15 compras (SEP y General) con fecha 2025/2027, día inexistente, mes 13/00, `10/03/2026`, `10-03-2026`, `2026-3-5`, vacía, `marzo`, pago en 2027 y cuenta fuera del catálogo; los totales por ítem y mes son los de siempre (se fija QUÉ entra y QUÉ no); marca por fila con `title`, resumen "N compras con avisos; $X sin contabilizar", "Datos a revisar" (+ marca "revisar" del RBD), el CSV y el PDF por fila sin marcas; formulario con validación en vivo (año ≠ 2026, pago anterior al documento, fecha a medio teclear) que NO impide guardar, y al corregir la fecha desaparecen; fixture limpio sin ningún aviso; las fuentes no tienen "Datos a revisar" |
+| `estado_unico` | L-07, fixture `estado`: el Estado de SEP y de las 9 fuentes sale de UNA regla (Déficit ⇔ saldo < 0; Riesgo solo en SEP ⇔ gasto/recurso ≥ 90 % exacto con saldo ≥ 0; si no, Superávit) y todo lugar que cuenta o lista déficit coincide entre sí y con un cálculo independiente (BigInt): bordes (saldo $0, 99,996 %, -$1, 89,999 % vs 90,000 %, recurso 0 con y sin gasto, Carrera Docente en el recurso, RBD sin marco con gasto), filas y filtro de SEP, tarjeta "RBD en déficit" (con su universo), las 9 pestañas de fuente (filas y tarjeta "N de M"), franja y tarjetas por fuente del Panel principal, lista "Atención" (vista Total = todas las entidades en Déficit, en orden; vistas Real / Proyectado por el signo del saldo), CSV y Excel de resumen, PDF general y por fila, CSV de detalle de las fuentes, cambios remotos que cruzan un borde, y que la evolución mensual cuadra con la franja en las 3 vistas |
+| `estado_junji` | L-08, fixture `estado`: JUNJI es Déficit si el saldo total < 0 O el saldo de Operación para B&S < 0 (Operación − B&S): las 5 GESPARVU de borde (solo Operación, solo saldo total, ambas, $0 → Superávit, -$1), aviso visible y tooltip con la causa y su monto, tarjeta KPI y del Panel principal, "Atención" con la causa (también cuando el saldo total es grande), subtítulo y saldo de Operación del modal con edición EN VIVO (1.000.000 → Superávit, 1.000.001 → Déficit…), nada derivado se guarda en Firestore, CSV de detalle y PDF de la entidad, y "sin cambio donde no aplica" (las otras 8 fuentes, de una sola línea, siguen Déficit ⇔ saldo < 0; Aporte JUNJI y su modal sin saldo de Operación) |
+| `ejecucion_rotulos` | L-09: en % Ejecución de SEP el rótulo y el estilo Real / Proy. / Mixto de cada mes (columna "Corte", tooltip, línea "Corte" y tramo punteado del gráfico) salen de los cortes reales (ingresos: propio > cierre > `DATA.n_meses`; remuneraciones: `rem.real_hasta_mes`) y NO del selector "hasta el mes" (con el defecto —diciembre— antes los 12 meses salían "Real"; con el selector en marzo, de abril en adelante "Proy."); agregado, un RBD con cortes iguales / distintos / sin corte propio, fixture `cierre`, un cambio remoto del mes de cierre, y que cada fuente y el Consolidado siguen rotulándose por su "Real hasta" aunque se mueva el selector |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Bugs conocidos: `known-bug` vs `enforced`

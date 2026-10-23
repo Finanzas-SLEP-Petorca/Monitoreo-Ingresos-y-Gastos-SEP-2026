@@ -51,17 +51,30 @@ la selección (suma de sus líneas de ingreso, 3 en JUNJI):
 - % Ejec. Total acumulado = (Remuneraciones + B&S) acumulado / Ingreso anual Total.
 - Las tarjetas muestran cada % en **Real** (solo lo ejecutado) y **Real+Proy a diciembre**; el denominador
   es siempre el Ingreso anual Total, así que el % Real nunca supera al de diciembre.
-- La tabla mensual marca cada mes **Real / Proy. / Mixto** según el "Real hasta" de cada entidad (Mixto =
-  la selección agregada tiene entidades con cortes distintos ese mes); en el gráfico la línea sólida llega
-  hasta el menor corte y el resto va punteado. Sin ingreso cargado se muestra "—" y un aviso, nunca NaN.
+- La tabla mensual marca cada mes **Real / Proy. / Mixto** según el corte real de lo que se está viendo: el
+  "Real hasta" de cada entidad en las fuentes y, en SEP, el corte de ingresos y el de remuneraciones de cada RBD
+  (las compras siempre son reales; ver "Rótulo Real / Proy. / Mixto" más abajo); en el gráfico la línea sólida
+  llega hasta el menor corte y el resto va punteado. Sin ingreso cargado se muestra "—" y un aviso, nunca NaN.
 - Las partes mensuales (`partesMensualesOtraFuente` / `partesMensualesSep`) son las mismas que usa el
   dashboard, así que "Consolidado" cuadra con el panel principal.
+
+**Rótulo Real / Proy. / Mixto (L-09).** En **todas** las vistas de % Ejecución (SEP, cada fuente y Consolidado) el rótulo y el estilo de cada
+mes (columna "Corte" de la tabla, tooltip del gráfico, tramo punteado y línea "Corte") salen del **corte real efectivo** de lo que se ve, y
+**nunca** del selector "Ver resumen acumulado hasta el mes" de la pestaña SEP (ese selector solo decide hasta qué mes se acumulan las casillas
+"a <mes>"). Antes, en SEP, todo mes ≤ el selector salía "Real": con el valor por defecto (diciembre) los 12 meses se veían "Real" aunque el corte
+real fuera julio o septiembre. Los cortes que se consideran: ingresos de cada RBD (corte propio `ingreso_real_hasta_mes` > mes de cierre global
+> `DATA.n_meses`), remuneraciones (`rem.real_hasta_mes`; `DATA.n_meses` si falta) y, en las fuentes, el "Real hasta" de cada entidad; las compras
+siempre son reales y la proyección de B&S siempre proyectada (no tienen corte). Convención cuando hay varios cortes (la misma de las fuentes, del
+Consolidado y del Visualizador; función `tipoMesPorCortes`): **Real** si TODOS los cortes cubren el mes (mes ≤ el menor corte), **Proy.** si
+NINGUNO (mes > el mayor) y **Mixto** entre medio — es decir, cuando la selección agrega RBD con cortes distintos, o cuando los ingresos y las
+remuneraciones de un mismo RBD tienen cortes distintos (p. ej. ingresos hasta agosto y remuneraciones hasta julio: agosto sale "Mixto"). El
+Reporte personalizado, que colorea celda por celda, deja sin color la que mezcla ambos tipos.
 
 El **Panel principal** resume SEP + las 9 fuentes de un vistazo (todo en tiempo real, sin cargar nada aparte):
 
 - **Chips Total (Real+Proy) / Real / Proyectado**: cambian todas las cifras y gráficos de la pantalla.
 - **Franja consolidada**: Ingreso, Gasto Remuneraciones, Gasto Bienes y Servicios, Gasto Total, Saldo y
-  entidades en déficit (suma de SEP y las 9 fuentes).
+  entidades en déficit (suma de SEP y las 9 fuentes; siempre sobre el Total, ver "Estado de una entidad").
 - **Una tarjeta por fuente** (10): saldo destacado (verde/rojo con ▲/▼ y etiqueta, nunca solo color), Ingreso
   vs. Gasto en mini barras, % de ejecución (Gasto/Ingreso, con barra de progreso) y "N de M entidades en
   déficit". **Clic (o Enter/Espacio) en una tarjeta abre la pestaña de esa fuente.** Las cifras coinciden
@@ -76,8 +89,11 @@ El **Panel principal** resume SEP + las 9 fuentes de un vistazo (todo en tiempo 
   hasta el corte de ingresos de cada RBD —ver "Corte de ingresos y mes de cierre" más abajo—, remuneraciones hasta
   el corte de cada RBD, compras siempre reales y proyección de B&S siempre proyectada). Es la serie del año completo: no depende del selector "Ver resumen hasta el mes" de SEP.
   Los tests verifican que su total cuadra con la franja consolidada en las 3 vistas.
-- **Atención**: las 8 entidades con el saldo más negativo (según la vista elegida) entre SEP y todas las
-  fuentes; clic abre la pestaña y el detalle de esa entidad.
+- **Atención**: las 8 entidades **en Déficit** con el saldo más negativo (según la vista elegida) entre SEP y todas las
+  fuentes; clic abre la pestaña y el detalle de esa entidad. Usa la misma noción de Déficit que el resto del panel (ver "Estado de una
+  entidad"): en la vista Total son exactamente las entidades con Estado Déficit —las mismas que cuenta la franja— y, en JUNJI, las que lo están
+  por el saldo de Operación para B&S llevan su causa; en las vistas Real y Proyectado, las de saldo negativo en esa vista (el Estado se
+  calcula siempre sobre el Total).
 - **Mes de cierre** (solo lectura): bajo el título hay una línea "📅 Mes de cierre: Septiembre · ⚠ N entidades con corte
   distinto al cierre global" con un enlace a la pestaña SEP, donde está el control (ver abajo).
 - **🖨 Exportar PDF** del dashboard (mismo mecanismo de impresión del navegador; se ocultan la barra de
@@ -86,8 +102,9 @@ El **Panel principal** resume SEP + las 9 fuentes de un vistazo (todo en tiempo 
 Funciones: `computeTotalesSepParaDashboard()` (adaptador de SEP con la misma forma que
 `computeTotalesOtraFuente`), `irAPestana(tabId)`, `renderDashboard()` y las de gráficos (`renderDashComparativo`,
 `renderDashComposicion`, `renderDashMensual`, `renderDashAtencion`). Los gráficos usan la paleta del panel
-(Ingreso azul `--series-1`, Gasto naranja `--series-2`, Bienes y Servicios violeta `#7c3aed`), validada con el
-validador de paletas del skill `dataviz` (separación para daltonismo y contraste).
+(Ingreso azul `--series-1`, Gasto naranja `--series-2`, Bienes y Servicios violeta `#7c3aed`). El contraste de todo
+el texto está verificado por `tests/specs/a11y_contraste.mjs`; la separación para daltonismo se revisó con el validador de paletas del skill
+`dataviz` (esa revisión no se puede reproducir desde este repositorio).
 
 ### Paleta y formato
 
@@ -250,8 +267,8 @@ positivo ya no suma gasto: lo resta. La regla se aplica en todo el flujo con las
   CSV sigue comparando en **valor absoluto**.
 
 **Importar sin duplicar: ID vacío o "0".** En la hoja COMPRAS, una fila con un **ID real** actualiza esa compra. Un ID **vacío**
-(la celda vacía llega como el número `0`), `0`, `"0"`, `"00"`, `"undefined"`, `"NaN"`, `"#N/A"`, `-` o solo espacios **cuenta como
-sin ID**: antes cada importación inventaba un ID nuevo (reimportar el mismo archivo duplicaba todas las compras) o, con el texto
+(la celda vacía llega como el número `0`), `0`, `"0"`, `"00"` (cualquier cantidad de ceros), `"undefined"`, `"null"`, `"NaN"`, `"#N/A"`, `"#REF!"`,
+`"#VALUE!"`, uno o más guiones (`-`) o solo espacios **cuenta como sin ID**: antes cada importación inventaba un ID nuevo (reimportar el mismo archivo duplicaba todas las compras) o, con el texto
 `"0"`, todas las filas de un RBD colapsaban en una sola compra con la clave `"0"`. Ahora la compra recibe una **clave determinista
 según su contenido** (`imp-<hash de 53 bits>`), de modo que reimportar el mismo archivo da las mismas claves (también en otra
 sesión o al otro día) y compras distintas nunca se pisan. La **composición** (`firmaContenidoCompra`): código de cuenta + tipo de
@@ -298,11 +315,11 @@ chileno: `1500000`, `1.500.000`, `1,5`, `1.234,5`, `$ 1.500.000`, `-2.500`. El p
 miles **solo** si calza con grupos de 3 dígitos (`1.500`, `12.345.678`); una coma, o un punto con otra
 cantidad de dígitos detrás, es decimal (`1,5`, `1.5`, `1234.567`); vacío = 0 (sin valor). Un texto que no
 es un número (`abc`, `1.2.3`) se **rechaza**: la celda se marca en rojo, no se guarda nada y, al salir de
-la celda, vuelve al valor que estaba guardado. Teclear letras no hace nada. Mientras la celda tiene el foco
+la celda, vuelve al valor que estaba guardado. Un monto de valor absoluto igual o mayor a 10 billones (`1e13`) también se rechaza. Teclear letras no hace nada. Mientras la celda tiene el foco
 se muestra exactamente lo que escribiste; al salir se normaliza (`1.500.000` → `1500000`).
 
 **Lo que escribes no se altera por lo que hagan otras personas.** El panel recibe un cambio por cada
-edición de cualquiera de las ~17 personas conectadas (de cualquier RBD) y el eco de tu propio guardado.
+edición de cualquiera de las personas conectadas (hay 19 correos autorizados en `ALLOWED_EMAILS`; de cualquier RBD) y el eco de tu propio guardado.
 Con el modal de detalle abierto esos cambios se **reconcilian** con lo que ya está en pantalla (no se
 reconstruye el modal): la celda que estás tecleando conserva su texto, su cursor y su foco; el
 formulario de compra (campos a medias y modo edición "💾 Guardar cambios") no se toca; y solo
@@ -337,10 +354,11 @@ Cada RBD muestra quién hizo la última edición y cuándo ("Última edición en
 barra bajo el título muestra el estado general de sincronización. El botón "⬇ Descargar carga
 (JSON)" y "⬇ Excel" / "⬆ Importar Excel" siguen disponibles, ahora como respaldo manual — ya no
 son necesarios para que los cambios queden guardados (la importación de Excel ya no trae hojas
-SUBT22/SUBT29, esos gastos se cargan como compras).
+SUBT22/SUBT29, esos gastos se cargan como compras; el Excel que se exporta todavía trae esas dos hojas, derivadas de las compras y solo de
+consulta, y el importador las ignora).
 
-El botón "⬇ Excel" descarga la carga completa (Ingreso, Remuneraciones, Compras) lista para
-reimportar; es distinto del botón "⬇ Excel (resumen general)", que descarga en una sola hoja el
+El botón "⬇ Excel" descarga la carga completa (hojas `INGRESO`, `REMUNERACIONES`, `SUBT22` y `SUBT29` —estas dos solo de consulta—, `COMPRAS` y
+`BYS_PROYECCION`) lista para reimportar; es distinto del botón "⬇ Excel (resumen general)", que descarga en una sola hoja el
 mismo resumen que se ve en pantalla y que trae "🖨 Exportar PDF (general)" (Ingreso SEP, gastos,
 % de ejecución, saldos, Estado) para todos los RBD que cumplan el filtro/búsqueda actual.
 
@@ -380,15 +398,15 @@ Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o nar
   propio, si sigue al mes de cierre o si es el valor por defecto. El ingreso anual (Real + Proyectado) no cambia: solo se
   reparte distinto.
 - **Mes de cierre global** (documento `sep_carga_rbd/_meta`, campos `mes_cierre` 1–12, `mes_cierre_por` y `mes_cierre_en`
-  con la hora del servidor): es el mes hasta el que los datos son reales en todo el panel (hoy **Septiembre**; pasa a
-  Octubre cuando termina el pago de remuneraciones de octubre). Se guarda con `merge`, así que no pisa los
+  con la hora del servidor): es el mes hasta el que los datos son reales en todo el panel (lo fija un administrador; p. ej. Septiembre, y
+  pasa a Octubre cuando termina el pago de remuneraciones de octubre; el valor vigente está en Firestore, no en el código). Se guarda con `merge`, así que no pisa los
   `items_22` / `items_29` que ese documento traía; un `_meta` ausente, sin el campo o con un valor dañado (`"x"`, `0`,
   `13`, `null`, `7,5`…) equivale a "sin definir".
 - **Corte efectivo del ingreso de un RBD** = su `ingreso_real_hasta_mes` si es válido → el mes de cierre global si está
-  definido → `DATA.n_meses` (hoy julio). **Mientras no se defina nada, las cifras son exactamente las de antes.**
+  definido → `DATA.n_meses` (hoy 7 = julio, constante embebida en `index.html`). **Mientras no se defina nada, las cifras son exactamente las de antes.**
   Remuneraciones y las 9 fuentes mantienen su propio corte (por defecto `DATA.n_meses`): el mes de cierre solo mueve el
   default de los **ingresos de SEP** sin corte propio.
-- **Control en la pestaña SEP** (arriba de las tarjetas KPI): "📅 Mes de cierre: Septiembre · fijado por … el …". Solo quien
+- **Control en la pestaña SEP** (arriba de las tarjetas KPI): "📅 Mes de cierre: Septiembre · fijado por … el …" (o "sin definir" mientras nadie lo fije). Solo quien
   está en `ADMIN_EMAILS` ve además el selector **"Cambiar a:"** y el botón **"Aplicar a todas las entidades"**; el resto
   lo ve como texto de solo lectura. Cambiar el selector guarda en `_meta` y **no toca ningún corte explícito** de una entidad.
 - **"Aplicar a todas las entidades"** (solo admin, como "Migrar DC"): pide confirmación mostrando cuántas entidades
@@ -415,12 +433,12 @@ Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o nar
   (`RealHastaMes`) siguen igual.
 
 El selector "Ver resumen (KPI y % Ejecución) acumulado hasta el mes:" de arriba de la tabla
-principal es un control aparte: solo dice hasta qué mes se suman los montos en las tarjetas KPI y
-en el gráfico de "% Ejecución" — no tiene ningún efecto sobre el real/proyectado del detalle por
-RBD.
+principal es un control aparte: solo dice hasta qué mes se suman los montos en las tarjetas KPI (y en la tarjeta SEP del Panel
+principal) y en las casillas "a <mes>" de "% Ejecución" de SEP — no tiene ningún efecto sobre el real/proyectado del detalle por
+RBD ni sobre cómo se rotula cada mes de "% Ejecución" (Real / Proy. / Mixto sale de los cortes reales; ver "Rótulo Real / Proy. / Mixto").
 
 Ese mismo desglose real/proyectado se repite arriba de la tabla principal, en tres filas de
-tarjetas KPI (sumando los 52 RBD): **"Real (ejecutado)"** (borde verde — Ingreso SEP, Carrera
+tarjetas KPI (sumando los 55 RBD de la tabla: 52 con marco SEP y 3 sin marco): **"Real (ejecutado)"** (borde verde — Ingreso SEP, Carrera
 Docente, Gasto Remuneraciones y Gasto Bienes y Servicios ya ejecutados, con su Saldo), **"Proyectado"**
 (borde naranja — las mismas 5 cifras pero solo la parte proyectada) y **"Total (Real +
 Proyectado)"** (la tabla de siempre, con RBD en déficit, Datos a revisar y Gasto SEP sin marco).
@@ -493,7 +511,7 @@ celda, ahora para **SEP y las 9 fuentes de financiamiento**:
   el código del GESPARVU); archivos `reporte_personalizado_AAAA-MM-DD.*`.
 
 Este coloreado es independiente del selector "Ver resumen
-acumulado hasta el mes" de la pestaña SEP, que solo afecta a las tarjetas KPI.
+acumulado hasta el mes" de la pestaña SEP, que solo afecta a las tarjetas KPI (y a las casillas "a <mes>" de % Ejecución).
 
 ### Pestaña "Otras Fuentes"
 
@@ -502,13 +520,14 @@ de SEP. Hoy son 9: Subvención General, PIE, Subvención de Mantención, Subvenc
 JUNJI, FAEP, FIGA, Aporte Fiscal Extraordinario Educación y Aporte Fiscal Extraordinario JUNJI
 (estos dos últimos van como fuentes separadas a pedido del usuario). A diferencia de SEP, estas fuentes **no tienen marco anual ni meta 70/30** —
 el seguimiento es simplemente Ingreso vs. Gasto por fuente, con un Estado de solo dos valores
-(Superávit/Déficit).
+(Superávit/Déficit; ver "Estado de una entidad").
 
 - Cada fuente es su propia pestaña de primer nivel (entre SEP y % Ejecución/Reportes, ver
   "Estructura de pestañas") — sin selector desplegable intermedio, se presiona directo.
-- La tabla incluye una fila fija adicional, **"AC" (Administración Central)**, para gasto a
-  nivel del sostenedor que no corresponde a un establecimiento puntual — no aparece en el Panel
-  principal ni en Reportes de SEP, solo en esta pestaña (excepto en JUNJI, ver más abajo).
+- Las fuentes con universo `rbd_ac` incluyen una fila fija adicional, **"AC" (Administración Central)**, para gasto a
+  nivel del sostenedor que no corresponde a un establecimiento puntual — no participa de SEP (no está en la tabla ni en los totales
+  de SEP), pero sí cuenta en cada una de esas fuentes: en sus tarjetas del Panel principal ("N de 56 entidades"), en % Ejecución y en Reportes.
+  Las fuentes con universo `gesparvu` (JUNJI y Aporte JUNJI) no tienen fila AC.
 - Todo se guarda en tiempo real vía Firestore (mismo documento `sep_carga_rbd/{rbd}` de SEP, bajo
   el campo nuevo `otras_fuentes`), sin requerir cambios en `firestore.rules`.
 
@@ -538,7 +557,9 @@ Fiscales agregaron combinaciones nuevas):
 
 **JUNJI** (`incomeShape:'junji3'`, `bysMode:'concepto'`): Operación financia Remuneraciones y
 Bienes y Servicios; Homologación y Carrera Docente financian solo Remuneraciones — el modal
-muestra un "Saldo Operación disponible para B&S" informativo (no bloquea la carga si se excede).
+muestra un "Saldo Operación disponible para B&S" (Operación − gasto de B&S; no bloquea la carga si se excede) y **ese saldo entra al Estado**: una
+entidad de JUNJI está en Déficit si su saldo total es negativo **o** si su saldo de Operación para B&S es negativo (B&S no puede pagarse con
+fondos solo-remuneraciones). La fila, el modal, "Atención" y el tooltip dicen la causa (ver "Estado de una entidad").
 
 **FAEP y FIGA** (`incomeShape:'single'`, `bysMode:'concepto'`): quedaron pendientes de la PR
 anterior porque, igual que JUNJI, ninguna de las dos aparece en los manuales SUPEREDUC revisados
@@ -677,6 +698,34 @@ el catálogo SEP, la coherencia de Adm. Central y la revisión visual de las 8 p
 - Saldo final = (Ingreso SEP + Carrera Docente) − gasto remuneraciones − gasto bienes y
   servicios.
 
+### Estado de una entidad: una sola regla (L-07 / L-08)
+
+Una única función, `estadoDeEntidad(recurso, gasto, conRiesgo)`, decide el Estado de **SEP y de las 9 fuentes** (antes SEP lo decidía con el % ya
+redondeado a 1 decimal y las fuentes con el signo del saldo, así que un mismo caso salía distinto). Trabaja con montos en pesos enteros y **sin
+redondear ningún porcentaje**: los % que se muestran siguen redondeados a 1 decimal, pero no deciden nada.
+
+| Estado | Regla | Dónde existe |
+|---|---|---|
+| **Déficit** | el saldo es negativo (gasto total > recurso total). Un saldo de exactamente $0 **no** es déficit; recurso $0 con gasto > $0 sí | SEP y las 9 fuentes |
+| **Riesgo** | no es déficit y gasto / recurso ≥ 90 % **exacto** (se compara `gasto × 10 ≥ recurso × 9`, sin punto flotante); sin recurso no hay cociente | solo SEP |
+| **Superávit** | todo lo demás (también recurso $0 sin gasto) | SEP y las 9 fuentes |
+
+- **SEP**: recurso = Ingreso SEP (Preferente + Prioritario) + Carrera Docente; gasto = remuneraciones + Bienes y Servicios (compras + proyección), año completo
+  (Real + Proy). Un 99,996 % se muestra "100,0 %" pero es **Riesgo** (no Déficit); un 89,999 % se muestra "90,0 %" y es **Superávit**; un 100 % exacto (saldo $0)
+  es **Riesgo**; saldo -$1 es **Déficit**. Un RBD sin marco SEP con gasto SEP tiene recurso $0, así que su Estado es Déficit (la etiqueta sigue diciendo
+  "⚠ Sin marco SEP") y cuenta como tal en el filtro, la tarjeta "RBD en déficit" ("de 53 (52 con marco SEP activo + 1 sin marco con gasto SEP)") y el Panel principal.
+- **Fuentes**: solo Superávit / Déficit, siempre sobre el Total (Real + Proy). Saldo $0 → Superávit; ingreso $0 con gasto → Déficit.
+- **JUNJI (L-08)**: `incomeShape:'junji3'` tiene 3 líneas de ingreso. Operación puede financiar Bienes y Servicios y Remuneraciones; Homologación y Carrera
+  Docente financian **solo** Remuneraciones (decisión de negocio). Por eso JUNJI es Déficit si el saldo total < 0 **o** si `saldo_operacion_bys` =
+  Operación − gasto de B&S < 0, y la fila (aviso visible + tooltip), el subtítulo del modal, "Atención" y el PDF de la entidad dicen cuál es la causa (saldo total,
+  saldo de Operación para B&S, o ambas). La regla vive en `causasDeficitOtraFuente` y está atada a `incomeShape:'junji3'`, así que cualquier fuente futura
+  con líneas restringidas la hereda; hoy **ninguna otra fuente** tiene líneas de ingreso restringidas (las otras 8 son `single`).
+- **Todo lugar que cuenta o lista "entidades en déficit" lee el mismo Estado**: tarjetas KPI de SEP y de cada fuente, tarjetas por fuente y franja del Panel principal,
+  la lista "Atención" (vista Total), el filtro por Estado de la tabla SEP, el CSV y el Excel de resumen, el PDF general y los PDF por fila, y el CSV de detalle de las fuentes
+  ("Estado (Total)"). Lo derivado (Estado, causa, saldo de Operación) nunca se guarda en Firestore. El spec `estado_unico` lo comprueba contra un cálculo independiente.
+- Fuera de alcance (hallazgo L-17, sin cambios): en SEP la Carrera Docente también es de uso exclusivo en remuneraciones, pero hoy solo se suma a la meta de
+  remuneraciones y el Estado usa el saldo total; no existe un equivalente al "saldo de Operación para B&S".
+
 ### Dos familias de columnas "%" — no confundir
 
 La tabla tiene tres grupos de columnas de porcentaje:
@@ -692,10 +741,10 @@ La tabla tiene tres grupos de columnas de porcentaje:
   justo al lado de "Estado"): Ingreso Total − Gasto Total y (Gasto Remuneraciones + Gasto B&S) /
   Ingreso Total respectivamente — ambos ya incluyen tanto lo ejecutado como lo proyectado para lo
   que falta del año, así se ve cómo quedaría ese RBD si las proyecciones cargadas (Remuneraciones
-  futuras y Bienes y Servicios Proyección) se cumplen tal cual. El % Ejec. Total es la única
-  columna que realmente define el Estado de cada RBD: ≥100% Déficit, ≥90% Riesgo, el resto
-  Superávit — ambas se destacan aparte de las demás para que quede claro de un vistazo por qué un
-  RBD quedó en ese estado.
+  futuras y Bienes y Servicios Proyección) se cumplen tal cual. El Estado de cada RBD se lee con
+  estas dos columnas (Déficit = Saldo Final negativo; Riesgo = % Ejec. Total de 90 % o más sin ser déficit; el resto, Superávit), pero se decide con el
+  saldo y el cociente **exactos**, no con el % redondeado que se ve (ver "Estado de una entidad") — ambas se destacan aparte de las demás para que quede
+  claro de un vistazo por qué un RBD quedó en ese estado.
 
 ## Alerta: establecimientos sin marco SEP con gasto SEP
 
@@ -709,7 +758,7 @@ $0), pero de todas formas pueden registrar gasto SEP por error de imputación:
 Se incluyen en el panel igual que cualquier otro RBD (mismas tablas editables, mismo
 exportar/importar Excel), pero si alguna vez registran gasto en remuneraciones, Subt. 22/29 o
 Carrera Docente, el panel los marca con una alerta crítica bien visible: fila resaltada en rojo,
-tag "⚠ GASTO SEP INDEBIDO" junto al nombre, "Estado" pasa a "⚠ Sin marco SEP", un banner rojo en
+tag "⚠ GASTO SEP INDEBIDO" junto al nombre, la etiqueta de "Estado" pasa a "⚠ Sin marco SEP" (su Estado real es Déficit: recurso $0 y gasto > 0), un banner rojo en
 su detalle explicando el problema, y se suman a la tarjeta KPI "⚠ Gasto SEP sin marco" en la
 parte superior. Esto es siempre un error a corregir o justificar, nunca un estado normal.
 
@@ -725,7 +774,11 @@ scripts/              Pipeline en Python usado para armar los datos que alimenta
 data/                 plan_cuentas_2026.json (matriz de cuentas por subvención, dato normativo
                        sin cifras) y plan_cuentas_2026_verificacion.md (cómo se verificó).
 tests/                Arnés de pruebas (Playwright + mock local de Firebase): specs, golden master
-                       y fixture sintético. Ver tests/README.md. Se corre con `node tests/run.mjs`.
+                       y fixtures sintéticos (default, cierre, compras, estado). Ver tests/README.md.
+                       Se corre con `node tests/run.mjs` (≈ 12 min la suite completa).
+tests/e2e-real/       Arnés opcional contra el SDK real de Firestore y su emulador (ver tests/e2e-real/README.md).
+*.pdf (raíz)          Manuales oficiales de SUPEREDUC 2026 de referencia (Manual de Cuentas y capítulos del Manual de
+                       Usuario de Rendición de Cuentas); el panel no los lee.
 ```
 
 Los scripts de `scripts/` esperan los Excel de origen en una carpeta `CARGA/` local (no
@@ -741,8 +794,12 @@ El panel usa el mismo proyecto Firebase que
 en una colección propia y separada (`sep_carga_rbd`) que no comparte datos con la colección
 `events` de Calendariopermisos.
 
-- **Modelo de datos**: un documento por RBD en `sep_carga_rbd/{rbd}` (`ingreso_items`, `rem`,
-  `agregado.items`, `ingreso_real_hasta_mes`, `lastModifiedBy`, `lastModifiedAt`), más un documento `sep_carga_rbd/_meta`
+- **Modelo de datos**: un documento por entidad en `sep_carga_rbd/{id}` —cada RBD de `DATA.registros` (55), `AC` (Administración Central) y cada GESPARVU
+  (13)— con los campos `rbd`, `nombre`, `ingreso_items` (Preferente / Prioritario / Carrera Docente, cada uno `{item, meses, total}`),
+  `ingreso_real_hasta_mes` (corte propio de ingresos, opcional), `rem` (`meses`, `total`, `real_hasta_mes`), `bys_proyeccion.items.{código}`
+  (proyección de B&S por cuenta), `compras.{id}` (Subt. 22/29 de SEP), `otras_fuentes.{fuente}` (las 9 fuentes: ingreso/s, `gasto_rem`, `compras` o `bys_items`,
+  `bys_proy_items`, `real_hasta_mes`), `lastModifiedBy` y `lastModifiedAt`. El antiguo `agregado.items` ya no se guarda (el B&S por ítem y mes se deriva de
+  las compras); los totales nunca se leen de Firestore, siempre se recalculan. Más un documento `sep_carga_rbd/_meta`
   con la lista compartida de conceptos de gasto (`items_22`, `items_29`, que el panel ignora) y el **mes de cierre global**
   (`mes_cierre`, `mes_cierre_por`, `mes_cierre_en`; ver "Corte de ingresos y mes de cierre"). `_meta` solo se escribe con `merge`
   y únicamente cuando un administrador mueve el mes de cierre; la siembra inicial y la creación de RBD que faltan nunca lo tocan.
@@ -752,10 +809,10 @@ en una colección propia y separada (`sep_carga_rbd`) que no comparte datos con 
   ningún RBD puede borrarse desde el cliente.
 - **Migración inicial (una sola vez)**: la primera vez que alguien entra al panel con la
   colección `sep_carga_rbd` vacía, el propio `index.html` sube automáticamente los datos que hoy
-  vienen embebidos en el archivo (marco SEP por RBD, ítems de gasto, ingreso real
-  Preferente/Prioritario) — un `setDoc` por RBD. Esa migración está en una función claramente
+  vienen embebidos en el archivo (el ingreso real Preferente/Prioritario de cada RBD, con su proyección de agosto a diciembre = promedio de los meses reales, Carrera
+  Docente en $0 y las remuneraciones en $0 con su `real_hasta_mes`) — un `batch.set` con `merge:true` por cada RBD de `DATA.registros`, todos en un solo `writeBatch`. Esa migración está en una función claramente
   marcada como "EJECUTAR UNA SOLA VEZ" dentro de `index.html`; una vez confirmada la carga de
-  los 52 RBD en Firebase Console, ese bloque puede eliminarse del código con seguridad. Está
+  los 55 RBD (52 con marco y 3 sin marco) en Firebase Console, ese bloque puede eliminarse del código con seguridad. Está
   protegido para no pisar datos: **solo se dispara con un snapshot vacío confirmado por el
   servidor** (`fromCache = false`); un snapshot vacío que viene del caché local (navegador sin caché
   o sin conexión) **no escribe nada**. Ni la siembra ni la creación de RBD que faltan envían mapas
@@ -774,6 +831,7 @@ donde se edita) refleja la verdad, usando `snapshot.metadata.hasPendingWrites` /
 | Verde | `Sincronizado · última edición por …` | el servidor confirmó todo y hay conexión |
 | Amarillo | `Guardando…` | hay escrituras sin confirmar, o se está reintentando tras un error transitorio |
 | Amarillo | `Sin conexión: los cambios se guardan en este navegador y se enviarán al reconectar` | el snapshot viene del caché (`fromCache`) o el navegador no tiene red; lo editado se envía al reconectar |
+| Amarillo | `Sin conexión con el servidor — esperando datos (no se escribió nada)` | el primer snapshot vino vacío del caché y el servidor todavía no confirmó qué hay: no se siembra ni se crea nada |
 | Rojo (persistente) | `N cambios sin guardar — <motivo>` + **Reintentar** | error **permanente** del servidor |
 
 - **Errores transitorios** (`unavailable`, `deadline-exceeded`, `resource-exhausted`, `aborted`): se

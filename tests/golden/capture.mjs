@@ -463,6 +463,58 @@ async function seccionCompras(h, R) {
   await R.descarga('compras.exp.of.pie.csv-compras', () => page.click('#downloadComprasOFBtn-pie'));
 }
 
+// Con el fixture "estado" (default + casos de borde del Estado, PR D2 — ver generate.mjs): saldo 0, 99,996 %, -$1, 89,999 % / 90,000 %, recurso 0, Carrera Docente, FAEP / General con saldo 0 y
+// -$1, y los GESPARVU de JUNJI con el saldo de Operación para B&S negativo (solo, con el total, o ninguno). Cubre el Estado en TODAS las vistas que lo cuentan o lo listan.
+async function seccionEstado(h, R) {
+  const { page } = h;
+  await abrirDetails(page, '#tab-dashboard');
+  for (const v of ['total', 'real', 'proy']) {
+    await page.click(`.dash-chips button[data-dash-vista="${v}"]`);
+    await R.vista(`estado.dashboard.${v}`, '#tab-dashboard');
+  }
+  await page.click('.dash-chips button[data-dash-vista="total"]');
+  await h.clickTab('SEP');
+  await R.vista('estado.sep', '#tab-panel');
+  for (const ef of ['deficit', 'riesgo', 'superavit']) {
+    await setSelect(page, '#estadoFilter', ef);
+    await R.vista(`estado.sep.filtro-${ef}`, '#tab-panel');
+  }
+  await setSelect(page, '#estadoFilter', '');
+  await page.fill('#searchInput', '113');
+  await R.vista('estado.sep.busqueda-113', '#tab-panel');
+  await page.fill('#searchInput', '');
+  for (const rbd of ['1131', '1136']) {
+    await page.click(`#tableBody td.rbd-clickable[data-abrir-rbd="${rbd}"]`);
+    await h.waitIdle();
+    await R.vista(`estado.modal.sep.${rbd}`, '#rbdModal');
+    await page.keyboard.press('Escape');
+    await h.waitIdle();
+  }
+  for (const fk of ['faep', 'general', 'junji', 'aporte_junji']) {
+    await h.clickTab('of-' + fk);
+    await R.vista(`estado.of.${fk}`, '#tab-of-' + fk);
+  }
+  for (const [fk, id] of [['junji', '5402002'], ['junji', '5402004'], ['junji', '5401006'], ['junji', '5401005'], ['junji', '5401007'], ['faep', '1131']]) {
+    await abrirModalOtraFuente(h, R, fk, id, `estado.modal.of.${fk}.${id}`);
+  }
+  await h.clickTab('SEP');
+  await R.descarga('estado.exp.sep.csv-resumen', () => page.click('#downloadBtn'));
+  await R.descarga('estado.exp.sep.excel-resumen', () => page.click('#downloadResumenExcelBtn'));
+  await R.imprimir('estado.print.sep.general', () => page.click('#exportPdfBtn'));
+  await R.imprimir('estado.print.sep.fila.1131', () => page.click('#tableBody button.row-action-btn[data-action="pdf"][data-rbd="1131"]'));
+  await h.clickTab('of-junji');
+  await R.descarga('estado.exp.of.junji.fila.5402002.csv', () => page.click('#otrasFuentesTbody-junji button.row-action-btn[data-action="csv"][data-rbd="5402002"]'));
+  await R.descarga('estado.exp.of.junji.fila.5401005.csv', () => page.click('#otrasFuentesTbody-junji button.row-action-btn[data-action="csv"][data-rbd="5401005"]'));
+  await R.imprimir('estado.print.of.junji.fila.5402002', () => page.click('#otrasFuentesTbody-junji button.row-action-btn[data-action="pdf"][data-rbd="5402002"]'));
+  await h.clickTab('faep');
+  await R.descarga('estado.exp.of.faep.fila.1131.csv', () => page.click('#otrasFuentesTbody-faep button.row-action-btn[data-action="csv"][data-rbd="1131"]'));
+  await h.clickTab('% Ejecución');
+  for (const rbd of ['', '1130']) {
+    await setSelect(page, '#ejecRbdSelect', rbd);
+    await R.vista(`estado.ejec.sep.${rbd || 'agregado'}`, '#tab-ejecucion');
+  }
+}
+
 export const SECCIONES = [
   { nombre: 'dashboard', fn: seccionEncabezadoYDashboard },
   { nombre: 'sep', fn: seccionSep },
@@ -473,6 +525,7 @@ export const SECCIONES = [
   { nombre: 'exports-fuentes', fn: seccionExportsFuentes },
   { nombre: 'cierre', fixture: 'cierre', fn: seccionCierre },
   { nombre: 'compras', fixture: 'compras', fn: seccionCompras },
+  { nombre: 'estado', fixture: 'estado', fn: seccionEstado },
 ];
 
 export async function capturar({ log = () => {}, solo = null, html = undefined } = {}) {

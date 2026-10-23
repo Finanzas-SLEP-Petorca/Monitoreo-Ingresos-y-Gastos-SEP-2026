@@ -56,7 +56,7 @@ export async function vista(page, selector, { inputs = true } = {}) {
       el.querySelectorAll('.vz-chip.active, .of-chip.active, .tab-btn.active, .dash-chips button.active').forEach(c => campos.push(`activo ${etiqueta(c)} = ${norm(c.innerText)}`));
       // 3) cifras clave
       el.querySelectorAll('.kpi-card, .dash-tile').forEach(c => kpi.push(norm(c.innerText).split('\n').slice(0, 2).join(' | ')));
-      el.querySelectorAll('.dash-card').forEach(c => kpi.push(`card ${c.dataset.fuente}: ing=${c.dataset.ing} rem=${c.dataset.rem} bys=${c.dataset.bys} gas=${c.dataset.gas} saldo=${c.dataset.saldo}`));
+      el.querySelectorAll('.dash-card').forEach(c => kpi.push(`card ${c.dataset.fuente}: ing=${c.dataset.ing} rem=${c.dataset.rem} hon=${c.dataset.hon} bys=${c.dataset.bys} gas=${c.dataset.gas} saldo=${c.dataset.saldo}`));
       // 4) gráficos (SVG) y marcado completo (este último solo informativo)
       el.querySelectorAll('svg').forEach(s => svg.push(cyrb53(s.outerHTML)));
       html.push(el.outerHTML);

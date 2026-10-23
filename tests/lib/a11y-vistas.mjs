@@ -158,3 +158,34 @@ export async function recorrerLogin(visitante) {
     await h.close();
   }
 }
+
+/**
+ * Honorarios (Subt. 21), con el fixture `honorarios` ya arrancado en `h`: la pestaña SEP con la columna «Gasto Hon.», el detalle del RBD 1121 con boletas, marcas ⚠ y proyección, el formulario en modo
+ * edición con avisos en vivo (fecha de 2025, pago anterior al documento, gasto mayor que el documento) y el Panel principal / % Ejecución (Consolidado) con honorarios dentro del total.
+ * `visitante({nombre, scope, tipo})` como en recorrerVistas.
+ */
+export async function recorrerHonorarios(h, visitante) {
+  const { page } = h;
+  const vista = async (nombre) => { await h.waitIdle(); await visitante({ nombre, scope: '#app', tipo: 'vista' }); };
+  const modal = async (nombre) => { await h.waitIdle(); await visitante({ nombre, scope: '#rbdModal .modal-panel', tipo: 'modal' }); };
+  await h.clickTab('Panel principal');
+  await abrirDetails(page, '#tab-dashboard');
+  await vista('hon.dashboard.total');
+  await h.clickTab('SEP');
+  await vista('hon.sep');
+  await page.click('#tableBody td.rbd-clickable[data-abrir-rbd="1121"]');
+  await h.waitIdle();
+  await modal('hon.modal.sep.1121');
+  await page.click('#modalBody tr[data-hon-id="h1121_1"] .hon-edit-btn');
+  await page.fill('#modalBody .hon-form-grid [data-field="fechaDocumento"]', '2025-12-30');
+  await page.fill('#modalBody .hon-form-grid [data-field="fechaPago"]', '2025-12-01');
+  await page.fill('#modalBody .hon-form-grid [data-field="montoGasto"]', '900.000');
+  await page.fill('#modalBody .hon-form-grid [data-field="montoDocumento"]', '100.000');
+  await modal('hon.modal.sep.1121.edicion-con-avisos');
+  await page.click('#modalBody .cancelar-edicion-hon-btn');
+  await page.keyboard.press('Escape');
+  await h.waitIdle();
+  await h.clickTab('% Ejecución');
+  await page.click('#ejecFuenteChips button[data-ejec-fuente="consolidado"]');
+  await vista('hon.ejec.consolidado');
+}

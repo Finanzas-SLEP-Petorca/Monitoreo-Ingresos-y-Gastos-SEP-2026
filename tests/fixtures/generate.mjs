@@ -1,4 +1,4 @@
-// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json, cierre.json, compras.json y estado.json).
+// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json, cierre.json, compras.json, estado.json y honorarios.json).
 //   node tests/fixtures/generate.mjs            -> escribe default.json y cierre.json
 //   node tests/fixtures/generate.mjs --check    -> verifica que ambos coinciden con lo que generaría (sin escribir)
 //
@@ -8,6 +8,9 @@
 //                 (ver más abajo). Los MONTOS son los mismos que los de default.json: solo cambian los cortes Real/Proyectado.
 //   compras.json  default + casos de la PR de corrección de compras (L-03 signo de notas de crédito/débito, F-11/L-05 avisos de fecha y de cuenta, L-14 ID "0"):
 //                 compras AGREGADAS al final (sin consumir números aleatorios), así que todo lo que ya traía default.json queda igual.
+//
+//   honorarios.json default + Honorarios (Subt. 21) por boleta y proyección en varios RBD de SEP (PR-1 de Honorarios): agrega `honorarios` / `hon_proyeccion` sin tocar nada más
+//                 (ver el bloque «variante honorarios» más abajo).
 //
 //   estado.json   default + casos de borde del Estado de las entidades (PR D2: L-07 Estado único sin redondear, L-08 JUNJI): saldo exactamente 0, 99,996 %, saldo -$1,
 //                 89,999 % vs 90,000 %, recurso 0 con y sin gasto, Carrera Docente en el recurso, y GESPARVU de JUNJI con el saldo de Operación para B&S negativo.
@@ -22,6 +25,9 @@
 //     ingreso_items: { "<item>": { item, meses:{ENERO..DICIEMBRE}, total } },       // Preferente / Prioritario / Carrera Docente
 //     rem: { meses, total, real_hasta_mes },
 //     bys_proyeccion: { items: { "<codigo SEP>": { meses, total } } },
+//     honorarios: { "<id>": { codigo, tipoDocumento (CÓDIGO: BOLH|BHE|BOLHE|BPST|BPSTE), nroDocumento, fechaDocumento, fechaPago, descripcion, rutProveedor, nombreProveedor,
+//                              montoGasto, montoDocumento, documentoContable? } },       // solo en la variante honorarios
+//     hon_proyeccion: { items: { "<cuenta de honorarios>": { meses, total } } },
 //     compras: { "<id>": { codigo, tipoDocumento, nroDocumento, fechaDocumento, fechaPago, descripcion,
 //                          rutProveedor, nombreProveedor, montoGasto, montoDocumento, documentoOriginal, documentoContable? } },
 //     otras_fuentes: { general|pie|mantenimiento|prorretencion: { ingreso, gasto_rem, compras, bys_proy_items, real_hasta_mes },
@@ -445,6 +451,56 @@ const docsEstado = JSON.parse(JSON.stringify(docs));
   };
 }
 
+// ---------- variante "honorarios": Honorarios (Subt. 21) por boleta + proyección (PR-1 de Honorarios, solo SEP) ----------
+// Se AGREGAN `honorarios` y `hon_proyeccion` a algunos RBD de default.json (sin consumir números aleatorios, sin tocar nada más): los demás RBD quedan igual. Boletas con sus 5
+// tipos, reparto (Monto Gasto < Monto Documento), N° DC, caracteres peligrosos y los casos con aviso (fecha de 2025, fecha con formato no reconocido, cuenta fuera del catálogo,
+// cuenta no habilitada para SEP, tipo que no es de honorarios, tipo que la cuenta no acepta). Montos en pesos enteros; las fechas son de documento (determinan el mes).
+//   SEP / 1121 · h1121_1 (410803 BOLHE, ENE 600.000) · h1121_2 (410803 BOLH, FEB 450.000) · h1121_3 (410304 BHE, MAR 300.000, N° DC DC_601) · h1121_4 (411601 BPST, MAR, reparto 200.000 de 500.000)
+//                · h1121_5 (410501 BPSTE, JUL 800.000) · h1121_especial (410803 BOLHE, ABR 120.000, texto con & < > " ') · h1121_f2025 (410802 BOLH, 2025-12-30: ⚠ fuera de 2026, suma en DIC)
+//                · h1121_invalida (410803 BOLH, fecha 10/03/2026: ⚠ no se contabiliza) · h1121_cuenta_x (cuenta 999999: ⚠ fuera del catálogo, no se contabiliza)
+//                · h1121_nohab (411101 BOLH, MAY: ⚠ cuenta no habilitada para SEP; sí suma) · h1121_tipo_fac (410803 con tipo FAC: ⚠ no es de honorarios) · h1121_tipo_np (410904 con BHE: ⚠ la cuenta no lo acepta)
+//                · hon_proyeccion: 410803 (ENE 100.000 —se SUMA a la boleta de enero—, AGO-DIC 300.000) y 410304 (SEP-DIC 200.000)
+//   SEP / 1122 · 2 boletas (410803 BOLHE MAR 500.000; 410608 BPST ABR 250.000) y proyección 410803 (JUN-DIC 100.000)
+//   SEP / 1123 · solo proyección 410304 (ABR-DIC 150.000);  SEP / 1125 · una boleta de DIC (410804 BOLHE 600.000);  SEP / 1128 · una boleta grande (411701 BOLHE JUN 9.000.000: empuja el saldo)
+//   SEP / 1120 (sin marco SEP) · una boleta (410803 BOLH FEB 80.000): dispara "⚠ Gasto SEP sin marco" aunque no tenga otro gasto de honorarios
+const docsHon = JSON.parse(JSON.stringify(docs));
+{
+  const mesesRango = (desde, hasta, v) => meses12(i => (i + 1 >= desde && i + 1 <= hasta ? v : 0));
+  const proy = (m) => ({ meses: m, total: suma(m) });
+  const bol = (codigo, tipoDocumento, nro, fecha, pago, descripcion, gasto, doc, extra = {}) => ({
+    codigo, tipoDocumento, nroDocumento: String(nro), fechaDocumento: fecha, fechaPago: pago, descripcion,
+    rutProveedor: '11111111-1', nombreProveedor: 'Nombre Apellido Apellido', montoGasto: gasto, montoDocumento: doc === undefined ? gasto : doc, ...extra,
+  });
+  docsHon['1121'].honorarios = {
+    h1121_1: bol('410803', 'BOLHE', 54, '2026-01-21', '2026-01-28', 'Taller de ajedrez enero 2026', 600000),
+    h1121_2: bol('410803', 'BOLH', 55, '2026-02-10', '2026-02-17', 'Taller de ajedrez febrero 2026', 450000),
+    h1121_3: bol('410304', 'BHE', 12, '2026-03-05', '2026-03-12', 'Servicio de apoyo administrativo', 300000, undefined, { documentoContable: 'DC_601', rutProveedor: '12345678-5', nombreProveedor: 'Juan Pérez Soto' }),
+    h1121_4: bol('411601', 'BPST', 8, '2026-03-18', '2026-03-25', 'Reparación de cubierta (reparto entre RBD)', 200000, 500000, { rutProveedor: '76123456-7', nombreProveedor: 'Constructora Aconcagua' }),
+    h1121_5: bol('410501', 'BPSTE', 90, '2026-07-30', '2026-08-05', 'Asistencia técnica pedagógica (ATE)', 800000, undefined, { rutProveedor: '77654321-K', nombreProveedor: 'Consultora Educativa Valle' }),
+    h1121_especial: bol('410803', 'BOLHE', 'A&B-<7>', '2026-04-15', '2026-04-30', 'Taller "Robótica" & <b>Lego</b>; O\'Higgins, 2° ciclo', 120000, undefined, {
+      rutProveedor: '9999999-9', nombreProveedor: 'Ñandú <Ltda> & "Co"', documentoContable: "DC_<9> & 'Z'; \"Q\"" }),
+    h1121_f2025: bol('410802', 'BOLH', 61, '2025-12-30', '2026-01-05', 'Boleta con fecha de 2025', 70000),
+    h1121_invalida: bol('410803', 'BOLH', 62, '10/03/2026', '2026-03-20', 'Fecha con formato no reconocido', 90000),
+    h1121_cuenta_x: bol('999999', 'BOLH', 63, '2026-05-05', '2026-05-10', 'Cuenta fuera del catálogo de honorarios', 110000),
+    h1121_nohab: bol('411101', 'BOLH', 64, '2026-05-12', '2026-05-20', 'Cuenta no habilitada para SEP', 130000),
+    h1121_tipo_fac: bol('410803', 'FAC', 65, '2026-06-02', '2026-06-09', 'Tipo que no es de honorarios', 140000),
+    h1121_tipo_np: bol('410904', 'BHE', 66, '2026-06-15', '2026-06-22', 'Tipo que la cuenta no acepta', 150000),
+  };
+  docsHon['1121'].hon_proyeccion = { items: {
+    '410803': proy(meses12(i => (i === 0 ? 100000 : (i >= 7 ? 300000 : 0)))),
+    '410304': proy(mesesRango(9, 12, 200000)),
+  } };
+  docsHon['1122'].honorarios = {
+    h1122_1: bol('410803', 'BOLHE', 7, '2026-03-09', '2026-03-16', 'Taller de teatro', 500000),
+    h1122_2: bol('410608', 'BPST', 3, '2026-04-20', '2026-04-27', 'Evaluación diagnóstica externa', 250000),
+  };
+  docsHon['1122'].hon_proyeccion = { items: { '410803': proy(mesesRango(6, 12, 100000)) } };
+  docsHon['1123'].hon_proyeccion = { items: { '410304': proy(mesesRango(4, 12, 150000)) } };
+  docsHon['1125'].honorarios = { h1125_1: bol('410804', 'BOLHE', 21, '2026-12-10', '2026-12-20', 'Apoyo de especialista (diciembre)', 600000) };
+  docsHon['1128'].honorarios = { h1128_1: bol('411701', 'BOLHE', 31, '2026-06-08', '2026-06-15', 'Mantención de bienes muebles (boleta grande)', 9000000) };
+  docsHon['1120'].honorarios = { h1120_1: bol('410803', 'BOLH', 2, '2026-02-12', '2026-02-19', 'Boleta en un RBD sin marco SEP', 80000) };
+}
+
 // ---------- salida ----------
 function serializar(docsX, extra = {}) {
   const ids = Object.keys(docsX).sort();
@@ -462,6 +518,7 @@ const SALIDAS = [
   { archivo: path.join(AQUI, 'cierre.json'), ...serializar(docsCierre, { variante: 'cierre' }) },
   { archivo: path.join(AQUI, 'compras.json'), ...serializar(docsCompras, { variante: 'compras' }) },
   { archivo: path.join(AQUI, 'estado.json'), ...serializar(docsEstado, { variante: 'estado' }) },
+  { archivo: path.join(AQUI, 'honorarios.json'), ...serializar(docsHon, { variante: 'honorarios' }) },
 ];
 
 if (process.argv.includes('--check')) {

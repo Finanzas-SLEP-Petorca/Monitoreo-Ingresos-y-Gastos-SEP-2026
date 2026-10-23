@@ -27,6 +27,11 @@ function armarFixture() {
     f4: compra({ nroDocumento: '80', descripcion: '-1500', nombreProveedor: 'Aseo & Cía' }),   // texto que ES un número: no se toca
     f5: compra({ nroDocumento: '81', descripcion: 'Compra normal', nombreProveedor: 'Proveedor SpA', montoGasto: 1000, montoDocumento: 1000 }),
   };
+  // Honorarios (Subt. 21): texto libre = descripción, nombre del prestador y N° DC; N° de boleta, RUT, fechas, cuenta, tipo (código) y montos nunca se tocan.
+  d.honorarios = {
+    h1: { codigo: '410803', tipoDocumento: 'BOLHE', nroDocumento: '-91', fechaDocumento: '2026-03-02', fechaPago: '2026-03-05', descripcion: F1, rutProveedor: '-1234567-8', nombreProveedor: F2, montoGasto: 1500, montoDocumento: 1500, documentoContable: F3 },
+    h2: { codigo: '410803', tipoDocumento: 'BOLH', nroDocumento: '92', fechaDocumento: '2026-03-03', fechaPago: '2026-03-06', descripcion: '-1500', rutProveedor: '11111111-1', nombreProveedor: 'Aseo & Cía', montoGasto: 2500, montoDocumento: 2500 },
+  };
   d.otras_fuentes.pie.compras = {
     p1: compra({ nroDocumento: '-5', descripcion: '=1+1', nombreProveedor: '@cmd' }),
     p2: compra({ nroDocumento: '-6', descripcion: F5, nombreProveedor: 'Normal' }),
@@ -88,6 +93,13 @@ await correrSpec('formulas_csv_excel', async (t) => {
   t.eq([rx.f1[5], rx.f1[9], rx.f1[6], rx.f1[7], rx.f1[3]], ['-77', '11.111.111-1', '2026-03-02', '2026-03-05', '410606'], 'Excel SEP: N° de documento, RUT, fechas y código NO llevan apóstrofo (en el Excel de respaldo el RUT va como se guardó)');
   t.ok(typeof rx.f1[11] === 'number' && rx.f1[11] === -1500 && typeof rx.f1[12] === 'number', 'Excel SEP: los montos negativos siguen siendo NÚMEROS (no texto con apóstrofo)', [rx.f1[11], rx.f1[12]]);
 
+  // Honorarios: hoja HONORARIOS (ID, RBD, Establecimiento, Codigo, TipoDocumento, NroDocumento, FechaDocumento, FechaPago, Descripcion, RutProveedor, NombreProveedor, MontoGasto, MontoDocumento, N° DC)
+  const hon = Object.fromEntries(libro.hojas.HONORARIOS.slice(1).filter(r => String(r[1]) === '1121').map(r => [String(r[0]), r]));
+  t.eq([hon.h1[8], hon.h1[10], hon.h1[13]], [`'${F1}`, `'${F2}`, `'${F3}`], 'Excel SEP (honorarios): descripción, nombre del prestador y N° DC con fórmula salen con apóstrofo');
+  t.eq([hon.h2[8], hon.h2[10], hon.h2[13]], ['-1500', 'Aseo & Cía', ''], 'Excel SEP (honorarios): texto numérico y texto normal sin apóstrofo');
+  t.eq([hon.h1[5], hon.h1[9], hon.h1[6], hon.h1[7], hon.h1[3], hon.h1[4]], ['-91', '-1234567-8', '2026-03-02', '2026-03-05', '410803', 'BOLHE'], 'Excel SEP (honorarios): N° de boleta, RUT (aunque empiece con «-»), fechas, cuenta y tipo NO llevan apóstrofo');
+  t.ok(typeof hon.h1[11] === 'number' && hon.h1[11] === 1500 && typeof hon.h1[12] === 'number', 'Excel SEP (honorarios): los montos son NÚMEROS', [hon.h1[11], hon.h1[12]]);
+
   // ---------------------------------------------------------------- Excel FAEP (conceptos de B&S)
   await clickTab(page, 'FAEP');
   const xlFaep = await capturarDescarga(page, () => page.click('#downloadExcelOFBtn-faep'));
@@ -125,6 +137,12 @@ await correrSpec('formulas_csv_excel', async (t) => {
   const xl2 = await capturarDescarga(page, () => page.click('#downloadExcelBtn'));
   const hoja2 = (await leerXlsx(page, xl2.buffer)).hojas.COMPRAS;
   t.eq(hoja2, hoja, 'exportar → reimportar → exportar: la hoja COMPRAS queda IDÉNTICA');
+  const wHon = (await h.writes()).filter(w => w.path === RUTA('1121') && w.payload.honorarios);
+  const honEscritas = Object.assign({}, ...wHon.map(w => w.payload.honorarios));
+  t.eq([honEscritas.h1.descripcion, honEscritas.h1.nombreProveedor, honEscritas.h1.documentoContable], [F1, F2, F3], 'reimportar SEP (honorarios): descripción, prestador y N° DC vuelven SIN el apóstrofo');
+  t.eq([honEscritas.h1.nroDocumento, honEscritas.h1.rutProveedor, honEscritas.h1.montoGasto, honEscritas.h2.descripcion], ['-91', '-1234567-8', 1500, '-1500'], 'reimportar SEP (honorarios): N° de boleta, RUT, monto y el texto numérico idénticos');
+  t.ok(Object.values(honEscritas).every(b => !String(b.descripcion).startsWith("'") && !String(b.nombreProveedor).startsWith("'") && !String(b.documentoContable || '').startsWith("'")), 'reimportar SEP (honorarios): ninguna boleta queda con apóstrofo inicial');
+  t.eq((await leerXlsx(page, xl2.buffer)).hojas.HONORARIOS, libro.hojas.HONORARIOS, 'exportar → reimportar → exportar: la hoja HONORARIOS queda IDÉNTICA');
   // FAEP: la clave del concepto no cambia (no aparece "'=HYPERLINK…" como ítem nuevo)
   await h.clearWrites();
   await clickTab(page, 'FAEP');

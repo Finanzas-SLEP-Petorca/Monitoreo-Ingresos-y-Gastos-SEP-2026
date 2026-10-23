@@ -320,7 +320,7 @@ await correrSpec('corte_ingresos', async (t) => {
     await clickTab(page, 'SEP');
     const dl = await capturarDescarga(page, () => page.click('#downloadExcelBtn'));
     const libro = await leerXlsx(page, dl.buffer);
-    t.eq(libro.orden, ['INGRESO', 'REMUNERACIONES', 'SUBT22', 'SUBT29', 'COMPRAS', 'BYS_PROYECCION'], 'el Excel de carga de SEP conserva sus 6 hojas de siempre (sin hoja nueva de cortes)');
+    t.eq(libro.orden, ['INGRESO', 'REMUNERACIONES', 'SUBT22', 'SUBT29', 'COMPRAS', 'BYS_PROYECCION', 'HONORARIOS', 'HON_PROYECCION'], 'el Excel de carga de SEP conserva sus 6 hojas de siempre y solo suma las 2 de Honorarios (sin hoja nueva de cortes)');
     t.ok(libro.orden.every(n => !(libro.hojas[n][0] || []).some(c => /hasta|corte|cierre/i.test(String(c)))), 'ninguna hoja trae una columna de corte (tampoco el de remuneraciones, que nunca la tuvo): los archivos antiguos siguen siendo válidos');
     await h.clearWrites();
     h.dialogs.length = 0;

@@ -93,8 +93,9 @@ await correrSpec('compras_avisos_fecha', async (t) => {
       t.ok([...m.doc, ...m.pago, ...m.cuenta].every(x => x.titulo.length > 30), `SEP: fila "${id}": cada marca trae un title explicativo`, [...m.doc, ...m.pago, ...m.cuenta]);
     }
     const titulos = await marcasDeFila(page, MODAL_SEP, 'y2025');
-    t.ok(/2025-12-30/.test(titulos.doc[0].titulo) && /Diciembre de 2026/.test(titulos.doc[0].titulo), 'SEP: el title de "fecha fuera de 2026" dice a qué mes se suma', titulos.doc[0].titulo);
-    t.ok(/NO entra en ningún total/.test((await marcasDeFila(page, MODAL_SEP, 'dmy')).doc[0].titulo), 'SEP: el title de "no válida" avisa que no entra en ningún total');
+    const tFuera = (titulos.doc[0] || {}).titulo || '';
+    t.ok(/2025-12-30/.test(tFuera) && /Diciembre de 2026/.test(tFuera), 'SEP: el title de "fecha fuera de 2026" dice a qué mes se suma', tFuera);
+    t.ok(/NO entra en ningún total/.test(((await marcasDeFila(page, MODAL_SEP, 'dmy')).doc[0] || {}).titulo || ''), 'SEP: el title de "no válida" avisa que no entra en ningún total');
     // resumen sobre la tabla
     const res = await resumenTexto(page, MODAL_SEP);
     t.ok(res && res.startsWith(`⚠ ${N_CON_AVISOS} compras con avisos; ${clp(SIN_CONTABILIZAR)} sin contabilizar (8 compras que no entran en ningún total)`), `SEP: resumen sobre la tabla: "${N_CON_AVISOS} compras con avisos; ${clp(SIN_CONTABILIZAR)} sin contabilizar"`, res);

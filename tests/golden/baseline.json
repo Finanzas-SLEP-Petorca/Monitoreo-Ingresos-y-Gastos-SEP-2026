@@ -3,7 +3,7 @@
   "esquema": 1,
   "baseline_ref": "0f16ace",
   "html_bajo_prueba": "árbol de trabajo (index.html)",
-  "html_sha1": "cc685c11a41fda9fc91c3ef828ef9692bd4a4a25",
+  "html_sha1": "212d4a3cd851324e9bbaded5b9d42f89c5bb5128",
   "fixture_sha1": "ecc4594e51c6ceb6cd125835198a76ae771228d4",
   "fixture_cierre_sha1": "7d9aeb301d08af3787066775b514d59cf7defc39",
   "fixture": {
@@ -12567,7 +12567,9 @@
     "✏️",
     "⧉",
     "🗑",
-    "999999 ⚠ cuenta no reconocida: no se contabiliza Factura 5007 2026-05-05 2026-05-10 Cuenta fuera del catálogo 76.123.456-7 Librería Central Ltda. $60.000 $71.400",
+    "999999",
+    "⚠ cuenta no reconocida: no se contabiliza",
+    "Factura 5007 2026-05-05 2026-05-10 Cuenta fuera del catálogo 76.123.456-7 Librería Central Ltda. $60.000 $71.400",
     "✏️",
     "⧉",
     "🗑",
@@ -12680,7 +12682,7 @@
     "select [field=codigo] opciones(52) = 410501,410502,410503,410601,410602,410603,410604,410605,410606,410607,410608,410609,410801,410802,410803,410804,410806,410901,410903,410904,410905,410906,410909,410910,410913,410918,411001,411403,411404,411501,411502,411503,411504,411601,411602,411603,411604,411608,411610,411701,411702,411703,411704,410701,410702,410703,410704,410705,410706,410707,411802",
     "select [field=tipoDocumento] = Tipo de documento…"
    ],
-   "htmlHash": "0b0db94f747bba"
+   "htmlHash": "1e747b38586874"
   },
   "compras.modal.sep.1121.formulario-nc-2025": {
    "text": [

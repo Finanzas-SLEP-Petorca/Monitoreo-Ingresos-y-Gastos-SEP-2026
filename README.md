@@ -73,11 +73,13 @@ El **Panel principal** resume SEP + las 9 fuentes de un vistazo (todo en tiempo 
   los mismos números como tabla.
 - **Evolución mensual consolidada** (Ingreso vs. Gasto, enero–diciembre): se arma mes a mes con las mismas
   reglas real/proyectado de cada pestaña (corte "Real hasta" por entidad en las fuentes; en SEP, ingreso real
-  hasta `DATA.n_meses`, remuneraciones hasta el corte de cada RBD, compras siempre reales y proyección de B&S
-  siempre proyectada). Es la serie del año completo: no depende del selector "Ver resumen hasta el mes" de SEP.
+  hasta el corte de ingresos de cada RBD —ver "Corte de ingresos y mes de cierre" más abajo—, remuneraciones hasta
+  el corte de cada RBD, compras siempre reales y proyección de B&S siempre proyectada). Es la serie del año completo: no depende del selector "Ver resumen hasta el mes" de SEP.
   Los tests verifican que su total cuadra con la franja consolidada en las 3 vistas.
 - **Atención**: las 8 entidades con el saldo más negativo (según la vista elegida) entre SEP y todas las
   fuentes; clic abre la pestaña y el detalle de esa entidad.
+- **Mes de cierre** (solo lectura): bajo el título hay una línea "📅 Mes de cierre: Septiembre · ⚠ N entidades con corte
+  distinto al cierre global" con un enlace a la pestaña SEP, donde está el control (ver abajo).
 - **🖨 Exportar PDF** del dashboard (mismo mecanismo de impresión del navegador; se ocultan la barra de
   pestañas y los controles).
 
@@ -289,9 +291,12 @@ mismo resumen que se ve en pantalla y que trae "🖨 Exportar PDF (general)" (In
 Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o naranja
 ("Proyectado"), con una regla distinta para cada una — no depende de un selector único:
 
-- **Ingreso SEP**: enero-julio son reales (vienen de la Liquidación Web Subvenciones Mineduc);
+- **Ingreso SEP**: enero-julio vienen de la Liquidación Web Subvenciones Mineduc;
   agosto-diciembre parten como una proyección editable (el promedio de esos 7 meses reales), que
-  se puede corregir a mano en cualquier momento.
+  se puede corregir a mano en cualquier momento. Desde la auditoría L-01 ("Ingreso real de SEP clavado en julio;
+  Saldo Real mezcla períodos") **el corte real/proyectado del ingreso ya no es fijo**: cada RBD tiene su propio
+  selector **"Ingresos reales hasta: [mes]"**, arriba de la tabla de ingresos del detalle y con la misma apariencia que el
+  de Remuneraciones (ver "Corte de ingresos y mes de cierre").
 - **Remuneraciones**: no hay ninguna fuente automática que diga si una remuneración ya es real
   o es una estimación, así que cada RBD tiene su propio selector "Remuneraciones reales hasta:
   [mes]" — los meses hasta ahí se ven verdes, el resto naranjas, y siempre son editables. Se
@@ -306,6 +311,50 @@ Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o nar
   puede tener compras reales y además una o varias proyecciones de gasto adicional sin documentar
   todavía, ya clasificadas por ítem igual que las compras. También se puede cargar/descargar de a
   granel en la hoja "BYS_PROYECCION" del Excel de carga masiva (columnas Código/Item + 12 meses).
+
+#### Corte de ingresos y mes de cierre
+
+- **Corte propio de ingresos por RBD** (`ingreso_real_hasta_mes`, entero 1–12, campo raíz del documento del RBD,
+  igual que `rem.real_hasta_mes`). El selector del detalle cambia el color y la etiqueta Real / Proy. de las columnas de
+  la tabla de ingresos y **todas las cifras de ingreso Real / Proyectado de ese RBD**: tarjetas KPI y Saldo Real de SEP,
+  tarjeta SEP, serie mensual y "Atención" del Panel principal, Visualizador, Reporte personalizado, % Ejecución
+  consolidado y el PDF de la fila (que dice "Ingresos reales hasta: …"). Una nota junto al selector dice si el corte es
+  propio, si sigue al mes de cierre o si es el valor por defecto. El ingreso anual (Real + Proyectado) no cambia: solo se
+  reparte distinto.
+- **Mes de cierre global** (documento `sep_carga_rbd/_meta`, campos `mes_cierre` 1–12, `mes_cierre_por` y `mes_cierre_en`
+  con la hora del servidor): es el mes hasta el que los datos son reales en todo el panel (hoy **Septiembre**; pasa a
+  Octubre cuando termina el pago de remuneraciones de octubre). Se guarda con `merge`, así que no pisa los
+  `items_22` / `items_29` que ese documento traía; un `_meta` ausente, sin el campo o con un valor dañado (`"x"`, `0`,
+  `13`, `null`, `7,5`…) equivale a "sin definir".
+- **Corte efectivo del ingreso de un RBD** = su `ingreso_real_hasta_mes` si es válido → el mes de cierre global si está
+  definido → `DATA.n_meses` (hoy julio). **Mientras no se defina nada, las cifras son exactamente las de antes.**
+  Remuneraciones y las 9 fuentes mantienen su propio corte (por defecto `DATA.n_meses`): el mes de cierre solo mueve el
+  default de los **ingresos de SEP** sin corte propio.
+- **Control en la pestaña SEP** (arriba de las tarjetas KPI): "📅 Mes de cierre: Septiembre · fijado por … el …". Solo quien
+  está en `ADMIN_EMAILS` ve además el selector **"Cambiar a:"** y el botón **"Aplicar a todas las entidades"**; el resto
+  lo ve como texto de solo lectura. Cambiar el selector guarda en `_meta` y **no toca ningún corte explícito** de una entidad.
+- **"Aplicar a todas las entidades"** (solo admin, como "Migrar DC"): pide confirmación mostrando cuántas entidades
+  cambian y por origen (SEP — Ingresos, SEP — Remuneraciones y cada fuente) y fija el mes de cierre en todas: `ingreso_real_hasta_mes`
+  y `rem.real_hasta_mes` de SEP y `otras_fuentes.{fuente}.real_hasta_mes` de las 9 fuentes (cada entidad en las fuentes de su
+  universo: RBD + AC; GESPARVU en JUNJI y Aporte JUNJI). Solo escribe lo que cambia (un ingreso sin corte propio ya sigue
+  al cierre, así que no recibe campo), un `set` con `merge:true` por documento, en `writeBatch` de a lo más 400 operaciones
+  (cada documento cuenta 2: el `set` y el `serverTimestamp` de la auditoría; hasta 200 documentos por lote); la pantalla se
+  actualiza al instante; repetirlo no escribe nada; si un lote falla, se avisa y repetir solo reintenta lo que falta.
+- **Aviso "N entidades con corte distinto al cierre global"** (visible para todos, bajo el control y en el Panel principal): cuenta los
+  ingresos y remuneraciones de SEP y el "Real hasta" de cada fuente cuyo corte efectivo ≠ mes de cierre; es un desplegable con
+  la lista (entidad, fuente, corte actual) y un enlace "Abrir detalle" a cada una; solo cuenta cuando hay mes de cierre
+  definido y desaparece cuando todo coincide. N cuenta pares entidad × origen (un RBD con su ingreso y su remuneración distintos
+  cuenta 2).
+- **⚠ Riesgo residual — la restricción a administradores es solo del cliente.** `firestore.rules` (compartido con otras dos
+  aplicaciones, no se modifica en esta PR) solo comprueba que el correo esté en la lista autorizada: no distingue administradores.
+  Cualquier correo autorizado que use otro cliente (consola, script) podría escribir `_meta.mes_cierre` o los cortes. Es la misma
+  situación que ya tenían "Revisar duplicados" y "Migrar DC". Decisión abierta: si se quiere una restricción real hay que
+  añadir una regla específica para `sep_carga_rbd/_meta` (p. ej. con una lista de administradores en las reglas) o un
+  backend. El spec `10_mes_cierre` del arnés contra el SDK real lo deja demostrado.
+- **Excel de respaldo de SEP**: no cambia. Sus hojas nunca llevaron los cortes (ni `rem.real_hasta_mes`: al importar se conserva el
+  que ya había), así que tampoco llevan `ingreso_real_hasta_mes`; los archivos antiguos se importan igual. El respaldo JSON sí
+  trae `ingreso_items_por_rbd.{rbd}.real_hasta_mes` en los RBD que tienen corte propio. Las hojas `META` de las fuentes
+  (`RealHastaMes`) siguen igual.
 
 El selector "Ver resumen (KPI y % Ejecución) acumulado hasta el mes:" de arriba de la tabla
 principal es un control aparte: solo dice hasta qué mes se suman los montos en las tarjetas KPI y
@@ -370,15 +419,16 @@ celda, ahora para **SEP y las 9 fuentes de financiamiento**:
   (Real+Proy) y, en las fuentes con compras, Proyección de B&S total; además, **dinámicos** (solo si
   hay datos): B&S por código de cuenta (compras), B&S por concepto libre y proyección de B&S por
   concepto. Un mismo código en dos fuentes es un concepto distinto por fuente.
-- **Real / proyectado por celda**: en SEP, las mismas reglas de siempre (Remuneraciones según el
-  corte propio de cada RBD, compras siempre reales, proyección siempre proyectada). En las fuentes,
+- **Real / proyectado por celda**: en SEP, las mismas reglas de siempre (Ingresos según el corte de
+  ingresos de cada RBD y Remuneraciones según su corte propio, compras siempre reales, proyección
+  siempre proyectada). En las fuentes,
   Ingreso / Remuneraciones / B&S por concepto: real hasta el "Real hasta" de ESA entidad en ESA
-  fuente (por defecto el mismo corte de SEP, editable en cada pestaña); B&S por código (compras):
+  fuente (por defecto `DATA.n_meses`, editable en cada pestaña y fijable en todas con el mes de cierre); B&S por código (compras):
   siempre real; proyección de B&S: siempre proyectada. "B&S total" suma ambos tipos: si en un mes
   hay monto real y proyectado, la celda es **mixta** y queda sin color (si el mes está en $0 rige
   el corte).
 - **Subtotales**: en SEP, la fila "Subtotal" de Remuneraciones nunca se colorea (mezclaría cortes
-  distintos). En las fuentes se colorea solo si **todas** las entidades del subtotal coinciden en
+  distintos) y la de Ingresos solo se colorea en los meses en que todos los RBD coinciden. En las fuentes se colorea solo si **todas** las entidades del subtotal coinciden en
   real/proyectado ese mes; si no, queda sin color. Los conceptos dinámicos se reconstruyen al volver
   a la pestaña Reportes.
 - CSV, Excel y PDF incluyen las filas de las fuentes (columna RBD con el código de la entidad: AC o
@@ -449,7 +499,8 @@ AC) y tiene una sola línea de Ingreso (a diferencia de la fuente JUNJI, que tie
 con el mismo criterio que las remuneraciones de SEP:
 
 - Cada entidad × fuente tiene un corte **"Real hasta el mes"** (`otras_fuentes.{fuente}.real_hasta_mes`,
-  por defecto el mismo corte de datos reales de SEP). Los meses hasta el corte son **Real** y los
+  por defecto `DATA.n_meses`, el último mes con datos reales de Mineduc; el botón "Aplicar a todas las entidades" del mes
+  de cierre de SEP también lo fija en todas). Los meses hasta el corte son **Real** y los
   siguientes **Proyectado**, para el/los ingreso/s, las remuneraciones y — en las fuentes con
   Bienes y Servicios por concepto (JUNJI, FAEP, FIGA, Aportes) — los ítems de B&S. El corte se
   cambia por entidad en el modal, o para todas las entidades de la fuente con el control "Real
@@ -633,8 +684,10 @@ en una colección propia y separada (`sep_carga_rbd`) que no comparte datos con 
 `events` de Calendariopermisos.
 
 - **Modelo de datos**: un documento por RBD en `sep_carga_rbd/{rbd}` (`ingreso_items`, `rem`,
-  `agregado.items`, `lastModifiedBy`, `lastModifiedAt`), más un documento `sep_carga_rbd/_meta`
-  con la lista compartida de conceptos de gasto (`items_22`, `items_29`).
+  `agregado.items`, `ingreso_real_hasta_mes`, `lastModifiedBy`, `lastModifiedAt`), más un documento `sep_carga_rbd/_meta`
+  con la lista compartida de conceptos de gasto (`items_22`, `items_29`, que el panel ignora) y el **mes de cierre global**
+  (`mes_cierre`, `mes_cierre_por`, `mes_cierre_en`; ver "Corte de ingresos y mes de cierre"). `_meta` solo se escribe con `merge`
+  y únicamente cuando un administrador mueve el mes de cierre; la siembra inicial y la creación de RBD que faltan nunca lo tocan.
 - **Reglas de seguridad**: ver [`firestore.rules`](./firestore.rules) — debe pegarse
   manualmente en Firebase Console → Firestore Database → Reglas → Publicar (esto no se puede
   automatizar desde el repositorio). Solo los correos de la whitelist (la lista de `isAllowed()`, igual a `ALLOWED_EMAILS`) pueden leer/escribir, y

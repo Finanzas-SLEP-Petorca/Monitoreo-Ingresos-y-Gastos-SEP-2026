@@ -1,6 +1,11 @@
-// Generador reproducible del fixture determinista (tests/fixtures/default.json).
-//   node tests/fixtures/generate.mjs            -> escribe default.json
-//   node tests/fixtures/generate.mjs --check    -> verifica que default.json coincide con lo que generaría (sin escribir)
+// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json y cierre.json).
+//   node tests/fixtures/generate.mjs            -> escribe default.json y cierre.json
+//   node tests/fixtures/generate.mjs --check    -> verifica que ambos coinciden con lo que generaría (sin escribir)
+//
+//   default.json  el fixture de siempre. Su `_meta` NO trae mes de cierre y ningún RBD trae `ingreso_real_hasta_mes`: es el "estado inicial" en que el panel
+//                 tiene que verse exactamente como antes de existir el corte de ingresos (los ingresos de SEP son reales hasta DATA.n_meses = julio).
+//   cierre.json   default + mes de cierre global definido (septiembre) y cortes propios, para el golden master y los specs del corte de ingresos
+//                 (ver más abajo). Los MONTOS son los mismos que los de default.json: solo cambian los cortes Real/Proyectado.
 //
 // Entradas: tests/fixtures/rbds.json (ids/nombres públicos de los 55 RBD de DATA.registros y los 13 GESPARVU).
 // Las CIFRAS son sintéticas (PRNG con semilla fija por entidad): no hay montos reales de ningún RBD.
@@ -277,24 +282,71 @@ gesparvu.forEach((g, k) => {
   ac.oge_AC_3.documentoOriginal = 'DC_12 - carpeta azul';
 }
 
-// Documento "_meta" (herencia de versiones anteriores del panel): debe ser ignorado por aplicarSnapshot.
+// Documento "_meta" (herencia de versiones anteriores del panel): trae items_22/items_29 (que el panel ignora) y, desde el corte de ingresos, puede
+// traer el mes de cierre global (mes_cierre / mes_cierre_por / mes_cierre_en). En default.json NO lo trae: el panel arranca "sin definir".
 docs._meta = { items_22: [], items_29: [], lastModifiedBy: EMAILS[0], lastModifiedAt: ts('_meta') };
 
+// ---------- variante "cierre": mes de cierre definido + cortes propios (los montos no cambian) ----------
+// Imita el estado de uso real después de pulsar "Aplicar a todas las entidades" con septiembre y de que alguien haya movido unos pocos cortes:
+//   · _meta.mes_cierre = 9 (septiembre), fijado por EMAILS[0] el 20/10/2026 14:30 UTC;
+//   · TODAS las remuneraciones de SEP y TODOS los "Real hasta" de las 9 fuentes (cada entidad en las fuentes de su universo) en 9, salvo 3 RBD de
+//     Remuneraciones (1121 → 7, 1123 → 12, 1128 → 5) y 3 entidades de fuentes (General/1121 → 7, FAEP/AC → 12, JUNJI/5402002 → 6);
+//   · ingreso_real_hasta_mes propio en 3 RBD: 1121 → 8 (distinto del cierre), 1122 → 9 (igual al cierre) y 1123 → 12 (distinto); los demás no lo traen
+//     (siguen al mes de cierre).
+// Así el aviso "entidades con corte distinto al cierre global" lista 8 filas (2 de ingresos, 3 de remuneraciones y 3 de fuentes).
+const docsCierre = JSON.parse(JSON.stringify(docs));
+{
+  const KEYS_RBD_AC = ['general', 'pie', 'mantenimiento', 'prorretencion', 'faep', 'figa', 'aporte_educ'];
+  const KEYS_GESPARVU = ['junji', 'aporte_junji'];
+  const fijaFuentes = (id, keys) => {
+    const d = docsCierre[id];
+    d.otras_fuentes = d.otras_fuentes || {};
+    keys.forEach(k => { d.otras_fuentes[k] = { ...(d.otras_fuentes[k] || {}), real_hasta_mes: 9 }; }); // como queda un documento tras "Aplicar a todas"
+  };
+  registros.forEach(r => { fijaFuentes(r.rbd, KEYS_RBD_AC); if (docsCierre[r.rbd].rem) docsCierre[r.rbd].rem.real_hasta_mes = 9; });
+  fijaFuentes('AC', KEYS_RBD_AC);
+  gesparvu.forEach(g => fijaFuentes(g.rbd, KEYS_GESPARVU));
+  docsCierre['1121'].rem.real_hasta_mes = 7;
+  docsCierre['1123'].rem.real_hasta_mes = 12;
+  docsCierre['1128'].rem.real_hasta_mes = 5;
+  docsCierre['1121'].otras_fuentes.general.real_hasta_mes = 7;
+  docsCierre.AC.otras_fuentes.faep.real_hasta_mes = 12;
+  docsCierre['5402002'].otras_fuentes.junji.real_hasta_mes = 6;
+  docsCierre['1121'].ingreso_real_hasta_mes = 8;
+  docsCierre['1122'].ingreso_real_hasta_mes = 9;
+  docsCierre['1123'].ingreso_real_hasta_mes = 12;
+  docsCierre._meta = { ...docsCierre._meta, mes_cierre: 9, mes_cierre_por: EMAILS[0], mes_cierre_en: { __ts: Date.UTC(2026, 9, 20, 14, 30) } };
+}
+
 // ---------- salida ----------
-const ids = Object.keys(docs).sort();
-const lineas = ids.map(id => ` ${JSON.stringify(id)}: ${JSON.stringify(docs[id])}`);
-const meta = {
-  generado_por: 'tests/fixtures/generate.mjs',
-  nota: 'Fixture sintético determinista (PRNG con semilla fija). No contiene cifras reales.',
-  n_documentos: ids.length, n_rbd: registros.length, n_gesparvu: gesparvu.length,
-};
-const salida = `{\n"meta": ${JSON.stringify(meta)},\n"docs": {\n${lineas.join(',\n')}\n}\n}\n`;
+function serializar(docsX, extra = {}) {
+  const ids = Object.keys(docsX).sort();
+  const lineas = ids.map(id => ` ${JSON.stringify(id)}: ${JSON.stringify(docsX[id])}`);
+  const meta = {
+    generado_por: 'tests/fixtures/generate.mjs',
+    nota: 'Fixture sintético determinista (PRNG con semilla fija). No contiene cifras reales.',
+    ...extra,
+    n_documentos: ids.length, n_rbd: registros.length, n_gesparvu: gesparvu.length,
+  };
+  return { ids, texto: `{\n"meta": ${JSON.stringify(meta)},\n"docs": {\n${lineas.join(',\n')}\n}\n}\n` };
+}
+const SALIDAS = [
+  { archivo: SALIDA, ...serializar(docs) },
+  { archivo: path.join(AQUI, 'cierre.json'), ...serializar(docsCierre, { variante: 'cierre' }) },
+];
 
 if (process.argv.includes('--check')) {
-  const actual = fs.existsSync(SALIDA) ? fs.readFileSync(SALIDA, 'utf8') : '';
-  if (actual !== salida) { console.error('default.json NO coincide con lo que genera generate.mjs (regenerar con: node tests/fixtures/generate.mjs)'); process.exit(1); }
-  console.log(`default.json OK (${ids.length} documentos)`);
+  let mal = false;
+  for (const o of SALIDAS) {
+    const actual = fs.existsSync(o.archivo) ? fs.readFileSync(o.archivo, 'utf8') : '';
+    const nombre = path.basename(o.archivo);
+    if (actual !== o.texto) { console.error(`${nombre} NO coincide con lo que genera generate.mjs (regenerar con: node tests/fixtures/generate.mjs)`); mal = true; }
+    else console.log(`${nombre} OK (${o.ids.length} documentos)`);
+  }
+  if (mal) process.exit(1);
 } else {
-  fs.writeFileSync(SALIDA, salida);
-  console.log(`Escrito ${path.relative(process.cwd(), SALIDA)}: ${ids.length} documentos, ${(salida.length / 1024).toFixed(0)} KB`);
+  for (const o of SALIDAS) {
+    fs.writeFileSync(o.archivo, o.texto);
+    console.log(`Escrito ${path.relative(process.cwd(), o.archivo)}: ${o.ids.length} documentos, ${(o.texto.length / 1024).toFixed(0)} KB`);
+  }
 }

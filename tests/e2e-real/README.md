@@ -13,7 +13,7 @@ reglas de seguridad, límites del servidor, detección de red caída…). Este a
 
 ```bash
 bash tests/e2e-real/setup.sh          # una vez (idempotente): npm install + emulador de Firestore; no re-descarga lo ya instalado
-node tests/e2e-real/run.mjs           # los 9 specs contra el index.html del árbol: tabla PASS / BUG / FAIL (≈ 6 min)
+node tests/e2e-real/run.mjs           # los 10 specs contra el index.html del árbol: tabla PASS / BUG / FAIL (≈ 7 min)
 
 node tests/e2e-real/run.mjs --matriz  # árbol + @069f9dd (+ @baseline en los specs 06 y 07) y compara con lo esperado (≈ 15 min)
 node tests/e2e-real/run.mjs 01 04     # solo esos specs (prefijo del nombre)
@@ -88,6 +88,7 @@ tests/e2e-real/
 | `07_documento_envenenado` | PR #56 con tipos reales: `rem.meses.ENERO="1000"` e `ingreso_items:{x:null}` (tolerados); documentos ilegibles (`lastModifiedAt:{toDate:'x'}`) → rojo que los nombra; números enormes (hallazgo B4) |
 | `08_reglas_reales` | `firestore.rules` del repo con `@firebase/rules-unit-testing`: todos los correos de la lista leen/escriben `sep_carga_rbd`, uno no permitido y la sesión anónima no, nadie borra, otras colecciones cerradas; consistencia con `ALLOWED_EMAILS`; observaciones (solo diagnóstico, sin proponer cambios) |
 | `09_multi_pestana` | (extra) dos pestañas del mismo perfil: la 2.ª recibe `failed-precondition` al activar IndexedDB y el panel avisa al cerrar con lo no enviado solo en ella |
+| `10_mes_cierre` | mes de cierre global (`_meta`) y "Aplicar a todas las entidades" con el SDK real: `setDoc` + `merge` de `mes_cierre` / `mes_cierre_por` / `mes_cierre_en` (hora del servidor) sin pisar `items_22` / `items_29` ni tocar otros documentos (`updateTime`), sobrevive a recargar; UN `writeBatch` real de 69 documentos (138 operaciones ≤ 400) confirmado, el servidor queda con `rem.real_hasta_mes` de los 55 RBD y `otras_fuentes.{fuente}.real_hasta_mes` de todas las entidades en 9, ningún otro campo cambia, repetirlo no escribe nada; un lote rechazado por las reglas es atómico (el servidor no recibe nada), el panel avisa y repetir lo guarda; con las `firestore.rules` reales un correo autorizado que NO es admin SÍ puede escribir `_meta` (la restricción a administradores es solo del cliente: riesgo residual) |
 
 ## Resultados
 
@@ -105,6 +106,7 @@ Emulador 1.19.8, SDK 10.12.0, Chromium headless. «PASS» = todas las aserciones
 | 07 Documento envenenado | **BUG** (B4) | **BUG** (B4, preexistente) | **FAIL** (2; y B4) |
 | 08 firestore.rules reales | **PASS** | **PASS** | — |
 | 09 Dos pestañas | **PASS** | **FAIL** (2): no avisa al cerrar con cambios solo en memoria | — |
+| 10 Mes de cierre global | **PASS** | **FAIL** (no existe el control; verificado contra `@a94c2fb`) | — |
 
 Con las cuatro correcciones propuestas (`parches/TODOS_B1_a_B4.patch`, aplicadas **a una copia**, nunca a `index.html`) los 9 specs quedan en PASS sin BUG.
 `node tests/run.mjs` (mocks) sobre copias parcheadas: con B1+B2+B4 las 20 pruebas siguen en PASS; con los cuatro parches solo falla `claves_invalidas` (espera que 1500 bytes sea válido: hay que actualizar ese límite a 1400).

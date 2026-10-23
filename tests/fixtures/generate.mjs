@@ -1,4 +1,4 @@
-// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json y cierre.json).
+// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json, cierre.json, compras.json y estado.json).
 //   node tests/fixtures/generate.mjs            -> escribe default.json y cierre.json
 //   node tests/fixtures/generate.mjs --check    -> verifica que ambos coinciden con lo que generaría (sin escribir)
 //
@@ -8,6 +8,10 @@
 //                 (ver más abajo). Los MONTOS son los mismos que los de default.json: solo cambian los cortes Real/Proyectado.
 //   compras.json  default + casos de la PR de corrección de compras (L-03 signo de notas de crédito/débito, F-11/L-05 avisos de fecha y de cuenta, L-14 ID "0"):
 //                 compras AGREGADAS al final (sin consumir números aleatorios), así que todo lo que ya traía default.json queda igual.
+//
+//   estado.json   default + casos de borde del Estado de las entidades (PR D2: L-07 Estado único sin redondear, L-08 JUNJI): saldo exactamente 0, 99,996 %, saldo -$1,
+//                 89,999 % vs 90,000 %, recurso 0 con y sin gasto, Carrera Docente en el recurso, y GESPARVU de JUNJI con el saldo de Operación para B&S negativo.
+//                 Reescribe SOLO los RBD / entidades que nombra (ver más abajo); el resto queda igual que en default.json.
 //
 // Entradas: tests/fixtures/rbds.json (ids/nombres públicos de los 55 RBD de DATA.registros y los 13 GESPARVU).
 // Las CIFRAS son sintéticas (PRNG con semilla fija por entidad): no hay montos reales de ningún RBD.
@@ -358,6 +362,89 @@ const docsCompras = JSON.parse(JSON.stringify(docs));
   docsCompras['1121'].otras_fuentes.pie.compras.opx_nc_pos = { ...base, ...nota, codigo: '410917', tipoDocumento: 'Nota de crédito', nroDocumento: '6201', fechaDocumento: '2026-03-18', fechaPago: '2026-03-22', descripcion: 'NC cargada en positivo (PIE)', montoGasto: 55000, montoDocumento: 65450 };
 }
 
+// ---------- variante "estado": casos de borde del Estado (PR D2: L-07 / L-08) ----------
+// Montos en pesos enteros, todos en ENERO (real: el corte por defecto es julio) para que el recurso y el gasto sean EXACTOS y se puedan razonar a mano.
+// El oráculo de los specs (tests/lib/estado.mjs) los recalcula desde estos documentos sin pasar por el código del panel.
+//   SEP (Estado con Riesgo: Déficit ⇔ saldo < 0; Riesgo ⇔ gasto/recurso ≥ 90 % sin redondear y saldo ≥ 0; si no, Superávit). recurso = Preferente + Prioritario + Carrera Docente.
+//     1130  recurso 10.000.000 · gasto 10.000.000  (saldo 0, 100,0 %)                      → Riesgo      (antes: Déficit, por el % ≥ 100)
+//     1131  recurso 10.000.000 · gasto  9.999.600  (99,996 %, se muestra 100,0 %)           → Riesgo      (antes: Déficit con saldo positivo)
+//     1132  recurso 10.000.000 · gasto 10.000.001  (saldo -$1)                               → Déficit
+//     1133  recurso 10.000.000 · gasto  8.999.900  (89,999 %, se muestra 90,0 %)             → Superávit   (antes: Riesgo)
+//     1134  recurso 10.000.000 · gasto  9.000.000  (90,000 %)                                → Riesgo
+//     1135  recurso 0 · gasto 0                                                              → Superávit
+//     1136  recurso 0 · gasto 500.000 (remuneraciones sin ingreso)                           → Déficit     (antes: Superávit, el % se forzaba a 0)
+//     1137  recurso 12.000.000 (10.000.000 + Carrera Docente 2.000.000) · gasto 12.000.000   → Riesgo      (antes: Déficit)
+//     1139  recurso 10.000.000 · gasto 9.500.000 (rem 6.000.000 + proyección B&S 3.500.000)  → Riesgo
+//     1140  recurso 10.000.000 · gasto 5.000.000                                              → Superávit
+//     1120 (sin marco SEP, con una compra del fixture) · recurso 0 · gasto > 0               → Déficit     (antes: Superávit)
+//   Fuentes (Estado de 2 niveles: Déficit ⇔ saldo total < 0), FAEP y Subvención General (1 línea de ingreso):
+//     FAEP 1130 ingreso 5.000.000 · gasto 5.000.000 (saldo 0) → Superávit;  FAEP 1131 gasto 5.000.001 (-$1) → Déficit;  FAEP 1132 gasto 4.999.800 (99,996 %) → Superávit;
+//     FAEP 1133 ingreso 0 · gasto 100.000 → Déficit;  FAEP 1134 ingreso 0 · gasto 0 → Superávit;  General 1130 ingreso 3.000.000 · gasto 3.000.000 → Superávit;  General 1131 gasto 3.000.001 → Déficit.
+//   JUNJI (3 líneas; Déficit ⇔ saldo total < 0 O saldo de Operación para B&S = Operación − B&S < 0), cada una con sus montos en ENERO:
+//     5402002  Op 1.000.000 · Hom 2.000.000 · CD 1.000.000 · Rem 2.000.000 · B&S 1.500.000  (saldo +500.000; Op − B&S = -500.000)   → Déficit SOLO por Operación
+//     5402004  Op 2.000.000 · Rem 2.500.000 · B&S 500.000                                     (saldo -1.000.000; Op − B&S = +1.500.000) → Déficit SOLO por el saldo total
+//     5401006  Op 1.000.000 · Hom 500.000 · Rem 1.500.000 · B&S 1.200.000                      (saldo -1.200.000; Op − B&S = -200.000)   → Déficit por AMBAS
+//     5401007  Op 1.000.000 · Hom 1.000.000 · Rem 1.000.000 · B&S 1.000.000                    (saldo 0; Op − B&S = 0)                   → Superávit
+//     5401005  Op 1.000.000 · Hom 3.000.000 · Rem 2.000.000 · B&S 1.000.001                    (saldo +999.999; Op − B&S = -1)           → Déficit SOLO por Operación (-$1)
+//   Aporte Fiscal JUNJI (1 línea, sin restricción de líneas): 5401004 ingreso 1.000.000 · Rem 0 · B&S 900.000 → Superávit (NO es déficit aunque B&S sea el 90 % del ingreso).
+const docsEstado = JSON.parse(JSON.stringify(docs));
+{
+  const enero = (v) => { const m = meses12(() => 0); m.ENERO = v; return m; };
+  const lineaEnero = (v) => ({ meses: enero(v), total: v });
+  const sep = (rbd, { pref = 0, prio = 0, carrera = 0, rem = 0, bys = 0 }) => {
+    const d = docsEstado[rbd];
+    const ing = {};
+    [['Ingreso SEP Preferente', pref], ['Ingreso SEP Prioritario', prio], ['Carrera Docente', carrera]].forEach(([item, v]) => { ing[item] = { item, meses: enero(v), total: v }; });
+    d.ingreso_items = ing;
+    d.rem = { ...lineaEnero(rem), real_hasta_mes: N_MESES };
+    d.bys_proyeccion = { items: bys ? { '411601': lineaEnero(bys) } : {} };
+    d.compras = {};
+  };
+  const par = (total, pref = 4000000) => ({ pref, prio: total - pref });
+  sep('1130', { ...par(10000000), rem: 10000000 });
+  sep('1131', { ...par(10000000), rem: 9999600 });
+  sep('1132', { ...par(10000000), rem: 10000001 });
+  sep('1133', { ...par(10000000), rem: 8999900 });
+  sep('1134', { ...par(10000000), rem: 9000000 });
+  sep('1135', {});
+  sep('1136', { rem: 500000 });
+  sep('1137', { ...par(10000000), carrera: 2000000, rem: 12000000 });
+  sep('1139', { ...par(10000000), rem: 6000000, bys: 3500000 });
+  sep('1140', { ...par(10000000), rem: 5000000 });
+  // Fuentes con una línea: se reemplaza lo que hubiera de esa fuente en la entidad.
+  const fuente1 = (id, key, { ingreso = 0, rem = 0 }) => {
+    const d = docsEstado[id];
+    d.otras_fuentes = d.otras_fuentes || {};
+    const base = { ingreso: lineaEnero(ingreso), gasto_rem: lineaEnero(rem), real_hasta_mes: N_MESES };
+    d.otras_fuentes[key] = key === 'general' ? { ...base, compras: {}, bys_proy_items: {} } : { ...base, bys_items: {} };
+  };
+  fuente1('1130', 'faep', { ingreso: 5000000, rem: 5000000 });
+  fuente1('1131', 'faep', { ingreso: 5000000, rem: 5000001 });
+  fuente1('1132', 'faep', { ingreso: 5000000, rem: 4999800 });
+  fuente1('1133', 'faep', { rem: 100000 });
+  fuente1('1134', 'faep', {});
+  fuente1('1130', 'general', { ingreso: 3000000, rem: 3000000 });
+  fuente1('1131', 'general', { ingreso: 3000000, rem: 3000001 });
+  // JUNJI (GESPARVU): 3 líneas de ingreso + remuneraciones + un concepto de B&S.
+  const junji = (id, { op = 0, hom = 0, cd = 0, rem = 0, bys = 0 }) => {
+    const d = docsEstado[id];
+    d.otras_fuentes = d.otras_fuentes || {};
+    d.otras_fuentes.junji = {
+      ingreso_operacion: lineaEnero(op), ingreso_homologacion: lineaEnero(hom), ingreso_carrera_docente: lineaEnero(cd),
+      gasto_rem: lineaEnero(rem), bys_items: { 'Alimentación': { concepto: 'Alimentación', ...lineaEnero(bys) } }, real_hasta_mes: N_MESES,
+    };
+  };
+  junji('5402002', { op: 1000000, hom: 2000000, cd: 1000000, rem: 2000000, bys: 1500000 });
+  junji('5402004', { op: 2000000, rem: 2500000, bys: 500000 });
+  junji('5401006', { op: 1000000, hom: 500000, rem: 1500000, bys: 1200000 });
+  junji('5401007', { op: 1000000, hom: 1000000, rem: 1000000, bys: 1000000 });
+  junji('5401005', { op: 1000000, hom: 3000000, rem: 2000000, bys: 1000001 });
+  docsEstado['5401004'].otras_fuentes.aporte_junji = {
+    ingreso: lineaEnero(1000000), gasto_rem: lineaEnero(0),
+    bys_items: { 'Alimentación': { concepto: 'Alimentación', ...lineaEnero(900000) } }, real_hasta_mes: N_MESES,
+  };
+}
+
 // ---------- salida ----------
 function serializar(docsX, extra = {}) {
   const ids = Object.keys(docsX).sort();
@@ -374,6 +461,7 @@ const SALIDAS = [
   { archivo: SALIDA, ...serializar(docs) },
   { archivo: path.join(AQUI, 'cierre.json'), ...serializar(docsCierre, { variante: 'cierre' }) },
   { archivo: path.join(AQUI, 'compras.json'), ...serializar(docsCompras, { variante: 'compras' }) },
+  { archivo: path.join(AQUI, 'estado.json'), ...serializar(docsEstado, { variante: 'estado' }) },
 ];
 
 if (process.argv.includes('--check')) {

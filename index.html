@@ -165,8 +165,8 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   table.data-table td.pct-ing-total { background:#f6f9fc; color:var(--text-secondary); }
   table.data-table tbody tr:hover { background:var(--page-plane); }
   table.data-table tbody tr:hover td.pct-ing-total { background:#eef3f9; }
-  /* % Ejec. Total (Real+Proy): el número que en realidad decide el Estado (≥100% Déficit, ≥90%
-     Riesgo) — se destaca aparte de las columnas "informativo" (fondo más marcado y en negrita)
+  /* % Ejec. Total (Real+Proy): el número con el que se lee el Estado (Déficit solo si el saldo es negativo; Riesgo si el gasto es ≥90% del
+     ingreso sin ser déficit; ver estadoDeEntidad) — se destaca aparte de las columnas "informativo" (fondo más marcado y en negrita)
      y se ubica justo al lado de la columna Estado, para que se entienda de un vistazo por qué
      ese RBD quedó en ese estado. */
   table.data-table th.pct-ejec-total-final, table.data-table td.pct-ejec-total-final { background:#dce7f5; font-weight:700; color:var(--text-primary); }
@@ -180,6 +180,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .tag.superavit { background:rgba(12,163,12,0.12); color:var(--status-good); }
   .tag.anomalia { background:rgba(235,104,52,0.15); color:#a3410f; margin-left:4px; }
   .tag.alerta-sep { background:var(--status-critical); color:#fff; margin-left:4px; }
+  /* L-08: causa del Déficit de una entidad de JUNJI cuando interviene el saldo de Operación para B&S (la fila y el modal; el tooltip la explica completa). */
+  .estado-causa { font-size:10.5px; font-weight:600; color:var(--status-critical); margin-left:6px; }
+  td > .estado-causa { display:block; margin:3px 0 0; line-height:1.25; white-space:normal; max-width:150px; }
   tr.rbd-row.alerta-critica, tr.otras-fuentes-row.alerta-critica { background:rgba(208,59,59,0.07); }
   tr.rbd-row.alerta-critica:hover, tr.otras-fuentes-row.alerta-critica:hover { background:rgba(208,59,59,0.12); }
 
@@ -577,6 +580,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .dash-atencion li:hover, .dash-atencion li:focus-visible { background:var(--tone-red-bg); border-color:var(--tone-red-border); }
   .dash-atencion .a-fuente { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.03em; }
   .dash-atencion .a-nombre { font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dash-atencion .a-causa { font-size:11px; font-weight:600; color:var(--status-critical); line-height:1.25; }
   .dash-atencion .a-saldo { font-size:13px; font-weight:700; color:var(--status-critical); font-variant-numeric:tabular-nums; white-space:nowrap; }
   .dash-vacio { color:var(--text-muted); font-size:12.5px; padding:14px 4px; }
   .dash-tabla { margin-top:10px; font-size:12px; }
@@ -909,7 +913,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
           <div class="dash-panel-head">
             <h3>Atención — entidades con peor saldo</h3>
           </div>
-          <p class="dash-nota-chart" id="dashNotaAtencion">Las 8 entidades con saldo más negativo entre SEP y todas las fuentes. Clic para abrir su detalle.</p>
+          <p class="dash-nota-chart" id="dashNotaAtencion">Las 8 entidades en Déficit con el saldo más negativo entre SEP y todas las fuentes. Clic para abrir su detalle.</p>
           <ul class="dash-atencion" id="dashAtencion"></ul>
         </div>
       </div>
@@ -980,7 +984,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <span><strong>% Ejec. Remuneraciones</strong>: gasto en remuneraciones / meta de remuneraciones de ese RBD (70% del Ingreso SEP + 100% de Carrera Docente, ya que ese ingreso solo puede usarse ahí). 100% = gastó justo la meta.</span>
         <span><strong>% Ejec. B&S</strong>: gasto Subt.22+29 / meta 30% del Ingreso SEP de ese RBD. 100% = gastó justo la meta.</span>
         <span style="padding:1px 6px; border-radius:4px; background:#eef3f9;"><strong>% .../Ingreso</strong> (columnas con fondo celeste): NO es contra la meta 70/30, es gasto / Ingreso Total (SEP + Carrera Docente) — la fracción real del ingreso ya gastada, solo informativo.</span>
-        <span style="padding:1px 6px; border-radius:4px; background:#dce7f5; font-weight:600;">Saldo Final y % Ejec. Total (ambos "Real+Proy"): ya incluyen tanto lo ya ejecutado como lo proyectado para lo que falta del año — así se ve cómo quedaría ese RBD si las proyecciones cargadas se cumplen tal cual. El % Ejec. Total es el número que define el Estado del RBD — ≥100% Déficit, ≥90% Riesgo, el resto Superávit.</span>
+        <span style="padding:1px 6px; border-radius:4px; background:#dce7f5; font-weight:600;">Saldo Final y % Ejec. Total (ambos "Real+Proy"): ya incluyen tanto lo ya ejecutado como lo proyectado para lo que falta del año — así se ve cómo quedaría ese RBD si las proyecciones cargadas se cumplen tal cual. El Estado del RBD se decide con el saldo y el cociente exactos (no con el % redondeado que se ve): Déficit solo si el Saldo Final es negativo (gasto mayor que el ingreso; saldo $0 no es déficit), Riesgo si no es déficit y el % Ejec. Total es 90% o más, el resto Superávit.</span>
         </div>
       </details>
       <div class="table-scroll">
@@ -995,7 +999,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
               <th class="th-group" colspan="2" title="Se mide contra la META del 30% del Ingreso SEP.">Bienes y Servicios — % sobre meta 30%</th>
               <th class="th-group th-group-alt" colspan="2" title="Se mide contra el Ingreso SEP + Carrera Docente TOTAL (no contra la meta 70/30) — es la fracción real del ingreso que se ha gastado, no cuánto se ha usado del cupo asignado. Solo informativo.">% sobre Ingreso Total (informativo)</th>
               <th data-key="saldo_total" class="num pct-ejec-total-final" rowspan="2" title="Ingreso Total (SEP + Carrera Docente) − Gasto Total, contando en ambos lo ya ejecutado MÁS lo cargado como proyección (Remuneraciones futuras y Bienes y Servicios Proyección) — es el saldo que quedaría si esas proyecciones se cumplen tal cual están cargadas.">Saldo Final (Real+Proy)</th>
-              <th data-key="pct_ejec_total" class="num pct-ejec-total-final" rowspan="2" title="(Gasto Rem. + Gasto B&S) / (Ingreso SEP + Carrera Docente) — ya incluye lo ejecutado + lo proyectado. Este es el número que define el Estado: ≥100% Déficit, ≥90% Riesgo, el resto Superávit.">% Ejec. Total (Real+Proy)</th>
+              <th data-key="pct_ejec_total" class="num pct-ejec-total-final" rowspan="2" title="(Gasto Rem. + Gasto B&S) / (Ingreso SEP + Carrera Docente) — ya incluye lo ejecutado + lo proyectado. El Estado se decide con el saldo y el cociente exactos (sin redondear): Déficit solo si el Saldo Final es negativo (saldo $0 no es déficit), Riesgo si no es déficit y este % es 90% o más, el resto Superávit.">% Ejec. Total (Real+Proy)</th>
               <th data-key="estado" rowspan="2">Estado</th>
               <th class="col-acciones" rowspan="2" title="Análisis individual">Acciones</th>
             </tr>
@@ -1386,8 +1390,9 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
       <h2>JUNJI</h2>
       <div class="panel">
         <div class="detalle-empty">JUNJI es un proceso independiente de SUPEREDUC: se sigue como Ingreso vs. Gasto,
-        sin techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Las filas son
-        los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
+        sin techo ni meta 70/30 — el Estado es Superávit o Déficit: Déficit si el saldo acumulado es negativo <strong>o</strong> si el saldo de
+        Operación para Bienes y Servicios (ingreso de Operación − gasto de B&S) es negativo, porque Homologación y Carrera Docente solo pueden pagar
+        Remuneraciones. Las filas son los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-junji" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de JUNJI (3 líneas de Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1644,7 +1649,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <h4>4. Pestañas de las otras fuentes de financiamiento</h4>
         <p>Cada fuente tiene su propia pestaña, con una fila por entidad (RBD, "AC" para Administración Central, o los
         GESPARVU en las fuentes JUNJI), las mismas tarjetas Real / Proyectado / Total y el control "Real hasta el mes".
-        A diferencia de SEP no tienen meta 70/30: el Estado solo indica Superávit o Déficit. Cada fila trae botones
+        A diferencia de SEP no tienen meta 70/30: el Estado solo indica Superávit o Déficit (Déficit = saldo negativo; en JUNJI también si el saldo de Operación para B&S es negativo). Cada fila trae botones
         para descargar su Excel (⬇ XLS), su CSV y su PDF individual (🖨), y arriba hay botones para importar y
         exportar toda la fuente.</p>
 
@@ -1675,8 +1680,12 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <h4>7. Qué significan "Saldo Final (Real+Proy)" y "% Ejec. Total (Real+Proy)" (SEP)</h4>
         <p>Estas dos columnas, destacadas en <span class="help-tag final">celeste</span> justo al lado de "Estado",
         ya suman lo ejecutado MÁS lo cargado como proyección — muestran cómo quedaría ese establecimiento a fin de
-        año si las proyecciones cargadas se cumplen tal cual. El % Ejec. Total es el número que define el Estado:
-        100% o más es Déficit, 90% o más es Riesgo, el resto es Superávit.</p>
+        año si las proyecciones cargadas se cumplen tal cual. El Estado se decide con esos montos exactos, sin redondear
+        (el % de la tabla se muestra con un decimal, pero no se usa redondeado para decidir): <strong>Déficit</strong> solo si el
+        Saldo Final es negativo (gastó más de lo que tiene; un saldo exacto de $0 no es déficit), <strong>Riesgo</strong> si no es
+        déficit y el gasto es el 90% o más del ingreso, y <strong>Superávit</strong> en cualquier otro caso. En las demás fuentes el
+        Estado es solo Superávit o Déficit (Déficit = saldo negativo); en JUNJI también es Déficit si el saldo de Operación para
+        Bienes y Servicios es negativo (esos gastos no se pueden pagar con Homologación ni Carrera Docente).</p>
 
         <h4>8. Pestaña "Reportes"</h4>
         <p>Tiene dos vistas. El <strong>Visualizador</strong> (la que se abre por defecto) consolida todas las fuentes
@@ -2606,7 +2615,9 @@ const N_RBD_SIN_MARCO = DATA.registros.length - N_RBD_CON_MARCO;
 // montos en esas dos vistas. Por defecto Diciembre (año completo); el usuario puede elegir otro
 // mes desde el selector, para ambas vistas a la vez.
 let corteMesIdx = MESES_CARGA.length;
-function mesEsReal(idx1based) { return idx1based <= corteMesIdx; }
+// (L-09) Ese selector NO decide qué mes es Real o Proyectado: eso lo dicen los cortes reales de cada entidad (cortesRealesSepRbd / realHastaMesOtraFuente).
+// Antes % Ejecución de SEP rotulaba "Real" todo mes ≤ el selector, y con el valor por defecto (diciembre) los 12 meses salían "Real" aunque el corte real
+// fuera julio o septiembre.
 
 // Real vs. proyectado en las tablas editables del detalle de cada RBD: cada tipo de dato tiene
 // su propia regla, independiente del selector de arriba (antes las 4 tablas del detalle
@@ -2645,6 +2656,18 @@ function corteIngresoRbd(rbd) {
 function corteRemRbd(rbd) {
   const rem = CARGA_MANUAL.rem_por_rbd ? CARGA_MANUAL.rem_por_rbd[rbd] : null;
   return (rem && rem.real_hasta_mes) || DATA.n_meses;
+}
+// Cortes reales de un RBD de SEP (L-09): el de sus ingresos (corteIngresoRbd) y el de sus remuneraciones (corteRemRbd, solo si tiene remuneraciones). Las compras
+// siempre son reales y la proyección de B&S siempre proyectada: no tienen corte. Lo usan % Ejecución (SEP y Consolidado, vía partesMensualesSep) para rotular los meses.
+function cortesRealesSepRbd(r) {
+  const cortes = [corteIngresoRbd(r.rbd)];
+  if (CARGA_MANUAL.rem_por_rbd && CARGA_MANUAL.rem_por_rbd[r.rbd]) cortes.push(corteRemRbd(r.rbd));
+  return cortes;
+}
+// Cómo se rotula un mes de una selección con varios cortes (convención de % Ejecución por fuente y del Visualizador): Real si TODOS los cortes lo cubren (mes ≤ el
+// menor corte), Proyectado si NINGUNO (mes > el mayor corte) y Mixto entre medio (entidades con cortes distintos, o ingresos y remuneraciones de un mismo RBD con cortes distintos).
+function tipoMesPorCortes(idx1based, corteMin, corteMax) {
+  return idx1based <= corteMin ? 'real' : (idx1based > corteMax ? 'proy' : 'mixto');
 }
 // Frases de los textos de ayuda (nada de "hasta Julio" fijo): el corte REAL de los ingresos de SEP. Si todos los RBD coinciden es
 // "hasta Septiembre"; si alguno tiene un corte propio distinto, "entre Julio y Septiembre (corte propio de cada RBD)".
@@ -2724,11 +2747,28 @@ const kpiRowProy = document.getElementById('kpiRowProy');
 const estadoLabel = {deficit:'Déficit', riesgo:'En riesgo', superavit:'Superávit'};
 const estadoColor = {deficit:'var(--status-critical)', riesgo:'var(--status-warning)', superavit:'var(--status-good)'};
 
+// ---- Estado ÚNICO de una entidad (L-07): lo usan SEP (recomputeRegistro) y las 9 fuentes (recomputeOtraFuente) ----
+// Antes había dos definiciones distintas: SEP decidía con el % redondeado a 1 decimal (99,96 % → "100,0 %" → Déficit con saldo positivo; un
+// 100 % exacto con saldo 0 también salía Déficit) y las fuentes con el signo del saldo. Ahora una sola regla, con montos en pesos enteros y SIN redondear
+// ningún porcentaje (lo que se MUESTRA sigue redondeado a 1 decimal; solo cambia con qué se decide el Estado):
+//   · Déficit  ⇔ el saldo es negativo (gasto total > recurso total). Saldo 0 NO es déficit. Recurso 0 con gasto > 0 sí lo es (saldo negativo).
+//   · Riesgo   (solo SEP, `conRiesgo`) ⇔ no es déficit y gasto / recurso ≥ 90 % exacto. Se compara en enteros (gasto × 10 ≥ recurso × 9) para que
+//                un 90 % justo no caiga a 89,999… por el punto flotante. Sin recurso (0) no hay cociente: queda Superávit.
+//   · Superávit en cualquier otro caso (las fuentes distintas de SEP solo tienen estos dos niveles: no pasan `conRiesgo`).
+// Todo lugar que cuenta o lista "entidades en déficit" (KPI, tarjetas, filtro, "Atención", exportaciones) lee este mismo `estado`.
+function estadoDeEntidad(recurso, gasto, conRiesgo) {
+  if (recurso - gasto < 0) return 'deficit';
+  if (conRiesgo && recurso > 0 && gasto * 10 >= recurso * 9) return 'riesgo';
+  return 'superavit';
+}
+
 // El tag de "Estado" normal (Déficit/En riesgo/Superávit) no tiene sentido para un RBD sin
 // marco SEP (siempre daría "Superávit" al dividir por un marco de $0) — para esos casos se
 // reemplaza por una alerta crítica bien visible.
 function estadoTagHTML(r) {
-  if (r.alerta_sep_sin_marco) return `<span class="tag alerta-sep">⚠ Sin marco SEP</span>`;
+  // Sin marco SEP y con gasto: su Estado (r.estado) se calcula con la misma regla que el de todos (sin ingreso, el gasto deja saldo negativo = Déficit, y cuenta como tal
+  // en los totales y filtros); la alerta tiene prioridad en la etiqueta.
+  if (r.alerta_sep_sin_marco) return `<span class="tag alerta-sep" title="Sin marco SEP y con gasto SEP (error de imputación). Su Estado se calcula como el de los demás: saldo negativo = Déficit (${estadoLabel[r.estado]})">⚠ Sin marco SEP</span>`;
   return `<span class="tag ${r.estado}">${estadoLabel[r.estado]}</span>`;
 }
 function nombreTagsHTML(r) {
@@ -3205,8 +3245,33 @@ function recomputeOtraFuente(rbd, fuenteKey) {
   if (fuente.incomeShape === 'junji3') {
     of.saldo_operacion_bys = of.ingreso_operacion.total - of.gasto_bys_total;
   }
-  of.estado = of.saldo >= 0 ? 'superavit' : 'deficit';
+  of.estado = causasDeficitOtraFuente(of, fuente).length ? 'deficit' : 'superavit';
   return of;
+}
+// Causas por las que una entidad de una fuente está en Déficit (vacío = no lo está). Es LA definición del Estado de las fuentes (L-07 / L-08):
+//   · 'saldo'          el saldo total (ingreso − gasto, Real+Proy) es negativo: misma función que SEP (estadoDeEntidad, sin el nivel Riesgo).
+//   · 'operacion_bys'  (L-08, solo fuentes con líneas de ingreso restringidas: `incomeShape:'junji3'`, hoy JUNJI) Operación puede financiar Bienes y
+//                      Servicios y Remuneraciones; Homologación y Carrera Docente financian SOLO Remuneraciones (decisión de negocio), así que B&S no
+//                      puede pagarse con ellas: si B&S supera a Operación, `saldo_operacion_bys` es negativo y hay Déficit aunque el saldo total sea ≥ 0.
+// No se guarda en `of` (el respaldo JSON vuelca `of` completo y no debe cambiar de forma): se deriva de sus montos.
+function causasDeficitOtraFuente(of, fuente) {
+  const causas = [];
+  if (estadoDeEntidad(of.ingreso_total, of.gasto_total, false) === 'deficit') causas.push('saldo');
+  if (fuente && fuente.incomeShape === 'junji3' && Math.round(of.saldo_operacion_bys) < 0) causas.push('operacion_bys'); // a pesos enteros, como todo monto: -$0,4 no es déficit
+  return causas;
+}
+// Texto de esa causa para la fila, el modal y el tooltip: '' si no está en Déficit. `corto` solo existe cuando interviene el saldo de Operación (con solo el
+// saldo total negativo —el caso de todas las fuentes— no hace falta aviso aparte: la celda de saldo ya sale en rojo); `largo` explica siempre.
+function causaEstadoOtraFuente(of, fuenteKey) {
+  const c = causasDeficitOtraFuente(of, FUENTES_OTRAS_BY_KEY[fuenteKey]);
+  const saldo = c.includes('saldo'), op = c.includes('operacion_bys');
+  if (!saldo && !op) return { corto: '', largo: '' };
+  const largoSaldo = `el saldo total es negativo (${fmtCLP(of.saldo)})`;
+  const largoOp = `el saldo de Operación para Bienes y Servicios es negativo (${fmtCLP(of.saldo_operacion_bys)}): B&S no puede pagarse con Homologación ni Carrera Docente, que financian solo Remuneraciones`;
+  return {
+    corto: op ? (saldo ? 'Saldo total y saldo Operación para B&S negativos' : 'Saldo Operación para B&S negativo') : '',
+    largo: 'Déficit: ' + (saldo && op ? `${largoSaldo}; además ${largoOp}` : (op ? largoOp : largoSaldo)) + '.',
+  };
 }
 // Suma of.rp de todas las entidades de la fuente (RBD+AC o GESPARVU según su universo): lo
 // consumen las tarjetas KPI de cada pestaña y, más adelante, el Dashboard / % Ejecución /
@@ -3299,9 +3364,8 @@ function recomputeRegistro(r) {
   r.pct_rem_ing_total = recursoTotal ? Math.round((r.gasto_rem_anual_proy / recursoTotal * 100) * 10) / 10 : 0;
   r.pct_bys_ing_total = recursoTotal ? Math.round((r.gasto_bys / recursoTotal * 100) * 10) / 10 : 0;
 
-  if (r.pct_ejec_total >= 100) r.estado = 'deficit';
-  else if (r.pct_ejec_total >= 90) r.estado = 'riesgo';
-  else r.estado = 'superavit';
+  // Estado (L-07): misma función que las fuentes, con los montos sin redondear (el % de arriba es solo lo que se muestra). Con Riesgo (≥ 90 %) solo en SEP.
+  r.estado = estadoDeEntidad(recursoTotal, r.gasto_rem_anual_proy + r.gasto_bys, true);
   r.anomalia = r.marco_anual_proy > 0 && r.gasto_bys > 3 * r.marco_anual_proy;
   // Compras con avisos de fecha o de cuenta (F-11 / L-05): suman al "Datos a revisar" y a la marca "revisar" del RBD. Solo avisos: no cambian ningún total.
   r.compras_con_avisos = resumenAvisosCompras((CARGA_MANUAL.compras_por_rbd || {})[r.rbd], CUENTAS_SEP_BY_CODIGO).n;
@@ -3355,7 +3419,13 @@ function computeTotales() {
     gasto_bys: Math.round(gastoBys),
     carrera_docente_anual: Math.round(carreraDocente),
     saldo_total: Math.round(marco + carreraDocente - gastoRem - gastoBys),
+    // Entidades por Estado (L-07). El universo es el de las filas que tienen un Estado que mirar: los RBD con marco SEP y, además, los sin marco que
+    // registraron gasto (recurso 0 y gasto > 0 = saldo negativo = Déficit; se ven con la alerta "⚠ Sin marco SEP"). Es la MISMA lista que el filtro de
+    // la tabla (r.estado), el Panel principal y "Atención", así que todos coinciden.
     n_deficit: regs.filter(r => r.estado === 'deficit').length,
+    n_riesgo: regs.filter(r => r.estado === 'riesgo').length,
+    n_entidades_estado: regs.filter(r => !r.sin_marco_sep || r.alerta_sep_sin_marco).length,
+    n_sin_marco_con_gasto: regs.filter(r => r.sin_marco_sep && r.alerta_sep_sin_marco).length,
     n_anomalias: regs.filter(r => r.anomalia || r.compras_con_avisos > 0).length, // posible error de imputación O compras con avisos de fecha/cuenta
     n_revisar_compras: regs.filter(r => r.compras_con_avisos > 0).length,          // de esos, los RBD con compras con avisos (para el texto de la tarjeta)
     n_alertas_sep_sin_marco: regs.filter(r => r.alerta_sep_sin_marco).length,
@@ -3435,7 +3505,7 @@ function kpiCards(t) {
     { label: `Gasto Remuneraciones (${hastaTxt})`, value: fmtCLP(t.gasto_rem_anual_proy), full: fmtPct(t.marco_anual_proy ? t.gasto_rem_anual_proy/t.marco_anual_proy*100 : 0)+' del marco (sin contar Carrera Docente)', tone: 'amber' },
     { label: `Gasto Bienes y Servicios (${hastaTxt})`, value: fmtCLP(t.gasto_bys), full: 'Subt 22 + Subt 29', tone: 'amber' },
     { label: `Saldo (${hastaTxt})`, value: fmtCLP(t.saldo_total), full: 'Ingreso SEP (+ Carrera Docente) − gasto remuneraciones − gasto B&S, hasta ese mes', critical: t.saldo_total < 0, tone: t.saldo_total < 0 ? 'red' : 'green' },
-    { label: 'RBD en déficit', value: t.n_deficit, full: 'de ' + N_RBD_CON_MARCO + ' con marco SEP activo (proyección año completo)', critical: t.n_deficit > 0, tone: t.n_deficit > 0 ? 'red' : 'gray' },
+    { label: 'RBD en déficit', value: t.n_deficit, full: (t.n_sin_marco_con_gasto ? `de ${t.n_entidades_estado} (${N_RBD_CON_MARCO} con marco SEP activo + ${t.n_sin_marco_con_gasto} sin marco con gasto SEP)` : 'de ' + N_RBD_CON_MARCO + ' con marco SEP activo') + ' (proyección año completo)', critical: t.n_deficit > 0, tone: t.n_deficit > 0 ? 'red' : 'gray' },
     { label: 'Datos a revisar', value: t.n_anomalias, full: 'posible error de imputación' + (t.n_revisar_compras ? ` · incluye ${t.n_revisar_compras} RBD con avisos de fecha o cuenta en sus compras` : ''), critical: t.n_anomalias > 0, tone: t.n_anomalias > 0 ? 'red' : 'gray' },
     { label: '⚠ Gasto SEP sin marco', value: t.n_alertas_sep_sin_marco, full: `de ${N_RBD_SIN_MARCO} RBD sin marco SEP asignado — no deberían tener ningún gasto SEP`, critical: t.n_alertas_sep_sin_marco > 0, tone: t.n_alertas_sep_sin_marco > 0 ? 'red' : 'gray' },
   ];
@@ -3475,6 +3545,7 @@ function renderKpis() {
   DATA.totales.gasto_bys = t.gasto_bys;
   DATA.totales.saldo_total = t.saldo_total;
   DATA.totales.n_deficit = t.n_deficit;
+  DATA.totales.n_riesgo = t.n_riesgo;
   DATA.totales.n_anomalias = t.n_anomalias;
   DATA.totales.n_alertas_sep_sin_marco = t.n_alertas_sep_sin_marco;
   renderKpiCardsInto(kpiRow, kpiCards(t));
@@ -4824,8 +4895,15 @@ modalBodyEl.addEventListener('focusout', (e) => {
 // arriesgar nada de lo ya probado.
 // ============================================================================
 
-function otrasFuentesEstadoTagHTML(of) {
-  return `<span class="tag ${of.estado}">${estadoLabel[of.estado]}</span>`;
+// Etiqueta de Estado de una entidad de una fuente. En Déficit lleva en el `title` la causa (saldo total negativo y/o, en JUNJI, saldo de Operación
+// para B&S negativo: L-08); `otrasFuentesEstadoCausaHTML` la repite como texto visible solo cuando interviene el saldo de Operación.
+function otrasFuentesEstadoTagHTML(of, fuenteKey) {
+  const causa = causaEstadoOtraFuente(of, fuenteKey);
+  return `<span class="tag ${of.estado}"${causa.largo ? ` title="${escHtml(causa.largo)}"` : ''}>${estadoLabel[of.estado]}</span>`;
+}
+function otrasFuentesEstadoCausaHTML(of, fuenteKey) {
+  const causa = causaEstadoOtraFuente(of, fuenteKey);
+  return causa.corto ? `<span class="estado-causa" title="${escHtml(causa.largo)}">${escHtml(causa.corto)}</span>` : '';
 }
 
 // --- Real / Proyectado / Total en cada pestaña de fuente ---
@@ -4921,7 +4999,7 @@ function renderOtrasFuentesTable(fuenteKey) {
       <td class="num">${fmtCLP(b.bys)}</td>
       <td class="num">${fmtCLP(b.gasto)}</td>
       <td class="num" style="color:${b.saldo < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(b.saldo)}</td>
-      <td>${otrasFuentesEstadoTagHTML(of)}</td>
+      <td>${otrasFuentesEstadoTagHTML(of, key)}${otrasFuentesEstadoCausaHTML(of, key)}</td>
       <td class="col-acciones">${otrasFuentesAccionesHTML(key, r.rbd)}</td>
     </tr>`;
   }).join('');
@@ -5197,7 +5275,7 @@ function bysConceptoSectionHTML(rbd, fuenteKey, of, mostrarSaldoOperacion, opts)
   const corte = realHastaMesOtraFuente(of);
   const filasBys = (of[o.lista] || []).map(it => bysItemFilaHTML(rbd, fuenteKey, it.concepto, it, o.modo)).join('');
   const saldoOperacionHTML = mostrarSaldoOperacion
-    ? ` Saldo Operación disponible para B&S: <strong id="ofsaldoopbys-${rbd}-${fuenteKey}" style="color:${of.saldo_operacion_bys < 0 ? 'var(--status-critical)' : 'inherit'}">${fmtCLP(of.saldo_operacion_bys)}</strong>`
+    ? ` Saldo Operación disponible para B&S: <strong id="ofsaldoopbys-${rbd}-${fuenteKey}" style="color:${of.saldo_operacion_bys < 0 ? 'var(--status-critical)' : 'inherit'}">${fmtCLP(of.saldo_operacion_bys)}</strong> (si es negativo, la entidad queda en Déficit)`
     : '';
   return `
     <div class="compras-section" style="margin-top:14px;">
@@ -5276,13 +5354,13 @@ function otrasFuentesTituloEntidad(r, fuenteKey) {
 // Factorizado aparte de renderOtrasFuentesModalContenido (que reconstruye todo el modal, con el
 // costo de foco/scroll que eso implica) para poder refrescar SOLO el encabezado de totales desde
 // onOtraFuenteCeldaInput en cada tecleo, sin rehacer el resto del modal.
-function actualizarOtrasFuentesModalSubtitle(of) {
+function actualizarOtrasFuentesModalSubtitle(of, fuenteKey) {
   const el = document.getElementById('otrasFuentesModalSubtitle');
   if (!el) return;
   el.innerHTML =
     `Ingreso Total: <strong>${fmtCLP(of.ingreso_total)}</strong> · ` +
     `Gasto Total: <strong>${fmtCLP(of.gasto_total)}</strong> · ` +
-    `Saldo: <strong>${fmtCLP(of.saldo)}</strong> · ${otrasFuentesEstadoTagHTML(of)}` +
+    `Saldo: <strong>${fmtCLP(of.saldo)}</strong> · ${otrasFuentesEstadoTagHTML(of, fuenteKey)}${otrasFuentesEstadoCausaHTML(of, fuenteKey)}` +
     ` · <span class="detalle-sub">Saldo Real: <strong>${fmtCLP(of.rp.real.saldo)}</strong> · Saldo Proy.: <strong>${fmtCLP(of.rp.proy.saldo)}</strong></span>`;
 }
 // Se llama al abrir el modal, al cambiar su estructura (agregar/quitar compras o conceptos, cambiar el corte) y desde
@@ -5299,7 +5377,7 @@ function renderOtrasFuentesModalContenido(opts) {
   if (!r) { cerrarOtrasFuentesModal(); return; }
   const of = recomputeOtraFuente(rbd, fuenteKey);
   document.getElementById('otrasFuentesModalTitle').textContent = `${otrasFuentesTituloEntidad(r, fuenteKey)} — ${r.nombre} · ${FUENTES_OTRAS_BY_KEY[fuenteKey].label}`;
-  actualizarOtrasFuentesModalSubtitle(of);
+  actualizarOtrasFuentesModalSubtitle(of, fuenteKey);
   const cuerpo = document.getElementById('otrasFuentesModalBody');
   const html = buildOtrasFuentesDetalleHTML(rbd, fuenteKey);
   if (cuerpo.dataset.rbd === rbd && cuerpo.dataset.fuente === fuenteKey && cuerpo.firstElementChild) {
@@ -5359,7 +5437,7 @@ function onOtraFuenteCeldaInput(input) {
     recomputeOtraFuente(rbd, fuenteKey);
     scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { [campo]: { meses: { [mes]: val }, total: bucket.total } } } });
   }
-  if (otrasFuentesRbdAbierto === rbd) actualizarOtrasFuentesModalSubtitle(of);
+  if (otrasFuentesRbdAbierto === rbd) actualizarOtrasFuentesModalSubtitle(of, fuenteKey);
   renderOtrasFuentesTable();
 }
 window.onOtraFuenteCeldaInput = onOtraFuenteCeldaInput;
@@ -5963,7 +6041,7 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
   return `
     <div class="detalle-header" style="margin-bottom:14px;">
       <strong style="font-size:16px;">${escHtml(fuente.label)} — ${escHtml(otrasFuentesTituloEntidad(r, fuenteKey))} · ${escHtml(r.nombre)}</strong><br>
-      <span class="detalle-sub">Real hasta ${MESES_CARGA_TITLE[corte - 1]} · Estado (sobre el Total): ${otrasFuentesEstadoTagHTML(of)} — SLEP Petorca</span>
+      <span class="detalle-sub">Real hasta ${MESES_CARGA_TITLE[corte - 1]} · Estado (sobre el Total): ${otrasFuentesEstadoTagHTML(of, fuenteKey)}${otrasFuentesEstadoCausaHTML(of, fuenteKey)} — SLEP Petorca</span>
     </div>
     <div class="kpi-section-label">Real (ejecutado)</div>
     <div class="kpi-row kpi-row-real" style="margin-bottom:10px;">${kpis('real')}</div>
@@ -6074,7 +6152,8 @@ function computeTotalesSepParaDashboard() {
     gasto: t.gasto_rem_anual_proy + t.gasto_bys,
     saldo: t.saldo_total,
   };
-  return { real, proy, total, nEntidades: N_RBD_CON_MARCO, nDeficit: t.n_deficit, nSuperavit: Math.max(0, N_RBD_CON_MARCO - t.n_deficit) };
+  // Mismo universo y misma cuenta que la tarjeta "RBD en déficit" de la pestaña SEP (computeTotales): nEntidades = filas con Estado, nDeficit = r.estado 'deficit'.
+  return { real, proy, total, nEntidades: t.n_entidades_estado, nDeficit: t.n_deficit, nRiesgo: t.n_riesgo, nSuperavit: Math.max(0, t.n_entidades_estado - t.n_deficit - t.n_riesgo) };
 }
 
 function dashFuentes() {
@@ -6094,7 +6173,8 @@ function fmtMillones(n) {
 }
 function dashPct(gasto, ingreso) { return ingreso > 0 ? (gasto / ingreso) * 100 : null; }
 function fmtPct1(p) { return p.toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%'; }
-function dashColorEjec(p) { return p >= 100 ? 'var(--status-critical)' : (p >= 90 ? 'var(--status-warning)' : 'var(--status-good)'); }
+// Rojo solo si gasta MÁS que el ingreso (> 100 %: saldo negativo = Déficit, como el Estado de la tarjeta); un 100,0 % exacto (saldo $0) no es déficit y sale ámbar.
+function dashColorEjec(p) { return p > 100 ? 'var(--status-critical)' : (p >= 90 ? 'var(--status-warning)' : 'var(--status-good)'); }
 
 // Activa una pestaña por código (data-tab): reusa el handler de clic de los botones, así que
 // muestra el div correcto y repinta lo que corresponda.
@@ -6311,13 +6391,13 @@ function partesMensualesSep(out) {
   const cortes = [];
   DATA.registros.forEach(r => {
     const corteIng = corteIngresoRbd(r.rbd);
-    cortes.push(corteIng);
+    cortes.push(...cortesRealesSepRbd(r)); // ingresos y remuneraciones (los mismos cortes que rotulan los meses de % Ejecución SEP)
     const ing = CARGA_MANUAL.ingreso_items_por_rbd[r.rbd];
     const rem = CARGA_MANUAL.rem_por_rbd[r.rbd];
     const ag = CARGA_MANUAL.agregado_por_rbd[r.rbd];
     const bp = CARGA_MANUAL.bys_proyeccion_por_rbd ? CARGA_MANUAL.bys_proyeccion_por_rbd[r.rbd] : null;
     if (ing) ing.items.forEach(it => MESES_CARGA.forEach((m, i) => { out[i + 1 <= corteIng ? 'real' : 'proy'].ing[i] += Number(it.meses[m]) || 0; }));
-    if (rem) { const hasta = rem.real_hasta_mes || DATA.n_meses; cortes.push(hasta); MESES_CARGA.forEach((m, i) => { out[i + 1 <= hasta ? 'real' : 'proy'].rem[i] += Number(rem.meses[m]) || 0; }); }
+    if (rem) { const hasta = corteRemRbd(r.rbd); MESES_CARGA.forEach((m, i) => { out[i + 1 <= hasta ? 'real' : 'proy'].rem[i] += Number(rem.meses[m]) || 0; }); }
     if (ag) ag.items.forEach(it => MESES_CARGA.forEach((m, i) => { out.real.bys[i] += Number(it.meses[m]) || 0; }));
     if (bp) MESES_CARGA.forEach((m, i) => { out.proy.bys[i] += Number(bp.meses[m]) || 0; });
   });
@@ -6414,18 +6494,29 @@ function renderDashMensual() {
   document.getElementById('dashTablaMesBody').innerHTML = html;
 }
 
-// ---- Panel "Atención": las 8 entidades con el saldo más negativo (según la vista elegida). ----
+// ---- Panel "Atención": las 8 entidades en Déficit con el saldo más negativo (según la vista elegida). ----
+// Misma noción de Déficit que las tarjetas, la franja y los filtros (L-07): en la vista Total es el Estado de la entidad (r.estado / of.estado:
+// saldo negativo y, en JUNJI, también saldo de Operación para B&S negativo); en Real y Proyectado no existe un Estado (siempre se calcula sobre el Total),
+// así que ahí es el signo del saldo de esa vista, con la misma regla (saldo < 0; $0 no es déficit).
 function dashEntidadesEnDeficit(fuentes) {
   const lista = [];
   DATA.registros.forEach(r => {
     const s = dashVista === 'total' ? r.saldo_total : (() => { const rp = computeRealProyParaRbd(r); return dashVista === 'real' ? rp.saldoReal : rp.saldoProy; })();
-    if (s < 0) lista.push({ fuente: 'SEP', fkey: 'sep', tab: 'panel', rbd: r.rbd, titulo: 'RBD ' + r.rbd, nombre: r.nombre, saldo: s });
+    const enDeficit = dashVista === 'total' ? r.estado === 'deficit' : s < 0;
+    if (enDeficit) lista.push({ fuente: 'SEP', fkey: 'sep', tab: 'panel', rbd: r.rbd, titulo: 'RBD ' + r.rbd, nombre: r.nombre, saldo: s, causa: '' });
   });
   FUENTES_OTRAS.forEach(f => {
     filasOtrasFuentes(f.key).forEach(r => {
       const of = recomputeOtraFuente(r.rbd, f.key);
-      const s = of.rp[dashVista].saldo;
-      if (s < 0) lista.push({ fuente: DASH_META[f.key].corto, fkey: f.key, tab: 'of-' + f.key, rbd: r.rbd, titulo: otrasFuentesTituloEntidad(r, f.key), nombre: r.nombre, saldo: s });
+      let s = of.rp[dashVista].saldo, causa = '';
+      let enDeficit = s < 0;
+      if (dashVista === 'total') {
+        enDeficit = of.estado === 'deficit';
+        causa = causaEstadoOtraFuente(of, f.key).corto;
+        // Déficit solo por el saldo de Operación para B&S (el total es ≥ 0): ese es el saldo que explica por qué está en la lista.
+        if (enDeficit && s >= 0) s = Math.round(of.saldo_operacion_bys);
+      }
+      if (enDeficit) lista.push({ fuente: DASH_META[f.key].corto, fkey: f.key, tab: 'of-' + f.key, rbd: r.rbd, titulo: otrasFuentesTituloEntidad(r, f.key), nombre: r.nombre, saldo: s, causa });
     });
   });
   return lista.sort((a, b) => a.saldo - b.saldo);
@@ -6444,10 +6535,10 @@ function renderDashAtencion(fuentes) {
   const ul = document.getElementById('dashAtencion');
   ul.textContent = '';
   const todas = dashEntidadesEnDeficit(fuentes);
-  document.getElementById('dashNotaAtencion').textContent = `Las 8 entidades con saldo más negativo entre SEP y todas las fuentes (${DASH_VISTAS[dashVista]}) — ${todas.length} en total con saldo negativo. Clic para abrir su detalle.`;
+  document.getElementById('dashNotaAtencion').textContent = `Las 8 entidades en Déficit con el saldo más negativo entre SEP y todas las fuentes (${DASH_VISTAS[dashVista]}) — ${todas.length} en total. Déficit = saldo negativo (en JUNJI, también si el saldo de Operación para B&S es negativo). Clic para abrir su detalle.`;
   if (!todas.length) {
     const li = document.createElement('li'); li.className = 'dash-vacio'; li.style.cursor = 'default'; li.style.border = 'none';
-    li.textContent = 'Ninguna entidad con saldo negativo en esta vista.'; ul.appendChild(li); return;
+    li.textContent = 'Ninguna entidad en déficit en esta vista.'; ul.appendChild(li); return;
   }
   todas.slice(0, 8).forEach(e => {
     const li = document.createElement('li'); li.tabIndex = 0; li.setAttribute('role', 'link');
@@ -6456,6 +6547,7 @@ function renderDashAtencion(fuentes) {
     const f = document.createElement('div'); f.className = 'a-fuente'; f.textContent = `${e.fuente} · ${e.titulo}`;
     const n = document.createElement('div'); n.className = 'a-nombre'; n.textContent = e.nombre; n.title = e.nombre;
     izq.appendChild(f); izq.appendChild(n);
+    if (e.causa) { const c = document.createElement('div'); c.className = 'a-causa'; c.textContent = e.causa; izq.appendChild(c); } // L-08: Déficit por el saldo de Operación para B&S (JUNJI)
     const s = document.createElement('div'); s.className = 'a-saldo'; s.textContent = '▼ ' + fmtCLP(e.saldo);
     li.appendChild(izq); li.appendChild(s);
     li.addEventListener('click', () => abrirEntidadDesdeDashboard(e));
@@ -7493,16 +7585,23 @@ renderReporte();
 // ============================================================================
 // ============== % EJECUCIÓN: comportamiento mensual/anual ==================
 // Vista de solo lectura — % Ejec. Remuneraciones y % Ejec. B&S acumulados mes a mes, para un
-// RBD específico o agregados entre todos, con el MISMO corte real/proyectado del Panel
-// principal (corteMesIdx, cambia allá). Grafica el ritmo de ejecución contra la meta anual
+// RBD específico o agregados entre todos. Grafica el ritmo de ejecución contra la meta anual
 // (línea de 100%) y la tabla de abajo muestra el gasto de cada mes por separado (no
 // acumulado) para detectar en qué mes hubo una caída o una subida.
+// Real / Proyectado (L-09): cada mes se rotula según los cortes REALES de la selección (el de ingresos de cada RBD —propio > mes de cierre > DATA.n_meses— y el
+// de remuneraciones —rem.real_hasta_mes—; compras siempre reales), con la misma convención que % Ejecución por fuente: Real si todos los cortes lo cubren,
+// Proyectado si ninguno, Mixto entre medio. El selector "Ver resumen acumulado hasta el mes" (corteMesIdx, cambia en la pestaña SEP) NO interviene: solo decide
+// hasta qué mes se acumulan las casillas "a <mes>" de arriba.
 // ============================================================================
 
 function computeEjecucionSerie(rbdFiltro) {
   const regs = rbdFiltro ? DATA.registros.filter(r => r.rbd === rbdFiltro) : DATA.registros;
   const metaRemAnual = regs.reduce((s, r) => s + (r.meta_rem_70 || 0), 0);
   const metaBysAnual = regs.reduce((s, r) => s + (r.meta_bys_30 || 0), 0);
+  const cortes = [];
+  regs.forEach(r => cortes.push(...cortesRealesSepRbd(r)));
+  const corteMin = cortes.length ? Math.min(...cortes) : DATA.n_meses;
+  const corteMax = cortes.length ? Math.max(...cortes) : DATA.n_meses;
 
   let cumRem = 0, cumBys = 0;
   const serie = MESES_CARGA.map((mes, i) => {
@@ -7517,13 +7616,14 @@ function computeEjecucionSerie(rbdFiltro) {
     });
     cumRem += gastoRemMes;
     cumBys += gastoBysMes;
+    const tipo = tipoMesPorCortes(i + 1, corteMin, corteMax);
     return {
-      mes, idx: i + 1, esReal: mesEsReal(i + 1), gastoRemMes, gastoBysMes,
+      mes, idx: i + 1, tipo, esReal: tipo === 'real', gastoRemMes, gastoBysMes,
       pctRemAcum: metaRemAnual ? (cumRem / metaRemAnual * 100) : 0,
       pctBysAcum: metaBysAnual ? (cumBys / metaBysAnual * 100) : 0,
     };
   });
-  return { serie, metaRemAnual, metaBysAnual };
+  return { serie, metaRemAnual, metaBysAnual, corteMin, corteMax };
 }
 
 // ---- % Ejecución por fuente de financiamiento --------------------------------------------------
@@ -7583,7 +7683,7 @@ function computeEjecucionSerieFuente(fuenteKey, entidadFiltro) {
     const gastoRemMes = p.real.rem[i] + p.proy.rem[i];
     const gastoBysMes = p.real.bys[i] + p.proy.bys[i];
     cumRem += gastoRemMes; cumBys += gastoBysMes;
-    const tipo = idx <= corteMin ? 'real' : (idx > corteMax ? 'proy' : 'mixto');
+    const tipo = tipoMesPorCortes(idx, corteMin, corteMax);
     return {
       mes, idx, tipo, esReal: tipo === 'real', ingresoMes, gastoRemMes, gastoBysMes,
       pctRemAcum: pct(cumRem), pctBysAcum: pct(cumBys), pctTotalAcum: pct(cumRem + cumBys),
@@ -7819,13 +7919,17 @@ function renderEjecucion() {
   const showRem = document.getElementById('ejecShowRem').checked;
   const showBys = document.getElementById('ejecShowBys').checked;
 
-  const { serie } = computeEjecucionSerie(rbdFiltro);
+  const { serie, corteMin, corteMax } = computeEjecucionSerie(rbdFiltro);
+  // corteIdx = hasta qué mes se ACUMULAN las casillas "a <mes>" (selector de la pestaña SEP); NO es el corte Real/Proyectado (ese es corteMin/corteMax).
   const corteIdx = Math.max(1, Math.min(serie.length, corteMesIdx));
   const alCorte = serie[corteIdx - 1];
   const anual = serie[serie.length - 1];
 
+  const mesNom = i => MESES_CARGA_TITLE[i - 1];
+  const corteTxt = corteMin === corteMax ? `hasta ${mesNom(corteMin)}` : `entre ${mesNom(corteMin)} y ${mesNom(corteMax)} (cortes distintos entre los RBD o entre ingresos y remuneraciones; esos meses salen "Mixto")`;
   document.getElementById('ejecCorteNota').textContent =
-    `Corte real/proyectado: hasta ${MESES_CARGA_TITLE[corteMesIdx - 1]} — mismo selector "Ver resumen acumulado hasta el mes" del Panel principal.`;
+    `Corte real/proyectado: según el corte real de cada RBD (ingresos y remuneraciones; las compras siempre son reales) — ${corteTxt}. ` +
+    `Las casillas "a ${mesNom(corteMesIdx)}" acumulan hasta el mes elegido en "Ver resumen acumulado hasta el mes" de la pestaña SEP: ese selector no cambia qué meses son Real o Proyectados.`;
 
   document.getElementById('ejecKpiRow').innerHTML = [
     { label: `% Ejec. Remuneraciones (a ${MESES_CARGA_TITLE[corteIdx - 1]})`, value: fmtPct(alCorte.pctRemAcum), full: 'Acumulado hasta el corte, sobre la meta anual (70% del Ingreso SEP + Carrera Docente)', critical: alCorte.pctRemAcum >= 100 },
@@ -7834,12 +7938,12 @@ function renderEjecucion() {
     { label: '% Ejec. B&S (proy. a diciembre)', value: fmtPct(anual.pctBysAcum), full: 'Acumulado a diciembre, incluyendo los meses aún proyectados', critical: anual.pctBysAcum >= 100 },
   ].map(k => `<div class="kpi-card${k.critical ? ' critical' : ''}"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="delta">${k.full}</div></div>`).join('');
 
-  const chart = ejecucionChartSVG(serie, showRem, showBys);
+  const chart = ejecucionChartSVG(serie, showRem, showBys, { corteIdx: corteMin });
   const wrap = document.getElementById('ejecChartWrap');
   wrap.innerHTML = chart.svg + '<div class="ejec-tooltip" id="ejecTooltip"></div>';
 
   ejecWireTooltip(wrap, chart, serie, (m, idx) =>
-    `<div class="tt-title">${MESES_CARGA_TITLE[idx]} · ${m.esReal ? 'Real' : 'Proyectado'}</div>` +
+    `<div class="tt-title">${MESES_CARGA_TITLE[idx]} · ${m.tipo === 'real' ? 'Real' : m.tipo === 'proy' ? 'Proyectado' : 'Mixto'}</div>` +
     (showRem ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-1)"></span>Remuneraciones: <strong>${fmtPct(m.pctRemAcum)}</strong> acum. (${fmtCLP(m.gastoRemMes)} ese mes)</div>` : '') +
     (showBys ? `<div class="tt-row"><span class="tt-key" style="background:var(--series-2)"></span>Bienes y Servicios: <strong>${fmtPct(m.pctBysAcum)}</strong> acum. (${fmtCLP(m.gastoBysMes)} ese mes)</div>` : ''));
 
@@ -7847,7 +7951,7 @@ function renderEjecucion() {
     const prev = i > 0 ? serie[i - 1] : null;
     return `<tr>
       <td>${MESES_CARGA_TITLE[i]}</td>
-      <td class="${m.esReal ? 'mes-real' : 'mes-proy'}">${m.esReal ? 'Real' : 'Proy.'}</td>
+      <td class="mes-${m.tipo}">${EJEC_TIPO_TXT[m.tipo]}</td>
       <td class="num">${fmtCLP(m.gastoRemMes)}</td>
       <td class="num">${deltaHTML(m.gastoRemMes, prev ? prev.gastoRemMes : undefined)}</td>
       <td class="num">${fmtPct(m.pctRemAcum)}</td>
@@ -8095,7 +8199,7 @@ function buildSingleRbdPrintHTML(rbd) {
         <th class="num pct-ing-total" title="Gasto Rem. / Ingreso Total (informativo)">% Rem./Ingreso</th>
         <th class="num pct-ing-total" title="Gasto B&S / Ingreso Total (informativo)">% B&S/Ingreso</th>
         <th class="num pct-ejec-total-final" title="Ingreso Total − Gasto Total, contando en ambos lo ejecutado + lo proyectado">Saldo Final (Real+Proy)</th>
-        <th class="num pct-ejec-total-final" title="(Gasto Rem.+B&S) / Ingreso Total — este es el número que define el Estado">% Ejec. Total (Real+Proy)</th>
+        <th class="num pct-ejec-total-final" title="(Gasto Rem.+B&S) / Ingreso Total. El Estado se decide con el saldo y el cociente exactos (sin redondear): Déficit solo si el saldo es negativo, Riesgo si no es déficit y este % es 90% o más.">% Ejec. Total (Real+Proy)</th>
         <th>Estado</th>
       </tr></thead>
       <tbody><tr>

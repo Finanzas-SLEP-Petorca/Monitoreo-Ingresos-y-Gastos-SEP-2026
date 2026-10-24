@@ -338,6 +338,21 @@ Los 6 `honorarios_*` son nuevos; los otros 11 se **extendieron** con su parte de
 `seguridad_xss` y `formulas_csv_excel` (texto libre de boletas: se ve literal, apóstrofo solo en descripción, nombre del prestador y N° DC), `modal_equivalencia` (40 pasos con boletas y proyección y la comprobación de que el bloque está en el modal), `escritura_modal_tecleo` (teclear en el formulario de honorarios y en la proyección con cambios ajenos),
 `csv_supereduc_formato` (aviso «muévelo al registro de Honorarios») y `a11y_nombres` / `a11y_contraste` / `a11y_foco` (el bloque de honorarios en los recorridos de vistas, `recorrerHonorarios` de `tests/lib/a11y-vistas.mjs`).
 
+### Ajustes de fuentes (jardines en FAEP/FIGA + BDL de JUNJI): qué falla contra el panel anterior (`APP_HTML=@ff7a666`)
+
+`ff7a666` es el `index.html` justo antes de esta PR (merge de la PR #64). Estos specs **fallan** contra él y **pasan** con el árbol:
+
+```bash
+APP_HTML=@ff7a666 node tests/run.mjs spec faep_figa_jardines junji_bdl estado_junji a11y_nombres roundtrip_excel persistencia seguridad_xss mes_cierre_global
+# → 8 FAIL, 0 PASS (y el golden, cuyo baseline ya trae los jardines y el BDL)
+APP_HTML=@ff7a666 node tests/e2e-real/run.mjs 12   # el spec 12 del arnés real también FALLA (7 aserciones)
+```
+
+`faep_figa_jardines` y `junji_bdl` son nuevos; los otros 6 se **extendieron** o ajustaron: `estado_junji` (texto de la causa «Homologación, Carrera Docente ni BDL» y la sección 7 con el BDL), `a11y_nombres` (escenario J con `recorrerJardines`),
+`roundtrip_excel` (FAEP / FIGA con 69 filas, JUNJI con `ING_BDL` y el Excel individual de un jardín), `persistencia` (BDL y FAEP de un jardín con merge), `seguridad_xss` (conceptos con marcado en FAEP/FIGA de un jardín y la línea BDL) y `mes_cierre_global`
+(los jardines también son entidades de FAEP y FIGA: «Aplicar a todas» los fija en 69 documentos). Los oráculos (`tests/lib/corte.mjs`, `tests/lib/estado.mjs`) calculan el universo de cada fuente (`idsDeUniverso`) y el rótulo por tipo (`tituloEntidad`)
+sin pasar por el código del panel.
+
 ### Bugs conocidos: `known-bug` vs `enforced`
 
 Hoy ningún spec está en `'known-bug'`: `semilla_offline.mjs` (PR A) y `escritura_modal_tecleo.mjs` (F-01) ya están en `'enforced'` porque sus bugs se corrigieron.

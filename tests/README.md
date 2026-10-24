@@ -21,7 +21,7 @@ node tests/specs/persistencia.mjs        # un spec directamente (sin la tabla)
 ```
 
 Código de salida: `0` si todo es PASS o KNOWN_BUG; `1` si algo FALLA.
-Duración: ≈ 15 min la suite completa (47 pruebas: fixture + 45 specs + golden; golden ≈ 85 s; los specs más largos son `n_dc`, `escritura_modal_tecleo`, `a11y_contraste`, `corte_ingresos`, `modal_equivalencia`, `sync_estado`, `seguridad_xss` y `mes_cierre_global`). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
+Duración: ≈ 16 min la suite completa (49 pruebas: fixture + 47 specs + golden; golden ≈ 100 s; los specs más largos son `n_dc`, `escritura_modal_tecleo`, `a11y_contraste`, `corte_ingresos`, `modal_equivalencia`, `sync_estado`, `seguridad_xss` y `mes_cierre_global`). `-v` muestra la salida completa de cada prueba; `--jobs N` corre specs en paralelo.
 
 ### Qué HTML se prueba (`APP_HTML`)
 
@@ -79,6 +79,15 @@ node tests/run.mjs                             # tu versión modificada contra e
 > de SEP y del Panel principal (3 → 4, 10 → 11 y "de 52" → "de 53"), (2) los textos de ayuda del Estado y de "Atención" y la causa de JUNJI, (3) en % Ejecución de SEP la columna "Corte" (Real / Mixto / Proy. según los cortes reales), la nota y la línea
 > "Corte" del gráfico, y (4) en JUNJI la nota del saldo de Operación; se agrega la sección `estado` (fixture `estado`, 30 entradas nuevas).
 
+> **Desde la PR «ajustes de fuentes» (jardines en FAEP/FIGA + BDL en JUNJI)** `APP_HTML=@ff7a666` (el `index.html` de `main` justo antes de esa PR) FALLA a propósito en `faep_figa_jardines` y `junji_bdl`
+> (FAEP/FIGA con 56 filas en vez de 69 y JUNJI sin la línea «Ingreso Bono Desempeño Laboral (BDL)»), en `estado_junji` (el tooltip de la causa dice «Homologación, Carrera Docente ni BDL» y la sección 7 del BDL),
+> en `a11y_nombres` (J: nombres de las celdas de los jardines y del BDL), en `roundtrip_excel`, `persistencia` y `seguridad_xss` (sus tramos nuevos) y en el golden. Con el fixture `default` esa PR **no cambia ninguna cifra en pesos**:
+> en el golden solo cambian (1) los conteos «de 56 → de 69 entidades» de FAEP y FIGA (tarjetas de las pestañas y del Panel principal, franja «de 471 → de 497») y su encabezado «RBD / GESPARVU», (2) las 13 filas nuevas de
+> jardines en $0 de FAEP y FIGA (tabla, Excel con 70 filas por hoja, `META` con el corte) y, por la misma causa, la fila `5402002 RINCONCITO [FAEP] B&S — Alimentación $0` del Reporte personalizado «multifuente» y las 13 opciones
+> nuevas del selector de entidad de % Ejecución (57 → 70), (3) la línea «Ingreso Bono Desempeño Laboral (BDL)» en $0 de JUNJI (modal, PDF por entidad, hoja `ING_BDL` del Excel, fila del CSV de detalle, respaldo JSON con la clave
+> `ingreso_bdl` y +361 bytes por entidad, concepto nuevo del catálogo del Reporte personalizado: JUNJI 11 → 12 y 184 → 185), y (4) los textos de ayuda (FAEP, FIGA, JUNJI y la nota de «qué entidades genera cada concepto»). Se agrega la
+> sección `jardines` (fixture `jardines`, 46 entradas nuevas).
+
 ### Flujo recomendado para un cambio grande en `index.html`
 
 1. `node tests/run.mjs` en el árbol limpio → confirma que el arnés está sano (todo PASS).
@@ -121,6 +130,7 @@ tests/
                                                                   compras.json  variante con casos de signo de NC/ND, fechas con avisos e ID "0" (ver abajo)
                                                                   estado.json   variante con los casos de borde del Estado de SEP y de las fuentes, y de JUNJI (ver abajo)
                                                                   honorarios.json  variante con boletas y proyección de Honorarios (Subt. 21) en SEP (ver abajo)
+                                                                  jardines.json    variante con FAEP/FIGA en jardines (GESPARVU) y la línea BDL de JUNJI (ver abajo)
   golden/
     capture.mjs           recorrido de todas las vistas y exportaciones     diff.mjs  comparación legible
     golden.mjs            CLI (comparar / --update)                         baseline.json  línea base (≈ 0,7 MB)
@@ -206,6 +216,14 @@ Fuentes de una línea: FAEP 1130 saldo $0 → Superávit, 1131 -$1 → Déficit,
 Operación − B&S): 5402002 +500.000 / -500.000 → Déficit solo por Operación; 5402004 -1.000.000 / +1.500.000 → solo por el saldo total; 5401006 -1.200.000 / -200.000 → ambas; 5401007 $0 / $0 → Superávit; 5401005 +999.999 / -$1 → Déficit solo por Operación;
 y Aporte Fiscal JUNJI 5401004 con B&S = 90 % de su única línea → Superávit. El resto de las entidades conserva las cifras de `default.json`.
 
+**`jardines.json`** (también de `generate.mjs`; `--check` lo verifica; «ajustes de fuentes») es `default.json` con montos **agregados** en jardines (GESPARVU), sin consumir números aleatorios: el resto de los documentos queda igual.
+Los jardines son ahora entidades de FAEP y FIGA y JUNJI tiene la línea BDL (`ingreso_bdl`); `default.json` NO trae nada de eso (es el estado anterior: los jardines sin FAEP/FIGA ni BDL parten en $0 y sirven de «documentos antiguos»).
+FAEP: 5402002 (ingreso 400.000/mes, Rem. 250.000/mes, B&S «Alimentación» 60.000/mes y «Mantención menor» desde agosto; Real hasta julio → superávit), 5402004 (déficit; concepto con `& < > " '`; Real hasta mayo), 5401006 (enero-junio; Real hasta diciembre),
+5404001 y 5403001. FIGA: 5404001 (desde abril; Real hasta septiembre), 5404002 (desde septiembre) y 5401002 (déficit). JUNJI BDL: 5402002 (120.000/mes, corte en julio → 7 meses Real y 5 Proyectados), 5402004 (enero-junio, todo Real), 5401006 (80.000/mes),
+5401007 (desde agosto, todo Proyectado), 5403001 (documento SIN JUNJI en `default`: solo `ingreso_bdl` y el corte), **5401002 (BDL ALTO: Operación 1.000.000, BDL 20.000.000, Rem. 3.000.000, B&S 1.500.000 → saldo total positivo pero Operación − B&S = -500.000 → Déficit solo por
+Operación)** y **5403002 (el BDL cubre Remuneraciones: Operación 2.000.000, BDL 3.000.000, Rem. 4.000.000, B&S 500.000 → saldo +500.000, Operación − B&S +1.500.000 → Superávit; sin el BDL sería -2.500.000)**. `cierre.json` ahora también trae `real_hasta_mes` = 9 en FAEP y FIGA de los
+13 jardines (como los dejaría «Aplicar a todas las entidades» con la nueva regla), para que el aviso de cortes distintos siga listando exactamente 8 filas.
+
 **`honorarios.json`** (también de `generate.mjs`; `--check` lo verifica) es `default.json` con `honorarios` (boletas por id) y `hon_proyeccion` **agregados** a 1120, 1121, 1122, 1123, 1125 y 1128 (sin tocar nada más ni consumir números aleatorios:
 los demás RBD y todas las compras quedan igual). SEP/1121 trae 12 boletas: los 5 tipos (BOLH, BHE, BOLHE, BPST, BPSTE), un reparto (Monto Gasto 200.000 de 500.000), N° DC, texto con `& < > " '`, y los casos con aviso: fecha de 2025 (suma en diciembre),
 fecha `10/03/2026` (no suma), cuenta `999999` fuera del catálogo (no suma), cuenta `411101` no habilitada para SEP (suma), tipo `FAC` (no es de honorarios) y `BHE` en `410904` (la cuenta no lo acepta); más una proyección de `410803`
@@ -232,6 +250,9 @@ que dispara «⚠ Gasto SEP sin marco». Las compras y las demás fuentes no cam
 - Sección **`cierre`** (fixture `cierre`, entradas `cierre.*`): Panel principal (3 vistas), pestaña SEP con el control del mes de cierre y el aviso abierto, modales de 4 RBD (corte propio ≠ cierre, = cierre,
   diciembre y sin corte propio), JSON de respaldo, PDF de dos filas, % Ejecución consolidado, Visualizador (SEP) y Reporte personalizado de ingresos con sus CSV.
 
+- Sección **`jardines`** (fixture `jardines`, entradas `jardines.*`): Panel principal (3 vistas), pestañas FAEP y JUNJI (Total / Real / Proyectado) y FIGA (Total) con los jardines, modales de jardines en FAEP (5402002, 5402004, AC) y FIGA (5404001, 5401002) y de JUNJI con BDL
+  (5402002, 5401002, 5403002, 5403001), % Ejecución (FAEP agregado y de un jardín, JUNJI de un jardín y Consolidado), Visualizador y Reporte personalizado con jardines y RBD, Excel (FAEP, FIGA y JUNJI con `ING_BDL`) y JSON de respaldo de las tres,
+  XLS / CSV / PDF de la fila de un jardín en FAEP y JUNJI (y CSV de otros), el PDF de FAEP y el del Panel principal.
 - Sección **`honorarios`** (fixture `honorarios`, entradas `honorarios.*`): Panel principal (3 vistas), pestaña SEP (tarjetas Real / Proyectado / Total, tabla con «Gasto Hon.» y % de personal, corte a marzo, filtro Déficit), modales de SEP 1121 (todas las marcas ⚠,
   el resumen de avisos, el formulario en edición con los avisos en vivo), 1122, 1123 (solo proyección) y 1120 (sin marco), % Ejecución (SEP agregado, 1121 y Consolidado), Visualizador, Reporte personalizado y las exportaciones de SEP (Excel de carga con `HONORARIOS` y `HON_PROYECCION`,
   resumen, JSON, la fila 1121 en XLS / PDF y el PDF general).
@@ -299,6 +320,8 @@ Cada uno termina con `process.exit(1)` si falla y con una línea final `RESULT: 
 | `honorarios_consistencia` | Honorarios PR-1, invariante: el gasto total y el saldo de SEP son idénticos en la pestaña SEP, Panel principal (tarjeta, franja, serie mensual, «Atención»), % Ejecución (SEP y Consolidado) y Reportes (Visualizador y Reporte personalizado) en Total / Real / Proyectado |
 | `honorarios_excel` | Honorarios PR-1: hojas `HONORARIOS` y `HON_PROYECCION` (columnas, una fila por boleta, ID, tipo como código, N° DC, neutralización de fórmulas solo en texto libre), exportar → reimportar → exportar idempotente, claves deterministas sin duplicar, filas rechazadas con motivo, un Excel antiguo no borra nada |
 | `honorarios_compras` | Honorarios PR-1: compras sin los 5 tipos en el selector; las antiguas con esos tipos siguen sumando en B&S (cero cambio de cifras), con la marca «⚠ muévelo a Honorarios» y su resumen (SEP y General), sin botón de migración, editar no pierde el tipo, y el aviso previo al CSV de SUPEREDUC dice «muévelo al registro de Honorarios» |
+| `faep_figa_jardines` | «Ajustes de fuentes», cambio 1, fixture `jardines`: FAEP y FIGA listan 69 entidades (55 RBD, AC y los 13 jardines, en ese orden) y las demás fuentes conservan su universo (56 / 13); cifras por fila y tarjetas KPI de FAEP y FIGA (Total / Real / Proyectado) contra un cálculo independiente que suma los jardines; Estado y «N de 69 entidades en déficit» (tarjetas de las pestañas, del Panel principal y franja «de 497»); «Atención» rotula «FAEP · GESPARVU 5402004» y abre su modal; títulos de modal y nombres accesibles por TIPO de entidad (GESPARVU / Administración Central / RBD); guardado con `merge:true` solo de `otras_fuentes.faep` (o `.figa`) sin tocar JUNJI ni Aporte JUNJI del mismo documento, incluido un jardín que no tenía FAEP; «Real hasta» de un jardín y «Aplicar a todas las entidades» (69 documentos); % Ejecución (70 opciones), Visualizador y Reporte personalizado (un jardín genera filas en FAEP/FIGA/JUNJI y ninguna en General ni Aporte Educ.); Excel exportar/importar (archivo nuevo con jardines, archivo antiguo solo con RBD y AC —no escribe nada en los jardines— y la fila de un jardín sin FAEP previo); XLS / CSV / PDF por fila de un jardín; respaldo JSON; con los documentos de los jardines ausentes no se siembra nada |
+| `junji_bdl` | «Ajustes de fuentes», cambio 2, fixture `jardines`: la línea «Ingreso Bono Desempeño Laboral (BDL)» (`ingreso_bdl`, hoja `ING_BDL`) de JUNJI: 4.ª tabla del modal (orden, ayuda, nombre accesible, 7 meses Real / 5 Proyectados según el corte), filas y tarjetas (Total / Real / Proyectado) contra un cálculo independiente, el BDL NO entra en el saldo de Operación para B&S pero SÍ al saldo total y al Estado (5401002 con BDL alto → Déficit solo por Operación; 5403002: el BDL cubre Remuneraciones, bordes -$1 / $0 / +$1 con edición en vivo; un BDL de $1.000 M no saca del Déficit por Operación), guardado con `merge:true` solo de `ingreso_bdl`, Panel principal (tarjeta JUNJI y franja = total de la serie mensual en las 3 vistas), % Ejecución (el «Ingreso anual Total» incluye el BDL), Visualizador, Reporte personalizado (catálogo, real/proyectado por celda), Excel (hoja `ING_BDL`, round-trip, archivo anterior sin la hoja y archivo con cambios), CSV y PDF por fila, respaldo JSON, Aporte JUNJI sin BDL, «Cómo usar», documentos antiguos sin `ingreso_bdl` (ceros, 0 writes) y documentos con `ingreso_bdl` dañado (texto, nulo, arreglo, `meses` de texto, meses con basura: no tumba nada ni escribe) |
 | `mock_semantica` | prueba el propio mock (merge profundo, deleteField, timestamps, batch, offline, errores…) sin el panel |
 
 ### Honorarios (PR-1): qué falla contra el panel anterior (`APP_HTML=@1f0821b`)
@@ -358,7 +381,7 @@ El mock de arriba es rápido y determinista, pero lo escribimos nosotros: no dem
 `setup.sh`; las dependencias, unos 280 MB, se instalan fuera del repositorio en `E2E_HOME`, por defecto `/home/user/.e2e-real`).
 
 ```bash
-bash tests/e2e-real/setup.sh && node tests/e2e-real/run.mjs        # los 11 specs contra el árbol (el 11 es Honorarios por boleta), ≈ 8 min
+bash tests/e2e-real/setup.sh && node tests/e2e-real/run.mjs        # los 12 specs contra el árbol (el 11 es Honorarios por boleta; el 12, jardines en FAEP/FIGA y BDL de JUNJI), ≈ 8 min
 node tests/e2e-real/run.mjs --matriz                                # además contra @069f9dd y @baseline, ≈ 15 min
 ```
 

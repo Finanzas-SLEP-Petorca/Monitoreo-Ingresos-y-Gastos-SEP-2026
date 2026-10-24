@@ -44,7 +44,7 @@ hacia abajo. A 1440 px o más el diseño es el mismo de siempre.
 La pestaña **% Ejecución** tiene una fila de botones para elegir la fuente: **SEP** (comportamiento de
 siempre, contra la meta 70/30), las 9 fuentes y **Consolidado** (SEP + las 9). Para las fuentes que no son
 SEP no hay meta ni techo, así que el % de ejecución se define **sobre el Ingreso anual Total (Real+Proy)** de
-la selección (suma de sus líneas de ingreso, 3 en JUNJI):
+la selección (suma de sus líneas de ingreso, 4 en JUNJI: Operación, Homologación, Carrera Docente y BDL):
 
 - % Ejec. Remuneraciones acumulado = Σ gasto en Remuneraciones hasta el mes / Ingreso anual Total.
 - % Ejec. B&S acumulado = Σ gasto en Bienes y Servicios hasta el mes / Ingreso anual Total.
@@ -448,7 +448,7 @@ Cada tabla del detalle por RBD marca sus columnas de mes en verde ("Real") o nar
 - **"Aplicar a todas las entidades"** (solo admin, como "Migrar DC"): pide confirmación mostrando cuántas entidades
   cambian y por origen (SEP — Ingresos, SEP — Remuneraciones y cada fuente) y fija el mes de cierre en todas: `ingreso_real_hasta_mes`
   y `rem.real_hasta_mes` de SEP y `otras_fuentes.{fuente}.real_hasta_mes` de las 9 fuentes (cada entidad en las fuentes de su
-  universo: RBD + AC; GESPARVU en JUNJI y Aporte JUNJI). Solo escribe lo que cambia (un ingreso sin corte propio ya sigue
+  universo: RBD + AC; GESPARVU en JUNJI y Aporte JUNJI; los tres en FAEP y FIGA). Solo escribe lo que cambia (un ingreso sin corte propio ya sigue
   al cierre, así que no recibe campo), un `set` con `merge:true` por documento, en `writeBatch` de a lo más 400 operaciones
   (cada documento cuenta 2: el `set` y el `serverTimestamp` de la auditoría; hasta 200 documentos por lote); la pantalla se
   actualiza al instante; repetirlo no escribe nada; si un lote falla, se avisa y repetir solo reintenta lo que falta.
@@ -496,7 +496,7 @@ Es la última pestaña de la barra y tiene dos vistas, que se eligen con los chi
 **Visualizador (multi-fuente).** Consolida **todas las fuentes de financiamiento** al estilo del
 Visualizador de la plataforma de Rendición de Cuentas de SUPEREDUC (Manual, Cap. VII): filtros por
 Fuente (SEP + las 9 fuentes, chips con "Todas / Ninguna") y por Entidad (55 RBD, "AC" y los 13
-GESPARVU de JUNJI, con buscador; al elegir solo AC o solo GESPARVU quedan únicamente las fuentes
+GESPARVU —jardines infantiles—, con buscador; al elegir solo AC o solo GESPARVU quedan únicamente las fuentes
 cuyo universo los incluye), un panel **Saldo disponible** (Ingresos − Gastos) y dos tablas
 expandibles, **Ingresos** y **Gastos**, con columnas **Real / Proyectado / Total**:
 
@@ -521,13 +521,13 @@ celda, ahora para **SEP y las 9 fuentes de financiamiento**:
 - **Entidades**: los 55 RBD + "AC — Administración Central" + los 13 GESPARVU, en la misma lista
   (agrupada con encabezados, con buscador y Todos/Ninguno; todas marcadas por defecto). Un par
   entidad × concepto que no corresponde (un GESPARVU con un concepto de SEP, un RBD con un concepto
-  de JUNJI) simplemente no genera fila: RBD → SEP y las fuentes por RBD; AC → las fuentes por RBD;
-  GESPARVU → JUNJI y Aporte Fiscal JUNJI.
+  de JUNJI) simplemente no genera fila: RBD → SEP y las fuentes por RBD (incluidas FAEP y FIGA); AC → las fuentes por RBD, sin SEP;
+  GESPARVU → JUNJI, Aporte Fiscal JUNJI, FAEP y FIGA. El grupo de la lista se llama «GESPARVU (jardines infantiles)».
 - **Conceptos agrupados por fuente** (un grupo plegable por fuente; SEP abierto por defecto) con
   chips de fuente encima del buscador (solo filtran qué grupos se ven, no lo seleccionado). Los de
   SEP conservan sus keys y etiquetas de siempre (3 ingresos SEP, Remuneraciones, cada ítem de
   compras Subt.22/29, la proyección de B&S total y por ítem). Los de las fuentes llevan prefijo
-  `[Fuente]`: Ingreso (o las 3 líneas de JUNJI), Remuneraciones, Bienes y Servicios total
+  `[Fuente]`: Ingreso (o las 4 líneas de JUNJI: Operación, Homologación, Carrera Docente y «Ingreso Bono Desempeño Laboral (BDL)»), Remuneraciones, Bienes y Servicios total
   (Real+Proy) y, en las fuentes con compras, Proyección de B&S total; además, **dinámicos** (solo si
   hay datos): B&S por código de cuenta (compras), B&S por concepto libre y proyección de B&S por
   concepto. Un mismo código en dos fuentes es un concepto distinto por fuente.
@@ -560,10 +560,10 @@ el seguimiento es simplemente Ingreso vs. Gasto por fuente, con un Estado de sol
 
 - Cada fuente es su propia pestaña de primer nivel (entre SEP y % Ejecución/Reportes, ver
   "Estructura de pestañas") — sin selector desplegable intermedio, se presiona directo.
-- Las fuentes con universo `rbd_ac` incluyen una fila fija adicional, **"AC" (Administración Central)**, para gasto a
+- Las fuentes con universo `rbd_ac` o `rbd_ac_gesparvu` incluyen una fila fija adicional, **"AC" (Administración Central)**, para gasto a
   nivel del sostenedor que no corresponde a un establecimiento puntual — no participa de SEP (no está en la tabla ni en los totales
   de SEP), pero sí cuenta en cada una de esas fuentes: en sus tarjetas del Panel principal ("N de 56 entidades"), en % Ejecución y en Reportes.
-  Las fuentes con universo `gesparvu` (JUNJI y Aporte JUNJI) no tienen fila AC.
+  Las fuentes con universo `gesparvu` (JUNJI y Aporte JUNJI) no tienen fila AC. FAEP y FIGA (universo `rbd_ac_gesparvu`) listan además los 13 jardines: ver más abajo.
 - Todo se guarda en tiempo real vía Firestore (mismo documento `sep_carga_rbd/{rbd}` de SEP, bajo
   el campo nuevo `otras_fuentes`), sin requerir cambios en `firestore.rules`.
 
@@ -571,13 +571,15 @@ el seguimiento es simplemente Ingreso vs. Gasto por fuente, con un Estado de sol
 con tres campos en vez de un único flag binario (necesario desde que FAEP/FIGA y los Aportes
 Fiscales agregaron combinaciones nuevas):
 
-- `incomeShape`: `'single'` (1 línea de Ingreso) o `'junji3'` (3 líneas — Operación,
-  Homologación, Carrera Docente — hoy solo JUNJI). Solo decide cuántas líneas de ingreso hay (y si
+- `incomeShape`: `'single'` (1 línea de Ingreso) o `'junji3'` (4 líneas — Operación,
+  Homologación, Carrera Docente y Bono Desempeño Laboral (BDL) — hoy solo JUNJI). Solo decide cuántas líneas de ingreso hay (y si
   aplica el "Saldo Operación disponible para B&S"); ya no determina el universo de entidades.
-- `universo`: `'rbd_ac'` (los 55 RBD + la fila fija "AC") o `'gesparvu'` (los 13 **GESPARVU** —
-  jardín infantil / sala cuna —, sin AC). Define qué filas lista la pestaña y de qué fuentes
-  participa cada entidad (un mismo GESPARVU puede tener datos en JUNJI y en Aporte Fiscal JUNJI,
-  bajo claves distintas de `otras_fuentes`, sin pisarse).
+- `universo`: `'rbd_ac'` (los 55 RBD + la fila fija "AC"), `'gesparvu'` (los 13 **GESPARVU** —
+  jardín infantil / sala cuna —, sin AC) o `'rbd_ac_gesparvu'` (los tres: 55 RBD + AC + 13 GESPARVU = 69 entidades; hoy solo FAEP y FIGA).
+  Define qué filas lista la pestaña y de qué fuentes participa cada entidad (un mismo GESPARVU puede tener datos en JUNJI, Aporte Fiscal JUNJI,
+  FAEP y FIGA, bajo claves distintas de `otras_fuentes`, sin pisarse). La participación se decide por el **tipo** de la entidad
+  (`tipoEntidadDeRbd`: `rbd` / `ac` / `gesparvu`, con `universoIncluyeTipo`), no por la fuente; por la misma razón el rótulo
+  («RBD 1121», «Administración Central», «GESPARVU 5402002») sale del tipo de entidad en todas las vistas.
 - `bysMode`: `'compras'` (Bienes y Servicios como "Registro de compras" con código de cuenta
   SUPEREDUC + documento/proveedor — General/PIE/Mantención/Pro-Retención) o `'concepto'` (ítems
   por concepto libre, sin código ni documento — JUNJI/FAEP/FIGA/Aportes Fiscales, ninguna es parte
@@ -586,29 +588,47 @@ Fiscales agregaron combinaciones nuevas):
 | Fuente | `incomeShape` | `bysMode` | `universo` | CSV SUPEREDUC |
 |---|---|---|---|---|
 | General / PIE / Mantención / Pro-Retención | `single` | `compras` | `rbd_ac` | Sí |
-| FAEP / FIGA | `single` | `concepto` | `rbd_ac` | No |
+| FAEP / FIGA | `single` | `concepto` | `rbd_ac_gesparvu` | No |
 | Aporte Fiscal Extraord. Educación | `single` | `concepto` | `rbd_ac` | No |
 | JUNJI | `junji3` | `concepto` | `gesparvu` | No |
 | Aporte Fiscal Extraord. JUNJI | `single` | `concepto` | `gesparvu` | No |
 
 **JUNJI** (`incomeShape:'junji3'`, `bysMode:'concepto'`): Operación financia Remuneraciones y
-Bienes y Servicios; Homologación y Carrera Docente financian solo Remuneraciones — el modal
+Bienes y Servicios; Homologación, Carrera Docente y Bono Desempeño Laboral (BDL) financian solo Remuneraciones — el modal
 muestra un "Saldo Operación disponible para B&S" (Operación − gasto de B&S; no bloquea la carga si se excede) y **ese saldo entra al Estado**: una
 entidad de JUNJI está en Déficit si su saldo total es negativo **o** si su saldo de Operación para B&S es negativo (B&S no puede pagarse con
 fondos solo-remuneraciones). La fila, el modal, "Atención" y el tooltip dicen la causa (ver "Estado de una entidad").
+
+**Línea «Ingreso Bono Desempeño Laboral (BDL)» de JUNJI** (cuarta línea de ingreso, a pedido del usuario): campo `otras_fuentes.junji.ingreso_bdl` (`{meses, total}`, como las otras
+tres), clave de la celda `of_ingreso_bdl`, hoja `ING_BDL` del Excel, fila «Ingreso Bono Desempeño Laboral (BDL)» del CSV de detalle y del PDF por entidad, y concepto
+`[JUNJI] Ingreso Bono Desempeño Laboral (BDL)` (`of|junji|ingreso_bdl`) del Reporte personalizado y línea del Visualizador. **Decisión del usuario:** el BDL financia
+solo Remuneraciones, igual que Homologación y Carrera Docente; por eso **no** entra en `saldo_operacion_bys` (que sigue siendo Ingreso Operación − B&S) y **sí** en el ingreso
+total, en Real/Proyectado según el corte «Real hasta el mes» de la entidad (`computeRealProyOtraFuente`), en el saldo, en el Estado (regla de la PR #63: Déficit si el saldo total < 0
+o el saldo de Operación para B&S < 0), en las series mensuales del Panel principal y de % Ejecución (el «Ingreso anual Total» incluye el BDL). El Aporte Fiscal Extraord. JUNJI
+(una sola línea) no cambia. Un documento anterior sin `ingreso_bdl` se lee como ceros **sin escribir nada**; un `ingreso_bdl` dañado (texto, nulo, arreglo, meses con basura) se lee
+con la misma tolerancia que las demás líneas (`mesesDesde` / `num`) y no tumba el documento; un Excel anterior sin la hoja `ING_BDL` se importa sin error y no borra el BDL guardado.
 
 **FAEP y FIGA** (`incomeShape:'single'`, `bysMode:'concepto'`): quedaron pendientes de la PR
 anterior porque, igual que JUNJI, ninguna de las dos aparece en los manuales SUPEREDUC revisados
 — de hecho, el propio Manual de Cuentas 2026 confirma que los convenios FAEP quedaron excluidos
 del sistema de rendición de cuentas desde el periodo 2024 (dictamen N°67 de 2023 de la
-Superintendencia de Educación). Usan el mismo universo de entidades que las 4 fuentes "simples"
-(55 RBD + "AC").
+Superintendencia de Educación). Su universo de entidades es el combinado `rbd_ac_gesparvu`: los 55 RBD + "AC" + los 13 GESPARVU, porque
+los jardines infantiles también tienen ingresos y gastos de FAEP y de FIGA (ajuste de fuentes: antes solo listaban 55 RBD + "AC"; las
+demás fuentes conservan su universo). Orden de las filas: los RBD (en el orden de `DATA.registros`), luego "AC" y luego los jardines
+(en el orden de `GESPARVU_REGISTROS`, el mismo que usa JUNJI): se respeta cada lista que ya existía y la entidad nueva queda al
+final; el primer encabezado de la tabla dice «RBD / GESPARVU». Los jardines **parten en $0** en FAEP y FIGA: ninguna cifra existente cambia,
+solo aparecen 13 filas nuevas por fuente y los conteos pasan de «N de 56» a «N de 69» (tarjetas de las pestañas, del Panel principal y franja
+consolidada). Los documentos de los jardines **ya existen** en Firestore (los creó JUNJI): no se vuelven a sembrar ni se pisan
+(`ensureRbdsFaltantesEnFirestore` solo crea RBD de `DATA.registros` faltantes); cuando alguien edita FAEP o FIGA de un jardín el write es un
+`setDoc` con `merge:true` que solo toca `otras_fuentes.faep` (o `.figa`), así que `otras_fuentes.junji` y `.aporte_junji` del mismo documento
+quedan intactos. El Excel de respaldo de FAEP/FIGA exporta las 69 filas (los jardines al final, con su código numérico); el importador acepta
+los códigos de los jardines y un archivo antiguo, solo con RBD y AC, se importa igual sin tocar a los jardines.
 
 **Aporte Fiscal Extraordinario Educación y Aporte Fiscal Extraordinario JUNJI**
 (`incomeShape:'single'`, `bysMode:'concepto'`): ingresos aparte, que se gastan en Remuneraciones y
 Bienes y Servicios y no se rinden por el libro de compras de SUPEREDUC. El de Educación usa el
 universo `rbd_ac` (55 RBD + "AC"); el de JUNJI usa el universo `gesparvu` (los 13 GESPARVU, sin
-AC) y tiene una sola línea de Ingreso (a diferencia de la fuente JUNJI, que tiene 3).
+AC) y tiene una sola línea de Ingreso (a diferencia de la fuente JUNJI, que tiene 4).
 
 **Real / Proyectado / Total.** Cada pestaña de fuente distingue lo ejecutado de lo proyectado,
 con el mismo criterio que las remuneraciones de SEP:
@@ -758,9 +778,9 @@ redondear ningún porcentaje**: los % que se muestran siguen redondeados a 1 dec
   es **Riesgo**; saldo -$1 es **Déficit**. Un RBD sin marco SEP con gasto SEP tiene recurso $0, así que su Estado es Déficit (la etiqueta sigue diciendo
   "⚠ Sin marco SEP") y cuenta como tal en el filtro, la tarjeta "RBD en déficit" ("de 53 (52 con marco SEP activo + 1 sin marco con gasto SEP)") y el Panel principal.
 - **Fuentes**: solo Superávit / Déficit, siempre sobre el Total (Real + Proy). Saldo $0 → Superávit; ingreso $0 con gasto → Déficit.
-- **JUNJI (L-08)**: `incomeShape:'junji3'` tiene 3 líneas de ingreso. Operación puede financiar Bienes y Servicios y Remuneraciones; Homologación y Carrera
-  Docente financian **solo** Remuneraciones (decisión de negocio). Por eso JUNJI es Déficit si el saldo total < 0 **o** si `saldo_operacion_bys` =
-  Operación − gasto de B&S < 0, y la fila (aviso visible + tooltip), el subtítulo del modal, "Atención" y el PDF de la entidad dicen cuál es la causa (saldo total,
+- **JUNJI (L-08)**: `incomeShape:'junji3'` tiene 4 líneas de ingreso. Operación puede financiar Bienes y Servicios y Remuneraciones; Homologación, Carrera
+  Docente y Bono Desempeño Laboral (BDL) financian **solo** Remuneraciones (decisión de negocio). Por eso JUNJI es Déficit si el saldo total < 0 **o** si `saldo_operacion_bys` =
+  Operación − gasto de B&S < 0 (el BDL suma al ingreso y al saldo total, pero **no** a `saldo_operacion_bys`: un BDL alto no saca de Déficit a un jardín cuyo B&S supera a Operación), y la fila (aviso visible + tooltip), el subtítulo del modal, "Atención" y el PDF de la entidad dicen cuál es la causa (saldo total,
   saldo de Operación para B&S, o ambas). La regla vive en `causasDeficitOtraFuente` y está atada a `incomeShape:'junji3'`, así que cualquier fuente futura
   con líneas restringidas la hereda; hoy **ninguna otra fuente** tiene líneas de ingreso restringidas (las otras 8 son `single`).
 - **Todo lugar que cuenta o lista "entidades en déficit" lee el mismo Estado**: tarjetas KPI de SEP y de cada fuente, tarjetas por fuente y franja del Panel principal,
@@ -822,7 +842,7 @@ data/                 plan_cuentas_2026.json (matriz de cuentas por subvención,
 docs/                 honorarios_spec.md: especificación del Libro de Honorarios, decisiones del
                        usuario y plan en 3 PR (PR-1 hecha: SEP; PR-2: CSV; PR-3: otras fuentes y analítica).
 tests/                Arnés de pruebas (Playwright + mock local de Firebase): specs, golden master
-                       y fixtures sintéticos (default, cierre, compras, estado, honorarios). Ver tests/README.md.
+                       y fixtures sintéticos (default, cierre, compras, estado, honorarios, jardines). Ver tests/README.md.
                        Se corre con `node tests/run.mjs` (≈ 15 min la suite completa).
 tests/e2e-real/       Arnés opcional contra el SDK real de Firestore y su emulador (ver tests/e2e-real/README.md).
 *.pdf (raíz)          Manuales oficiales de SUPEREDUC 2026 de referencia (Manual de Cuentas y capítulos del Manual de

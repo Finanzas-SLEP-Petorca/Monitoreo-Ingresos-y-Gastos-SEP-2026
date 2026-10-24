@@ -13,7 +13,7 @@ reglas de seguridad, límites del servidor, detección de red caída…). Este a
 
 ```bash
 bash tests/e2e-real/setup.sh          # una vez (idempotente): npm install + emulador de Firestore; no re-descarga lo ya instalado
-node tests/e2e-real/run.mjs           # los 11 specs contra el index.html del árbol: tabla PASS / BUG / FAIL (≈ 8 min)
+node tests/e2e-real/run.mjs           # los 12 specs contra el index.html del árbol: tabla PASS / BUG / FAIL (≈ 8 min)
 
 node tests/e2e-real/run.mjs --matriz  # árbol + @069f9dd (+ @baseline en los specs 06 y 07) y compara con lo esperado (≈ 15 min)
 node tests/e2e-real/run.mjs 01 04     # solo esos specs (prefijo del nombre)
@@ -55,7 +55,7 @@ tests/e2e-real/
   lib/netproxy.mjs    proxy TCP navegador→emulador que se puede CORTAR de verdad (resetea las conexiones) y restablecer
   lib/harness.mjs     boot(): servidor estático + Chromium + page.route + instrumentos (indicador, bitácora de writes/snapshots…)
   lib/spec.mjs        mini-arnés de specs (OK / FALLA por aserción, t.bug(), RESULT:, process.exit(1))
-  specs/01…11         los casos (abajo)
+  specs/01…12         los casos (abajo)
   parches/            parches PROPUESTOS para index.html (no aplicados; ver «Hallazgos»)
 ```
 
@@ -90,6 +90,7 @@ tests/e2e-real/
 | `09_multi_pestana` | (extra) dos pestañas del mismo perfil: la 2.ª recibe `failed-precondition` al activar IndexedDB y el panel avisa al cerrar con lo no enviado solo en ella |
 | `10_mes_cierre` | mes de cierre global (`_meta`) y "Aplicar a todas las entidades" con el SDK real: `setDoc` + `merge` de `mes_cierre` / `mes_cierre_por` / `mes_cierre_en` (hora del servidor) sin pisar `items_22` / `items_29` ni tocar otros documentos (`updateTime`), sobrevive a recargar; UN `writeBatch` real de 69 documentos (138 operaciones ≤ 400) confirmado, el servidor queda con `rem.real_hasta_mes` de los 55 RBD y `otras_fuentes.{fuente}.real_hasta_mes` de todas las entidades en 9, ningún otro campo cambia, repetirlo no escribe nada; un lote rechazado por las reglas es atómico (el servidor no recibe nada), el panel avisa y repetir lo guarda; con las `firestore.rules` reales un correo autorizado que NO es admin SÍ puede escribir `_meta` (la restricción a administradores es solo del cliente: riesgo residual) |
 | `11_honorarios` | Honorarios (Subt. 21) por boleta en SEP (PR-1) con el SDK real: alta / edición / borrado de UNA boleta = un `setDoc` con `merge:true` confirmado que toca solo `honorarios.<id>` (tipo como código, montos numéricos, N° DC; borrar = `deleteField` de ese id; el resto del documento y los demás documentos intactos, `updateTime`), otra persona agregando y editando SU boleta en el mismo RBD (merge por id: ninguna pisa a la otra, el panel abierto la muestra sin recargar), proyección por cuenta (agregar, teclear un mes, quitar = `deleteField` de la cuenta, otra persona agregando otra cuenta), recarga con IndexedDB real, y documentos con honorarios dañados que el servidor sí guarda (boleta nula / de texto / número / arreglo, monto «abc», fecha numérica, `honorarios` o `hon_proyeccion` del tipo equivocado, meses de texto, cuenta de proyección fuera del catálogo): el panel los tolera, queda verde, los demás RBD se ven idénticos y no escribe nada |
+| `12_jardines_bdl` | «Ajustes de fuentes» con el SDK real: FAEP de un jardín (GESPARVU) y el BDL de su JUNJI = dos `setDoc` con `merge:true` confirmados que tocan solo `otras_fuentes.faep…` y `otras_fuentes.junji.ingreso_bdl…` (el documento ya traía `junji` y `aporte_junji`: nada se pisa, `updateTime` de los demás documentos intacto); otra persona escribe otro mes de FAEP en el mismo jardín y el merge anidado conserva ambos; recarga con IndexedDB real sin escribir; documentos de jardines con `ingreso_bdl` dañado (texto, nulo, arreglo, `meses` de texto, meses con basura) tolerados (verde, 13 jardines, 0 writes, `updateTime` intacto); con los 13 documentos de jardines ausentes no se siembra nada y editar uno lo crea con `merge` |
 
 ## Resultados
 
@@ -109,6 +110,7 @@ Emulador 1.19.8, SDK 10.12.0, Chromium headless. «PASS» = todas las aserciones
 | 09 Dos pestañas | **PASS** | **FAIL** (2): no avisa al cerrar con cambios solo en memoria | — |
 | 10 Mes de cierre global | **PASS** | **FAIL** (no existe el control; verificado contra `@a94c2fb`) | — |
 | 11 Honorarios por boleta (PR-1) | **PASS** | **FAIL** (4: no existe el registro de honorarios; igual contra `@1f0821b`) | — |
+| 12 Jardines en FAEP/FIGA y BDL de JUNJI | **PASS** | **FAIL** (verificado también contra `@ff7a666`: 7 aserciones) | — |
 
 Con las cuatro correcciones propuestas (`parches/TODOS_B1_a_B4.patch`, aplicadas **a una copia**, nunca a `index.html`) los 9 specs quedan en PASS sin BUG.
 `node tests/run.mjs` (mocks) sobre copias parcheadas: con B1+B2+B4 las 20 pruebas siguen en PASS; con los cuatro parches solo falla `claves_invalidas` (espera que 1500 bytes sea válido: hay que actualizar ese límite a 1400).

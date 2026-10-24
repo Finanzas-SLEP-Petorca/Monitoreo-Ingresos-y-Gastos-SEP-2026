@@ -1,6 +1,6 @@
-// L-08 — JUNJI: el Estado ignoraba el saldo de Operación y las líneas solo-remuneraciones. En JUNJI (incomeShape 'junji3', universo GESPARVU) el ingreso tiene 3 líneas:
-// Operación (puede financiar Bienes y Servicios y Remuneraciones) y Homologación + Carrera Docente (TODO lo que ingresa por ahí se va a Remuneraciones: no puede financiar B&S;
-// decisión del usuario). Regla: JUNJI es Déficit si el saldo total < 0 O si el saldo de Operación para B&S (Operación − B&S) < 0; la fila, el modal, "Atención" y el tooltip
+// L-08 — JUNJI: el Estado ignoraba el saldo de Operación y las líneas solo-remuneraciones. En JUNJI (incomeShape 'junji3', universo GESPARVU) el ingreso tiene 4 líneas:
+// Operación (puede financiar Bienes y Servicios y Remuneraciones) y Homologación + Carrera Docente + Bono Desempeño Laboral (BDL; TODO lo que ingresa por ahí se va a Remuneraciones: no puede
+// financiar B&S; decisión del usuario; el BDL se agregó en «ajustes de fuentes» y suma al saldo total pero NO al de Operación: ver la sección 7). Regla: JUNJI es Déficit si el saldo total < 0 O si el saldo de Operación para B&S (Operación − B&S) < 0; la fila, el modal, "Atención" y el tooltip
 // dicen la causa. En las demás fuentes (una sola línea de ingreso) nada cambia. Fixture `estado`: 5402002 (solo Operación), 5402004 (solo saldo total), 5401006 (ambas),
 // 5401007 (saldo 0 y Operación − B&S = 0: Superávit), 5401005 (Operación − B&S = -$1 con saldo total positivo). Debe FALLAR contra APP_HTML=@3d5b041.
 import { boot, clickTab, cargarFixture } from '../lib/boot.mjs';
@@ -33,7 +33,7 @@ await correrSpec('estado_junji', async (t) => {
   t.eq(filas['5402002'].saldo, '$500.000', '…con saldo total $500.000');
   t.eq(filas['5402002'].causa, CORTO_OP, '…y la fila dice la causa: saldo de Operación para B&S negativo');
   t.ok(/saldo de Operación para Bienes y Servicios es negativo \(-\$500\.000\)/.test(filas['5402002'].title) && !/saldo total es negativo/.test(filas['5402002'].title), 'tooltip de 5402002: solo la causa de Operación, con su monto (-$500.000)');
-  t.ok(/Homologación ni Carrera Docente/.test(filas['5402002'].title), 'y explica por qué: B&S no puede pagarse con Homologación ni Carrera Docente');
+  t.ok(/Homologación, Carrera Docente ni BDL/.test(filas['5402002'].title), 'y explica por qué: B&S no puede pagarse con Homologación, Carrera Docente ni BDL');
   t.eq([filas['5402004'].estado, filas['5402004'].causa], ['Déficit', ''], '5402004 (saldo total -$1.000.000): Déficit sin aviso aparte');
   t.ok(/el saldo total es negativo \(-\$1\.000\.000\)/.test(filas['5402004'].title) && !/Operación/.test(filas['5402004'].title), 'tooltip de 5402004: solo el saldo total negativo');
   t.eq([filas['5401006'].estado, filas['5401006'].causa], ['Déficit', CORTO_AMBAS], '5401006: Déficit por ambas causas, lo dice la fila');
@@ -129,6 +129,38 @@ await correrSpec('estado_junji', async (t) => {
   t.ok(!/Saldo Operación disponible/.test(await page.evaluate(() => document.getElementById('otrasFuentesModalBody').innerText)), 'el modal de Aporte JUNJI no tiene "Saldo Operación disponible para B&S" (solo JUNJI)');
   await page.keyboard.press('Escape');
 
+  // ---------------------------------------------------------------- 7) BDL (4.ª línea de ingreso, solo Remuneraciones): suma al saldo total y al Estado, NO al saldo de Operación para B&S
+  // El fixture `estado` no trae ingreso_bdl (documentos anteriores a la línea): «otra persona» lo escribe aquí.
+  await clickTab(page, 'junji');
+  const conBdl = async (id, valor) => {
+    await h.remoto(id, `const j = d.otras_fuentes.junji; j.ingreso_bdl = { meses: { ENERO: ${valor} }, total: ${valor} };`);
+    await h.waitIdle();
+    return (await filasFuente(page, 'junji'))[id];
+  };
+  // 5402004: saldo total -$1.000.000 y Operación − B&S = +$1.500.000 → solo el saldo total decide, y el BDL lo mueve (bordes exactos)
+  for (const [valor, estado, saldo] of [[1000000, 'Superávit', '$0'], [1000001, 'Superávit', '$1'], [999999, 'Déficit', '-$1'], [0, 'Déficit', '-$1.000.000']]) {
+    const f = await conBdl('5402004', valor);
+    t.eq([f.estado, f.saldo, f.causa], [estado, saldo, ''], `5402004 con BDL de $${valor}: saldo ${saldo} → ${estado} (el BDL cubre Remuneraciones y entra al saldo total)`);
+  }
+  // 5402002: Operación − B&S = -$500.000: ningún BDL, por alto que sea, lo saca del Déficit por Operación
+  const f5 = await conBdl('5402002', 100000000);
+  t.eq([f5.estado, f5.causa, f5.saldo], ['Déficit', CORTO_OP, '$100.500.000'], '5402002 con BDL de $100 M: saldo total +$100.500.000 pero sigue en Déficit por el saldo de Operación (B&S no puede pagarse con el BDL)');
+  t.ok(/saldo de Operación para Bienes y Servicios es negativo \(-\$500\.000\)/.test(f5.title) && !/saldo total es negativo/.test(f5.title), '…y el tooltip da solo la causa de Operación con el mismo monto (-$500.000): el BDL no lo cambia');
+  // 5401006 (ambas causas): con BDL el saldo total deja de ser negativo y queda solo la de Operación
+  const f6 = await conBdl('5401006', 5000000);
+  t.eq([f6.estado, f6.causa, f6.saldo], ['Déficit', CORTO_OP, '$3.800.000'], '5401006 (-$1.200.000 y Operación -$200.000) con BDL de $5 M: saldo +$3.800.000, queda solo la causa de Operación');
+  // el modal: el saldo de Operación no suma el BDL; el subtítulo (Saldo) sí
+  await page.click('#otrasFuentesTbody-junji td[data-abrir-otra-fuente="5402002"]');
+  await h.waitIdle();
+  const opBdl = await page.evaluate(() => document.querySelector('#otrasFuentesModalBody [id^="ofsaldoopbys-"]').textContent.trim());
+  t.eq(opBdl, '-$500.000', 'modal de 5402002: «Saldo Operación disponible para B&S» sigue en -$500.000 con $100 M de BDL');
+  t.ok(/Saldo: \$100\.500\.000/.test(await sub()), 'mientras que el Saldo del subtítulo sí lo incluye → ' + await sub());
+  await page.keyboard.press('Escape');
+  await h.waitIdle();
+  // Panel principal: la causa y el saldo que explican la entrada en «Atención» siguen siendo los de Operación
+  const D4 = await leerDashboard(page);
+  const a5 = D4.items.find(i => i.fuente === 'junji' && i.rbd === '5402002');
+  t.ok(!a5 || (a5.causa === CORTO_OP && a5.saldo === '▼ -$500.000'), '«Atención»: 5402002 (si entra en el top 8) muestra el saldo de Operación (-$500.000) y la causa, no el saldo total con BDL');
   t.noErrores(h);
   await h.close();
 });

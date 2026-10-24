@@ -59,7 +59,12 @@ function armarFixture() {
   docs.AC.otras_fuentes.general = docs.AC.otras_fuentes.general || {};
   docs.AC.otras_fuentes.general.compras = { ...(docs.AC.otras_fuentes.general.compras || {}), ac1: ofCompraPayload('AC') };
   docs['5401003'].nombre = P.img;
-  docs['5401003'].otras_fuentes = { junji: { bys_items: { j: { concepto: P.img, meses: { MARZO: 1000 }, total: 1000 } } } };
+  // El jardín 5401003 (GESPARVU) ahora también es entidad de FAEP y FIGA, y JUNJI tiene la línea BDL: conceptos con marcado en sus tres fuentes.
+  docs['5401003'].otras_fuentes = {
+    junji: { ingreso_bdl: { meses: { MARZO: 500 }, total: 500 }, bys_items: { j: { concepto: P.img, meses: { MARZO: 1000 }, total: 1000 } } },
+    faep: { ingreso: { meses: { MARZO: 5000 }, total: 5000 }, bys_items: { f1: { concepto: P.img, meses: { MARZO: 100 }, total: 100 }, f2: { concepto: P.attr, meses: { MARZO: 200 }, total: 200 }, f3: { concepto: P.amp, meses: { MARZO: 300 }, total: 300 } } },
+    figa: { bys_items: { g: { concepto: P.svg, meses: { MARZO: 1 }, total: 1 } } },
+  };
   return docs;
 }
 
@@ -248,6 +253,30 @@ await correrSpec('seguridad_xss', async (t) => {
   await h.waitIdle(); await limpio('modal JUNJI (GESPARVU con nombre de documento con marcado)');
   await page.keyboard.press('Escape');
   await clickTab(page, 'Aporte Educ.'); await limpio('tabla Aporte Educ.');
+
+  // ---------------------------------------------------------------- FAEP y FIGA con jardines (GESPARVU): rótulo por tipo y conceptos con marcado
+  for (const fk of ['faep', 'figa']) {
+    await clickTab(page, fk); await limpio(`tabla ${fk.toUpperCase()} (con los jardines)`);
+    await page.click(`#otrasFuentesTbody-${fk} td[data-abrir-otra-fuente="5401003"]`);
+    await h.waitIdle(); await limpio(`modal ${fk.toUpperCase()} de un jardín (GESPARVU 5401003)`);
+    const tit = await textoDe('#otrasFuentesModalTitle');
+    t.eq(tit, `GESPARVU 5401003 — PULMAHUE · ${fk.toUpperCase()}`, `modal ${fk.toUpperCase()} del jardín: el título sale del rótulo fijo (el nombre hostil del documento no se muestra): ` + tit);
+    const cuerpo = await textoDe('#otrasFuentesModalBody');
+    t.ok(fk === 'faep' ? (cuerpo.includes(P.img) && cuerpo.includes(P.attr) && cuerpo.includes(P.amp)) : cuerpo.includes(P.svg), `modal ${fk.toUpperCase()} del jardín: los conceptos con marcado se ven LITERALES`);
+    t.ok(!cuerpo.includes('&amp;amp;') && !cuerpo.includes('&lt;img'), `modal ${fk.toUpperCase()} del jardín: sin doble escape`);
+    await page.keyboard.press('Escape');
+    await page.evaluate((k) => document.querySelector(`#otrasFuentesTbody-${k} .row-action-btn[data-action="pdf"][data-rbd="5401003"]`).click(), fk);
+    await h.waitIdle();
+    imp = await page.evaluate(() => window.__imprimiendo.slice());
+    t.ok(imp.length >= 1 && imp.every(x => x.malos === 0) && imp.some(x => x.wrap.includes(`${fk.toUpperCase()} — GESPARVU 5401003`)), `PDF de la fila del jardín (${fk.toUpperCase()}): sin nodos peligrosos y rotulado «GESPARVU 5401003»`, imp.map(x => x.malos));
+    await page.evaluate(() => { window.__imprimiendo = []; });
+  }
+  // la línea BDL de JUNJI en el mismo jardín y el Reporte personalizado / Visualizador con esas entidades
+  await clickTab(page, 'junji');
+  await page.click('#otrasFuentesTbody-junji td[data-abrir-otra-fuente="5401003"]');
+  await h.waitIdle(); await limpio('modal JUNJI con BDL');
+  t.ok((await textoDe('#otrasFuentesModalBody')).includes('Ingreso Bono Desempeño Laboral (BDL)'), 'modal JUNJI del jardín 5401003: trae la línea BDL');
+  await page.keyboard.press('Escape');
 
   // ---------------------------------------------------------------- % Ejecución
   await clickTab(page, '% Ejecución'); await limpio('% Ejecución (SEP)');

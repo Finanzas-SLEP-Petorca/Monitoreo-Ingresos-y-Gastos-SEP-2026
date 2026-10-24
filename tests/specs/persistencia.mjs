@@ -290,6 +290,30 @@ await correrSpec('persistencia', async (t) => {
   t.ok(w.length === 1 && esMergeSet(w[0]) && w[0].payload.otras_fuentes.junji.ingreso_homologacion.meses.NOVIEMBRE === 4321, 'JUNJI: la edición va a otras_fuentes.junji.ingreso_homologacion (doc GESPARVU 5402002)', w);
   await page.keyboard.press('Escape'); await h.waitIdle();
 
+  // ---------------------------------------------------------------- JUNJI: línea BDL (Bono Desempeño Laboral) y FAEP de un jardín (ajustes de fuentes): write parcial con merge, solo ese campo
+  await h.clearWrites();
+  await page.click('#otrasFuentesTbody-junji td[data-abrir-otra-fuente="5402002"]');
+  await h.waitIdle();
+  await page.fill('#otrasFuentesModalBody input.celda-input[data-rbd="5402002"][data-modo="of_ingreso_bdl"][data-mes="DICIEMBRE"]', '2468');
+  await h.flushWrites();
+  w = writesDe(await h.writes(), '5402002');
+  t.ok(w.length === 1 && esMergeSet(w[0]) && w[0].payload.otras_fuentes.junji.ingreso_bdl.meses.DICIEMBRE === 2468, 'JUNJI BDL: la edición va a otras_fuentes.junji.ingreso_bdl (merge:true)', w);
+  t.eq(w[0] && Object.keys(w[0].payload.otras_fuentes.junji), ['ingreso_bdl'], 'JUNJI BDL: solo toca ingreso_bdl (ninguna otra línea ni fuente)');
+  t.eq(w[0] && w[0].payload.otras_fuentes.junji.ingreso_bdl, { meses: { DICIEMBRE: 2468 }, total: 2468 }, 'JUNJI BDL: el write lleva el mes editado y el total de la línea (el fixture default no trae BDL: parte en $0)');
+  await page.keyboard.press('Escape'); await h.waitIdle();
+  await h.clearWrites();
+  await clickTab(page, 'FAEP');
+  await page.click('#otrasFuentesTbody-faep td[data-abrir-otra-fuente="5402002"]');
+  await h.waitIdle();
+  await page.fill('#otrasFuentesModalBody input.celda-input[data-rbd="5402002"][data-fuente="faep"][data-modo="of_ingreso"][data-mes="ENERO"]', '1357');
+  await h.flushWrites();
+  w = writesDe(await h.writes(), '5402002');
+  t.ok(w.length === 1 && esMergeSet(w[0]) && w[0].payload.otras_fuentes.faep.ingreso.meses.ENERO === 1357 && w[0].payload.nombre === 'RINCONCITO', 'FAEP de un jardín (GESPARVU 5402002): la edición va a otras_fuentes.faep.ingreso con merge:true y el nombre del jardín', w);
+  t.eq(w[0] && Object.keys(w[0].payload.otras_fuentes), ['faep'], 'FAEP de un jardín: solo otras_fuentes.faep (no toca junji ni aporte_junji)');
+  const dJar = (await h.store())['sep_carga_rbd/5402002'];
+  t.ok(dJar.otras_fuentes.junji.ingreso_homologacion.meses.NOVIEMBRE === 4321 && dJar.otras_fuentes.junji.ingreso_bdl.meses.DICIEMBRE === 2468 && dJar.otras_fuentes.faep.ingreso.meses.ENERO === 1357, 'deep-merge en el servidor: JUNJI (homologación y BDL) y FAEP conviven en el documento del jardín', dJar.otras_fuentes);
+  await page.keyboard.press('Escape'); await h.waitIdle();
+
   // ---------------------------------------------------------------- Cambio hecho por OTRO usuario (llega por snapshot)
   const otro = JSON.parse(JSON.stringify(fx['1123']));
   otro.rem.meses.ENERO = 5555555; otro.rem.total = otro.rem.total - fx['1123'].rem.meses.ENERO + 5555555;

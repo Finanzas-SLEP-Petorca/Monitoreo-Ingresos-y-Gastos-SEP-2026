@@ -151,4 +151,35 @@ await correrSpec('roundtrip_excel', async (t) => {
     t.noErrores(hh);
     await hh.close();
   }
+
+  // ================================================================ «Ajustes de fuentes»: FAEP y FIGA con los 13 jardines, y JUNJI con la línea BDL (hoja ING_BDL). Fixture `jardines`.
+  {
+    const hj = await boot({ fixture: 'jardines' });
+    for (const [key, etiqueta, hojaClave, nFilas] of [['faep', 'FAEP (69 entidades, con jardines)', 'INGRESO', 69], ['figa', 'FIGA (69 entidades, con jardines)', 'INGRESO', 69], ['junji', 'JUNJI (con ING_BDL)', 'ING_BDL', 13]]) {
+      await clickTab(hj.page, 'of-' + key);
+      const tAntes = await textoDe(hj.page, '#tab-of-' + key);
+      const sAntes = documentos(await hj.store());
+      const e1 = await exportar(hj, () => hj.page.click(`#downloadExcelOFBtn-${key}`));
+      t.eq(e1.libro.hojas[hojaClave].length - 1, nFilas, `${etiqueta}: la hoja ${hojaClave} trae ${nFilas} filas`);
+      const m = await importar(hj, `#importExcelOFInput-${key}`, e1);
+      t.ok(/^Carga importada correctamente/.test(m[0] || '') && (key !== 'junji' || /ING_BDL: 13 filas/.test(m[0] || '')), `${etiqueta}: la importación informa éxito`, m);
+      t.eq(await textoDe(hj.page, '#tab-of-' + key), tAntes, `${etiqueta}: la pestaña queda idéntica tras reimportar`);
+      const e2 = await exportar(hj, () => hj.page.click(`#downloadExcelOFBtn-${key}`));
+      t.eq(igualLibros(e1.libro, e2.libro), null, `${etiqueta}: exportar → importar → exportar da exactamente las mismas hojas`);
+      t.eq(primeraDiferencia(sAntes, documentos(await hj.store())), null, `${etiqueta}: los documentos del servidor quedan iguales (salvo ceros y auditoría)`);
+    }
+    // Excel individual de un jardín (FAEP y JUNJI): se reimporta y no cambia nada
+    for (const [key, id] of [['faep', '5402002'], ['junji', '5402002']]) {
+      await clickTab(hj.page, 'of-' + key);
+      const sAntes = documentos(await hj.store());
+      const f1 = await exportar(hj, () => hj.page.click(`#otrasFuentesTbody-${key} button.row-action-btn[data-action="excel"][data-rbd="${id}"]`));
+      const mf = await importar(hj, `#importExcelOFInput-${key}`, f1);
+      t.ok(/^Carga importada correctamente/.test(mf[0] || ''), `${key.toUpperCase()} › jardín ${id}: el Excel individual se reimporta`, mf);
+      const f2 = await exportar(hj, () => hj.page.click(`#otrasFuentesTbody-${key} button.row-action-btn[data-action="excel"][data-rbd="${id}"]`));
+      t.eq(igualLibros(f1.libro, f2.libro), null, `${key.toUpperCase()} › jardín ${id}: el Excel individual no cambia tras reimportarlo`);
+      t.eq(primeraDiferencia(sAntes, documentos(await hj.store())), null, `${key.toUpperCase()} › jardín ${id}: los documentos siguen iguales`);
+    }
+    t.noErrores(hj);
+    await hj.close();
+  }
 });

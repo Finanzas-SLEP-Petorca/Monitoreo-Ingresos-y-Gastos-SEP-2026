@@ -14,6 +14,7 @@ export const FUENTES = ['general', 'pie', 'mantenimiento', 'prorretencion', 'jun
 export const CASOS_MODAL_FUENTE = [
   ['general', '1121'], ['general', 'AC'], ['pie', '1121'], ['mantenimiento', '1121'], ['prorretencion', 'AC'],
   ['junji', '5402002'], ['faep', '1121'], ['figa', 'AC'], ['aporte_educ', '1121'], ['aporte_junji', '5402002'],
+  ['faep', '5402002'], ['figa', '5404001'], // jardines (GESPARVU) en FAEP y FIGA
 ];
 export const RBD_MODAL_SEP = ['1121', '1120', '1128', '1123', '1125'];
 
@@ -188,4 +189,31 @@ export async function recorrerHonorarios(h, visitante) {
   await h.clickTab('% Ejecución');
   await page.click('#ejecFuenteChips button[data-ejec-fuente="consolidado"]');
   await vista('hon.ejec.consolidado');
+}
+
+/**
+ * «Ajustes de fuentes», con el fixture `jardines` ya arrancado en `h`: FAEP y FIGA con los 13 jardines (69 filas), el detalle de un jardín en FAEP / FIGA con montos, y el detalle de JUNJI con
+ * la cuarta línea de ingreso «Ingreso Bono Desempeño Laboral (BDL)» (jardín con BDL alto, jardín con BDL que cubre Remuneraciones y jardín sin JUNJI previo).
+ * `visitante({nombre, scope, tipo})` como en recorrerVistas.
+ */
+export async function recorrerJardines(h, visitante) {
+  const { page } = h;
+  const vista = async (nombre) => { await h.waitIdle(); await visitante({ nombre, scope: '#app', tipo: 'vista' }); };
+  const modal = async (nombre) => { await h.waitIdle(); await visitante({ nombre, scope: '#otrasFuentesModal .modal-panel', tipo: 'modal' }); };
+  for (const k of ['faep', 'figa', 'junji']) {
+    await h.clickTab('of-' + k);
+    await vista(`jardines.of.${k}.total`);
+  }
+  for (const [fuente, id] of [['faep', '5402002'], ['faep', '5402004'], ['figa', '5404001'], ['junji', '5401002'], ['junji', '5403002'], ['junji', '5403001']]) {
+    await h.clickTab('of-' + fuente);
+    await page.click(`#otrasFuentesTbody-${fuente} td[data-abrir-otra-fuente="${id}"]`);
+    await h.waitIdle();
+    await modal(`jardines.modal.of.${fuente}.${id}`);
+    await page.keyboard.press('Escape');
+    await h.waitIdle();
+  }
+  await h.clickTab('% Ejecución');
+  await page.click('#ejecFuenteChips button[data-ejec-fuente="faep"]');
+  await page.selectOption('#ejecRbdSelect', '5402002');
+  await vista('jardines.ejec.faep.5402002');
 }

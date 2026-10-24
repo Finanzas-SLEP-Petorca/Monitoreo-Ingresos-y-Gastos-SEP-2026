@@ -8,7 +8,7 @@
 // Cobertura: las vistas y modales de tests/lib/a11y-vistas.mjs (3 vistas del Panel principal, SEP en 4 estados, las 9 fuentes (+ Real/Proy.), % Ejecución en todas sus
 // fuentes, Reportes en sus 2 vistas, 5 modales SEP, 10 modales de fuentes y "Cómo usar"), más la pantalla de acceso en sus 4 estados y el formulario de compra en modo edición.
 import { boot } from '../lib/boot.mjs';
-import { recorrerVistas, recorrerLogin, recorrerHonorarios } from '../lib/a11y-vistas.mjs';
+import { recorrerVistas, recorrerLogin, recorrerHonorarios, recorrerJardines } from '../lib/a11y-vistas.mjs';
 import { nombresAccesibles, controlesSinNombre } from '../lib/a11y.mjs';
 import { correrSpec } from '../lib/spec.mjs';
 
@@ -109,6 +109,46 @@ await correrSpec('a11y_nombres', async (t) => {
     t.ok(/^Cuenta de proyección de honorarios para agregar, RBD 1121$/.test(await nom('#honproyAddSelect-1121')), 'H5) el selector de la proyección: «Cuenta de proyección de honorarios para agregar, RBD 1121»');
     t.noErrores(hh);
     await hh.close();
+  });
+
+  // ======================================================================== J) «Ajustes de fuentes»: jardines en FAEP / FIGA y la línea BDL de JUNJI
+  await escenario(t, 'J', async () => {
+    const hj = await boot({ fixture: 'jardines', viewport: { width: 1500, height: 1000 } });
+    const sinNom = [], mal = [], dup = [], accionesMal = [];
+    let nVistas = 0, nCeldasJar = 0, nBdl = 0, nAccJardin = 0;
+    await recorrerJardines(hj, async ({ nombre, scope, tipo }) => {
+      const lista = await nombresAccesibles(hj.page, { scope });
+      nVistas++;
+      controlesSinNombre(lista).forEach((c) => sinNom.push(`${nombre}: ${resumen(c)}`));
+      const cel = lista.filter((c) => /^input\.celda-input/.test(c.sel));
+      const vistos = new Map();
+      cel.forEach((c) => {
+        if (!RE_CELDA.test(c.nombre)) mal.push(`${nombre}: ${c.nombre}`);
+        vistos.set(c.nombre, (vistos.get(c.nombre) || 0) + 1);
+        if (/GESPARVU \d+$/.test(c.nombre)) nCeldasJar++;
+        if (/^Ingreso Bono Desempeño Laboral \(BDL\), /.test(c.nombre)) nBdl++;
+      });
+      vistos.forEach((n, nom) => { if (n > 1) dup.push(`${nombre}: ${nom} (${n})`); });
+      // acciones por fila (FAEP / FIGA / JUNJI): una por entidad y las de un jardín dicen «GESPARVU <código>»
+      const acciones = lista.filter((c) => /row-action-btn/.test(c.sel));
+      const cuenta = new Map(); acciones.forEach((c) => cuenta.set(c.nombre, (cuenta.get(c.nombre) || 0) + 1));
+      cuenta.forEach((n, nom) => { if (n > 1) dup.push(`${nombre}: acción ${nom} (${n})`); });
+      acciones.forEach((c) => { if (/ GESPARVU \d+$/.test(c.nombre)) nAccJardin++; if (/ RBD 54\d{5}$/.test(c.nombre)) accionesMal.push(`${nombre}: ${c.nombre}`); });
+      void tipo;
+    });
+    t.ok(nVistas >= 10, `J0) se midieron ${nVistas} vistas/estados con jardines en FAEP/FIGA y el BDL de JUNJI (${nCeldasJar} celdas de jardines, ${nBdl} del BDL, ${nAccJardin} acciones de fila de jardines)`, { nVistas, nCeldasJar, nBdl, nAccJardin });
+    t.ok(nBdl >= 3 * 12, `J0) las celdas del BDL de JUNJI se midieron en 3 modales (${nBdl} celdas)`, nBdl);
+    t.ok(nAccJardin >= 3 * 13 * 3, `J0) FAEP, FIGA y JUNJI traen 3 acciones (XLS / CSV / PDF) por cada uno de los 13 jardines (${nAccJardin})`, nAccJardin);
+    t.eq(sinNom, [], 'J1) ningún control de FAEP / FIGA con jardines ni de la línea BDL de JUNJI queda sin nombre accesible');
+    t.eq(mal, [], 'J2) toda celda se llama "<concepto>, <mes>, <entidad>": las de los jardines terminan en "GESPARVU <código>" y la del BDL es "Ingreso Bono Desempeño Laboral (BDL), enero, GESPARVU 5401002"');
+    t.eq(dup, [], 'J3) nombres únicos dentro de cada vista y modal (incluida la línea BDL frente a las otras tres líneas de ingreso) y acciones de fila sin repetir en las tablas de 69 entidades');
+    t.eq(accionesMal, [], 'J4) las acciones de un jardín nunca dicen «RBD» (se rotulan por el tipo de entidad)');
+    const nomDe = async (sel) => { const l = await nombresAccesibles(hj.page, { scope: sel }); return l.length ? l[0].nombre : null; };
+    await hj.clickTab('of-faep');
+    t.eq(await nomDe('#otrasFuentesTbody-faep button.row-action-btn[data-action="excel"][data-rbd="5402002"]'), 'Descargar Excel (XLS) de GESPARVU 5402002', 'J5) «Descargar Excel (XLS) de GESPARVU 5402002»');
+    t.eq(await nomDe('#otrasFuentesTbody-faep button.row-action-btn[data-action="csv"][data-rbd="1121"]'), 'Descargar detalle mensual (CSV) de RBD 1121', 'J5) y el de un RBD sigue diciendo «RBD 1121»');
+    t.noErrores(hj);
+    await hj.close();
   });
 
   // ---- controles concretos de la lista de la auditoría

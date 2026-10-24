@@ -589,6 +589,84 @@ async function seccionHonorarios(h, R) {
   await R.imprimir('honorarios.print.dashboard', () => page.click('#dashPdfBtn'));
 }
 
+// Con el fixture "jardines" («ajustes de fuentes»: FAEP y FIGA incluyen los 13 jardines (GESPARVU) y JUNJI tiene la línea «Ingreso Bono Desempeño Laboral (BDL)» — ver generate.mjs): el Panel
+// principal (tarjetas «de 69», franja, «Atención»), las pestañas FAEP, FIGA y JUNJI con los jardines (Total / Real / Proyectado), los detalles de jardines en FAEP / FIGA, el de JUNJI con BDL (BDL alto →
+// Déficit solo por Operación, BDL que cubre Remuneraciones, jardín sin JUNJI previo), % Ejecución, el Visualizador y el Reporte personalizado con jardines y las exportaciones (Excel con 69 filas y la
+// hoja ING_BDL, JSON, XLS / CSV / PDF por fila de un jardín).
+async function seccionJardines(h, R) {
+  const { page } = h;
+  const fila = (key, rbd, accion) => `#otrasFuentesTbody-${key} button.row-action-btn[data-action="${accion}"][data-rbd="${rbd}"]`;
+  await abrirDetails(page, '#tab-dashboard');
+  for (const v of ['total', 'real', 'proy']) {
+    await page.click(`.dash-chips button[data-dash-vista="${v}"]`);
+    await R.vista(`jardines.dashboard.${v}`, '#tab-dashboard');
+  }
+  await page.click('.dash-chips button[data-dash-vista="total"]');
+  for (const key of ['faep', 'figa', 'junji']) {
+    await h.clickTab('of-' + key);
+    await R.vista(`jardines.of.${key}.total`, `#tab-of-${key}`);
+    if (key !== 'figa') {
+      for (const v of ['real', 'proy']) {
+        await page.click(`#tab-of-${key} .of-chip[data-of-vista="${v}"]`);
+        await R.vista(`jardines.of.${key}.${v}`, `#tab-of-${key}`);
+      }
+      await page.click(`#tab-of-${key} .of-chip[data-of-vista="total"]`);
+      await h.waitIdle();
+    }
+  }
+  for (const [fuente, id] of [['faep', '5402002'], ['faep', '5402004'], ['faep', 'AC'], ['figa', '5404001'], ['figa', '5401002'], ['junji', '5402002'], ['junji', '5401002'], ['junji', '5403002'], ['junji', '5403001']]) {
+    await abrirModalOtraFuente(h, R, fuente, id, `jardines.modal.of.${fuente}.${id}`);
+  }
+  await h.clickTab('% Ejecución');
+  for (const [key, ent] of [['faep', ''], ['faep', '5402002'], ['junji', '5402002'], ['consolidado', '']]) {
+    await page.click(`#ejecFuenteChips .of-chip[data-ejec-fuente="${key}"]`);
+    if (key !== 'consolidado') await setSelect(page, '#ejecRbdSelect', ent);
+    await R.vista(`jardines.ejec.${key}.${ent || 'agregado'}`, '#tab-ejecucion');
+  }
+  await h.clickTab('Reportes');
+  await page.click('#vzFuentesNinguna');
+  for (const k of ['faep', 'figa', 'junji']) await page.click(`#vzFuenteChips [data-vz-fuente="${k}"]`);
+  await page.evaluate(() => { document.getElementById('vzEntidadesDet').open = true; });
+  await page.click('#vzEntNinguno');
+  for (const id of ['5402002', '5402004', '5401002', '5404001', '1121', 'AC']) await setCheck(page, `#vzEntList input[data-vz-ent="${id}"]`, true);
+  await page.evaluate(() => document.querySelector('#vzEntList input[data-vz-ent="1121"]').dispatchEvent(new Event('change', { bubbles: true })));
+  await page.click('#vzExpIng'); await page.click('#vzExpGas');
+  await R.vista('jardines.rep.vz.fuentes', SEL_VZ);
+  await R.descarga('jardines.exp.vz.fuentes.csv', () => page.click('#vzCsvBtn'));
+  await page.click('#vzLimpiarBtn');
+  await page.click('#reporteVistaChips [data-reporte-vista="personalizado"]');
+  await h.waitIdle();
+  const f = await configurarPersonalizado(h, R, {
+    entidades: ['5402002', '5401002', '1121', 'AC'],
+    conceptos: ['of|faep|ingreso', 'of|faep|bys_total', 'of|figa|ingreso', 'of|junji|ingreso_operacion', 'of|junji|ingreso_bdl'],
+    meses: ['ENERO', 'MARZO', 'JULIO', 'AGOSTO', 'DICIEMBRE'],
+  });
+  R.dato('jardines.rep.pers.faltantes', f);
+  await R.vista('jardines.rep.pers', SEL_PERS);
+  await R.descarga('jardines.exp.pers.csv', () => page.click('#reporteCsvBtn'));
+  await R.descarga('jardines.exp.pers.excel', () => page.click('#reporteExcelBtn'));
+  for (const key of ['faep', 'figa', 'junji']) {
+    await h.clickTab('of-' + key);
+    await R.descarga(`jardines.exp.of.${key}.excel`, () => page.click(`#downloadExcelOFBtn-${key}`));
+    await R.descarga(`jardines.exp.of.${key}.json-carga`, () => page.click(`#downloadCargaOFBtn-${key}`));
+  }
+  await h.clickTab('of-faep');
+  await R.imprimir('jardines.print.of.faep', () => page.click('#exportPdfOFBtn-faep'));
+  await R.descarga('jardines.exp.of.faep.fila.5402002.xls', () => page.click(fila('faep', '5402002', 'excel')));
+  await R.descarga('jardines.exp.of.faep.fila.5402002.csv-detalle', () => page.click(fila('faep', '5402002', 'csv')));
+  await R.imprimir('jardines.print.of.faep.fila.5402002', () => page.click(fila('faep', '5402002', 'pdf')));
+  await R.descarga('jardines.exp.of.faep.fila.AC.csv-detalle', () => page.click(fila('faep', 'AC', 'csv')));
+  await h.clickTab('of-figa');
+  await R.descarga('jardines.exp.of.figa.fila.5404001.csv-detalle', () => page.click(fila('figa', '5404001', 'csv')));
+  await h.clickTab('of-junji');
+  await R.descarga('jardines.exp.of.junji.fila.5402002.xls', () => page.click(fila('junji', '5402002', 'excel')));
+  await R.descarga('jardines.exp.of.junji.fila.5402002.csv-detalle', () => page.click(fila('junji', '5402002', 'csv')));
+  await R.descarga('jardines.exp.of.junji.fila.5401002.csv-detalle', () => page.click(fila('junji', '5401002', 'csv')));
+  await R.imprimir('jardines.print.of.junji.fila.5402002', () => page.click(fila('junji', '5402002', 'pdf')));
+  await h.clickTab('Panel principal');
+  await R.imprimir('jardines.print.dashboard', () => page.click('#dashPdfBtn'));
+}
+
 export const SECCIONES = [
   { nombre: 'dashboard', fn: seccionEncabezadoYDashboard },
   { nombre: 'sep', fn: seccionSep },
@@ -601,6 +679,7 @@ export const SECCIONES = [
   { nombre: 'compras', fixture: 'compras', fn: seccionCompras },
   { nombre: 'estado', fixture: 'estado', fn: seccionEstado },
   { nombre: 'honorarios', fixture: 'honorarios', fn: seccionHonorarios },
+  { nombre: 'jardines', fixture: 'jardines', fn: seccionJardines },
 ];
 
 export async function capturar({ log = () => {}, solo = null, html = undefined } = {}) {

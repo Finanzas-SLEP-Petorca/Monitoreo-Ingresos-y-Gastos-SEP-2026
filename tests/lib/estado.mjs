@@ -6,11 +6,11 @@
 //   · Déficit  ⇔ saldo (recurso − gasto) < 0. Saldo 0 NO es déficit. Recurso 0 con gasto > 0 sí (saldo negativo).
 //   · Riesgo   (solo SEP) ⇔ no es déficit y gasto/recurso ≥ 90 % EXACTO (gasto × 10 ≥ recurso × 9, recurso > 0). Los % que se muestran van redondeados a 1 decimal; no deciden.
 //   · Superávit en cualquier otro caso. Las fuentes distintas de SEP solo tienen Superávit / Déficit.
-//   · JUNJI (3 líneas de ingreso): además es Déficit si Operación − gasto de B&S < 0 (Homologación y Carrera Docente financian solo Remuneraciones).
+//   · JUNJI (4 líneas de ingreso): además es Déficit si Operación − gasto de B&S < 0 (Homologación, Carrera Docente y BDL financian solo Remuneraciones; el BDL suma al saldo total, no al de Operación).
 import fs from 'node:fs';
 import path from 'node:path';
 import { TESTS_DIR } from './config.mjs';
-import { MESES, RBD_IDS, GESPARVU_IDS, FUENTES } from './corte.mjs';
+import { MESES, RBD_IDS, GESPARVU_IDS, FUENTES, idsDeUniverso } from './corte.mjs';
 
 // Los RBD de DATA.registros marcados sin marco SEP (se leen de rbds.json, no se repiten aquí).
 export const SIN_MARCO = JSON.parse(fs.readFileSync(path.join(TESTS_DIR, 'fixtures', 'rbds.json'), 'utf8')).registros.filter(r => r.sin_marco_sep).map(r => r.rbd);
@@ -50,7 +50,7 @@ export function sepDe(docs, rbd) {
 export function fuenteDe(docs, id, key) {
   const f = FUENTES.find(x => x.key === key);
   const of = (docs[id] && docs[id].otras_fuentes && docs[id].otras_fuentes[key]) || {};
-  const lineas = key === 'junji' ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente] : [of.ingreso];
+  const lineas = key === 'junji' ? [of.ingreso_operacion, of.ingreso_homologacion, of.ingreso_carrera_docente, of.ingreso_bdl] : [of.ingreso];
   const ingreso = Math.round(lineas.reduce((s, l) => s + sumaMeses(l), 0));
   const compras = ['general', 'pie', 'mantenimiento', 'prorretencion'].includes(key);
   const bys = compras
@@ -65,7 +65,7 @@ export function fuenteDe(docs, id, key) {
   return { fuente: f, ingreso, gasto, saldo, saldoOp, estado: causas.length ? 'deficit' : 'superavit', causas };
 }
 
-export const idsDeFuente = (key) => (FUENTES.find(x => x.key === key).universo === 'gesparvu' ? GESPARVU_IDS : [...RBD_IDS, 'AC']);
+export const idsDeFuente = (key) => idsDeUniverso(FUENTES.find(x => x.key === key).universo);
 
 /** Todo lo esperado a la vez: { sep: {rbd→...}, fuentes: {key→{id→...}}, conteos } */
 export function esperadoDe(docs) {

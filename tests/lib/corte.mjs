@@ -19,11 +19,16 @@ export const FUENTES = [
   { key: 'mantenimiento', label: 'Subv. Mantención', corto: 'Mantención', universo: 'rbd_ac' },
   { key: 'prorretencion', label: 'Subv. Pro-Retención', corto: 'Pro-Retención', universo: 'rbd_ac' },
   { key: 'junji', label: 'JUNJI', corto: 'JUNJI', universo: 'gesparvu' },
-  { key: 'faep', label: 'FAEP', corto: 'FAEP', universo: 'rbd_ac' },
-  { key: 'figa', label: 'FIGA', corto: 'FIGA', universo: 'rbd_ac' },
+  { key: 'faep', label: 'FAEP', corto: 'FAEP', universo: 'rbd_ac_gesparvu' },
+  { key: 'figa', label: 'FIGA', corto: 'FIGA', universo: 'rbd_ac_gesparvu' },
   { key: 'aporte_educ', label: 'Aporte Fiscal Extraord. Educación', corto: 'Aporte Fiscal Educ.', universo: 'rbd_ac' },
   { key: 'aporte_junji', label: 'Aporte Fiscal Extraord. JUNJI', corto: 'Aporte Fiscal JUNJI', universo: 'gesparvu' },
 ];
+// Universos de entidades de las fuentes: 'rbd_ac' (55 RBD + AC), 'gesparvu' (13 jardines) y 'rbd_ac_gesparvu' (los tres, en ese orden: FAEP y FIGA desde «ajustes de fuentes»).
+// Es lo que debe listar cada pestaña y de lo que participa cada documento; se calcula aquí, sin pasar por el código del panel.
+export const idsDeUniverso = (universo) => (universo === 'gesparvu' ? GESPARVU_IDS : (universo === 'rbd_ac_gesparvu' ? [...RBD_IDS, 'AC', ...GESPARVU_IDS] : [...RBD_IDS, 'AC']));
+// Rótulo de una entidad: lo decide su tipo, no la fuente.
+export const tituloEntidad = (id) => (id === 'AC' ? 'Administración Central' : (GESPARVU_IDS.includes(id) ? 'GESPARVU ' + id : 'RBD ' + id));
 export const clon = (o) => JSON.parse(JSON.stringify(o));
 export const docsDe = (fixture = 'default') => clon(cargarFixture(fixture).docs);
 
@@ -99,7 +104,7 @@ export const mesesRealesDe = (enc) => enc.filter(e => e.real).length;
 
 // Entidades × origen cuyo corte efectivo NO coincide con el mes de cierre de `docs._meta` (vacío si no hay mes de cierre válido). Es lo que debe listar el
 // aviso "N entidades con corte distinto al cierre global": ingresos y remuneraciones de cada RBD de SEP y el "Real hasta" de cada entidad en cada fuente
-// de su universo (RBD + AC; GESPARVU en JUNJI y Aporte JUNJI).
+// de su universo (RBD + AC; GESPARVU en JUNJI y Aporte JUNJI; RBD + AC + GESPARVU en FAEP y FIGA).
 export function cortesDistintosEsperados(docs) {
   const g = corteValido(docs._meta && docs._meta.mes_cierre);
   if (!g) return [];
@@ -111,10 +116,9 @@ export function cortesDistintosEsperados(docs) {
     if (cr !== g) out.push({ rbd, origen: 'sep_rem', titulo: 'RBD ' + rbd, etiqueta: 'SEP — Remuneraciones', etiquetaLarga: 'SEP — Remuneraciones', corte: cr });
   });
   FUENTES.forEach(f => {
-    const ids = f.universo === 'gesparvu' ? GESPARVU_IDS : [...RBD_IDS, 'AC'];
-    ids.forEach(id => {
+    idsDeUniverso(f.universo).forEach(id => {
       const c = corteFuente(docs, id, f.key);
-      if (c !== g) out.push({ rbd: id, origen: f.key, titulo: id === 'AC' ? 'Administración Central' : (f.universo === 'gesparvu' ? 'GESPARVU ' + id : 'RBD ' + id), etiqueta: f.corto, etiquetaLarga: f.label, corte: c });
+      if (c !== g) out.push({ rbd: id, origen: f.key, titulo: tituloEntidad(id), etiqueta: f.corto, etiquetaLarga: f.label, corte: c });
     });
   });
   return out;

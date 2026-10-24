@@ -30,6 +30,7 @@ const SPECS = [
   { id: '09', archivo: '09_multi_pestana.mjs', titulo: 'Dos pestañas (IndexedDB)', esperado: { tree: 'PASS', '@069f9dd': 'FAIL' } },
   { id: '10', archivo: '10_mes_cierre.mjs', titulo: 'Mes de cierre global y "Aplicar a todas"', esperado: { tree: 'PASS', '@069f9dd': 'FAIL' } },
   { id: '11', archivo: '11_honorarios.mjs', titulo: 'Honorarios por boleta (PR-1)', esperado: { tree: 'PASS', '@069f9dd': 'FAIL' } },
+  { id: '12', archivo: '12_jardines_bdl.mjs', titulo: 'Jardines en FAEP/FIGA y BDL de JUNJI', esperado: { tree: 'PASS', '@069f9dd': 'FAIL' } },
 ];
 
 const args = process.argv.slice(2);

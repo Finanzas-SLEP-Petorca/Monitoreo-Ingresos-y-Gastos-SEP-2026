@@ -17,7 +17,7 @@ import { boot, clickTab, esperarPanelListo } from '../lib/boot.mjs';
 import { correrSpec } from '../lib/spec.mjs';
 import { resolverAppHtml } from '../lib/html-source.mjs';
 import { TMP_DIR } from '../lib/config.mjs';
-import { N_MESES, MESES_TITULO, RBD_IDS, GESPARVU_IDS, FUENTES, docsDe, clon, cortesDistintosEsperados, porOrigen, encabezadosMes, mesesRealesDe } from '../lib/corte.mjs';
+import { N_MESES, MESES_TITULO, RBD_IDS, GESPARVU_IDS, FUENTES, idsDeUniverso, docsDe, clon, cortesDistintosEsperados, porOrigen, encabezadosMes, mesesRealesDe } from '../lib/corte.mjs';
 
 const RUTA = (id) => `sep_carga_rbd/${id}`;
 const ADMIN = 'wilson.rojas@sleppetorca.gob.cl';
@@ -340,8 +340,9 @@ await correrSpec('mes_cierre_global', async (t) => {
     t.ok(new Set(ws.map(w => w.batchId)).size === 1 && ws.length * 2 <= 400, `un solo lote de ${ws.length * 2} operaciones (≤ 400)`);
     const st = await h.store();
     // cada fuente en el universo correcto, cada RBD en su remuneración; ningún ingreso_real_hasta_mes nuevo (siguen al cierre)
-    t.ok(FUENTES.every(f => (f.universo === 'gesparvu' ? GESPARVU_IDS : [...RBD_IDS, 'AC']).every(id => st[RUTA(id)].otras_fuentes[f.key].real_hasta_mes === 9)), 'servidor: las 9 fuentes quedan en Septiembre en TODAS sus entidades (RBD + AC; GESPARVU en JUNJI y Aporte JUNJI)');
-    t.ok(GESPARVU_IDS.every(id => !['general', 'pie', 'mantenimiento', 'prorretencion', 'faep', 'figa', 'aporte_educ'].some(k => st[RUTA(id)].otras_fuentes && st[RUTA(id)].otras_fuentes[k])), 'sin crear fuentes que no corresponden al universo de un GESPARVU');
+    t.ok(FUENTES.every(f => idsDeUniverso(f.universo).every(id => st[RUTA(id)].otras_fuentes[f.key].real_hasta_mes === 9)), 'servidor: las 9 fuentes quedan en Septiembre en TODAS sus entidades (RBD + AC; GESPARVU en JUNJI y Aporte JUNJI; los tres en FAEP y FIGA)');
+    t.ok(GESPARVU_IDS.every(id => !['general', 'pie', 'mantenimiento', 'prorretencion', 'aporte_educ'].some(k => st[RUTA(id)].otras_fuentes && st[RUTA(id)].otras_fuentes[k])), 'sin crear fuentes que no corresponden al universo de un GESPARVU (los jardines SÍ tienen FAEP y FIGA)');
+    t.ok([...RBD_IDS, 'AC'].every(id => !['junji', 'aporte_junji'].some(k => st[RUTA(id)].otras_fuentes && st[RUTA(id)].otras_fuentes[k])), 'ni fuentes de jardines (JUNJI, Aporte JUNJI) en un RBD o en AC');
     t.ok(RBD_IDS.every(id => !st[RUTA(id)].rem || st[RUTA(id)].rem.real_hasta_mes === 9), 'y la remuneración de los 55 RBD');
     t.ok(RBD_IDS.every(id => st[RUTA(id)].ingreso_real_hasta_mes === undefined), 'los ingresos sin corte propio NO reciben campo (ya seguían al cierre global: no cambian)');
     t.ok(Object.keys(base).every(id => JSON.stringify(sinCortes(st[RUTA(id)])) === JSON.stringify(sinCortes(docs[id]))), 'no se tocó ningún otro campo de ningún documento');
@@ -404,7 +405,7 @@ await correrSpec('mes_cierre_global', async (t) => {
     t.eq(new Set(ws2.map(w => w.batchId)).size, 1, 'el reintento envía un solo lote');
     t.eq(ws2.length, 20, 'con los 20 documentos del lote que había fallado (los ya guardados no se vuelven a tocar)');
     const st = await h.store();
-    t.ok(FUENTES.every(f => (f.universo === 'gesparvu' ? GESPARVU_IDS : [...RBD_IDS, 'AC']).every(id => st[RUTA(id)].otras_fuentes[f.key].real_hasta_mes === 9)) && RBD_IDS.every(id => st[RUTA(id)].rem.real_hasta_mes === 9), 'al final todo está en Septiembre en el servidor');
+    t.ok(FUENTES.every(f => idsDeUniverso(f.universo).every(id => st[RUTA(id)].otras_fuentes[f.key].real_hasta_mes === 9)) && RBD_IDS.every(id => st[RUTA(id)].rem.real_hasta_mes === 9), 'al final todo está en Septiembre en el servidor');
     h.expectErrors(/Firebase: simulated unavailable/);
     await h.close();
   });

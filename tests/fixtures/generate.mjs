@@ -1,4 +1,4 @@
-// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json, cierre.json, compras.json, estado.json y honorarios.json).
+// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json, cierre.json, compras.json, estado.json, honorarios.json y jardines.json).
 //   node tests/fixtures/generate.mjs            -> escribe default.json y cierre.json
 //   node tests/fixtures/generate.mjs --check    -> verifica que ambos coinciden con lo que generaría (sin escribir)
 //
@@ -11,6 +11,9 @@
 //
 //   honorarios.json default + Honorarios (Subt. 21) por boleta y proyección en varios RBD de SEP (PR-1 de Honorarios): agrega `honorarios` / `hon_proyeccion` sin tocar nada más
 //                 (ver el bloque «variante honorarios» más abajo).
+//
+//   jardines.json default + «ajustes de fuentes»: montos de FAEP y FIGA en varios jardines (GESPARVU; ahora son parte del universo de FAEP y FIGA) y la línea «Ingreso Bono Desempeño
+//                 Laboral (BDL)» de JUNJI (`ingreso_bdl`) en varios jardines (ver el bloque «variante jardines» más abajo). Solo AGREGA o reescribe lo que nombra, sin consumir números aleatorios.
 //
 //   estado.json   default + casos de borde del Estado de las entidades (PR D2: L-07 Estado único sin redondear, L-08 JUNJI): saldo exactamente 0, 99,996 %, saldo -$1,
 //                 89,999 % vs 90,000 %, recurso 0 con y sin gasto, Carrera Docente en el recurso, y GESPARVU de JUNJI con el saldo de Operación para B&S negativo.
@@ -32,7 +35,8 @@
 //                          rutProveedor, nombreProveedor, montoGasto, montoDocumento, documentoOriginal, documentoContable? } },
 //     otras_fuentes: { general|pie|mantenimiento|prorretencion: { ingreso, gasto_rem, compras, bys_proy_items, real_hasta_mes },
 //                      faep|figa|aporte_educ:               { ingreso, gasto_rem, bys_items, real_hasta_mes },
-//                      junji:                               { ingreso_operacion, ingreso_homologacion, ingreso_carrera_docente, gasto_rem, bys_items, real_hasta_mes },
+//                      junji:                               { ingreso_operacion, ingreso_homologacion, ingreso_carrera_docente, ingreso_bdl, gasto_rem, bys_items, real_hasta_mes },   // ingreso_bdl solo en jardines.json
+//                                                           (en los GESPARVU, además, faep y figa: solo en jardines.json y cierre.json)
 //                      aporte_junji:                        { ingreso, gasto_rem, bys_items, real_hasta_mes } },
 //     lastModifiedBy, lastModifiedAt: {__ts: ms} }
 import fs from 'node:fs';
@@ -301,7 +305,7 @@ docs._meta = { items_22: [], items_29: [], lastModifiedBy: EMAILS[0], lastModifi
 // ---------- variante "cierre": mes de cierre definido + cortes propios (los montos no cambian) ----------
 // Imita el estado de uso real después de pulsar "Aplicar a todas las entidades" con septiembre y de que alguien haya movido unos pocos cortes:
 //   · _meta.mes_cierre = 9 (septiembre), fijado por EMAILS[0] el 20/10/2026 14:30 UTC;
-//   · TODAS las remuneraciones de SEP y TODOS los "Real hasta" de las 9 fuentes (cada entidad en las fuentes de su universo) en 9, salvo 3 RBD de
+//   · TODAS las remuneraciones de SEP y TODOS los "Real hasta" de las 9 fuentes (cada entidad en las fuentes de su universo: los jardines en JUNJI, Aporte JUNJI, FAEP y FIGA) en 9, salvo 3 RBD de
 //     Remuneraciones (1121 → 7, 1123 → 12, 1128 → 5) y 3 entidades de fuentes (General/1121 → 7, FAEP/AC → 12, JUNJI/5402002 → 6);
 //   · ingreso_real_hasta_mes propio en 3 RBD: 1121 → 8 (distinto del cierre), 1122 → 9 (igual al cierre) y 1123 → 12 (distinto); los demás no lo traen
 //     (siguen al mes de cierre).
@@ -309,7 +313,7 @@ docs._meta = { items_22: [], items_29: [], lastModifiedBy: EMAILS[0], lastModifi
 const docsCierre = JSON.parse(JSON.stringify(docs));
 {
   const KEYS_RBD_AC = ['general', 'pie', 'mantenimiento', 'prorretencion', 'faep', 'figa', 'aporte_educ'];
-  const KEYS_GESPARVU = ['junji', 'aporte_junji'];
+  const KEYS_GESPARVU = ['junji', 'aporte_junji', 'faep', 'figa']; // los jardines también son entidades de FAEP y FIGA
   const fijaFuentes = (id, keys) => {
     const d = docsCierre[id];
     d.otras_fuentes = d.otras_fuentes || {};
@@ -501,6 +505,51 @@ const docsHon = JSON.parse(JSON.stringify(docs));
   docsHon['1120'].honorarios = { h1120_1: bol('410803', 'BOLH', 2, '2026-02-12', '2026-02-19', 'Boleta en un RBD sin marco SEP', 80000) };
 }
 
+// ---------- variante "jardines": FAEP y FIGA en los jardines (GESPARVU) + línea BDL de JUNJI («ajustes de fuentes») ----------
+// Los 13 jardines ahora son entidades de FAEP y FIGA (además de los RBD y AC) y JUNJI tiene una cuarta línea de ingreso, «Ingreso Bono Desempeño Laboral (BDL)» (`ingreso_bdl`), que financia SOLO
+// Remuneraciones (como Homologación y Carrera Docente: no entra en el saldo de Operación para B&S). default.json NO trae nada de esto: es el estado de los documentos anterior al ajuste
+// (los jardines sin FAEP/FIGA ni BDL: parten en $0). Aquí se AGREGAN `faep` / `figa` y `ingreso_bdl` a varios jardines, sin consumir números aleatorios; los demás documentos quedan igual.
+//   FAEP     · 5402002 (RINCONCITO: ingreso 400.000/mes, Rem 250.000/mes, B&S 'Alimentación' 60.000/mes + 'Mantención menor' desde agosto 100.000; Real hasta julio → superávit)
+//              · 5402004 (SANTA MARTA: ingreso 100.000/mes y Rem 150.000/mes → DÉFICIT; concepto con & < > " '; Real hasta mayo) · 5401006 (solo enero-junio; Real hasta diciembre)
+//              · 5404001 (LAMPARITA; Real hasta junio) · 5403001 (RAYITO DE SOL; sin JUNJI en default.json)
+//   FIGA     · 5404001 (desde abril; Real hasta septiembre) · 5404002 (desde septiembre; Real hasta julio) · 5401002 (SANTA TERESA: ingreso 10.000/mes y Rem 40.000/mes → DÉFICIT)
+//   JUNJI BDL· 5402002 (120.000/mes: con su corte en julio, 7 meses Real y 5 Proyectados) · 5402004 (enero-junio 200.000; corte en junio: todo Real) · 5401006 (80.000/mes; corte en diciembre)
+//              · 5401007 (desde agosto 300.000; corte en julio: todo Proyectado) · 5403001 (documento SIN JUNJI en default.json: solo `ingreso_bdl` y el corte, el resto de líneas ausentes → ceros)
+//              · 5401002 (BDL ALTO: Operación 1.000.000, BDL 20.000.000, Rem 3.000.000, B&S 1.500.000, todo en enero → saldo total positivo pero Operación − B&S = -500.000 → DÉFICIT solo por Operación)
+//              · 5403002 (BDL que salva el saldo: Operación 2.000.000, BDL 3.000.000, Rem 4.000.000, B&S 500.000 → saldo +500.000 y Operación − B&S = +1.500.000 → Superávit; sin BDL sería -2.500.000)
+const docsJar = JSON.parse(JSON.stringify(docs));
+{
+  const plano = (v) => linea(() => v);                          // el mismo monto los 12 meses
+  const desde = (m, v) => linea(i => (i + 1 >= m ? v : 0));     // de mes m (1-12) en adelante
+  const hasta = (m, v) => linea(i => (i + 1 <= m ? v : 0));     // hasta el mes m
+  const enero = (v) => linea(i => (i === 0 ? v : 0));
+  const ofDe = (id) => (docsJar[id].otras_fuentes = docsJar[id].otras_fuentes || {});
+  const conceptos = (o) => Object.fromEntries(Object.entries(o).map(([c, l]) => [c, { concepto: c, ...l }]));
+  // --- FAEP y FIGA en los jardines
+  ofDe('5402002').faep = { ingreso: plano(400000), gasto_rem: plano(250000), bys_items: conceptos({ 'Alimentación': plano(60000), 'Mantención menor': desde(8, 100000) }), real_hasta_mes: 7 };
+  ofDe('5402004').faep = { ingreso: plano(100000), gasto_rem: plano(150000), bys_items: conceptos({ 'Reparación "sala" & <cuna>': hasta(3, 200000) }), real_hasta_mes: 5 };
+  ofDe('5401006').faep = { ingreso: hasta(6, 500000), gasto_rem: hasta(6, 300000), bys_items: conceptos({ 'Material didáctico': hasta(6, 50000) }), real_hasta_mes: 12 };
+  ofDe('5404001').faep = { ingreso: plano(250000), gasto_rem: plano(100000), bys_items: conceptos({ 'Alimentación': plano(20000) }), real_hasta_mes: 6 };
+  ofDe('5403001').faep = { ingreso: plano(80000), gasto_rem: plano(30000), bys_items: {}, real_hasta_mes: 7 };
+  ofDe('5404001').figa = { ingreso: desde(4, 150000), gasto_rem: desde(4, 60000), bys_items: conceptos({ 'Transporte escolar': desde(10, 30000) }), real_hasta_mes: 9 };
+  ofDe('5404002').figa = { ingreso: desde(9, 500000), gasto_rem: desde(9, 100000), bys_items: {}, real_hasta_mes: 7 };
+  ofDe('5401002').figa = { ingreso: plano(10000), gasto_rem: plano(40000), bys_items: {}, real_hasta_mes: 12 };
+  // --- Línea BDL de JUNJI
+  docsJar['5402002'].otras_fuentes.junji.ingreso_bdl = plano(120000);
+  docsJar['5402004'].otras_fuentes.junji.ingreso_bdl = hasta(6, 200000);
+  docsJar['5401006'].otras_fuentes.junji.ingreso_bdl = plano(80000);
+  docsJar['5401007'].otras_fuentes.junji.ingreso_bdl = desde(8, 300000);
+  ofDe('5403001').junji = { ingreso_bdl: plano(50000), real_hasta_mes: 7 };
+  ofDe('5401002').junji = {
+    ingreso_operacion: enero(1000000), ingreso_homologacion: enero(0), ingreso_carrera_docente: enero(0), ingreso_bdl: enero(20000000),
+    gasto_rem: enero(3000000), bys_items: conceptos({ 'Alimentación': enero(1500000) }), real_hasta_mes: 7,
+  };
+  ofDe('5403002').junji = {
+    ingreso_operacion: enero(2000000), ingreso_homologacion: enero(0), ingreso_carrera_docente: enero(0), ingreso_bdl: enero(3000000),
+    gasto_rem: enero(4000000), bys_items: conceptos({ 'Alimentación': enero(500000) }), real_hasta_mes: 7,
+  };
+}
+
 // ---------- salida ----------
 function serializar(docsX, extra = {}) {
   const ids = Object.keys(docsX).sort();
@@ -519,6 +568,7 @@ const SALIDAS = [
   { archivo: path.join(AQUI, 'compras.json'), ...serializar(docsCompras, { variante: 'compras' }) },
   { archivo: path.join(AQUI, 'estado.json'), ...serializar(docsEstado, { variante: 'estado' }) },
   { archivo: path.join(AQUI, 'honorarios.json'), ...serializar(docsHon, { variante: 'honorarios' }) },
+  { archivo: path.join(AQUI, 'jardines.json'), ...serializar(docsJar, { variante: 'jardines' }) },
 ];
 
 if (process.argv.includes('--check')) {

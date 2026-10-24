@@ -31,7 +31,8 @@ const quitaCortes = (d) => {
   return c;
 };
 const FUENTES_RBD_AC = ['general', 'pie', 'mantenimiento', 'prorretencion', 'faep', 'figa', 'aporte_educ'];
-const FUENTES_GESPARVU = ['junji', 'aporte_junji'];
+const FUENTES_GESPARVU = ['junji', 'aporte_junji', 'faep', 'figa']; // los jardines también son entidades de FAEP y FIGA («ajustes de fuentes»)
+const SOLO_RBD_AC = FUENTES_RBD_AC.filter(k => !FUENTES_GESPARVU.includes(k)); // general, pie, mantenimiento, prorretencion, aporte_educ
 
 await correrSpec('10_mes_cierre', async (t) => {
   const docs = cargarFixture('default');
@@ -106,8 +107,8 @@ await correrSpec('10_mes_cierre', async (t) => {
     const despues = await h.emu.instantanea();
     t.ok(rbds.every(id => despues[id].data.rem.real_hasta_mes === 9), 'M2) servidor: la remuneración de los 55 RBD queda en Septiembre');
     t.ok([...rbds, 'AC'].every(id => FUENTES_RBD_AC.every(k => despues[id].data.otras_fuentes[k].real_hasta_mes === 9)), 'M2) servidor: las 7 fuentes de RBD/AC quedan en Septiembre en los 55 RBD y en AC');
-    t.ok(gesparvu.length === 13 && gesparvu.every(id => FUENTES_GESPARVU.every(k => despues[id].data.otras_fuentes[k].real_hasta_mes === 9)), 'M2) servidor: JUNJI y Aporte JUNJI en Septiembre en los 13 GESPARVU');
-    t.ok(gesparvu.every(id => !FUENTES_RBD_AC.some(k => despues[id].data.otras_fuentes && despues[id].data.otras_fuentes[k])), 'M2) sin crear fuentes fuera del universo de cada entidad');
+    t.ok(gesparvu.length === 13 && gesparvu.every(id => FUENTES_GESPARVU.every(k => despues[id].data.otras_fuentes[k].real_hasta_mes === 9)), 'M2) servidor: JUNJI, Aporte JUNJI, FAEP y FIGA en Septiembre en los 13 GESPARVU');
+    t.ok(gesparvu.every(id => !SOLO_RBD_AC.some(k => despues[id].data.otras_fuentes && despues[id].data.otras_fuentes[k])) && [...rbds, 'AC'].every(id => !['junji', 'aporte_junji'].some(k => despues[id].data.otras_fuentes && despues[id].data.otras_fuentes[k])), 'M2) sin crear fuentes fuera del universo de cada entidad (un jardín no gana General/PIE/Mantención/Pro-Retención/Aporte Educ.; un RBD o AC no gana JUNJI ni Aporte JUNJI)');
     t.ok(ids.every(id => despues[id].data.ingreso_real_hasta_mes === undefined), 'M2) los ingresos sin corte propio no reciben campo (siguen al mes de cierre)');
     const limpio = (id) => { const d = clon(despues[id].data); delete d.lastModifiedAt; delete d.lastModifiedBy; return quitaCortes(d); };
     const orig = (id) => { const d = clon(antes[id].data); delete d.lastModifiedAt; delete d.lastModifiedBy; return quitaCortes(d); };

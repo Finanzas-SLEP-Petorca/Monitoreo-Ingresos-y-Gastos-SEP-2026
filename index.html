@@ -206,6 +206,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
   .detalle-header { margin-bottom:8px; font-size:12px; }
   .detalle-header strong { color:var(--text-secondary); }
   .detalle-sub { color:var(--text-muted); margin-left:8px; }
+  .of-bys-split { font-size:10.5px; font-weight:400; color:var(--text-muted); white-space:nowrap; margin-top:1px; }
   .detalle-empty { font-size:11.5px; color:var(--text-muted); background:rgba(250,178,25,0.1); border:1px solid rgba(250,178,25,0.3); border-radius:4px; padding:8px 10px; margin-bottom:10px; }
   .alerta-sep-banner { font-size:12px; color:var(--status-critical); background:rgba(208,59,59,0.08); border:1px solid rgba(208,59,59,0.3); border-radius:4px; padding:9px 12px; margin-bottom:10px; font-weight:500; }
   /* padding:4px + margen negativo (U-13): el contenido NO se mueve (verificado midiendo posiciones antes/después), pero el anillo de foco (2 px + 2 px de separación)
@@ -1403,7 +1404,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">JUNJI es un proceso independiente de SUPEREDUC: se sigue como Ingreso vs. Gasto,
         sin techo ni meta 70/30 — el Estado es Superávit o Déficit: Déficit si el saldo acumulado es negativo <strong>o</strong> si el saldo de
         Operación para Bienes y Servicios (ingreso de Operación − gasto de B&S) es negativo, porque Homologación, Carrera Docente y el Bono Desempeño
-        Laboral (BDL) solo pueden pagar Remuneraciones. Las filas son los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
+        Laboral (BDL) solo pueden pagar Remuneraciones. Las filas son los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, no los RBD de establecimientos educacionales. Bienes y Servicios se registra <strong>por documento</strong> ("Registro de compras" dentro del detalle de cada entidad, con un <strong>concepto</strong> en vez del código de cuenta: tipo y N° de documento, fechas, proveedor, monto y pago) y/o como montos mensuales por concepto <strong>sin documento</strong>; los dos se suman y se muestran por separado (Documentado / Sin documento).</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-junji" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de JUNJI (4 líneas de Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1443,7 +1444,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         explícitamente desde el periodo 2024 por el dictamen N°67 de 2023): se sigue como Ingreso vs. Gasto, sin
         techo ni meta 70/30 — el Estado solo indica si el saldo acumulado es Superávit o Déficit. Las filas son los RBD de
         establecimientos, una fila fija "AC — Administración Central" para gasto del sostenedor que no es de un establecimiento
-        puntual, y los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, que también tienen ingresos y gastos de FAEP.</div>
+        puntual, y los 13 GESPARVU (jardín infantil / sala cuna) de SLEP Petorca, que también tienen ingresos y gastos de FAEP. Bienes y Servicios se registra <strong>por documento</strong> ("Registro de compras" dentro del detalle de cada entidad, con un <strong>concepto</strong> en vez del código de cuenta: tipo y N° de documento, fechas, proveedor, monto y pago) y/o como montos mensuales por concepto <strong>sin documento</strong>; los dos se suman y se muestran por separado (Documentado / Sin documento).</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-faep" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de FAEP (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-faep" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1483,7 +1484,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         sistema de rendición): se sigue como Ingreso vs. Gasto, sin techo ni meta 70/30 — el Estado solo indica si
         el saldo acumulado es Superávit o Déficit. Las filas son los RBD de establecimientos, una fila fija "AC — Administración
         Central" para gasto del sostenedor que no es de un establecimiento puntual, y los 13 GESPARVU (jardín infantil / sala
-        cuna) de SLEP Petorca, que también tienen ingresos y gastos de FIGA.</div>
+        cuna) de SLEP Petorca, que también tienen ingresos y gastos de FIGA. Bienes y Servicios se registra <strong>por documento</strong> ("Registro de compras" dentro del detalle de cada entidad, con un <strong>concepto</strong> en vez del código de cuenta: tipo y N° de documento, fechas, proveedor, monto y pago) y/o como montos mensuales por concepto <strong>sin documento</strong>; los dos se suman y se muestran por separado (Documentado / Sin documento).</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-figa" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de FIGA (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-figa" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1522,7 +1523,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">El Aporte Fiscal Extraordinario de Educación es un ingreso aparte que no se rinde por el libro de compras de
         SUPEREDUC: se sigue como Ingreso vs. Gasto, sin techo ni meta 70/30 — el Estado solo indica si el saldo
         acumulado es Superávit o Déficit. Incluye una fila fija "AC — Administración Central" para gasto del
-        sostenedor que no es de un establecimiento puntual.</div>
+        sostenedor que no es de un establecimiento puntual. Bienes y Servicios se registra <strong>por documento</strong> ("Registro de compras" dentro del detalle de cada entidad, con un <strong>concepto</strong> en vez del código de cuenta: tipo y N° de documento, fechas, proveedor, monto y pago) y/o como montos mensuales por concepto <strong>sin documento</strong>; los dos se suman y se muestran por separado (Documentado / Sin documento).</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-aporte_educ" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de Aporte Fiscal Extraord. Educación (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-aporte_educ" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1561,7 +1562,7 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         <div class="detalle-empty">El Aporte Fiscal Extraordinario de JUNJI es un ingreso aparte, separado del de Educación, que no se rinde por
         el libro de compras de SUPEREDUC: se sigue como Ingreso vs. Gasto, sin techo ni meta 70/30 — el Estado solo
         indica si el saldo acumulado es Superávit o Déficit. Las filas son los 13 GESPARVU (jardín infantil / sala
-        cuna) de SLEP Petorca, no los RBD de establecimientos educacionales.</div>
+        cuna) de SLEP Petorca, no los RBD de establecimientos educacionales. Bienes y Servicios se registra <strong>por documento</strong> ("Registro de compras" dentro del detalle de cada entidad, con un <strong>concepto</strong> en vez del código de cuenta: tipo y N° de documento, fechas, proveedor, monto y pago) y/o como montos mensuales por concepto <strong>sin documento</strong>; los dos se suman y se muestran por separado (Documentado / Sin documento).</div>
         <div class="table-controls">
           <button id="downloadExcelOFBtn-aporte_junji" type="button" style="background:#1b8247; border-color:#1b8247;" title="Descarga la carga completa de Aporte Fiscal Extraord. JUNJI (Ingreso, Remuneraciones, Bienes y Servicios) en el mismo formato que se puede volver a importar">⬇ Excel</button>
           <button id="importExcelOFBtn-aporte_junji" type="button" style="background:#6b46c1; border-color:#6b46c1;">⬆ Importar Excel</button>
@@ -1666,6 +1667,14 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
         Homologación, Carrera Docente y Bono Desempeño Laboral (BDL), que financian solo Remuneraciones; las cuatro suman al ingreso total, pero el BDL no entra en el saldo de Operación para B&S. Cada fila trae botones
         para descargar su Excel (⬇ XLS), su CSV y su PDF individual (🖨), y arriba hay botones para importar y
         exportar toda la fuente.</p>
+        <p><strong>Bienes y Servicios en JUNJI, FAEP, FIGA y los dos Aportes Fiscales.</strong> Dentro del detalle de cada entidad hay un
+        "Registro de compras" por documento, como el de Subv. General o PIE pero con un <strong>concepto</strong> (lista desplegable con los
+        conceptos que ya existen en esa entidad, o uno nuevo que escribas) en lugar del código de cuenta: tipo y N° de documento (factura, boleta,
+        nota de crédito…), fechas de documento y de pago, proveedor, montos y N° DC. El mes del gasto es la fecha del documento, las notas de crédito
+        se registran en negativo y lo documentado siempre es <span class="help-tag real">Real</span>. Los montos mensuales por concepto que ya estaban
+        cargados se mantienen como <strong>«sin documento»</strong> (siguen el corte "Real hasta"); lo documentado se suma <strong>aparte</strong> y el panel
+        muestra los dos por separado: «Documentado $X · Sin documento $Y». Si registras un documento por un gasto que ya estaba como «sin documento», réstalo de ese monto
+        para no contarlo dos veces. El Excel de cada fuente trae la hoja COMPRAS (con la columna Concepto) y los PDF por fila incluyen el registro.</p>
 
         <h4>5. Cómo cargar los datos de un establecimiento de SEP</h4>
         <ul>
@@ -2362,8 +2371,11 @@ const ITEMS_29 = CUENTAS_SEP_29.map(c => c.nombre);
 //     — qué filas lista la pestaña de esa fuente y de qué fuentes participa cada entidad (ver
 //     filasDeUniverso / universoIncluyeTipo / recomputeTodasOtrasFuentes).
 //   - bysMode: 'compras' (registro de compras con código de cuenta SUPEREDUC + documento/
-//     proveedor) | 'concepto' (ítems de Bienes y Servicios por concepto libre, sin código ni
-//     documento — para fuentes que no son parte del sistema de rendición de SUPEREDUC).
+//     proveedor) | 'concepto' (Bienes y Servicios por CONCEPTO libre, sin código de cuenta — para fuentes que no
+//     son parte del sistema de rendición de SUPEREDUC). En 'concepto' hay DOS orígenes de gasto de B&S que se llevan
+//     por separado y se suman: lo «sin documento» (montos mensuales tecleados por concepto: `bys_items`, Real/Proy
+//     según el corte) y lo «documentado» (registro de compras por documento con CONCEPTO en vez de código de cuenta:
+//     `compras`, siempre Real; sus totales por concepto y mes salen de `bys_doc_items`, derivados, nunca guardados).
 // Códigos de cuenta: el Manual de Cuentas SUPEREDUC 2026 (sección 11, págs. 112-119) da, por cada
 // subvención, el subconjunto de cuentas habilitadas (p.ej. Mantención no admite remuneraciones;
 // solo infraestructura, mantención de bienes muebles y mobiliario). Esa matriz está transcrita en
@@ -2390,6 +2402,12 @@ const FUENTES_OTRAS = [
 ];
 const FUENTES_OTRAS_BY_KEY = {};
 FUENTES_OTRAS.forEach(f => { FUENTES_OTRAS_BY_KEY[f.key] = f; });
+// ¿El registro de compras de la fuente lleva CONCEPTO (texto libre) en vez de Código de cuenta? Son las fuentes bysMode:'concepto' (JUNJI, FAEP, FIGA y los dos
+// Aportes Fiscales). Su mapa `compras` tiene la misma forma que el de las demás (tipo, N°, fechas, proveedor, montos, N° DC, Doc. original) con `concepto` en lugar de `codigo`.
+function comprasPorConcepto(fuenteKey) {
+  const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  return !!f && f.bysMode === 'concepto';
+}
 // Columna del Plan de Cuentas que rige a una entidad en una fuente con compras. La fila AC usa la
 // columna «Adm. Central» cuando el manual la tiene (solo Subv. General); si no, la de la fuente.
 // null si la fuente no lleva libro de compras (JUNJI, FAEP, FIGA, Aportes).
@@ -2921,8 +2939,13 @@ function mesFromFechaISO(fecha) {
 //      ("2026-13-01", "2026-00-10").
 // En cambio SÍ entran: cualquier año (2025, 2027, 9999: solo se mira el mes, ignorando el año), un día inexistente ("2026-02-31", "2026-04-99") y
 // cualquier texto detrás de la fecha. La Fecha Pago nunca se usa en los totales. Los totales NO cambiaron: esto solo se avisa (ver avisosCompra).
+// Fuentes por CONCEPTO (JUNJI, FAEP, FIGA, Aportes): en vez de un código de cuenta del catálogo, la compra se agrupa por su CONCEPTO (texto libre). El «catálogo» es este
+// valor especial y la regla equivalente a «cuenta no reconocida» es «concepto vacío»: una compra sin concepto no entra en ningún total (igual que una sin cuenta reconocida).
+const CATALOGO_POR_CONCEPTO = Object.freeze({ __porConcepto: true });
+function conceptoCompra(c) { return textoSeguro(c && c.concepto).trim(); }
 function mesDeCompraEnTotales(c, catalogo) {
-  return { cat: catalogo[c.codigo] || null, mes: mesFromFechaISO(c.fechaDocumento) };
+  const cat = catalogo === CATALOGO_POR_CONCEPTO ? (conceptoCompra(c) ? { concepto: conceptoCompra(c) } : null) : (catalogo[c.codigo] || null);
+  return { cat, mes: mesFromFechaISO(c.fechaDocumento) };
 }
 function itemsFromCompras(comprasMap, catalogo = CUENTAS_SEP_BY_CODIGO) {
   const buckets = {};
@@ -2938,6 +2961,23 @@ function itemsFromCompras(comprasMap, catalogo = CUENTAS_SEP_BY_CODIGO) {
     buckets[c.codigo].meses[mes] += montoGastoCompra(c); // con el signo de su tipo: la nota de crédito RESTA (L-03)
   });
   const items = Object.values(buckets);
+  items.forEach(it => { it.total = MESES_CARGA.reduce((s, m) => s + it.meses[m], 0); });
+  return items;
+}
+
+// Total mensual por CONCEPTO de las compras de una entidad en una fuente por concepto (mismas reglas de QUÉ entra y del signo que itemsFromCompras: mes de la Fecha
+// Documento, nota de crédito en negativo, sin concepto o sin fecha válida = fuera de los totales): [{ concepto, meses, total }] ordenado por concepto. Es DERIVADO: nunca se guarda.
+function itemsFromComprasConcepto(comprasMap) {
+  const buckets = new Map();
+  Object.values(comprasMap || {}).forEach(c => {
+    if (!c || typeof c !== 'object') return;
+    const { cat, mes } = mesDeCompraEnTotales(c, CATALOGO_POR_CONCEPTO);
+    if (!cat || !mes) return;
+    let it = buckets.get(cat.concepto);
+    if (!it) { it = { concepto: cat.concepto, meses: mesesEnCero(), total: 0 }; buckets.set(cat.concepto, it); }
+    it.meses[mes] += montoGastoCompra(c); // con el signo de su tipo: la nota de crédito RESTA (L-03)
+  });
+  const items = Array.from(buckets.values()).sort((a, b) => a.concepto.localeCompare(b.concepto, 'es'));
   items.forEach(it => { it.total = MESES_CARGA.reduce((s, m) => s + it.meses[m], 0); });
   return items;
 }
@@ -2965,6 +3005,7 @@ const TEXTO_AVISO_FECHA_FUERA = '⚠ fecha fuera de 2026';
 const TEXTO_AVISO_FECHA_INVALIDA_EXCLUIDA = '⚠ fecha no válida: no se contabiliza';
 const TEXTO_AVISO_FECHA_INVALIDA = '⚠ fecha no válida';
 const TEXTO_AVISO_CUENTA_EXCLUIDA = '⚠ cuenta no reconocida: no se contabiliza';
+const TEXTO_AVISO_CONCEPTO_EXCLUIDO = '⚠ concepto vacío: no se contabiliza';
 // Avisos de UNA compra: [{ clave, celda: 'doc'|'pago'|'cuenta', texto, titulo, excluye }]. `excluye` = la compra NO entra en ningún total.
 function avisosCompra(c, catalogo) {
   const out = [];
@@ -2992,7 +3033,10 @@ function avisosCompra(c, catalogo) {
         titulo: `La fecha de pago (${vPago}) está fuera de ${ANIO_PANEL}: SUPEREDUC exige fechas de pago entre el 01-01-${ANIO_PANEL} y el 31-12-${ANIO_PANEL}. No cambia los totales.` });
     }
   }
-  if (!cat) {
+  if (!cat && catalogo === CATALOGO_POR_CONCEPTO) {
+    out.push({ clave: 'conceptoVacio', celda: 'cuenta', excluye: true, texto: TEXTO_AVISO_CONCEPTO_EXCLUIDO,
+      titulo: 'La compra no tiene concepto: NO entra en ningún total hasta que lo completes.' });
+  } else if (!cat) {
     out.push({ clave: 'cuentaNoReconocida', celda: 'cuenta', excluye: true, texto: TEXTO_AVISO_CUENTA_EXCLUIDA,
       titulo: `El código de cuenta «${textoSeguro(c.codigo)}» no está en el catálogo de cuentas de este registro: la compra NO entra en ningún total hasta que se reclasifique.` });
   }
@@ -3017,6 +3061,7 @@ const ROTULO_CAUSA_AVISO = {
   fechaFuera: ['con fecha de documento fuera de 2026', 'con fecha de documento fuera de 2026'],
   pagoFuera: ['con fecha de pago fuera de 2026', 'con fecha de pago fuera de 2026'],
   cuentaNoReconocida: ['con una cuenta no reconocida (no se contabiliza)', 'con una cuenta no reconocida (no se contabilizan)'],
+  conceptoVacio: ['sin concepto (no se contabiliza)', 'sin concepto (no se contabilizan)'],
 };
 // Resumen sobre la tabla de compras de un RBD / entidad ('' si ninguna compra tiene avisos).
 function resumenAvisosComprasHTML(res) {
@@ -3071,6 +3116,7 @@ function firmaContenidoCompra(c) {
   return JSON.stringify([
     textoSeguro(c.codigo).trim(), tipo, t(c.nroDocumento), textoSeguro(c.fechaDocumento).trim(), textoSeguro(c.fechaPago).trim(),
     Math.round(montoGastoCompra(c)), Math.round(montoDocumentoCompra(c)), rutSupereduc(c.rutProveedor).toUpperCase(), t(c.descripcion), t(c.nombreProveedor),
+    ...(c.concepto !== undefined ? [t(c.concepto)] : []), // fuentes por concepto: el concepto es parte de la identidad (en las demás la firma queda EXACTAMENTE como antes)
   ]);
 }
 // Hash de 53 bits (cyrb53) de un texto, en base 36 de 11 caracteres.
@@ -3434,6 +3480,9 @@ function ensureOtraFuente(rbd, fuenteKey) {
     // bysMode:'compras': las compras son siempre Real; la proyección de B&S vive aparte en
     // bys_proy_items (por concepto libre, siempre Proyectada).
     if (fuente.bysMode === 'compras') { entry.compras = {}; entry.bys_proy_items = []; }
+    // bysMode:'concepto': además de los montos «sin documento» (bys_items), el registro de compras por CONCEPTO (`compras`, siempre Real) y sus totales
+    // derivados por concepto y mes (`bys_doc_items`, «documentado»).
+    else { entry.compras = {}; entry.bys_doc_items = []; }
     computeRealProyOtraFuente(entry, fuenteKey);
     CARGA_MANUAL.otras_fuentes_por_rbd[rbd][fuenteKey] = entry;
   }
@@ -3444,7 +3493,9 @@ function ensureOtraFuente(rbd, fuenteKey) {
 // El total de B&S (Real+Proy) lo arma recomputeOtraFuente.
 function recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey) {
   const of = ensureOtraFuente(rbd, fuenteKey);
-  of.bys_items = itemsFromCompras(of.compras, CUENTAS_COMPRAS_BY_CODIGO);
+  // Fuentes por concepto: lo documentado se deriva aparte (`bys_doc_items`) y NUNCA toca `bys_items` (los montos mensuales «sin documento» tecleados).
+  if (comprasPorConcepto(fuenteKey)) of.bys_doc_items = itemsFromComprasConcepto(of.compras);
+  else of.bys_items = itemsFromCompras(of.compras, CUENTAS_COMPRAS_BY_CODIGO);
 }
 // B&S por concepto libre (JUNJI/FAEP/FIGA/Aportes en `bys_items`; proyección de las fuentes
 // con compras en `bys_proy_items`) — mismo patrón de agregación que
@@ -3495,16 +3546,26 @@ function computeRealProyOtraFuente(of, fuenteKey) {
   let ingReal = 0, ingProy = 0;
   lineasIngreso.forEach(l => { const s = splitRealProyMeses(l && l.meses, corte); ingReal += s.real; ingProy += s.proy; });
   const rem = splitRealProyMeses(of.gasto_rem && of.gasto_rem.meses, corte);
-  let bysReal = 0, bysProy = 0;
+  let bysReal = 0, bysProy = 0, bysDoc = 0;
+  const porConcepto = fuente.bysMode === 'concepto';
   if (fuente.bysMode === 'compras') {
     bysReal = (of.bys_items || []).reduce((s, it) => s + (it.total || 0), 0);
     bysProy = (of.bys_proy_items || []).reduce((s, it) => s + (it.total || 0), 0);
   } else {
+    // «Sin documento»: los montos mensuales tecleados por concepto, Real hasta el corte y Proyectado después.
     (of.bys_items || []).forEach(it => { const s = splitRealProyMeses(it.meses, corte); bysReal += s.real; bysProy += s.proy; });
+    // «Documentado»: las compras por documento (con concepto), SIEMPRE Real (como las compras de las demás fuentes), sin importar el corte.
+    bysDoc = (of.bys_doc_items || []).reduce((s, it) => s + (it.total || 0), 0);
   }
-  const real = bloqueRealProy(Math.round(ingReal), Math.round(rem.real), Math.round(bysReal));
+  // B&S de una fuente por concepto = sin documento + documentado (cada parte redondeada a pesos, así `bys = bysSin + bysDoc` cuadra siempre; sin documentos queda igual que antes).
+  const real = bloqueRealProy(Math.round(ingReal), Math.round(rem.real), Math.round(bysReal) + (porConcepto ? Math.round(bysDoc) : 0));
   const proy = bloqueRealProy(Math.round(ingProy), Math.round(rem.proy), Math.round(bysProy));
   const total = bloqueRealProy(real.ingreso + proy.ingreso, real.rem + proy.rem, real.bys + proy.bys);
+  if (porConcepto) {
+    real.bysDoc = Math.round(bysDoc); real.bysSin = Math.round(bysReal);
+    proy.bysDoc = 0; proy.bysSin = Math.round(bysProy);
+    total.bysDoc = real.bysDoc; total.bysSin = real.bysSin + proy.bysSin;
+  }
   of.rp = { real, proy, total };
   of.gasto_bys_real = real.bys;
   of.gasto_bys_proy = proy.bys;
@@ -3557,7 +3618,8 @@ function causaEstadoOtraFuente(of, fuenteKey) {
 // Reportes. Devuelve { real, proy, total } (cada uno { ingreso, rem, bys, gasto, saldo }) más
 // nEntidades / nDeficit / nSuperavit (según el saldo Total).
 function computeTotalesOtraFuente(fuenteKey) {
-  const vacio = () => ({ ingreso: 0, rem: 0, bys: 0, gasto: 0, saldo: 0 });
+  // Fuentes por concepto: además `bysDoc` (documentado) y `bysSin` (sin documento), que suman `bys`.
+  const vacio = () => ({ ingreso: 0, rem: 0, bys: 0, gasto: 0, saldo: 0, ...(comprasPorConcepto(fuenteKey) ? { bysDoc: 0, bysSin: 0 } : {}) });
   const acc = { real: vacio(), proy: vacio(), total: vacio(), nEntidades: 0, nDeficit: 0, nSuperavit: 0 };
   filasOtrasFuentes(fuenteKey).forEach(r => {
     const of = recomputeOtraFuente(r.rbd, fuenteKey);
@@ -3576,7 +3638,7 @@ function recomputeTodasOtrasFuentes(rbd) {
   FUENTES_OTRAS.forEach(f => {
     if (!universoIncluyeTipo(f.universo, tipo)) return;
     if (f.bysMode === 'compras') recomputeItemsOtraFuenteDesdeCompras(rbd, f.key);
-    else recomputeOtraFuenteBysItemsAgregado(ensureOtraFuente(rbd, f.key));
+    else { recomputeItemsOtraFuenteDesdeCompras(rbd, f.key); recomputeOtraFuenteBysItemsAgregado(ensureOtraFuente(rbd, f.key)); }
     recomputeOtraFuente(rbd, f.key);
   });
 }
@@ -5641,8 +5703,10 @@ function kpiCardsOtraFuente(fuenteKey, tipo, b, t) {
   const compras = fuente.bysMode === 'compras';
   const corteTxt = tipo === 'real' ? 'Meses hasta el corte "Real hasta" de cada entidad'
     : tipo === 'proy' ? 'Meses posteriores al corte "Real hasta" de cada entidad' : 'Real + Proyectado';
-  const bysTxt = tipo === 'real' ? (compras ? 'Compras ya documentadas' : corteTxt)
+  let bysTxt = tipo === 'real' ? (compras ? 'Compras ya documentadas' : corteTxt)
     : tipo === 'proy' ? (compras ? 'Proyección de B&S — se suma a las compras reales' : corteTxt) : 'Real + Proyectado';
+  // Fuentes por concepto: B&S = documentado (compras por documento, siempre Real) + sin documento (montos mensuales por concepto), mostrados por separado.
+  if (b.bysDoc !== undefined) bysTxt = `Documentado ${fmtCLP(b.bysDoc)} · Sin documento ${fmtCLP(b.bysSin)}`;
   const saldoTxt = tipo === 'total'
     ? `Ingreso − Gasto · ${t.nDeficit} de ${t.nEntidades} entidades en déficit`
     : `Ingreso ${suf} − Gasto ${suf}`;
@@ -5694,6 +5758,12 @@ function renderOtrasFuentesKpis(key) {
   if (sel && document.activeElement !== sel) sel.value = String(otrasFuentesCorteSel[key]);
 }
 
+// Fuentes por concepto: bajo el B&S de la fila, «Doc. $X · S/doc. $Y» (documentado y sin documento) SOLO cuando hay algo documentado en esa vista (así la tabla no se satura).
+function bysSplitCeldaHTML(b) {
+  if (!b || !b.bysDoc) return '';
+  return `<div class="of-bys-split" title="Bienes y Servicios: documentado (compras por documento, siempre Real) y sin documento (montos mensuales por concepto)">Doc. ${fmtCLP(b.bysDoc)} · S/doc. ${fmtCLP(b.bysSin)}</div>`;
+}
+
 // Cada fuente tiene su propia pestaña y su propia tabla (sin selector intermedio) — solo se
 // pinta la tabla de la fuente pedida, no las 9 de una vez, para no recalcular lo que no se ve.
 function renderOtrasFuentesTable(fuenteKey) {
@@ -5711,7 +5781,7 @@ function renderOtrasFuentesTable(fuenteKey) {
       <td class="of-real-hasta">${corteTxt}</td>
       <td class="num">${fmtCLP(b.ingreso)}</td>
       <td class="num">${fmtCLP(b.rem)}</td>
-      <td class="num">${fmtCLP(b.bys)}</td>
+      <td class="num">${fmtCLP(b.bys)}${bysSplitCeldaHTML(b)}</td>
       <td class="num">${fmtCLP(b.gasto)}</td>
       <td class="num" style="color:${b.saldo < 0 ? 'var(--status-critical)' : 'var(--text-primary)'}">${fmtCLP(b.saldo)}</td>
       <td>${otrasFuentesEstadoTagHTML(of, key)}${otrasFuentesEstadoCausaHTML(of, key)}</td>
@@ -5960,6 +6030,146 @@ function comprasSectionOtraFuenteHTML(rbd, fuenteKey, of, fuenteLabel) {
     </div>`;
 }
 
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+// ===== Fuentes por CONCEPTO (JUNJI, FAEP, FIGA, Aportes): REGISTRO DE COMPRAS por documento, con CONCEPTO en lugar de Código de cuenta =====
+// El mapa `otras_fuentes.{fuente}.compras = { id: { concepto, tipoDocumento, nroDocumento, fechaDocumento, fechaPago, descripcion, rutProveedor, nombreProveedor, montoGasto,
+// montoDocumento, documentoOriginal, documentoContable } }` tiene la forma del de las demás fuentes (General, PIE, Mantención, Pro-Retención) con `concepto` (texto libre) en vez de `codigo`.
+// Reglas (las mismas de las compras de las demás fuentes): el mes del gasto es el de la Fecha de Documento, la nota de crédito va en NEGATIVO (conSignoDeNota / montoGastoCompra),
+// «Doc. original» solo sirve para NC/ND y N° DC es interno; lo documentado es SIEMPRE Real. Los montos mensuales por concepto ya cargados (`bys_items`) se mantienen como «sin documento»:
+// los dos orígenes se llevan por separado y se SUMAN (B&S = sin documento + documentado). Un concepto nuevo escrito en una compra pasa a ser un concepto de la entidad (sugerido en las listas y
+// en los totales por concepto) sin escribir nada más que la compra: la existencia del concepto se DERIVA de las compras y de `bys_items`, no se duplica.
+// El «contexto» reúne lo que cambia entre entidades/fuentes (mismo patrón de ctxHonSep) para que Honorarios (PR-3) reuse el formulario y la tabla en estas fuentes.
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+function ctxComprasOtraFuente(fuenteKey, rbd) {
+  const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
+  const rbdTxt = String(rbd);
+  return {
+    clave: fuenteKey, rbd: rbdTxt, fuente: f, subvencion: f.label, porConcepto: comprasPorConcepto(fuenteKey), catalogo: CATALOGO_POR_CONCEPTO,
+    etiqueta: otrasFuentesTituloEntidad({ rbd: rbdTxt }, fuenteKey),
+    attrs: `data-rbd="${escHtml(rbdTxt)}" data-fuente="${fuenteKey}"`,
+    modalSel: '#otrasFuentesModalBody',
+    listaConceptosId: `ofconceptos-${idSeguro(rbdTxt)}-${fuenteKey}`,   // <datalist> con los conceptos ya existentes de la entidad en la fuente
+    compras: () => (((CARGA_MANUAL.otras_fuentes_por_rbd || {})[rbdTxt] || {})[fuenteKey] || {}).compras || {},
+  };
+}
+// Conceptos que ya existen para la entidad en la fuente (los de «sin documento» y los de las compras), sin repetir y ordenados.
+function conceptosDeEntidadFuente(of) {
+  const set = new Set();
+  (of.bys_items || []).forEach(it => { const t = textoSeguro(it.concepto).trim(); if (t) set.add(t); });
+  Object.values(of.compras || {}).forEach(c => { const t = conceptoCompra(c); if (t) set.add(t); });
+  return Array.from(set).sort((a, b) => a.localeCompare(b, 'es'));
+}
+function datalistConceptosHTML(ctx, of) {
+  return `<datalist id="${ctx.listaConceptosId}">${conceptosDeEntidadFuente(of).map(t => `<option value="${escHtml(t)}"></option>`).join('')}</datalist>`;
+}
+// Resumen «Documentado · Sin documento · Total» de B&S de una entidad en una fuente por concepto (con el saldo de Operación de JUNJI). Los números llevan id para
+// refrescarse mientras se teclea una celda (onOtraFuenteCeldaInput) sin reconstruir el modal.
+function bysResumenConceptoHTML(rbd, fuenteKey, of, mostrarSaldoOperacion) {
+  const t = of.rp.total;
+  const saldoOperacionHTML = mostrarSaldoOperacion
+    ? ` Saldo Operación disponible para B&S: <strong id="ofsaldoopbys-${rbd}-${fuenteKey}" style="color:${of.saldo_operacion_bys < 0 ? 'var(--status-critical)' : 'inherit'}">${fmtCLP(of.saldo_operacion_bys)}</strong> (si es negativo, la entidad queda en Déficit).`
+    : '';
+  return `<div class="of-bys-resumen plan-nota" id="ofbysresumen-${rbd}-${fuenteKey}">Bienes y Servicios de esta entidad: <strong>Documentado <span id="ofbysdoc-${rbd}-${fuenteKey}">${fmtCLP(t.bysDoc)}</span></strong> (compras por documento, siempre Real) · <strong>Sin documento <span id="ofbyssin-${rbd}-${fuenteKey}">${fmtCLP(t.bysSin)}</span></strong> (montos mensuales por concepto; Real hasta el corte y Proyectado después) · <strong>Total <span id="ofbystot-${rbd}-${fuenteKey}">${fmtCLP(t.bys)}</span></strong>. Los dos se suman: si registras un documento por un gasto que ya estaba como «sin documento», réstalo de ese monto para no contarlo dos veces.${saldoOperacionHTML}</div>`;
+}
+function actualizarBysResumenConceptoEnModal(rbd, fuenteKey, of) {
+  const t = of.rp && of.rp.total;
+  if (!t || t.bysDoc === undefined) return;
+  [['ofbysdoc', t.bysDoc], ['ofbyssin', t.bysSin], ['ofbystot', t.bys]].forEach(([pre, v]) => {
+    const el = document.getElementById(`${pre}-${rbd}-${fuenteKey}`);
+    if (el && el.textContent !== fmtCLP(v)) el.textContent = fmtCLP(v);
+  });
+}
+function comprasConceptoFilaHTML(ctx, id, c) {
+  const avisos = avisosCompra(c, CATALOGO_POR_CONCEPTO); // marcas ⚠ de fecha / concepto vacío
+  const idAttr = escHtml(id);
+  const concepto = conceptoCompra(c);
+  const nombreCompra = escHtml([c.tipoDocumento, c.nroDocumento ? 'N° ' + c.nroDocumento : ''].filter(Boolean).join(' ') || ('concepto ' + (concepto || id)));
+  return `<tr data-compra-id="${idAttr}">
+    <td>${escHtml(concepto)}${insigniasAvisoHTML(avisos, 'cuenta')}</td>
+    <td>${escHtml(c.tipoDocumento || '')}</td>
+    <td>${escHtml(c.nroDocumento || '')}</td>
+    <td>${escHtml(c.fechaDocumento || '')}${insigniasAvisoHTML(avisos, 'doc')}</td>
+    <td>${escHtml(c.fechaPago || '')}${insigniasAvisoHTML(avisos, 'pago')}</td>
+    <td>${escHtml(c.descripcion || '')}</td>
+    <td>${escHtml(c.rutProveedor || '')}</td>
+    <td>${escHtml(c.nombreProveedor || '')}</td>
+    <td class="num">${fmtCLP(montoGastoCompra(c))}</td>
+    <td class="num">${fmtCLP(montoDocumentoCompra(c))}</td>
+    <td class="col-dc">${celdaDcHTML(c)}</td>
+    <td>${escHtml(c.documentoOriginal || '')}</td>
+    <td class="compra-acciones-cell">
+      <button type="button" class="compra-edit-btn of-compra-edit-btn" ${ctx.attrs} data-compra-id="${idAttr}" title="Editar compra" aria-label="Editar compra ${nombreCompra}">✏️</button>
+      <button type="button" class="compra-dup-btn of-compra-dup-btn" ${ctx.attrs} data-compra-id="${idAttr}" title="Duplicar compra" aria-label="Duplicar compra ${nombreCompra}">⧉</button>
+      <button type="button" class="compra-del-btn of-compra-del-btn" ${ctx.attrs} data-compra-id="${idAttr}" title="Eliminar compra" aria-label="Eliminar compra ${nombreCompra}">🗑</button>
+    </td>
+  </tr>`;
+}
+function comprasConceptoFormHTML(ctx) {
+  return `
+      <div class="compra-form-grid" ${ctx.attrs}>
+        <label class="compra-field compra-field-concepto"><span class="compra-field-label">Concepto</span><input type="text" class="compra-input of-compra-input" data-field="concepto" list="${ctx.listaConceptosId}" autocomplete="off" placeholder="Elige uno o escribe uno nuevo" aria-label="Concepto de la compra" title="Concepto del gasto: elige uno de la lista (los de esta entidad en esta fuente) o escribe uno nuevo; un concepto nuevo pasa a existir como concepto de la entidad"></label>
+        <label class="compra-field"><span class="compra-field-label">Tipo de documento</span><select class="compra-input of-compra-input" data-field="tipoDocumento">${otrasFuentesOptionsTipoDocumento()}</select></label>
+        <label class="compra-field"><span class="compra-field-label">N° documento</span><input type="text" class="compra-input of-compra-input" data-field="nroDocumento" placeholder="N° documento"></label>
+        <label class="compra-field"><span class="compra-field-label">Fecha documento</span><input type="date" class="compra-input of-compra-input" data-field="fechaDocumento" title="Fecha documento: determina el mes del gasto"></label>
+        <label class="compra-field"><span class="compra-field-label">Fecha pago</span><input type="date" class="compra-input of-compra-input" data-field="fechaPago" title="Fecha pago"></label>
+        <label class="compra-field"><span class="compra-field-label">Descripción</span><input type="text" class="compra-input of-compra-input" data-field="descripcion" placeholder="Descripción del gasto"></label>
+        <label class="compra-field"><span class="compra-field-label">RUT proveedor</span><input type="text" class="compra-input of-compra-input" data-field="rutProveedor" placeholder="RUT proveedor"></label>
+        <label class="compra-field"><span class="compra-field-label">Nombre proveedor</span><input type="text" class="compra-input of-compra-input" data-field="nombreProveedor" placeholder="Nombre proveedor"></label>
+        <label class="compra-field"><span class="compra-field-label">Monto gasto</span><input type="number" class="compra-input of-compra-input" data-field="montoGasto" placeholder="Monto gasto"></label>
+        <label class="compra-field"><span class="compra-field-label">Monto documento</span><input type="number" class="compra-input of-compra-input" data-field="montoDocumento" placeholder="Monto documento"></label>
+        <label class="compra-field compra-field-dc" title="${escHtml(AYUDA_DC)}"><span class="compra-field-label">N° DC</span><input type="text" class="compra-input of-compra-input" data-field="documentoContable" maxlength="100" autocomplete="off" placeholder="p. ej. DC_344" title="${escHtml(AYUDA_DC)}"></label>
+        <label class="compra-field compra-field-docorig" title="${escHtml(AYUDA_DOC_ORIGINAL)}"><span class="compra-field-label">Doc. original (NC/ND)</span><input type="text" class="compra-input of-compra-input" data-field="documentoOriginal" autocomplete="off" placeholder="123-FAC" title="${escHtml(AYUDA_DOC_ORIGINAL)}"></label>
+        <span class="compra-form-actions">
+          <button type="button" class="add-compra-btn of-add-compra-btn" ${ctx.attrs}>+ Agregar compra</button>
+          <button type="button" class="cancelar-edicion-btn of-cancelar-edicion-btn hidden" ${ctx.attrs}>✕ Cancelar edición</button>
+        </span>
+        <div class="compra-form-avisos" aria-live="polite"></div>
+      </div>`;
+}
+function comprasConceptoSectionHTML(ctx, of) {
+  const compras = of.compras || {};
+  const filasCompras = Object.entries(compras)
+    .sort((a, b) => (b[1].fechaDocumento || '').localeCompare(a[1].fechaDocumento || ''))
+    .map(([id, c]) => comprasConceptoFilaHTML(ctx, id, c)).join('');
+  return `
+    <div class="compras-section" style="margin-top:14px;">
+      <div class="detalle-header">
+        <strong>Registro de compras (${ctx.subvencion}) — Bienes y Servicios documentados</strong> — <span class="detalle-sub">una fila por documento (factura, boleta, nota de crédito…), con su <strong>concepto</strong> en lugar del código de cuenta; cada compra se suma sola al concepto y mes de su Fecha Documento y siempre es Real. Las notas de crédito se registran en negativo. <strong>N° DC</strong> es interno (${escHtml(AYUDA_DC)}); <strong>Doc. original</strong> es solo para notas de crédito/débito.</span>
+      </div>
+      ${datalistConceptosHTML(ctx, of)}
+      ${comprasConceptoFormHTML(ctx)}
+      ${resumenAvisosComprasHTML(resumenAvisosCompras(compras, CATALOGO_POR_CONCEPTO))}
+      <div class="compras-scroll">
+        <table class="detalle-table compras-table">
+          <thead><tr><th>Concepto</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th title="${escHtml(AYUDA_DC)}">N° DC</th><th title="${escHtml(AYUDA_DOC_ORIGINAL)}">Doc. original</th><th aria-label="Acciones"></th></tr></thead>
+          <tbody>${filasCompras || `<tr><td colspan="13" class="detalle-sin-compras">Sin compras registradas todavía.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+// Lo documentado por concepto y mes (solo lectura, siempre Real): la suma de las compras del concepto en el mes de su Fecha Documento.
+function bysDocumentadoPorConceptoHTML(rbd, fuenteKey, of) {
+  const items = of.bys_doc_items || [];
+  const filas = items.map(it => `<tr id="ofdoc-${rbd}-${fuenteKey}-${idSeguro(it.concepto)}"><td class="item-label">${escHtml(it.concepto)}</td>${
+    MESES_CARGA.map(m => `<td class="num mes-real">${it.meses[m] ? fmtCLP(it.meses[m]) : '—'}</td>`).join('')}<td class="num item-total">${fmtCLP(it.total)}</td></tr>`).join('');
+  const totMeses = MESES_CARGA.map(m => items.reduce((s, it) => s + (it.meses[m] || 0), 0));
+  const totalRow = items.length
+    ? `<tr id="ofdoctotal-${rbd}-${fuenteKey}"><td class="item-label"><strong>Total documentado</strong></td>${totMeses.map(v => `<td class="num mes-real"><strong>${v ? fmtCLP(v) : '—'}</strong></td>`).join('')}<td class="num item-total"><strong>${fmtCLP(of.rp.total.bysDoc)}</strong></td></tr>`
+    : '';
+  return `
+    <div class="compras-section" style="margin-top:14px;">
+      <div class="detalle-header">
+        <strong>Bienes y Servicios documentados (por concepto)</strong> — <span class="detalle-sub">solo lectura: sale del registro de compras de arriba; siempre Real.</span>
+      </div>
+      <div class="detalle-scroll">
+        <table class="detalle-table">${DETALLE_COLGROUP}
+          <thead><tr><th>Concepto (documentado)</th>${mesHeaderCellsCorteHTML(12, false)}<th class="num">Total</th></tr></thead>
+          <tbody>${filas ? filas + totalRow : `<tr><td colspan="14" class="detalle-sin-compras">Sin compras con concepto registradas todavía.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
 // Bienes y Servicios por concepto libre: bysMode:'concepto' (JUNJI/FAEP/FIGA/Aportes, lista
 // `bys_items`, Real/Proy según el corte) y la PROYECCIÓN de B&S de las fuentes con compras (lista
 // `bys_proy_items`, siempre Proyectada) — sin código de cuenta SUPEREDUC ni documento/proveedor.
@@ -5999,7 +6209,7 @@ function bysConceptoSectionHTML(rbd, fuenteKey, of, mostrarSaldoOperacion, opts)
         <strong>${o.titulo}</strong> — <span class="detalle-sub">${o.nota}${saldoOperacionHTML}</span>
       </div>
       <div class="compra-form-grid">
-        <label class="compra-field" style="flex:1 1 260px;"><span class="compra-field-label">Concepto</span><input type="text" id="${o.inputId}" placeholder="Ej: Reparación sala cuna"></label>
+        <label class="compra-field" style="flex:1 1 260px;"><span class="compra-field-label">Concepto</span><input type="text" id="${o.inputId}" placeholder="Ej: Reparación sala cuna"${o.listaConceptosId ? ` list="${o.listaConceptosId}" autocomplete="off"` : ''}></label>
         <span class="compra-form-actions">
           <button type="button" class="add-compra-btn of-add-bysitem-btn" data-rbd="${rbd}" data-fuente="${fuenteKey}" data-lista="${o.lista}">+ Agregar concepto</button>
         </span>
@@ -6020,7 +6230,7 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
   const corte = realHastaMesOtraFuente(of);
   const compras = fuente.bysMode === 'compras';
   const corteSelectHTML = `<div class="of-modal-corte"><label class="of-ctl-label">Real hasta el mes: <select class="of-modal-corte-select" data-rbd="${rbd}" data-fuente="${fuenteKey}">${MESES_CARGA_TITLE.map((m, i) => `<option value="${i + 1}"${i + 1 === corte ? ' selected' : ''}>${m}</option>`).join('')}</select></label>
-    <span class="detalle-sub">Los meses hasta el corte son <strong>Real</strong> y los siguientes <strong>Proyectado</strong>${compras ? ' (las compras siempre son Real; la proyección de Bienes y Servicios se carga aparte, más abajo).' : '.'}</span></div>`;
+    <span class="detalle-sub">Los meses hasta el corte son <strong>Real</strong> y los siguientes <strong>Proyectado</strong>${compras ? ' (las compras siempre son Real; la proyección de Bienes y Servicios se carga aparte, más abajo).' : ' (Bienes y Servicios «sin documento» sigue el corte; lo documentado con compras siempre es Real).'}</span></div>`;
 
   let headerHTML, tablasMesesHTML;
   if (fuente.incomeShape === 'junji3') {
@@ -6034,7 +6244,7 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
   } else {
     const bysSubtitle = compras
       ? 'Bienes y Servicios se carga como "Registro de compras" más abajo; su total mensual se calcula solo.'
-      : 'Bienes y Servicios se carga por concepto más abajo; su total mensual se calcula solo.';
+      : 'Bienes y Servicios se carga como "Registro de compras" por documento (con concepto) o, sin documento, como montos mensuales por concepto, más abajo; los totales se calculan solos.';
     headerHTML = `<strong>Detalle por mes — Ingreso y Remuneraciones (${fuenteLabel})</strong> — <span class="detalle-sub">${bysSubtitle}</span>`;
     tablasMesesHTML = `
     ${otrasFuentesTablaMes(`Ingreso (${fuenteLabel})`, rbd, fuenteKey, 'of_ingreso', of.ingreso, `oftotal-${rbd}-${fuenteKey}-of_ingreso`)}
@@ -6048,7 +6258,18 @@ function buildOtrasFuentesDetalleHTML(rbd, fuenteKey) {
         nota: 'Siempre Proyectado: estimación aparte que se suma a las compras reales (nunca las reemplaza). El concepto es libre.',
         inputId: `juncon-proy-${rbd}-${fuenteKey}`,
       })
-    : bysConceptoSectionHTML(rbd, fuenteKey, of, fuente.incomeShape === 'junji3');
+    : (() => {
+      // Fuente por concepto: B&S = «documentado» (registro de compras con concepto, siempre Real) + «sin documento» (montos mensuales por concepto, que se mantienen).
+      const ctx = ctxComprasOtraFuente(fuenteKey, rbd);
+      return bysResumenConceptoHTML(rbd, fuenteKey, of, fuente.incomeShape === 'junji3')
+        + comprasConceptoSectionHTML(ctx, of)
+        + bysDocumentadoPorConceptoHTML(rbd, fuenteKey, of)
+        + bysConceptoSectionHTML(rbd, fuenteKey, of, false, {
+          titulo: 'Bienes y Servicios — sin documento (por concepto)',
+          nota: 'Montos mensuales por concepto, sin documento (lo que ya estaba cargado antes del registro de compras). Se suman APARTE de lo documentado: cada ítem se identifica por un concepto libre y sigue el corte "Real hasta".',
+          listaConceptosId: ctx.listaConceptosId,
+        });
+    })();
 
   return `
   <div class="detalle-wrap">
@@ -6080,7 +6301,8 @@ function actualizarOtrasFuentesModalSubtitle(of, fuenteKey) {
     `Ingreso Total: <strong>${fmtCLP(of.ingreso_total)}</strong> · ` +
     `Gasto Total: <strong>${fmtCLP(of.gasto_total)}</strong> · ` +
     `Saldo: <strong>${fmtCLP(of.saldo)}</strong> · ${otrasFuentesEstadoTagHTML(of, fuenteKey)}${otrasFuentesEstadoCausaHTML(of, fuenteKey)}` +
-    ` · <span class="detalle-sub">Saldo Real: <strong>${fmtCLP(of.rp.real.saldo)}</strong> · Saldo Proy.: <strong>${fmtCLP(of.rp.proy.saldo)}</strong></span>`;
+    ` · <span class="detalle-sub">Saldo Real: <strong>${fmtCLP(of.rp.real.saldo)}</strong> · Saldo Proy.: <strong>${fmtCLP(of.rp.proy.saldo)}</strong></span>` +
+    (comprasPorConcepto(fuenteKey) ? ` · <span class="detalle-sub">B&S: Documentado <strong>${fmtCLP(of.rp.total.bysDoc)}</strong> · Sin documento <strong>${fmtCLP(of.rp.total.bysSin)}</strong></span>` : '');
 }
 // Se llama al abrir el modal, al cambiar su estructura (agregar/quitar compras o conceptos, cambiar el corte) y desde
 // aplicarSnapshot en cada snapshot de Firestore, para que el modal refleje lo que otras personas cambian o borran. Con el modal
@@ -6102,6 +6324,7 @@ function renderOtrasFuentesModalContenido(opts) {
   if (cuerpo.dataset.rbd === rbd && cuerpo.dataset.fuente === fuenteKey && cuerpo.firstElementChild) {
     otrasFuentesMorphEnCurso = true;
     try { morphContenedor(cuerpo, html, opts); } finally { otrasFuentesMorphEnCurso = false; }
+    if (comprasPorConcepto(fuenteKey)) revisarModoEdicionCompraOF(rbd, fuenteKey);
     return;
   }
   cuerpo.innerHTML = html;
@@ -6157,7 +6380,7 @@ function onOtraFuenteCeldaInput(input) {
     recomputeOtraFuente(rbd, fuenteKey);
     scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { [campo]: { meses: { [mes]: val }, total: bucket.total } } } });
   }
-  if (otrasFuentesRbdAbierto === rbd) actualizarOtrasFuentesModalSubtitle(of, fuenteKey);
+  if (otrasFuentesRbdAbierto === rbd) { actualizarOtrasFuentesModalSubtitle(of, fuenteKey); actualizarBysResumenConceptoEnModal(rbd, fuenteKey, of); }
   renderOtrasFuentesTable();
 }
 window.onOtraFuenteCeldaInput = onOtraFuenteCeldaInput;
@@ -6241,7 +6464,87 @@ function leerCamposCompraOtraFuente() {
   });
   return campos;
 }
+// ---- Formulario del registro de compras por CONCEPTO: agregar / editar (✏️) / duplicar (⧉) / cancelar. Mismo patrón que el de SEP (el formulario NUNCA lo toca el
+// reconciliador del modal: lo escrito a medias y el modo edición sobreviven a los snapshots) y mismo guardado: un setDoc con merge:true de SOLO esa compra
+// (`otras_fuentes.<fuente>.compras.<id>`), así dos personas editando compras distintas de la misma entidad no se pisan. ----
+function gridComprasOtraFuente() {
+  const primerCampo = document.querySelector('#otrasFuentesModalBody .compra-form-grid .of-compra-input');
+  return primerCampo && primerCampo.closest('.compra-form-grid');
+}
+function llenarFormularioCompraOF(campos) {
+  const wrap = gridComprasOtraFuente();
+  if (!wrap) return;
+  wrap.querySelectorAll('.compra-input.of-compra-input').forEach(el => {
+    const field = el.dataset.field;
+    const valor = campos[field] !== undefined && campos[field] !== null ? campos[field] : '';
+    if (field === 'tipoDocumento') fijarValorSelect(el, String(valor), String(valor)); else el.value = valor; // un tipo que ya no está en el selector se conserva al guardar
+  });
+  actualizarAvisosFormularioCompra(wrap);
+}
+function resetFormularioCompraOFUI() {
+  const wrap = gridComprasOtraFuente();
+  if (wrap) { delete wrap.dataset.editingId; wrap.classList.remove('editing'); wrap.querySelectorAll('option[data-legado]').forEach(o => o.remove()); }
+  const btn = document.querySelector('#otrasFuentesModalBody .of-add-compra-btn');
+  if (btn) btn.textContent = '+ Agregar compra';
+  const cancelBtn = document.querySelector('#otrasFuentesModalBody .of-cancelar-edicion-btn');
+  if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+function cancelarEdicionCompraOF() {
+  resetFormularioCompraOFUI();
+  document.querySelectorAll('#otrasFuentesModalBody .compra-form-grid .of-compra-input').forEach(el => { el.value = ''; });
+  actualizarAvisosFormularioCompra(gridComprasOtraFuente());
+}
+function iniciarEdicionCompraOF(rbd, fuenteKey, compraId) {
+  const campos = (ensureOtraFuente(rbd, fuenteKey).compras || {})[compraId];
+  const wrap = gridComprasOtraFuente();
+  if (!campos || !wrap) return;
+  llenarFormularioCompraOF(campos);
+  wrap.dataset.editingId = compraId;
+  wrap.classList.add('editing');
+  const btn = document.querySelector('#otrasFuentesModalBody .of-add-compra-btn');
+  if (btn) btn.textContent = '💾 Guardar cambios';
+  const cancelBtn = document.querySelector('#otrasFuentesModalBody .of-cancelar-edicion-btn');
+  if (cancelBtn) cancelBtn.classList.remove('hidden');
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function duplicarCompraOF(rbd, fuenteKey, compraId) {
+  const campos = (ensureOtraFuente(rbd, fuenteKey).compras || {})[compraId];
+  const wrap = gridComprasOtraFuente();
+  if (!campos || !wrap) return;
+  resetFormularioCompraOFUI();
+  llenarFormularioCompraOF(campos); // sin data-editing-id: al guardar se crea una compra NUEVA con estos datos de partida
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+// Si la compra que se estaba editando desapareció (otra persona la borró), el formulario conserva lo escrito pero pasa a «compra nueva»: así «Guardar cambios» no vuelve a crear una compra eliminada.
+function revisarModoEdicionCompraOF(rbd, fuenteKey) {
+  const wrap = gridComprasOtraFuente();
+  if (!wrap || !wrap.dataset.editingId) return;
+  if (!(ensureOtraFuente(rbd, fuenteKey).compras || {})[wrap.dataset.editingId]) resetFormularioCompraOFUI();
+}
+function guardarCompraConcepto(rbd, fuenteKey) {
+  const leidos = leerCamposCompraOtraFuente();
+  if (!leidos) return;
+  const campos = conSignoDeNota(leidos); // L-03: nota de crédito siempre en negativo, nota de débito en positivo, el resto como se digitó
+  if (!campos.concepto) { alert('Escribe o elige un concepto.'); return; }
+  const errClave = validarClaveMapa(campos.concepto, 'El concepto');
+  if (errClave) { alert(errClave + '\nNo se guardó la compra.'); return; }
+  if (!campos.fechaDocumento) { alert('Ingresa la fecha del documento — determina el mes al que se suma la compra.'); return; }
+  if (!campos.montoGasto) { alert('Ingresa el monto del gasto.'); return; }
+  const wrap = gridComprasOtraFuente();
+  const id = (wrap && wrap.dataset.editingId) || generarCompraId();
+  const of = ensureOtraFuente(rbd, fuenteKey);
+  of.compras[id] = campos;
+  recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey);
+  recomputeOtraFuente(rbd, fuenteKey);
+  renderOtrasFuentesTable();
+  if (otrasFuentesRbdAbierto === rbd) renderOtrasFuentesModalContenido();
+  cancelarEdicionCompraOF(); // formulario limpio y fuera del modo edición (el modal ya no se reconstruye, así que se limpia a mano)
+  const reg = filasOtrasFuentes(fuenteKey).find(x => x.rbd === rbd);
+  scheduleRbdSave(rbd, { nombre: reg ? reg.nombre : rbd, otras_fuentes: { [fuenteKey]: { compras: { [id]: campos } } } });
+  flushRbdSaveNow(rbd);
+}
 function agregarCompraOtraFuente(rbd, fuenteKey) {
+  if (comprasPorConcepto(fuenteKey)) { guardarCompraConcepto(rbd, fuenteKey); return; }
   const leidos = leerCamposCompraOtraFuente();
   const campos = leidos && conSignoDeNota(leidos); // L-03: nota de crédito siempre en negativo, nota de débito en positivo, el resto como se digitó
   if (!campos || !campos.codigo || !campos.fechaDocumento || !campos.montoGasto) {
@@ -6269,6 +6572,7 @@ function agregarCompraOtraFuente(rbd, fuenteKey) {
 async function eliminarCompraOtraFuente(rbd, fuenteKey, compraId) {
   if (!confirm('¿Eliminar esta compra? No se puede deshacer.')) return;
   flushRbdSaveNow(rbd);
+  if (comprasPorConcepto(fuenteKey)) { const g = gridComprasOtraFuente(); if (g && g.dataset.editingId === compraId) cancelarEdicionCompraOF(); } // se borra la compra que se estaba editando
   const of = ensureOtraFuente(rbd, fuenteKey);
   delete of.compras[compraId];
   recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey);
@@ -6293,6 +6597,11 @@ otrasFuentesModalBodyEl.addEventListener('click', (e) => {
   if (addBtn) { agregarCompraOtraFuente(addBtn.getAttribute('data-rbd'), addBtn.getAttribute('data-fuente')); return; }
   const delBtn = e.target.closest('.of-compra-del-btn');
   if (delBtn) { eliminarCompraOtraFuente(delBtn.getAttribute('data-rbd'), delBtn.getAttribute('data-fuente'), delBtn.getAttribute('data-compra-id')); return; }
+  const editBtn = e.target.closest('.of-compra-edit-btn');
+  if (editBtn) { iniciarEdicionCompraOF(editBtn.getAttribute('data-rbd'), editBtn.getAttribute('data-fuente'), editBtn.getAttribute('data-compra-id')); return; }
+  const dupBtn = e.target.closest('.of-compra-dup-btn');
+  if (dupBtn) { duplicarCompraOF(dupBtn.getAttribute('data-rbd'), dupBtn.getAttribute('data-fuente'), dupBtn.getAttribute('data-compra-id')); return; }
+  if (e.target.closest('.of-cancelar-edicion-btn')) { cancelarEdicionCompraOF(); return; }
   const addBysItemBtn = e.target.closest('.of-add-bysitem-btn');
   if (addBysItemBtn) { agregarBysItemOtraFuente(addBysItemBtn.getAttribute('data-rbd'), addBysItemBtn.getAttribute('data-fuente'), addBysItemBtn.getAttribute('data-lista') || 'bys_items'); return; }
   const delBysItemBtn = e.target.closest('.of-bysitem-del-btn');
@@ -6410,13 +6719,15 @@ function sheetOtraFuenteSimpleAOA(fuenteKey, campo, onlyRbd) {
   return rows;
 }
 function sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd) {
-  const headers = ['ID', 'RBD', 'Nombre', 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal', 'N° DC'];
+  // Fuentes por concepto: la misma hoja con la columna «Concepto» (texto libre, neutralizado como la descripción) en vez de «Codigo».
+  const porConcepto = comprasPorConcepto(fuenteKey);
+  const headers = ['ID', 'RBD', 'Nombre', porConcepto ? 'Concepto' : 'Codigo', 'TipoDocumento', 'NroDocumento', 'FechaDocumento', 'FechaPago', 'Descripcion', 'RutProveedor', 'NombreProveedor', 'MontoGasto', 'MontoDocumento', 'DocumentoOriginal', 'N° DC'];
   const rows = [headers];
   filasOtraFuenteExport(fuenteKey, onlyRbd).forEach(r => {
     const of = (CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd]?.[fuenteKey];
     const compras = (of && of.compras) || {};
     Object.entries(compras).forEach(([id, c]) => {
-      rows.push([id, rbdCellValue(r.rbd), r.nombre, c.codigo || '', c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(montoGastoCompra(c)), Math.round(montoDocumentoCompra(c)), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
+      rows.push([id, rbdCellValue(r.rbd), r.nombre, porConcepto ? neutralizaFormula(conceptoCompra(c)) : (c.codigo || ''), c.tipoDocumento || '', c.nroDocumento || '', c.fechaDocumento || '', c.fechaPago || '', neutralizaFormula(c.descripcion || ''), c.rutProveedor || '', neutralizaFormula(c.nombreProveedor || ''), Math.round(montoGastoCompra(c)), Math.round(montoDocumentoCompra(c)), c.documentoOriginal || '', neutralizaFormula(c.documentoContable || '')]);
     });
   });
   return rows;
@@ -6459,6 +6770,8 @@ function buildOtraFuenteCargaWorkbook(fuenteKey, onlyRbd) {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd)), 'COMPRAS');
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey, 'bys_proy_items', onlyRbd)), 'BYS_PROY_ITEMS');
   } else {
+    // Fuentes por concepto: COMPRAS (documentado, con columna Concepto) y BYS_ITEMS (sin documento: los montos mensuales por concepto).
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetOtraFuenteComprasAOA(fuenteKey, onlyRbd)), 'COMPRAS');
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetBysItemsAOA(fuenteKey, 'bys_items', onlyRbd)), 'BYS_ITEMS');
   }
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheetMetaAOA(fuenteKey, onlyRbd)), 'META');
@@ -6498,6 +6811,7 @@ function importOtraFuenteSimpleSheet(ws, fuenteKey, campo) {
 // importan igual (no se pierde el dato) y quedan marcadas con ⚠ en el registro; el resumen las cuenta.
 // Devuelve { n, noHabilitadas }.
 function importOtraFuenteComprasSheet(ws, fuenteKey) {
+  const porConcepto = comprasPorConcepto(fuenteKey); // fuentes por concepto: la columna 4 es «Concepto» (texto libre) y no un código de cuenta
   const rows = rowsFromSheet(ws);
   const idxDc = indiceColumnaDc(rows[0]); // N° DC: -1 en un Excel antiguo (sin la columna) → no se toca el N° DC que ya tenga la compra
   const porRbd = {};
@@ -6511,9 +6825,9 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
     if (errRbd) { rechazarFilaImportacion('COMPRAS', i + 1, errRbd); continue; }
     const codigoRaw = row[3];
     const codigo = (typeof codigoRaw === 'number') ? String(Math.trunc(codigoRaw)) : String(codigoRaw || '').trim();
-    if (!CUENTAS_COMPRAS_BY_CODIGO[codigo]) continue;
+    if (!porConcepto && !CUENTAS_COMPRAS_BY_CODIGO[codigo]) continue;
     const campos = {
-      codigo,
+      ...(porConcepto ? { concepto: String(codigoRaw === 0 ? '' : (codigoRaw ?? '')).trim() } : { codigo }), // una celda vacía llega como el número 0 (rowsFromSheet usa defval:0): no es un concepto
       tipoDocumento: String(row[4] || '').trim(),
       nroDocumento: String(row[5] || '').trim(),
       fechaDocumento: excelDateToISO(row[6]),
@@ -6526,6 +6840,11 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
       documentoOriginal: String(row[13] || '').trim(),
     };
     if (!campos.fechaDocumento || !campos.montoGasto) continue;
+    // Fuentes por concepto: el concepto es una clave en potencia (catálogo de conceptos de la entidad, Reporte personalizado): se valida igual que al agregarlo a mano (vacío, «__x__», demasiado largo).
+    if (porConcepto) {
+      const errConcepto = validarClaveMapa(campos.concepto, 'El concepto');
+      if (errConcepto) { rechazarFilaImportacion('COMPRAS', i + 1, errConcepto); continue; }
+    }
     // L-03: nota de crédito siempre en negativo, nota de débito en positivo, el resto como viene en el archivo.
     campos.montoGasto = montoGastoCompra(campos);
     campos.montoDocumento = montoDocumentoCompra(campos);
@@ -6543,7 +6862,7 @@ function importOtraFuenteComprasSheet(ws, fuenteKey) {
     if (!porRbd[rbd]) porRbd[rbd] = {};
     porRbd[rbd][id] = campos;
     n++;
-    if (nivelCuentaOtraFuente(fuenteKey, rbd, codigo) === 0) noHabilitadas++;
+    if (!porConcepto && nivelCuentaOtraFuente(fuenteKey, rbd, codigo) === 0) noHabilitadas++;
   }
   Object.keys(porRbd).forEach(rbd => {
     recomputeItemsOtraFuenteDesdeCompras(rbd, fuenteKey);
@@ -6627,6 +6946,8 @@ function importOtraFuenteWorkbook(wbIn, fuenteKey) {
     }
     if (wbIn.Sheets['BYS_PROY_ITEMS']) resumen.push('BYS_PROY_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_PROY_ITEMS'], fuenteKey, 'bys_proy_items') + ' filas');
   } else {
+    // Fuentes por concepto: un Excel anterior al registro de compras no trae la hoja COMPRAS: se importa igual y no toca las compras guardadas (no borra nada).
+    if (wbIn.Sheets['COMPRAS']) resumen.push('COMPRAS: ' + importOtraFuenteComprasSheet(wbIn.Sheets['COMPRAS'], fuenteKey).n + ' filas');
     if (wbIn.Sheets['BYS_ITEMS']) resumen.push('BYS_ITEMS: ' + importBysItemsSheet(wbIn.Sheets['BYS_ITEMS'], fuenteKey) + ' filas');
   }
   renderOtrasFuentesTable(fuenteKey);
@@ -6688,6 +7009,7 @@ function csvDetalleMensualOtraFuenteLines(fuenteKey, rbd) {
     (of.bys_proy_items || []).forEach(it => push(fila(`B&S proyeccion - ${it.concepto}`, 'Proyectado', it)));
   } else {
     (of.bys_items || []).forEach(it => push(fila(`B&S - ${it.concepto}`, tipoPorCorte, it)));
+    (of.bys_doc_items || []).forEach(it => push(fila(`B&S documentado - ${it.concepto}`, 'Real', it))); // compras por documento (siempre Real); N° DC y demás datos del documento nunca van en este CSV
   }
   const vacios = MESES_CARGA.map(() => '');
   [['real', 'Real'], ['proy', 'Proyectado'], ['total', 'Total (Real+Proyectado)']].forEach(([k, etiqueta]) => {
@@ -6759,7 +7081,16 @@ function buildOtraFuenteEntidadPrintHTML(rbd, fuenteKey) {
       <div class="detalle-header" style="margin-top:10px;"><strong>Registro de compras</strong></div>
       <table class="detalle-table compras-table"><thead><tr><th>Código cuenta</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>N° DC</th><th>Doc. original</th></tr></thead><tbody>${filasCompras}</tbody></table>`;
   } else {
-    bysHTML = tablaMesesEstaticaHTML('Bienes y Servicios (por concepto)', (of.bys_items || []).map(it => ({ label: it.concepto, obj: it })), corte, false);
+    // Fuente por concepto: documentado (compras con concepto, siempre Real) + sin documento (montos mensuales por concepto) y el registro de compras, cada cosa por separado.
+    const compras = Object.values(of.compras || {}).sort((a, b) => (a.fechaDocumento || '').localeCompare(b.fechaDocumento || ''));
+    const filasCompras = compras.map(c => `<tr><td>${escHtml(conceptoCompra(c))}</td><td>${escHtml(c.tipoDocumento)}</td><td>${escHtml(c.nroDocumento)}</td><td>${escHtml(c.fechaDocumento)}</td><td>${escHtml(c.fechaPago)}</td><td>${escHtml(c.descripcion)}</td><td>${escHtml(c.rutProveedor)}</td><td>${escHtml(c.nombreProveedor)}</td><td class="num">${fmtCLP(montoGastoCompra(c))}</td><td class="num">${fmtCLP(montoDocumentoCompra(c))}</td><td class="col-dc">${celdaDcHTML(c)}</td><td>${escHtml(c.documentoOriginal)}</td></tr>`).join('')
+      || `<tr><td colspan="12" class="detalle-sin-compras">Sin compras registradas.</td></tr>`;
+    bysHTML = `
+      <div class="detalle-sub" style="margin-top:8px;">Bienes y Servicios: Documentado <strong>${fmtCLP(of.rp.total.bysDoc)}</strong> · Sin documento <strong>${fmtCLP(of.rp.total.bysSin)}</strong> · Total <strong>${fmtCLP(of.rp.total.bys)}</strong></div>
+      ${tablaMesesEstaticaHTML('Bienes y Servicios — documentado (compras, Real)', (of.bys_doc_items || []).map(it => ({ label: it.concepto, obj: it })), 12, false)}
+      ${tablaMesesEstaticaHTML('Bienes y Servicios — sin documento (por concepto)', (of.bys_items || []).map(it => ({ label: it.concepto, obj: it })), corte, false)}
+      <div class="detalle-header" style="margin-top:10px;"><strong>Registro de compras</strong></div>
+      <table class="detalle-table compras-table"><thead><tr><th>Concepto</th><th>Tipo doc.</th><th>N° doc.</th><th>Fecha doc.</th><th>Fecha pago</th><th>Descripción</th><th>RUT prov.</th><th>Nombre prov.</th><th class="num">Monto gasto</th><th class="num">Monto doc.</th><th>N° DC</th><th>Doc. original</th></tr></thead><tbody>${filasCompras}</tbody></table>`;
   }
   return `
     <div class="detalle-header" style="margin-bottom:14px;">
@@ -7108,7 +7439,8 @@ function partesMensualesOtraFuente(fuenteKey, out, entidadFiltro) {
       (of.bys_items || []).forEach(it => sumar(it.meses, 'bys', 'real'));
       (of.bys_proy_items || []).forEach(it => sumar(it.meses, 'bys', 'proy'));
     } else {
-      (of.bys_items || []).forEach(it => sumar(it.meses, 'bys'));
+      (of.bys_items || []).forEach(it => sumar(it.meses, 'bys'));                // sin documento: Real hasta el corte, Proyectado después
+      (of.bys_doc_items || []).forEach(it => sumar(it.meses, 'bys', 'real'));    // documentado (compras con concepto): siempre Real
     }
   });
   return cortes;
@@ -7420,12 +7752,13 @@ function reporteLineasOtraFuente(fuenteKey, sel) {
       (of.bys_proy_items || []).forEach(it => vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'bys_proy', concepto: it.concepto }, it.meses, 'proy'));
     } else {
       (of.bys_items || []).forEach(it => vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'bys_concepto', concepto: it.concepto }, it.meses, corte));
+      (of.bys_doc_items || []).forEach(it => vzSumar(mapa, { fuenteKey, tipo: 'gasto', grupo: 'bys_doc', concepto: it.concepto }, it.meses, 'real')); // documentado: siempre Real
     }
   });
   return Array.from(mapa.values());
 }
 
-// Líneas { fuenteKey, tipo:'ingreso'|'gasto', grupo:'ingreso'|'rem'|'bys'|'bys_concepto'|'bys_proy',
+// Líneas { fuenteKey, tipo:'ingreso'|'gasto', grupo:'ingreso'|'rem'|'bys'|'bys_concepto'|'bys_doc'|'bys_proy',
 // subt, codigo, concepto, real:[12], proy:[12] } de UNA fuente, sumadas sobre las entidades
 // seleccionadas (`entidadesSet` = ids de RBD / "AC" / GESPARVU). Se descartan las líneas en cero.
 function reporteLineasPorFuente(fuenteKey, entidadesSet) {
@@ -7445,6 +7778,7 @@ function vzSubcat(l) {
   if (l.grupo === 'hon_proy') return 'Honorarios — Proyección';
   if (l.grupo === 'bys') return `Bienes y Servicios — Subt. ${l.subt}`;
   if (l.grupo === 'bys_concepto') return 'Bienes y Servicios — por concepto (sin código)';
+  if (l.grupo === 'bys_doc') return 'Bienes y Servicios — documentado (compras por concepto)';
   return 'Bienes y Servicios — Proyección';
 }
 function vzEtiquetaLinea(l) {
@@ -7483,6 +7817,7 @@ function vzArbolPorFuente(tipo, lineas) {
       sub('hon', 'Honorarios (Subt. 21)', l => l.grupo === 'hon');
       sub('honproy', 'Honorarios — Proyección', l => l.grupo === 'hon_proy');
       sub('bys', 'Bienes y Servicios', l => l.grupo === 'bys' || l.grupo === 'bys_concepto');
+      sub('bysdoc', 'Bienes y Servicios — documentado (compras por concepto)', l => l.grupo === 'bys_doc');
       sub('proy', 'Bienes y Servicios — Proyección', l => l.grupo === 'bys_proy');
     }
     roots.push(vzPadre(nodo, hijos));
@@ -7527,6 +7862,7 @@ function vzArbolPorCodigo(tipo, lineas) {
   subcat('bys22', 'Bienes y Servicios — Subt. 22', l => l.grupo === 'bys' && l.subt === '22', l => l.codigo);
   subcat('bys29', 'Bienes y Servicios — Subt. 29', l => l.grupo === 'bys' && l.subt === '29', l => l.codigo);
   subcat('byscon', 'Bienes y Servicios — por concepto (sin código)', l => l.grupo === 'bys_concepto', l => l.concepto.trim().toLowerCase());
+  subcat('bysdoc', 'Bienes y Servicios — documentado (compras por concepto)', l => l.grupo === 'bys_doc', l => l.concepto.trim().toLowerCase());
   subcat('proy', 'Bienes y Servicios — Proyección', l => l.grupo === 'bys_proy', l => l.codigo || l.concepto.trim().toLowerCase());
   return roots;
 }
@@ -7946,7 +8282,7 @@ function buildConceptoCatalog() {
 // B&S por concepto libre y proyección de B&S por concepto. Key: `of|{fuente}|{tipo}[|{arg}]`
 // (el arg —código o concepto libre— puede traer "|", por eso se parsea con parseConceptoOF).
 function reporteConceptosDinamicos(f) {
-  const codigos = new Map(), conceptos = new Set(), proy = new Set();
+  const codigos = new Map(), conceptos = new Set(), proy = new Set(), docs = new Set();
   const conDatos = it => Object.values(it.meses || {}).some(v => Number(v));
   filasOtrasFuentes(f.key).forEach(r => {
     const of = ((CARGA_MANUAL.otras_fuentes_por_rbd || {})[r.rbd] || {})[f.key];
@@ -7957,11 +8293,13 @@ function reporteConceptosDinamicos(f) {
       else if (it.concepto) conceptos.add(it.concepto);
     });
     (of.bys_proy_items || []).forEach(it => { if (it.concepto && conDatos(it)) proy.add(it.concepto); });
+    (of.bys_doc_items || []).forEach(it => { if (it.concepto && conDatos(it)) docs.add(it.concepto); });
   });
   return {
     codigos: Array.from(codigos.values()).sort((a, b) => String(a.codigo).localeCompare(String(b.codigo), 'es', { numeric: true })),
     conceptos: Array.from(conceptos).sort((a, b) => a.localeCompare(b, 'es')),
     proy: Array.from(proy).sort((a, b) => a.localeCompare(b, 'es')),
+    docs: Array.from(docs).sort((a, b) => a.localeCompare(b, 'es')),
   };
 }
 function reporteConceptosFuente(f) {
@@ -7978,9 +8316,15 @@ function reporteConceptosFuente(f) {
   add('bys_total', 'Bienes y Servicios — total (Real+Proy)');
   if (f.bysMode === 'compras') add('bys_proy', 'Bienes y Servicios Proyección — total');
   const din = reporteConceptosDinamicos(f);
+  // Fuentes por concepto con compras documentadas: se pueden pedir por separado lo documentado y lo «sin documento» (el total ya suma ambos).
+  if (f.bysMode === 'concepto' && din.docs.length) {
+    add('bys_doc', 'Bienes y Servicios — documentado (compras)');
+    add('bys_sindoc', 'Bienes y Servicios — sin documento (montos mensuales)');
+  }
   din.codigos.forEach(c => add(`bys_codigo|${c.codigo}`, `${c.codigo} · ${c.nombre} (Subt.${c.subt})`));
   din.conceptos.forEach(n => add(`bys_concepto|${n}`, `B&S — ${n}`));
   din.proy.forEach(n => add(`bys_proy_item|${n}`, `B&S Proyección — ${n}`));
+  din.docs.forEach(n => add(`bys_doc_item|${n}`, `B&S documentado — ${n}`));
   return out;
 }
 function parseConceptoOF(key) {
@@ -8000,7 +8344,7 @@ function serieConceptoOF(rbd, key) {
   const { fuenteKey, tipo, arg } = parseConceptoOF(key);
   const of = ofDeEntidad(rbd, fuenteKey);
   if (!of) return {};
-  const items = of.bys_items || [], proy = of.bys_proy_items || [];
+  const items = of.bys_items || [], proy = of.bys_proy_items || [], docs = of.bys_doc_items || [];
   switch (tipo) {
     case 'ingreso': return of.ingreso ? of.ingreso.meses : {};
     case 'ingreso_operacion': return of.ingreso_operacion ? of.ingreso_operacion.meses : {};
@@ -8008,8 +8352,11 @@ function serieConceptoOF(rbd, key) {
     case 'ingreso_carrera_docente': return of.ingreso_carrera_docente ? of.ingreso_carrera_docente.meses : {};
     case 'ingreso_bdl': return of.ingreso_bdl ? of.ingreso_bdl.meses : {};
     case 'rem': return of.gasto_rem ? of.gasto_rem.meses : {};
-    case 'bys_total': return sumaItemsMeses([...items, ...proy]);
+    case 'bys_total': return sumaItemsMeses([...items, ...docs, ...proy]); // sin documento + documentado (+ proyección en las fuentes con compras)
     case 'bys_proy': return sumaItemsMeses(proy);
+    case 'bys_doc': return sumaItemsMeses(docs);
+    case 'bys_sindoc': return sumaItemsMeses(items);
+    case 'bys_doc_item': { const it = docs.find(x => x.concepto === arg); return it ? it.meses : {}; }
     case 'bys_codigo': { const it = items.find(x => x.codigo === arg); return it ? it.meses : {}; }
     case 'bys_concepto': { const it = items.find(x => x.concepto === arg); return it ? it.meses : {}; }
     case 'bys_proy_item': { const it = proy.find(x => x.concepto === arg); return it ? it.meses : {}; }
@@ -8029,7 +8376,7 @@ function esRealParaConcepto(rbd, key, idx1based) {
   const f = FUENTES_OTRAS_BY_KEY[fuenteKey];
   const of = ofDeEntidad(rbd, fuenteKey);
   const corte = realHastaMesOtraFuente(of);
-  if (tipo === 'bys_codigo') return true;
+  if (tipo === 'bys_codigo' || tipo === 'bys_doc' || tipo === 'bys_doc_item') return true; // compras (con código o con concepto): siempre reales
   if (tipo === 'bys_proy' || tipo === 'bys_proy_item') return false;
   if (tipo === 'bys_total' && of) {
     const mes = MESES_CARGA[idx1based - 1];
@@ -8038,6 +8385,7 @@ function esRealParaConcepto(rbd, key, idx1based) {
       const v = (it.meses && it.meses[mes]) || 0;
       if (f.bysMode === 'compras' || idx1based <= corte) real += v; else proy += v;
     });
+    (of.bys_doc_items || []).forEach(it => { real += (it.meses && it.meses[mes]) || 0; }); // documentado: siempre real
     (of.bys_proy_items || []).forEach(it => { proy += (it.meses && it.meses[mes]) || 0; });
     if (real && proy) return null;
     if (real) return true;
@@ -8235,7 +8583,7 @@ function renderReporte() {
     `Cada celda se colorea <span style="background:#e3f6ea; color:#0b7a3e; padding:1px 5px; border-radius:3px;">real</span> o ` +
     `<span style="background:#fdf1de; color:#9a5b08; padding:1px 5px; border-radius:3px;">proyectada</span> según la misma regla que el detalle de cada RBD ` +
     `(<b>SEP</b> — Ingreso: real ${fraseCorteIngresoSep()}; Remuneraciones: el corte propio de cada RBD; Honorarios (boletas) y compras Subt.22/29: siempre reales; Honorarios y Bienes y Servicios Proyección: siempre proyectadas) — no depende del selector "Ver resumen acumulado hasta el mes" de arriba, que solo afecta las casillas KPI. ` +
-    `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (${fraseDefaultFuentes()}); B&S por código (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
+    `<b>Fuentes de financiamiento</b> — Ingreso, Remuneraciones y B&S por concepto: real hasta el "Real hasta" de cada entidad (${fraseDefaultFuentes()}); B&S por código o por concepto documentado (compras): siempre real; Proyección de B&S: siempre proyectada; "B&S total" que en un mes mezcla parte real y proyectada queda sin color. ` +
     `Los subtotales de una fuente se colorean solo si todas las entidades coinciden. Un concepto solo genera filas para las entidades que le corresponden (RBD → SEP y las fuentes por RBD, incluidas FAEP y FIGA; AC → las fuentes por RBD, sin SEP; GESPARVU → JUNJI, Aporte Fiscal JUNJI, FAEP y FIGA).`;
 
   const tbody = document.getElementById('reporteTbody');
@@ -9985,7 +10333,12 @@ function aplicarSnapshot(snapshot) {
           entry.compras = comprasOF;
           entry.bys_proy_items = parseItemsConcepto(raw.bys_proy_items);
         } else {
+          // Fuente por concepto: «sin documento» (montos mensuales por concepto) + «documentado» (compras con concepto; sus totales por concepto y mes se derivan aquí y se recalculan siempre).
           entry.bys_items = parseItemsConcepto(raw.bys_items);
+          const comprasOF = {};
+          Object.entries(objetoPlano(raw.compras)).forEach(([id, c]) => { if (c && typeof c === 'object' && !Array.isArray(c)) comprasOF[id] = sanitizaCompraConcepto(c); });
+          entry.compras = comprasOF;
+          entry.bys_doc_items = itemsFromComprasConcepto(comprasOF);
         }
         of[f.key] = entry;
       });
@@ -10063,6 +10416,14 @@ function sanitizaCompra(c) {
   };
   // N° DC: solo si la compra lo trae (así una compra sin el campo no gana una clave nueva en respaldos ni en comparaciones).
   if (c.documentoContable !== undefined) limpia.documentoContable = textoSeguro(c.documentoContable);
+  return limpia;
+}
+
+// Compra de una fuente por CONCEPTO: lo mismo que sanitizaCompra pero con `concepto` (texto) en lugar de `codigo`.
+function sanitizaCompraConcepto(c) {
+  const limpia = sanitizaCompra(c);
+  delete limpia.codigo;
+  limpia.concepto = textoSeguro(c.concepto);
   return limpia;
 }
 

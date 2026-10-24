@@ -1,4 +1,4 @@
-// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json, cierre.json, compras.json, estado.json, honorarios.json y jardines.json).
+// Generador reproducible de los fixtures deterministas (tests/fixtures/default.json, cierre.json, compras.json, estado.json, honorarios.json, jardines.json y compras_conceptos.json).
 //   node tests/fixtures/generate.mjs            -> escribe default.json y cierre.json
 //   node tests/fixtures/generate.mjs --check    -> verifica que ambos coinciden con lo que generaría (sin escribir)
 //
@@ -14,6 +14,9 @@
 //
 //   jardines.json default + «ajustes de fuentes»: montos de FAEP y FIGA en varios jardines (GESPARVU; ahora son parte del universo de FAEP y FIGA) y la línea «Ingreso Bono Desempeño
 //                 Laboral (BDL)» de JUNJI (`ingreso_bdl`) en varios jardines (ver el bloque «variante jardines» más abajo). Solo AGREGA o reescribe lo que nombra, sin consumir números aleatorios.
+//
+//   compras_conceptos.json  jardines + registro de compras por documento con CONCEPTO en las 5 fuentes por concepto (JUNJI, FAEP, FIGA y los dos Aportes Fiscales): `compras` AGREGADAS en varias
+//                 entidades (RBD, AC y jardines), sin consumir números aleatorios (ver el bloque «variante compras_conceptos» más abajo).
 //
 //   estado.json   default + casos de borde del Estado de las entidades (PR D2: L-07 Estado único sin redondear, L-08 JUNJI): saldo exactamente 0, 99,996 %, saldo -$1,
 //                 89,999 % vs 90,000 %, recurso 0 con y sin gasto, Carrera Docente en el recurso, y GESPARVU de JUNJI con el saldo de Operación para B&S negativo.
@@ -550,6 +553,74 @@ const docsJar = JSON.parse(JSON.stringify(docs));
   };
 }
 
+// ---------- variante "compras_conceptos": registro de compras por documento con CONCEPTO en las 5 fuentes por concepto ----------
+// JUNJI, FAEP, FIGA y los dos Aportes Fiscales ahora tienen `otras_fuentes.{fuente}.compras = { id: { concepto, tipoDocumento, nroDocumento, fechaDocumento, fechaPago, descripcion, rutProveedor,
+// nombreProveedor, montoGasto, montoDocumento, documentoOriginal, documentoContable? } }` (lo documentado, siempre Real) junto a los montos mensuales «sin documento» que ya existían (`bys_items`).
+// Parte de la variante `jardines` (FAEP y FIGA ya incluyen los jardines) y AGREGA `compras` a varias entidades, sin consumir números aleatorios ni tocar nada más. Entidades con «sin documento»
+// de default.json: FAEP/FIGA/Aporte Educ. en 1121 y AC; JUNJI en 11 jardines; Aporte JUNJI en 5 jardines (más los FAEP/FIGA de jardines de la variante `jardines`).
+//   FAEP / 1121  (corte Real hasta julio; «sin documento»: «Alimentación» y «Servicios básicos»)
+//      · fa1121_1 «Alimentación» FACEL 1001, mar-2026, gasto 500.000 de 595.000, N° DC DC_701 · fa1121_2 «Alimentación» septiembre (DESPUÉS del corte: igual Real) 300.000
+//      · fa1121_nc  nota de crédito guardada en POSITIVO (se lee -50.000) con Doc. original 1001-FACEL · fa1121_nuevo concepto NUEVO «Mobiliario administrativo» 120.000
+//      · fa1121_2025 fecha 2025-12-30 (⚠ fuera de 2026; suma en diciembre) · fa1121_sinconcepto sin concepto (⚠ no se contabiliza) · fa1121_invalida fecha 10/03/2026 (⚠ no se contabiliza)
+//      · fa1121_especial concepto/descripción/proveedor/N° DC con & < > " '
+//   FAEP / AC · fa_ac_1 «Alimentación» 200.000;  FAEP / 5402002 (jardín) · «Alimentación» 80.000 (la hay «sin documento» 60.000/mes) y «Mantención menor» 45.000
+//   FIGA / 5404001 (jardín) · «Transporte escolar» 90.000 y concepto nuevo «Material didáctico» 35.000;  FIGA / 1121 · «Material didáctico» 250.000 y una NC guardada en negativo (-30.000)
+//   JUNJI / 5403002 · «Alimentación» 1.600.000 en enero: B&S pasa de 500.000 a 2.100.000, el saldo de +500.000 a -1.100.000 y Operación − B&S de +1.500.000 a -100.000 → DÉFICIT (por ambas causas; antes Superávit)
+//   JUNJI / 5402002 · «Alimentación» 800.000 (marzo) y «Servicios básicos» 120.000 (octubre, después del corte en julio)
+//   Aporte Educ. / 1121 · «Servicios básicos» 180.000 y «Transporte escolar» 60.000 (noviembre);  Aporte Educ. / AC · «Capacitación» 75.000
+//   Aporte JUNJI / 5402002 · concepto nuevo «Capacitación docentes» 220.000 y «Alimentación» 90.000
+const docsCC = JSON.parse(JSON.stringify(docsJar));
+{
+  const comp = (concepto, tipoDocumento, nro, fecha, pago, descripcion, gasto, doc, extra = {}) => ({
+    concepto, tipoDocumento, nroDocumento: String(nro), fechaDocumento: fecha, fechaPago: pago, descripcion,
+    rutProveedor: '76123456-7', nombreProveedor: 'Proveedor Ejemplo SpA', montoGasto: gasto, montoDocumento: doc === undefined ? gasto : doc, documentoOriginal: '', ...extra,
+  });
+  const de = (id, fuente) => {
+    const d = docsCC[id];
+    d.otras_fuentes = d.otras_fuentes || {};
+    d.otras_fuentes[fuente] = d.otras_fuentes[fuente] || {};
+    return d.otras_fuentes[fuente];
+  };
+  de('1121', 'faep').compras = {
+    fa1121_1: comp('Alimentación', 'Factura electrónica', 1001, '2026-03-12', '2026-03-30', 'Colaciones de marzo', 500000, 595000, { documentoContable: 'DC_701' }),
+    fa1121_2: comp('Alimentación', 'Factura electrónica', 1002, '2026-09-15', '2026-09-30', 'Colaciones de septiembre (después del corte)', 300000, 357000),
+    fa1121_nc: comp('Alimentación', 'Nota de crédito', 55, '2026-03-20', '2026-03-20', 'Devolución de colaciones', 50000, 59500, { documentoOriginal: '1001-FACEL' }),
+    fa1121_nuevo: comp('Mobiliario administrativo', 'Boleta', 77, '2026-05-05', '2026-05-12', 'Silla ergonómica', 120000),
+    fa1121_2025: comp('Alimentación', 'Factura electrónica', 900, '2025-12-30', '2026-01-05', 'Factura con fecha de 2025', 70000),
+    fa1121_sinconcepto: comp('', 'Boleta', 78, '2026-06-01', '2026-06-08', 'Compra sin concepto', 40000),
+    fa1121_invalida: comp('Servicios básicos', 'Factura', 79, '10/03/2026', '2026-03-20', 'Fecha con formato no reconocido', 90000),
+    fa1121_especial: comp('Reparación "sala" & <cuna> O\'Higgins', 'Factura', 'A&B-<7>', '2026-04-15', '2026-04-30', 'Taller <b>x</b> & "y"; O\'Higgins', 150000, undefined, {
+      nombreProveedor: 'Ñandú <Ltda> & "Co"', documentoContable: "DC_<9> & 'Z'; \"Q\"" }),
+  };
+  de('AC', 'faep').compras = { fa_ac_1: comp('Alimentación', 'Boleta', 301, '2026-01-20', '2026-01-25', 'Colaciones de la Administración Central', 200000) };
+  de('5402002', 'faep').compras = {
+    fa5402002_1: comp('Alimentación', 'Factura', 410, '2026-02-10', '2026-02-18', 'Colaciones del jardín', 80000),
+    fa5402002_2: comp('Mantención menor', 'Boleta', 411, '2026-08-12', '2026-08-14', 'Mantención menor (agosto)', 45000),
+  };
+  de('5404001', 'figa').compras = {
+    fg5404001_1: comp('Transporte escolar', 'Factura', 520, '2026-04-10', '2026-04-20', 'Traslado a actividad', 90000),
+    fg5404001_2: comp('Material didáctico', 'Boleta', 521, '2026-06-18', '2026-06-25', 'Material didáctico nuevo', 35000),
+  };
+  de('1121', 'figa').compras = {
+    fg1121_1: comp('Material didáctico', 'Factura', 530, '2026-02-05', '2026-02-12', 'Material didáctico del liceo', 250000),
+    fg1121_nc: comp('Material didáctico', 'Nota de crédito', 531, '2026-02-20', '2026-02-20', 'Devolución de material', -30000, -35700, { documentoOriginal: '530-FAC' }),
+  };
+  de('5403002', 'junji').compras = { jn5403002_1: comp('Alimentación', 'Factura electrónica', 610, '2026-01-15', '2026-01-30', 'Alimentación enero (empuja el saldo de Operación)', 1600000) };
+  de('5402002', 'junji').compras = {
+    jn5402002_1: comp('Alimentación', 'Factura electrónica', 620, '2026-03-03', '2026-03-10', 'Alimentación marzo', 800000),
+    jn5402002_2: comp('Servicios básicos', 'Boleta', 621, '2026-10-10', '2026-10-17', 'Servicios básicos (después del corte)', 120000),
+  };
+  de('1121', 'aporte_educ').compras = {
+    ae1121_1: comp('Servicios básicos', 'Factura', 710, '2026-04-02', '2026-04-10', 'Servicios básicos abril', 180000),
+    ae1121_2: comp('Transporte escolar', 'Factura', 711, '2026-11-11', '2026-11-18', 'Transporte escolar noviembre', 60000),
+  };
+  de('AC', 'aporte_educ').compras = { ae_ac_1: comp('Capacitación', 'Boleta', 712, '2026-05-05', '2026-05-12', 'Capacitación de la Administración Central', 75000) };
+  de('5402002', 'aporte_junji').compras = {
+    aj5402002_1: comp('Capacitación docentes', 'Factura', 810, '2026-06-06', '2026-06-13', 'Capacitación docentes (concepto nuevo)', 220000),
+    aj5402002_2: comp('Alimentación', 'Boleta', 811, '2026-02-02', '2026-02-09', 'Alimentación febrero', 90000),
+  };
+}
+
 // ---------- salida ----------
 function serializar(docsX, extra = {}) {
   const ids = Object.keys(docsX).sort();
@@ -569,6 +640,7 @@ const SALIDAS = [
   { archivo: path.join(AQUI, 'estado.json'), ...serializar(docsEstado, { variante: 'estado' }) },
   { archivo: path.join(AQUI, 'honorarios.json'), ...serializar(docsHon, { variante: 'honorarios' }) },
   { archivo: path.join(AQUI, 'jardines.json'), ...serializar(docsJar, { variante: 'jardines' }) },
+  { archivo: path.join(AQUI, 'compras_conceptos.json'), ...serializar(docsCC, { variante: 'compras_conceptos' }) },
 ];
 
 if (process.argv.includes('--check')) {
